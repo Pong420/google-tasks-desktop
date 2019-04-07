@@ -1,0 +1,42 @@
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+
+  @if ($index) {
+    @return str-slice($string, 1, $index - 1) + $replace +
+      str-replace(
+        str-slice($string, $index + str-length($search)),
+        $search,
+        $replace
+      );
+  }
+
+  @return $string;
+}
+
+@function to-string($value) {
+  @return inspect($value);
+}
+
+@function list-to-string($list, $separator: ',') {
+  $string: '';
+  @if (type-of($list) != list) {
+    @error 'Hey please give me a list instead!';
+  }
+  @each $item in $list {
+    @if (index($list, $item) ==1) {
+      $string: nth($list, 1);
+    } @else {
+      $string: #{$string}#{$separator}#{$item};
+    }
+  }
+
+  @return $string;
+}
+
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}

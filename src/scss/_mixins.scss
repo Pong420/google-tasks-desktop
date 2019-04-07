@@ -1,0 +1,11 @@
+@import './mixins/flex';
+@import './mixins/position';
+@import './mixins/size';
+@import './mixins/textOverflow';
+
+@mixin fake-border($position: bottom, $borderWidth: 1px, $color: #000, $width: 100%) {
+  background: linear-gradient(to left, $color 0, $color 100%);
+  background-size: $width $borderWidth;
+  background-repeat: no-repeat;
+  background-position: center $position;
+}

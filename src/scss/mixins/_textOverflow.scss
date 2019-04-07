@@ -1,0 +1,15 @@
+@mixin text-overflow-ellipsis() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin multi-line-ellipsis($line-height: 1.2em, $line-clamp: 2) {
+  line-height: $line-height;
+  // - 0.1em for firefox
+  max-height: calc(#{$line-height * $line-clamp} - 0.1em);
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: $line-clamp;
+  -webkit-box-orient: vertical;
+}
