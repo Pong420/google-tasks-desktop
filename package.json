@@ -132,9 +132,12 @@
   "devDependencies": {
     "@types/jest": "24.0.11",
     "@types/node": "11.13.0",
-    "@types/react": "16.8.12",
+    "@types/react": "16.8.13",
     "@types/react-dom": "16.8.3",
+    "@types/react-redux": "^7.0.6",
     "@types/react-router-dom": "^4.3.1",
+    "@types/redux": "^3.6.0",
+    "@types/uuid": "^3.4.4",
     "cross-env": "^5.2.0",
     "electron": "^4.1.4",
     "electron-builder": "^20.39.0",
@@ -153,8 +156,13 @@
     "pong-react-scripts": "2.1.8-3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-redux": "^6.0.1",
     "react-router-dom": "^5.0.0",
-    "typescript": "3.4.2"
+    "redux": "^4.0.1",
+    "redux-observable": "^1.1.0",
+    "rxjs": "^6.4.0",
+    "typescript": "3.4.2",
+    "uuid": "^3.3.2"
   },
   "devEngines": {
     "node": ">=7.x",
