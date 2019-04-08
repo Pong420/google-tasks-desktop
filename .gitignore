@@ -26,3 +26,5 @@ release
 electron/*.js
 electron/*.js.map
 *.tsbuildinfo
+
+src/constants/oauth2.keys.json

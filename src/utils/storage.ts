@@ -1,16 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { remote } from 'electron';
 import { TaskLists } from '../typings';
 import { writeFileSync } from './writeFileSync';
+import { STORAGE_DIRECTORY } from '../constants';
 
-export const directory = path.join(
-  remote.app.getPath('userData'),
-  'google-tasks-desktop',
-  'tasks.json'
-);
+export const TASKLISTS_PATH = path.join(STORAGE_DIRECTORY, 'tasks.json');
 
-if (!fs.existsSync(directory)) {
+if (!fs.existsSync(TASKLISTS_PATH)) {
   saveTaskLists([
     [
       'default',
@@ -22,10 +18,10 @@ if (!fs.existsSync(directory)) {
   ]);
 }
 
-export function saveTaskLists(storage: TaskLists) {
-  writeFileSync(directory, storage);
+export function saveTaskLists(tasksLists: TaskLists) {
+  writeFileSync(TASKLISTS_PATH, tasksLists);
 }
 
 export function getTaskLists() {
-  return JSON.parse(fs.readFileSync(directory, 'utf-8')) as TaskLists;
+  return JSON.parse(fs.readFileSync(TASKLISTS_PATH, 'utf-8')) as TaskLists;
 }

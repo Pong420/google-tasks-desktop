@@ -9,6 +9,7 @@ const enhancer = composeEnhancers(applyMiddleware(epicMiddleware));
 
 const store = createStore(rootReducer, undefined, enhancer);
 
+// FIXME:
 // @ts-ignore
 epicMiddleware.run(rootEpic);
 

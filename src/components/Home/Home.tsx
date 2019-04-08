@@ -4,6 +4,7 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { RootState, TasksState, TaskActionCreators } from '../../store';
 import { NewTask } from '../NewTask';
 import { Task } from '../Task';
+import { Auth } from '../Auth';
 import uuid from 'uuid';
 
 const mapStateToProps = ({ task }: RootState, ownProps: any) => ({
@@ -51,6 +52,7 @@ function HomeComponent({
           })}
         </div>
       </div>
+      <Auth />
     </div>
   );
 }
