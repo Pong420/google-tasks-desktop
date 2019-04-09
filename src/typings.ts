@@ -1,22 +1,21 @@
+import { tasks_v1 } from 'googleapis';
+
+// TODO: remove
 export type TaskListName = string;
+export type TaskListUUID = string;
 
-export interface Task {
-  id: string;
-  taskListName: TaskListName;
-  title: string;
-  description?: string;
-  dateTime?: number;
-  subTask?: string[];
-  completed?: boolean;
+export interface Task extends tasks_v1.Schema$Task {
+  taskListId: string;
+  sync: boolean;
+  uuid: string;
 }
 
-export interface TaskList {
-  name: TaskListName;
-  tasks: Task[];
-  sortBy?: 'order' | 'date';
+export interface TaskList extends tasks_v1.Schema$TaskList {
+  sync: boolean;
+  uuid: string;
 }
 
-export type TaskLists = Array<[TaskListName, TaskList]>;
+export type TaskLists = Array<[string, TaskList]>;
 
 export interface OAuth2Keys {
   client_id: string;

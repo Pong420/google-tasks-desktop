@@ -1,3 +1,4 @@
 {
-  "HOME": "/"
+  "TASKLIST": "/tasklist/:taskListId?",
+  "SETTING": "/setting"
 }

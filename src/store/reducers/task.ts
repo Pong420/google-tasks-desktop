@@ -12,7 +12,7 @@ const initialState: TasksState = {
 
 export default function(state = initialState, action: TaskActions) {
   const mappedStorage = new Map(state.taskLists.slice(0));
-  const taskListName = action.payload && action.payload.taskListName;
+  const taskListName = action.payload && action.payload.taskListId;
   const taskList: TaskList | undefined = taskListName
     ? mappedStorage.get(taskListName)
     : undefined;
@@ -22,9 +22,8 @@ export default function(state = initialState, action: TaskActions) {
       return {
         ...state,
         taskLists: [
-          ...mappedStorage.set(action.payload.taskListName, {
-            ...taskList!,
-            tasks: [...taskList!.tasks, action.payload]
+          ...mappedStorage.set(action.payload.taskListId, {
+            ...taskList!
           })
         ]
       };
@@ -33,11 +32,8 @@ export default function(state = initialState, action: TaskActions) {
       return {
         ...state,
         taskLists: [
-          ...mappedStorage.set(action.payload.taskListName, {
-            ...taskList!,
-            tasks: taskList!.tasks
-              .slice()
-              .filter(({ id }) => id !== action.payload.id)
+          ...mappedStorage.set(action.payload.taskListId, {
+            ...taskList!
           })
         ]
       };
@@ -47,13 +43,8 @@ export default function(state = initialState, action: TaskActions) {
       return {
         ...state,
         taskLists: [
-          ...mappedStorage.set(action.payload.taskListName, {
-            ...taskList!,
-            tasks: taskList!.tasks
-              .slice()
-              .map(task =>
-                task.id === action.payload.id ? action.payload : task
-              )
+          ...mappedStorage.set(action.payload.taskListId, {
+            ...taskList!
           })
         ]
       };

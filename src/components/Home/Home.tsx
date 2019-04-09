@@ -22,27 +22,18 @@ function HomeComponent({
   toggleComplete
 }: TasksState & typeof TaskActionCreators) {
   const [taskListName, taskList] = useMemo(() => taskLists[0], [taskLists]);
-  const onSubmit = useCallback(
-    title => {
-      addTask({
-        id: uuid.v4(),
-        taskListName,
-        title
-      });
-    },
-    [addTask, taskListName]
-  );
+  const onSubmit = useCallback(title => {}, []);
 
   return (
     <div className="home">
-      <div className="task-list">
+      {/* <div className="task-list">
         <div className="task-list-name">{taskListName}</div>
         <div className="task-list-content">
           <NewTask onSubmit={onSubmit} />
           {taskList.tasks.map((task, i) => {
             return (
               <Task
-                key={task.id}
+                key={task.uuid}
                 task={task}
                 onToggleComplete={toggleComplete}
                 onDelete={deleteTask}
@@ -52,7 +43,7 @@ function HomeComponent({
           })}
         </div>
       </div>
-      <Auth />
+      <Auth /> */}
     </div>
   );
 }

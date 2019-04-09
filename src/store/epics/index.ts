@@ -1,5 +1,6 @@
 import { combineEpics } from 'redux-observable';
-import tasksEpics from './tasks';
 import authEpics from './auth';
+import tasksEpics from './tasks';
+import taskListEpics from './taskList';
 
-export default combineEpics(...tasksEpics, ...authEpics);
+export default combineEpics(...authEpics, ...tasksEpics, ...taskListEpics);

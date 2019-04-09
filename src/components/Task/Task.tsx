@@ -38,17 +38,7 @@ export function Task({
         }
         onBlur={() => onUpdate && onUpdate(task)}
       />
-      <button
-        onClick={() =>
-          onToggleComplete &&
-          onToggleComplete({
-            ...task,
-            completed: !task.completed
-          })
-        }
-      >
-        {!!task.completed ? 'Undo' : 'Complete'}
-      </button>
+      <button>{!!task.completed ? 'Undo' : 'Complete'}</button>
       <button onClick={() => onDelete && onDelete(task)}>Delete</button>
     </div>
   );

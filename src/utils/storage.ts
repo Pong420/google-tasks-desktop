@@ -4,15 +4,7 @@ import { writeFileSync } from './writeFileSync';
 import { TASK_LISTS_PATH } from '../constants';
 
 if (!fs.existsSync(TASK_LISTS_PATH)) {
-  saveTaskLists([
-    [
-      'default',
-      {
-        name: 'default',
-        tasks: []
-      }
-    ]
-  ]);
+  saveTaskLists([]);
 }
 
 export function saveTaskLists(tasksLists: TaskLists) {
