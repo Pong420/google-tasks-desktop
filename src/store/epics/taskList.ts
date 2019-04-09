@@ -5,7 +5,10 @@ import { tasks_v1 } from 'googleapis';
 import {
   TaskListActions,
   TaskListActionTypes,
-  SyncTaskListSuccess
+  SyncTaskListSuccess,
+  GetAllTaskListSuccess,
+  AddTaskList,
+  AddTaskListSuccess
 } from '../actions/taskList';
 import { RootState } from '../reducers';
 import { saveTaskLists } from '../../utils/storage';
@@ -63,20 +66,32 @@ const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
       }
 
       switch (action.type) {
+        case TaskListActionTypes.GET_ALL_TASK_LIST:
+          return from(taskApi.tasklists.list()).pipe(
+            map(res => {
+              const result: GetAllTaskListSuccess = {
+                type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
+                payload: res.data.items!
+              };
+              return result;
+            })
+          );
+
         case TaskListActionTypes.ADD_TASK_LIST:
           return from(
             taskApi.tasklists.insert({
               requestBody: action.payload
             })
           ).pipe(
-            map<any, TaskListActions>(({ data }) => {
-              return {
+            map(({ data }) => {
+              const result: AddTaskListSuccess = {
                 type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
                 payload: {
-                  uuid: action.payload.uuid,
+                  tid: action.payload.tid,
                   data
                 }
               };
+              return result;
             })
           );
 

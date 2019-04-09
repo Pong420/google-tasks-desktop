@@ -131,6 +131,7 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.11",
+    "@types/lodash": "^4.14.123",
     "@types/node": "11.13.0",
     "@types/react": "16.8.13",
     "@types/react-dom": "16.8.3",
@@ -154,6 +155,7 @@
   "dependencies": {
     "electron-devtools-installer": "^2.2.4",
     "googleapis": "^39.2.0",
+    "lodash": "^4.17.11",
     "pong-react-scripts": "2.1.8-3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

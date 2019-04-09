@@ -25,7 +25,7 @@ function TaskListComponent({
   match: { params },
   loggedIn,
   taskLists,
-  syncTaskList,
+  getAllTaskList,
   addTaskList
 }: AuthsState &
   TaskListState &
@@ -35,17 +35,15 @@ function TaskListComponent({
     let current = taskLists[0];
     if (params.taskListId) {
       current =
-        taskLists.find(([uuid]) => uuid === params.taskListId) || current;
+        taskLists.find(({ tid }) => tid === params.taskListId) || current;
     }
 
-    return current ? current[1] : null;
+    return current || null;
   }, [params.taskListId, taskLists]);
 
   useEffect(() => {
-    if (!taskLists.length && loggedIn) {
-      syncTaskList();
-    }
-  }, [syncTaskList, loggedIn, taskLists.length]);
+    loggedIn && getAllTaskList();
+  }, [getAllTaskList, loggedIn]);
 
   return (
     <div className="task-list">

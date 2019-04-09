@@ -1,18 +1,17 @@
 import { tasks_v1 } from 'googleapis';
-import { TaskListUUID } from '../../typings';
 
 interface TaskListAPIParams {
   tasklist: string;
 }
 
 interface AddTaskListAPIParams {
-  uuid: TaskListUUID;
+  tid: string;
   title: string;
 }
 
 interface TaskListApiResponse {
   data: tasks_v1.Schema$TaskList;
-  uuid: TaskListUUID;
+  tid: string;
 }
 
 export enum TaskListActionTypes {
@@ -36,6 +35,7 @@ export interface GetAllTaskList {
 
 export interface GetAllTaskListSuccess {
   type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS;
+  payload: tasks_v1.Schema$TaskList[];
 }
 
 export interface GetTaskList {
