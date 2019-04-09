@@ -1,12 +1,9 @@
 import fs from 'fs';
-import path from 'path';
 import { TaskLists } from '../typings';
 import { writeFileSync } from './writeFileSync';
-import { STORAGE_DIRECTORY } from '../constants';
+import { TASK_LISTS_PATH } from '../constants';
 
-export const TASKLISTS_PATH = path.join(STORAGE_DIRECTORY, 'tasks.json');
-
-if (!fs.existsSync(TASKLISTS_PATH)) {
+if (!fs.existsSync(TASK_LISTS_PATH)) {
   saveTaskLists([
     [
       'default',
@@ -19,9 +16,9 @@ if (!fs.existsSync(TASKLISTS_PATH)) {
 }
 
 export function saveTaskLists(tasksLists: TaskLists) {
-  writeFileSync(TASKLISTS_PATH, tasksLists);
+  writeFileSync(TASK_LISTS_PATH, tasksLists);
 }
 
 export function getTaskLists() {
-  return JSON.parse(fs.readFileSync(TASKLISTS_PATH, 'utf-8')) as TaskLists;
+  return JSON.parse(fs.readFileSync(TASK_LISTS_PATH, 'utf-8')) as TaskLists;
 }

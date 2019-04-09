@@ -1,17 +1,14 @@
 import fs from 'fs';
-import path from 'path';
 import { remote } from 'electron';
 import { google } from 'googleapis';
-import { STORAGE_DIRECTORY, oAuth2Keys } from './constants';
+import { TOKEN_PATH, OAuth2Keys } from './constants';
 import { writeFileSync } from './utils/writeFileSync';
 
-const TOKEN_PATH = path.join(STORAGE_DIRECTORY, 'token.json');
 const SCOPES = ['https://www.googleapis.com/auth/tasks'];
-
 const oAuth2Client = new google.auth.OAuth2(
-  oAuth2Keys.client_id,
-  oAuth2Keys.client_secret,
-  oAuth2Keys.redirect_uris[0]
+  OAuth2Keys.client_id,
+  OAuth2Keys.client_secret,
+  OAuth2Keys.redirect_uris[0]
 );
 
 export const taskApi = google.tasks({
@@ -26,12 +23,12 @@ export async function authenticateAPI() {
       scope: SCOPES.join(' ')
     });
 
-    fs.readFile(TOKEN_PATH, (err, token) => {
+    fs.readFile(TOKEN_PATH, 'utf-8', (err, token) => {
       if (err) {
         remote.shell.openExternal(authorizeUrl);
         reject();
       } else {
-        oAuth2Client.setCredentials(JSON.parse(token.toString()));
+        oAuth2Client.setCredentials(JSON.parse(token));
         resolve();
       }
     });

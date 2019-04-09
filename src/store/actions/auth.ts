@@ -3,7 +3,8 @@ export enum AuthActionTypes {
   AUTHENTICATION_SUCCESS = 'AUTHENTICATION_SUCCESS',
   AUTHENTICATION_FAILURE = 'AUTHENTICATION_FAILURE',
   GET_TOKEN = 'GET_TOKEN',
-  GET_TOKEN_FAILURE = 'GET_TOKEN_FAILURE'
+  GET_TOKEN_FAILURE = 'GET_TOKEN_FAILURE',
+  LOGOUT = 'LOGOUT'
 }
 
 export interface Authenticate {
@@ -27,12 +28,17 @@ export interface GetTokenFailure {
   type: AuthActionTypes.GET_TOKEN_FAILURE;
 }
 
+export interface Logout {
+  type: AuthActionTypes.LOGOUT;
+}
+
 export type AuthActions =
   | Authenticate
   | AuthenticateSuccess
   | AuthenticateFailure
   | GetToken
-  | GetTokenFailure;
+  | GetTokenFailure
+  | Logout;
 
 export const AuthActionCreators = {
   authenticate(): Authenticate {
@@ -44,6 +50,11 @@ export const AuthActionCreators = {
     return {
       type: AuthActionTypes.GET_TOKEN,
       payload
+    };
+  },
+  logout(): Logout {
+    return {
+      type: AuthActionTypes.LOGOUT
     };
   }
 };

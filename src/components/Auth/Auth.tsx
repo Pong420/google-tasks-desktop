@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import { tasks_v1 } from 'googleapis';
 import { RootState, AuthActionCreators, AuthsState } from '../../store';
 import { taskApi } from '../../api';
-import { tasks_v1 } from 'googleapis';
 
 const mapStateToProps = ({ auth }: RootState) => ({ ...auth });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(AuthActionCreators, dispatch);
 
 export function AuthComponent({
+  autoLogin,
   waiting,
-  authorized,
+  loggedIn,
   authenticate,
   getToken
 }: AuthsState & typeof AuthActionCreators) {
@@ -45,12 +46,12 @@ export function AuthComponent({
   }, []);
 
   useEffect(() => {
-    authenticate();
-  }, [authenticate]);
+    autoLogin && authenticate();
+  }, [authenticate, autoLogin]);
 
   return (
     <div className="auth">
-      {authorized ? (
+      {loggedIn ? (
         <>
           <div>Authorized</div>
           <button onClick={logTaskLists}>get task lists</button>
@@ -76,7 +77,7 @@ export function AuthComponent({
               value={code}
               onChange={evt => setCode(evt.target.value)}
             />
-            <button>get code</button>
+            <button onClick={authenticate}>get code</button>
             <button onClick={submit}>get token</button>
           </form>
         </div>

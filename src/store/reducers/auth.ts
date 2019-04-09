@@ -1,16 +1,18 @@
+import fs from 'fs';
 import { AuthActions, AuthActionTypes } from '../actions/auth';
+import { TOKEN_PATH } from '../../constants';
 
 // TODO:
 export interface AuthsState {
+  autoLogin: boolean;
   waiting: boolean;
-  authorized: boolean;
-  needToken: boolean;
+  loggedIn: boolean;
 }
 
 const initialState: AuthsState = {
+  autoLogin: fs.existsSync(TOKEN_PATH),
   waiting: false,
-  authorized: false,
-  needToken: false
+  loggedIn: false
 };
 
 export default function(state = initialState, action: AuthActions) {
@@ -25,14 +27,19 @@ export default function(state = initialState, action: AuthActions) {
       return {
         ...state,
         waiting: false,
-        authorized: true
+        loggedIn: true
       };
 
     case AuthActionTypes.AUTHENTICATION_FAILURE:
       return {
         ...state,
-        waiting: false,
-        authorized: false
+        waiting: false
+      };
+
+    case AuthActionTypes.LOGOUT:
+      return {
+        ...state,
+        loggedIn: false
       };
 
     default:

@@ -1,8 +1,10 @@
-import { from, of } from 'rxjs';
-import { switchMap, map, mergeMap, catchError } from 'rxjs/operators';
+import fs from 'fs';
+import { from, of, empty } from 'rxjs';
+import { switchMap, mergeMap, catchError } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { AuthActions, AuthActionTypes, GetToken } from '../actions/auth';
 import { authenticateAPI, getTokenAPI } from '../../api';
+import { TOKEN_PATH } from '../../constants';
 
 const authEpic: Epic<AuthActions> = $action =>
   $action.pipe(
@@ -44,4 +46,16 @@ const getTokenEpic: Epic<AuthActions> = $action =>
     )
   );
 
-export default [authEpic, getTokenEpic];
+const logoutEpic: Epic<AuthActions> = $action =>
+  $action.pipe(
+    ofType<AuthActions>(AuthActionTypes.LOGOUT),
+    switchMap(() => {
+      try {
+        fs.unlinkSync(TOKEN_PATH);
+      } catch (err) {}
+
+      return empty();
+    })
+  );
+
+export default [authEpic, getTokenEpic, logoutEpic];
