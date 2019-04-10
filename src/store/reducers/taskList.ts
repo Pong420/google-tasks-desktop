@@ -22,7 +22,7 @@ export default function(state = initialState, action: TaskListActions) {
       };
 
     case TaskListActionTypes.ADD_TASK_LIST:
-      mappedTaskList.set(action.payload.id, {
+      mappedTaskList.set(action.payload.localId, {
         ...action.payload
       });
 
@@ -32,9 +32,10 @@ export default function(state = initialState, action: TaskListActions) {
       };
 
     case TaskListActionTypes.ADD_TASK_LIST_SUCCESS:
-      mappedTaskList.delete(action.payload.oid);
-      mappedTaskList.set(action.payload.id, {
+      mappedTaskList.delete(action.payload.localId);
+      mappedTaskList.set(action.payload.data.id!, {
         ...action.payload.data,
+        localId: action.payload.localId,
         sync: new Date().toISOString()
       });
 

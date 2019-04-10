@@ -14,6 +14,7 @@ import { saveTaskLists } from '../../utils/storage';
 import { taskApi } from '../../api';
 import { TaskList, TaskLists } from '../../typings';
 import { tasks_v1 } from 'googleapis';
+import uuid from 'uuid';
 
 // TODO: dependenics for api
 
@@ -75,8 +76,9 @@ const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
               const newTaskList = new Map<string, TaskList>();
 
               res.data.items!.forEach(taskList => {
-                const exists = mappedTaskList.get(taskList.id!);
-                mappedTaskList.delete(taskList.id!);
+                const exists = mappedTaskList.get(taskList.id!) || {
+                  localId: uuid.v4()
+                };
 
                 newTaskList.set(taskList.id!, {
                   ...exists,
@@ -119,8 +121,7 @@ const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
             map<any, AddTaskListSuccess>(res => ({
               type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
               payload: {
-                oid: action.payload.id,
-                id: res.data.id,
+                localId: action.payload.localId,
                 data: res.data
               }
             }))

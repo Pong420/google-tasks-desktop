@@ -58,7 +58,7 @@ function TaskListComponent({
         <button
           onClick={() =>
             addTaskList({
-              id: uuid.v4(),
+              localId: uuid.v4(),
               title: name
             })
           }
@@ -66,10 +66,10 @@ function TaskListComponent({
           Add Task List
         </button>
       </div>
-      {taskLists.map(([id, { title }]) => (
-        <div key={id}>
+      {taskLists.map(([key, { title, localId }]) => (
+        <div key={key}>
           <span>{title}</span>
-          <button onClick={() => delteTaskList(id)}>Delete</button>
+          <button onClick={() => delteTaskList(key)}>Delete</button>
         </div>
       ))}
     </div>

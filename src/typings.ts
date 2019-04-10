@@ -6,6 +6,7 @@ export interface Task extends tasks_v1.Schema$Task {
 }
 
 export interface TaskList extends tasks_v1.Schema$TaskList {
+  localId: string;
   sync?: string;
 }
 

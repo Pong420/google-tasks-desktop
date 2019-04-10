@@ -6,13 +6,12 @@ interface TaskListAPIParams {
 }
 
 interface AddTaskListAPIParams {
-  id: string;
+  localId: string;
   title: string;
 }
 
 interface TaskListApiResponse {
-  oid: string;
-  id: string;
+  localId: string;
   data: tasks_v1.Schema$TaskList;
 }
 
