@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import {
@@ -8,6 +8,7 @@ import {
   TaskListActionCreators
 } from '../../store';
 import { RouteComponentProps } from 'react-router-dom';
+import uuid from 'uuid';
 
 interface MatchParams {
   taskListId: string;
@@ -26,19 +27,20 @@ function TaskListComponent({
   loggedIn,
   taskLists,
   getAllTaskList,
-  addTaskList
+  addTaskList,
+  delteTaskList
 }: AuthsState &
   TaskListState &
   RouteComponentProps<MatchParams> &
   typeof TaskListActionCreators) {
+  const [name, setName] = useState('');
   const currentTaskList = useMemo(() => {
     let current = taskLists[0];
     if (params.taskListId) {
-      current =
-        taskLists.find(({ tid }) => tid === params.taskListId) || current;
+      current = taskLists.find(([id]) => id === params.taskListId) || current;
     }
 
-    return current || null;
+    return current ? current[1] : null;
   }, [params.taskListId, taskLists]);
 
   useEffect(() => {
@@ -47,9 +49,29 @@ function TaskListComponent({
 
   return (
     <div className="task-list">
-      <div className="task-list-header">
-        {currentTaskList && currentTaskList.title}
+      <div>
+        <input
+          type="text"
+          value={name}
+          onChange={evt => setName(evt.target.value)}
+        />
+        <button
+          onClick={() =>
+            addTaskList({
+              id: uuid.v4(),
+              title: name
+            })
+          }
+        >
+          Add Task List
+        </button>
       </div>
+      {taskLists.map(([id, { title }]) => (
+        <div key={id}>
+          <span>{title}</span>
+          <button onClick={() => delteTaskList(id)}>Delete</button>
+        </div>
+      ))}
     </div>
   );
 }

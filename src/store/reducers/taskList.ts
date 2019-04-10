@@ -1,11 +1,10 @@
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
-import { TaskList } from '../../typings';
+import { TaskList, TaskLists } from '../../typings';
 import { getTaskLists } from '../../utils/storage';
-import mergeWith from 'lodash/mergeWith';
 import uuid from 'uuid';
 
 export interface TaskListState {
-  taskLists: TaskList[];
+  taskLists: TaskLists;
 }
 
 const initialState: TaskListState = {
@@ -13,17 +12,43 @@ const initialState: TaskListState = {
 };
 
 export default function(state = initialState, action: TaskListActions) {
+  const mappedTaskList = new Map(state.taskLists.slice());
+
   switch (action.type) {
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
       return {
         ...state,
-        taskLists: mergeWith(state.taskLists, action.payload, src => {
-          return {
-            tid: uuid.v4(),
-            ...src,
-            updated: new Date().toISOString()
-          };
-        })
+        taskLists: action.payload
+      };
+
+    case TaskListActionTypes.ADD_TASK_LIST:
+      mappedTaskList.set(action.payload.id, {
+        ...action.payload
+      });
+
+      return {
+        ...state,
+        taskLists: [...mappedTaskList]
+      };
+
+    case TaskListActionTypes.ADD_TASK_LIST_SUCCESS:
+      mappedTaskList.delete(action.payload.oid);
+      mappedTaskList.set(action.payload.id, {
+        ...action.payload.data,
+        sync: new Date().toISOString()
+      });
+
+      return {
+        ...state,
+        taskLists: [...mappedTaskList]
+      };
+
+    case TaskListActionTypes.DELETE_TASK_LIST:
+      mappedTaskList.delete(action.payload);
+
+      return {
+        ...state,
+        taskLists: [...mappedTaskList]
       };
 
     default:

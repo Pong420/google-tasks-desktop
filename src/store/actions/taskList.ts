@@ -1,17 +1,19 @@
 import { tasks_v1 } from 'googleapis';
+import { TaskList } from '../../typings';
 
 interface TaskListAPIParams {
   tasklist: string;
 }
 
 interface AddTaskListAPIParams {
-  tid: string;
+  id: string;
   title: string;
 }
 
 interface TaskListApiResponse {
+  oid: string;
+  id: string;
   data: tasks_v1.Schema$TaskList;
-  tid: string;
 }
 
 export enum TaskListActionTypes {
@@ -35,7 +37,7 @@ export interface GetAllTaskList {
 
 export interface GetAllTaskListSuccess {
   type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS;
-  payload: tasks_v1.Schema$TaskList[];
+  payload: Array<[string, TaskList]>;
 }
 
 export interface GetTaskList {
@@ -68,7 +70,7 @@ export interface UpdateTaskListSuccess {
 
 export interface DeleteTaskList {
   type: TaskListActionTypes.DELETE_TASK_LIST;
-  payload: TaskListAPIParams;
+  payload: string;
 }
 
 export interface DeleteTaskListSuccess {
@@ -122,7 +124,7 @@ export const TaskListActionCreators = {
       payload
     };
   },
-  delteTaskList(payload: TaskListAPIParams): DeleteTaskList {
+  delteTaskList(payload: string): DeleteTaskList {
     return {
       type: TaskListActionTypes.DELETE_TASK_LIST,
       payload
