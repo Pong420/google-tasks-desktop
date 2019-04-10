@@ -1,0 +1,17 @@
+.task-list {
+  padding: 20px;
+}
+
+.task-list-header {
+  @include flex();
+
+  margin-bottom: 10px;
+
+  > :not(:first-child) {
+    margin-left: 10px;
+  }
+
+  > .active {
+    text-decoration: underline;
+  }
+}

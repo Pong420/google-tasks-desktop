@@ -8,7 +8,8 @@ import {
   TaskListActionCreators
 } from '../../store';
 import { RouteComponentProps } from 'react-router-dom';
-import uuid from 'uuid';
+import { TaskListHeader } from './TaskListHeader';
+import { TaskListContent } from './TaskListContent';
 
 interface MatchParams {
   taskListId: string;
@@ -26,14 +27,11 @@ function TaskListComponent({
   match: { params },
   loggedIn,
   taskLists,
-  getAllTaskList,
-  addTaskList,
-  delteTaskList
+  getAllTaskList
 }: AuthsState &
   TaskListState &
   RouteComponentProps<MatchParams> &
   typeof TaskListActionCreators) {
-  const [name, setName] = useState('');
   const currentTaskList = useMemo(() => {
     let current = taskLists[0];
     if (params.taskListId) {
@@ -49,31 +47,10 @@ function TaskListComponent({
 
   return (
     <div className="task-list">
-      <div>
-        <input
-          type="text"
-          value={name}
-          onChange={evt => setName(evt.target.value)}
-        />
-        <button
-          onClick={() =>
-            addTaskList({
-              localId: uuid.v4(),
-              title: name
-            })
-          }
-        >
-          Add Task List
-        </button>
-      </div>
-      {taskLists.map(({ title, id }) => (
-        <div key={id}>
-          <span>{title}</span>
-          <button onClick={() => delteTaskList(id!)} disabled={!id}>
-            Delete
-          </button>
-        </div>
-      ))}
+      <TaskListHeader taskLists={taskLists} />
+      <TaskListContent
+        taskListId={currentTaskList ? currentTaskList.id! : ''}
+      />
     </div>
   );
 }
