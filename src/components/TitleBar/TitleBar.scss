@@ -1,0 +1,5 @@
+.title-bar {
+  @include app-region;
+  @include dimen(100%, 14px);
+  @include fixed(0, null, 0);
+}

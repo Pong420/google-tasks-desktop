@@ -31,7 +31,7 @@ async function createWindow() {
 
   mainWindow = new BrowserWindow({
     frame: false,
-    height: 600,
+    height: 500,
     width: 300,
     show: false,
     titleBarStyle: 'hiddenInset',

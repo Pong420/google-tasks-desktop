@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '../Input';
+import { ToggleCompleted } from './ToggleCompleted';
 import { tasks_v1 } from 'googleapis';
 
 interface Props {
@@ -21,16 +22,20 @@ export function Task({
 // onUpdate
 Props) {
   const [task, setTask] = useState(defaultTask);
+  const [focus, setFocus] = useState<string>('');
 
   useEffect(() => {
     setTask(defaultTask);
   }, [defaultTask]);
 
   return (
-    <div className={`task ${className}`.trim()}>
-      <div className="task-complete-toggle">
-        <input type="checkbox" />
-      </div>
+    <div
+      className={[`task`, className, focus]
+        .filter(Boolean)
+        .join(' ')
+        .trim()}
+    >
+      <ToggleCompleted />
       <Input
         className="task-title"
         value={task.title}
@@ -40,6 +45,8 @@ Props) {
             title: evt.currentTarget.value
           })
         }
+        onFocus={() => setFocus('focus')}
+        onBlur={() => setFocus('')}
       />
     </div>
   );
