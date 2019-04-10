@@ -1,0 +1,52 @@
+.new-task {
+  @include dimen(100%, 56px);
+  @include flex(center);
+
+  cursor: pointer;
+  padding-right: 10px;
+
+  .add-new-task-button {
+    @include flex(center);
+    @include margin-x(10px);
+
+    border-radius: 50px;
+    flex: 1 0 auto;
+
+    &:hover {
+      background-color: #f1f3f4;
+    }
+
+    .add-icon-button {
+      background: none;
+    }
+
+    path:first-child {
+      fill: #4285f4;
+    }
+
+    div {
+      margin-bottom: -0.1em;
+    }
+  }
+}
+
+.task-list-menu-paper {
+  @include dimen(100%);
+
+  .task-list-menu-divider {
+    @include margin-y(0.4em);
+  }
+
+  .task-list-menu-title.task-list-menu-title {
+    @include padding-y(3px);
+
+    font-size: 0.875em;
+    opacity: 1;
+  }
+
+  .task-list-menu-item {
+    @include flex(center, space-between);
+
+    font-size: inherit;
+  }
+}

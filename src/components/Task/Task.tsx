@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Input } from '../Input';
 import { ToggleCompleted } from './ToggleCompleted';
 import { tasks_v1 } from 'googleapis';
 
@@ -36,8 +35,8 @@ Props) {
         .trim()}
     >
       <ToggleCompleted />
-      <Input
-        className="task-title"
+      <input
+        className="task-input"
         value={task.title}
         onChange={evt =>
           setTask({
