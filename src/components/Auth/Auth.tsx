@@ -49,41 +49,43 @@ export function AuthComponent({
     autoLogin && authenticate();
   }, [authenticate, autoLogin]);
 
-  return (
-    <div className="auth">
-      {loggedIn ? (
-        <>
-          <div>Authorized</div>
-          <button onClick={logTaskLists}>get task lists</button>
-          <div>
-            {taskLists!.map(v => (
-              <button key={v.id} onClick={() => logTasks(v)}>
-                {v.title}
-              </button>
-            ))}
-          </div>
-          <div>
-            {tasks.map((data, index) => (
-              <div key={data.id}>{data.title}</div>
-            ))}
-          </div>
-        </>
-      ) : waiting ? null : (
-        <div>
-          <form onSubmit={submit}>
-            <input
-              type="text"
-              placeholder="Paste the code here, then click get token"
-              value={code}
-              onChange={evt => setCode(evt.target.value)}
-            />
-            <button onClick={authenticate}>get code</button>
-            <button onClick={submit}>get token</button>
-          </form>
-        </div>
-      )}
-    </div>
-  );
+  return null;
+
+  // return (
+  //   <div className="auth">
+  //     {loggedIn ? (
+  //       <>
+  //         <div>Authorized</div>
+  //         <button onClick={logTaskLists}>get task lists</button>
+  //         <div>
+  //           {taskLists!.map(v => (
+  //             <button key={v.id} onClick={() => logTasks(v)}>
+  //               {v.title}
+  //             </button>
+  //           ))}
+  //         </div>
+  //         <div>
+  //           {tasks.map((data, index) => (
+  //             <div key={data.id}>{data.title}</div>
+  //           ))}
+  //         </div>
+  //       </>
+  //     ) : waiting ? null : (
+  //       <div>
+  //         <form onSubmit={submit}>
+  //           <input
+  //             type="text"
+  //             placeholder="Paste the code here, then click get token"
+  //             value={code}
+  //             onChange={evt => setCode(evt.target.value)}
+  //           />
+  //           <button onClick={authenticate}>get code</button>
+  //           <button onClick={submit}>get token</button>
+  //         </form>
+  //       </div>
+  //     )}
+  //   </div>
+  // );
 }
 
 export const Auth = connect(

@@ -1,0 +1,11 @@
+.task-input {
+  @include sq-dimen(100%);
+
+  border: none;
+  outline: none;
+  padding: 0;
+
+  &:hover:not(:focus) {
+    cursor: default;
+  }
+}

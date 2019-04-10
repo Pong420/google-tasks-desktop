@@ -30,9 +30,11 @@ async function createWindow() {
   }
 
   mainWindow = new BrowserWindow({
-    show: false,
+    frame: false,
     height: 600,
-    width: 800,
+    width: 300,
+    show: false,
+    titleBarStyle: 'hiddenInset',
     webPreferences
   });
 

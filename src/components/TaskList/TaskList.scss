@@ -1,17 +1,22 @@
-.task-list {
-  padding: 20px;
-}
-
 .task-list-header {
-  @include flex();
+  @include dimen(100%, 64px);
+  @include flex(center, flex-end);
+  @include fake-border($borderWidth: 1px, $color: #f1f3f4);
+  @include padding-x($padding-x);
 
   margin-bottom: 10px;
 
-  > :not(:first-child) {
-    margin-left: 10px;
-  }
+  .task-list-menu {
+    .task-list-menu-label {
+      color: #80868b;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
 
-  > .active {
-    text-decoration: underline;
+    > div:nth-child(2) {
+      min-height: 1em;
+    }
   }
 }

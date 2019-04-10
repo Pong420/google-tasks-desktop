@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import {
@@ -47,7 +47,7 @@ function TaskListComponent({
 
   return (
     <div className="task-list">
-      <TaskListHeader taskLists={taskLists} />
+      <TaskListHeader currentTaskList={currentTaskList} taskLists={taskLists} />
       <TaskListContent
         taskListId={currentTaskList ? currentTaskList.id! : ''}
       />
