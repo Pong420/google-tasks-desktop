@@ -37,10 +37,10 @@ function TaskListComponent({
   const currentTaskList = useMemo(() => {
     let current = taskLists[0];
     if (params.taskListId) {
-      current = taskLists.find(([id]) => id === params.taskListId) || current;
+      current = taskLists.find(({ id }) => id === params.taskListId) || current;
     }
 
-    return current ? current[1] : null;
+    return current || null;
   }, [params.taskListId, taskLists]);
 
   useEffect(() => {
@@ -66,10 +66,12 @@ function TaskListComponent({
           Add Task List
         </button>
       </div>
-      {taskLists.map(([key, { title, localId }]) => (
-        <div key={key}>
+      {taskLists.map(({ title, id }) => (
+        <div key={id}>
           <span>{title}</span>
-          <button onClick={() => delteTaskList(key)}>Delete</button>
+          <button onClick={() => delteTaskList(id!)} disabled={!id}>
+            Delete
+          </button>
         </div>
       ))}
     </div>

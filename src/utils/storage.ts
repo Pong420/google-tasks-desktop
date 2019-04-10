@@ -14,3 +14,4 @@ export function saveTaskLists(tasksLists: TaskLists) {
 export function getTaskLists() {
   return JSON.parse(fs.readFileSync(TASK_LISTS_PATH, 'utf-8')) as TaskLists;
 }
+;

@@ -36,7 +36,7 @@ export interface GetAllTaskList {
 
 export interface GetAllTaskListSuccess {
   type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS;
-  payload: Array<[string, TaskList]>;
+  payload: tasks_v1.Schema$TaskList[];
 }
 
 export interface GetTaskList {
@@ -55,7 +55,7 @@ export interface AddTaskList {
 
 export interface AddTaskListSuccess {
   type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS;
-  payload: TaskListApiResponse;
+  payload: tasks_v1.Schema$TaskList;
 }
 
 export interface UpdateTaskList {

@@ -1,12 +1,10 @@
-import { empty, from, forkJoin, Observable, of } from 'rxjs';
-import { switchMap, mergeMap, map, mapTo } from 'rxjs/operators';
+import { empty, from } from 'rxjs';
+import { mergeMap, map, mapTo } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import {
   TaskListActions,
   TaskListActionTypes,
   SyncTaskListSuccess,
-  GetAllTaskListSuccess,
-  GetTaskListSuccess,
   AddTaskListSuccess
 } from '../actions/taskList';
 import { RootState } from '../reducers';
@@ -17,42 +15,6 @@ import { tasks_v1 } from 'googleapis';
 import uuid from 'uuid';
 
 // TODO: dependenics for api
-
-const syncTasksListEpic: Epic<TaskListActions, TaskListActions, RootState> = (
-  action$,
-  state$
-) =>
-  action$.pipe(
-    ofType<TaskListActions, TaskListActions>(
-      TaskListActionTypes.SYNC_TASK_LIST
-    ),
-    switchMap(() =>
-      from(taskApi.tasklists.list()).pipe(
-        map(res => {
-          const result: SyncTaskListSuccess = {
-            type: TaskListActionTypes.SYNC_TASK_LIST_SUCCESS,
-            payload: res.data.items!
-          };
-          return result;
-        })
-      )
-    )
-  );
-
-const saveTasksListEpic: Epic<TaskListActions, TaskListActions, RootState> = (
-  action$,
-  state$
-) =>
-  action$.pipe(
-    ofType<TaskListActions, TaskListActions>(
-      ...Object.values(TaskListActionTypes)
-    ),
-    // TODO: debounce ?
-    switchMap(() => {
-      saveTaskLists(state$.value.taskList.taskLists);
-      return empty();
-    })
-  );
 
 const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
   action$,
@@ -67,64 +29,38 @@ const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
         return empty();
       }
 
-      const mappedTaskList = new Map(state$.value.taskList.taskLists);
-
       switch (action.type) {
         case TaskListActionTypes.GET_ALL_TASK_LIST:
-          return from(taskApi.tasklists.list()).pipe(
-            mergeMap(res => {
-              const newTaskList = new Map<string, TaskList>();
-
-              res.data.items!.forEach(taskList => {
-                const exists = mappedTaskList.get(taskList.id!) || {
-                  localId: uuid.v4()
-                };
-
-                newTaskList.set(taskList.id!, {
-                  ...exists,
-                  ...taskList,
-                  sync: new Date().toISOString()
-                });
-              });
-
-              const taskListAdded: Array<Observable<any>> = [];
-              mappedTaskList.forEach(taskList => {
-                if (typeof taskList.sync === 'undefined') {
-                  mappedTaskList.delete(taskList.id!);
-                  taskListAdded.push(addTaskListApi$(taskList.title!));
-                }
-              });
-
-              return (taskListAdded.length
-                ? forkJoin(...taskListAdded)
-                : of([])
-              ).pipe(
-                map((taskListAdded: TaskList[]) => {
-                  taskListAdded.forEach(taskList => {
-                    newTaskList.set(taskList.id!, {
-                      ...taskList,
-                      sync: new Date().toISOString()
-                    });
-                  });
-                  return [...newTaskList];
-                })
-              );
-            }),
-            map<TaskLists, GetAllTaskListSuccess>(payload => ({
+          return from(taskApi.tasklists.list().then(({ data }) => data)).pipe(
+            map<tasks_v1.Schema$TaskLists, TaskListActions>(({ items }) => ({
               type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
-              payload
+              payload: items!.map(taskList => taskList)
             }))
           );
 
         case TaskListActionTypes.ADD_TASK_LIST:
-          return addTaskListApi$(action.payload.title).pipe(
-            map<any, AddTaskListSuccess>(res => ({
+          return from(
+            taskApi.tasklists
+              .insert({
+                requestBody: {
+                  title: action.payload.title
+                }
+              })
+              .then(({ data }) => data)
+          ).pipe(
+            map<tasks_v1.Schema$TaskList, TaskListActions>(payload => ({
               type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
-              payload: {
-                localId: action.payload.localId,
-                data: res.data
-              }
+              payload
             }))
+          );
+
+        case TaskListActionTypes.DELETE_TASK_LIST:
+          return from(
+            taskApi.tasklists.delete({ tasklist: action.payload })
+          ).pipe(
+            mapTo<any, TaskListActions>({
+              type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS
+            })
           );
 
         default:
@@ -133,14 +69,4 @@ const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
     })
   );
 
-export default [syncTasksListEpic, saveTasksListEpic, apiEpic];
-
-function addTaskListApi$(title: string) {
-  return from(
-    taskApi.tasklists.insert({
-      requestBody: {
-        title
-      }
-    })
-  );
-}
+export default [apiEpic];
