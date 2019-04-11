@@ -56,6 +56,19 @@ export default function(state = initialState, action: TaskActions) {
         tasks: state.tasks.slice().filter(({ id }) => id !== action.payload.id)
       };
 
+    case TaskActionTypes.UPDATE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.slice().map(task =>
+          task.id !== action.payload.task
+            ? task
+            : {
+                ...task,
+                ...action.payload.requestBody
+              }
+        )
+      };
+
     default:
       return state;
   }

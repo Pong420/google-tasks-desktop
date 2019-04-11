@@ -20,7 +20,8 @@ function TaskListContentComponent({
   taskListId,
   getAllTasks,
   addTask,
-  deleteTask
+  deleteTask,
+  updateTask
 }: TaskState & typeof TaskActionCreators & Props) {
   const wrappedAddTask = useCallback(
     (requestBody?: tasks_v1.Schema$Task) => {
@@ -42,6 +43,20 @@ function TaskListContentComponent({
     [deleteTask, taskListId]
   );
 
+  const toggleCompleted = useCallback(
+    (task: Schema$Task) => {
+      return updateTask({
+        tasklist: taskListId,
+        task: task.id,
+        requestBody: {
+          id: task.id,
+          status: task.status === 'completed' ? 'needsAction' : 'completed'
+        }
+      });
+    },
+    [taskListId, updateTask]
+  );
+
   useEffect(() => {
     taskListId &&
       getAllTasks({
@@ -53,7 +68,12 @@ function TaskListContentComponent({
     <div className="task-list-content">
       <NewTask addTask={wrappedAddTask} />
       {tasks.map(task => (
-        <Task key={task.id} task={task} deleteTask={wrappedDeleteTask} />
+        <Task
+          key={task.id}
+          task={task}
+          deleteTask={wrappedDeleteTask}
+          toggleCompleted={toggleCompleted}
+        />
       ))}
     </div>
   );

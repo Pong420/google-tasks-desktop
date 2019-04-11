@@ -1,10 +1,17 @@
 import { empty, from } from 'rxjs';
-import { mergeMap, map, takeUntil, filter } from 'rxjs/operators';
+import { mergeMap, map, takeUntil, filter, debounceTime } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
-import { TaskActions, TaskActionTypes, AddTaskSuccess } from '../actions/task';
+import {
+  TaskActions,
+  TaskActionTypes,
+  AddTaskSuccess,
+  UpdateTask,
+  UpdateTaskSuccess
+} from '../actions/task';
 import { RootState } from '../reducers';
 import { taskApi } from '../../api';
 import { tasks_v1 } from 'googleapis';
+import { Schema$Task } from '../../typings';
 
 const deleteTaskSuccess$ = (tasklist: string, task: string) =>
   from(taskApi.tasks.delete({ tasklist, task })).pipe(
@@ -24,7 +31,13 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
       switch (action.type) {
         case TaskActionTypes.GET_ALL_TASKS:
           return from(
-            taskApi.tasks.list(action.payload).then(({ data }) => data)
+            taskApi.tasks
+              .list({
+                ...action.payload,
+                showCompleted: true,
+                showHidden: true
+              })
+              .then(({ data }) => data)
           ).pipe(
             map<tasks_v1.Schema$Tasks, TaskActions>(({ items }) => ({
               type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
@@ -69,4 +82,21 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
     })
   );
 
-export default [apiEpic];
+const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
+  action$,
+  state$
+) =>
+  action$.pipe(
+    ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
+    debounceTime(250),
+    mergeMap(action =>
+      from(taskApi.tasks.update(action.payload).then(({ data }) => data)).pipe(
+        map<Schema$Task, UpdateTaskSuccess>(payload => ({
+          type: TaskActionTypes.UPDATE_TASK_SUCCESS,
+          payload
+        }))
+      )
+    )
+  );
+
+export default [apiEpic, updateEpic];

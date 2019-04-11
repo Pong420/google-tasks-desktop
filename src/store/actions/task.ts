@@ -42,10 +42,12 @@ export interface AddTaskSuccess {
 
 export interface UpdateTask {
   type: TaskActionTypes.UPDATE_TASK;
+  payload: tasks_v1.Params$Resource$Tasks$Patch;
 }
 
 export interface UpdateTaskSuccess {
   type: TaskActionTypes.UPDATE_TASK_SUCCESS;
+  payload: Schema$Task;
 }
 
 export interface DeleteTask {
@@ -86,7 +88,6 @@ export type TaskActions =
   | MoveTaskSuccess
   | ClearCompletedTasks
   | ClearCompletedTasksSuccess;
-
 export const TaskActionCreators = {
   getAllTasks(payload: tasks_v1.Params$Resource$Tasks$List): GetAllTasks {
     return {
@@ -103,6 +104,12 @@ export const TaskActionCreators = {
   deleteTask(payload: Params$Tasks$Delete): DeleteTask {
     return {
       type: TaskActionTypes.DELETE_TASK,
+      payload
+    };
+  },
+  updateTask(payload: tasks_v1.Params$Resource$Tasks$Patch): UpdateTask {
+    return {
+      type: TaskActionTypes.UPDATE_TASK,
       payload
     };
   }
