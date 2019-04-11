@@ -1,14 +1,33 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch, bindActionCreators } from 'redux';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { TaskListState, TaskListActionCreators, RootState } from '../../store';
+import { useMenuItem } from '../Mui';
 import Menu from '@material-ui/core/Menu';
 import Divider from '@material-ui/core/Divider';
-import { useMenuItem } from '../Mui';
+import pkg from '../../../package.json';
 
 interface Props {
   anchorEl: HTMLElement | null;
   onClose(): void;
 }
 
-export function TaskListMenu({ anchorEl, onClose }: Props) {
+interface MatchParams {
+  taskListId: string;
+}
+
+const mapStateToProps = ({ taskList }: RootState) => ({ ...taskList });
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(TaskListActionCreators, dispatch);
+
+function TaskListMenuComponent({
+  match: { params },
+  anchorEl,
+  onClose,
+  taskLists,
+  completedTaskLists
+}: Props & RouteComponentProps<MatchParams> & TaskListState) {
   const MenuItem = useMenuItem(onClose);
 
   return (
@@ -23,11 +42,27 @@ export function TaskListMenu({ anchorEl, onClose }: Props) {
       <MenuItem text="Date" />
       <Divider />
       <MenuItem text="Rename list" />
-      <MenuItem text="disabled>Delete list" />
-      <MenuItem text="Delete all completed tasks" />
+      <MenuItem
+        text="Delete list"
+        disabled={!taskLists[0] || taskLists[0].id === params.taskListId}
+      />
+      <MenuItem
+        text="Delete all completed tasks"
+        disabled={!completedTaskLists.length}
+      />
       <Divider />
       <MenuItem text="Keyboard shortcuts" />
-      <MenuItem text="Copy reminders to Tasks" />
+      <MenuItem
+        text="Github"
+        onClick={() => window.open(pkg.repository.url, 'blank')}
+      />
     </Menu>
   );
 }
+
+export const TaskListMenu = withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(TaskListMenuComponent)
+);

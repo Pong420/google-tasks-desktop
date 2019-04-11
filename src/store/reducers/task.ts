@@ -13,7 +13,7 @@ export default function(state = initialState, action: TaskActions) {
   switch (action.type) {
     case TaskActionTypes.GET_ALL_TASKS:
       return {
-        ...state,
+        ...initialState,
         tasks: []
       };
 
