@@ -2,6 +2,7 @@ import React, { useState, useCallback, forwardRef } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
+import { useMuiMenu } from '../../utils/useMuiMenu';
 import { Schema$TaskList } from '../../typings';
 import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
@@ -16,8 +17,7 @@ interface Props {
 }
 
 export function TaskListHeader({ taskLists, currentTaskList }: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const onClose = useCallback(() => setAnchorEl(null), []);
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu(null);
 
   const MenuItem = useCallback(
     forwardRef(
@@ -49,7 +49,7 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
           {currentTaskList && (
             <Button
               classes={{ root: 'task-list-title-button' }}
-              onClick={evt => setAnchorEl(evt.currentTarget)}
+              onClick={setAnchorEl}
             >
               {currentTaskList.title} <ArrowDropDownIcon />
             </Button>

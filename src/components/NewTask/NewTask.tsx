@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
+import { useMuiMenu } from '../../utils/useMuiMenu';
 import { Schema$Task } from '../../typings';
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export function NewTask({ addTask }: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu(null);
 
   return (
     <div className="new-task">
@@ -20,10 +21,10 @@ export function NewTask({ addTask }: Props) {
         </IconButton>
         <div>Add a Task</div>
       </div>
-      <IconButton onClick={evt => setAnchorEl(evt.currentTarget)}>
+      <IconButton onClick={setAnchorEl}>
         <MoreIcon />
       </IconButton>
-      <TaskListMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
+      <TaskListMenu anchorEl={anchorEl} onClose={onClose} />
     </div>
   );
 }
