@@ -29,20 +29,12 @@
 .task-list-menu-paper {
   @include dimen(100%);
 
-  .task-list-menu-divider {
-    @include margin-y(0.4em);
-  }
+  .task-list-menu-title {
+    @include padding-x(16px);
 
-  .task-list-menu-title.task-list-menu-title {
-    @include padding-y(3px);
-
-    font-size: 0.875em;
-    opacity: 1;
-  }
-
-  .task-list-menu-item {
-    @include flex(center, space-between);
-
-    font-size: inherit;
+    font-size: 0.875em !important;
+    height: 30px;
+    line-height: 30px;
+    outline: none;
   }
 }

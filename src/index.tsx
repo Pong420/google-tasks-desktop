@@ -21,6 +21,18 @@ const theme = createMuiTheme({
     secondary: {
       main: '#4285f4'
     }
+  },
+  props: {
+    MuiMenu: {
+      disableAutoFocusItem: true
+    },
+    MuiDivider: {
+      light: true,
+      style: { margin: '0.4em 0' }
+    },
+    MuiSvgIcon: {
+      fontSize: 'small'
+    }
   }
 });
 

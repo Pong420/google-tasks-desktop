@@ -15,12 +15,21 @@
       letter-spacing: 1.5px;
       margin-bottom: 2px;
       text-transform: uppercase;
+      text-align: right;
+      padding-right: 6px;
     }
 
-    > div:nth-child(2) {
-      line-height: 1.4em;
-      min-height: 1.4em;
-      text-align: right;
+    .task-list-title {
+      min-height: 24px;
+      line-height: 24px;
+    }
+
+    .task-list-title-button {
+      @include flex(center);
+
+      padding: 0 0 0 7px;
+      font-size: inherit;
+      text-transform: initial;
     }
   }
 }

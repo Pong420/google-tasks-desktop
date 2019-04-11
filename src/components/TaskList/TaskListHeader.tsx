@@ -1,8 +1,14 @@
-import React from 'react';
-import { NavLink, generatePath } from 'react-router-dom';
+import React, { useState, useCallback, forwardRef } from 'react';
+import { Link, generatePath } from 'react-router-dom';
 import { tasks_v1 } from 'googleapis';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
+import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
+import TickIcon from '@material-ui/icons/Check';
 
 interface Props {
   taskLists: TaskListState['taskLists'];
@@ -10,11 +16,71 @@ interface Props {
 }
 
 export function TaskListHeader({ taskLists, currentTaskList }: Props) {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const onClose = useCallback(() => setAnchorEl(null), []);
+
+  const MenuItem = useCallback(
+    forwardRef(
+      (
+        { selected, classes, children, onClick, ...props }: MenuItemProps,
+        ref
+      ) => (
+        <MuiMenuItem
+          classes={{ root: 'mui-menu-item' }}
+          onClick={evt => {
+            onClose();
+            onClick && onClick(evt);
+          }}
+          {...props}
+        >
+          {children}
+          {selected && <TickIcon />}
+        </MuiMenuItem>
+      )
+    ),
+    [onClose]
+  );
+
   return (
     <div className="task-list-header">
       <div className="task-list-menu">
         <div className="task-list-menu-label">TASKS</div>
-        <div>{currentTaskList && currentTaskList.title}</div>
+        <div className="task-list-title">
+          {currentTaskList && (
+            <Button
+              classes={{ root: 'task-list-title-button' }}
+              onClick={evt => setAnchorEl(evt.currentTarget)}
+            >
+              {currentTaskList.title} <ArrowDropDownIcon />
+            </Button>
+          )}
+        </div>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={onClose}
+          anchorPosition={{
+            top: anchorEl ? anchorEl.offsetTop + anchorEl.offsetHeight + 3 : 0,
+            left: window.innerWidth
+          }}
+          anchorReference="anchorPosition"
+        >
+          {taskLists.map(({ id, title }) => (
+            <Link
+              to={generatePath(PATHS.TASKLIST, { taskListId: id })}
+              key={id}
+            >
+              <MenuItem>
+                <div>{title}</div>
+                {currentTaskList && currentTaskList.id === id && <TickIcon />}
+              </MenuItem>
+            </Link>
+          ))}
+          <Divider />
+          <MenuItem>
+            <div>Create new list</div>
+          </MenuItem>
+        </Menu>
       </div>
     </div>
   );

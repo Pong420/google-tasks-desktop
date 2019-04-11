@@ -11,12 +11,12 @@ export function NewTask() {
     <div className="new-task">
       <div className="add-new-task-button">
         <IconButton classes={{ root: 'add-icon-button' }} disableTouchRipple>
-          <AddIcon fontSize="small" color="secondary" />
+          <AddIcon color="secondary" />
         </IconButton>
         <div>Add a Task</div>
       </div>
       <IconButton onClick={evt => setAnchorEl(evt.currentTarget)}>
-        <MoreIcon fontSize="small" />
+        <MoreIcon />
       </IconButton>
       <TaskListMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </div>

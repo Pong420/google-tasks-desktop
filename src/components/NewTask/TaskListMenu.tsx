@@ -1,16 +1,12 @@
-import React, { useCallback, forwardRef, Ref } from 'react';
+import React, { useCallback, forwardRef } from 'react';
 import Menu from '@material-ui/core/Menu';
-import DefaultMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
-import DefaultDivider from '@material-ui/core/Divider';
+import Divider from '@material-ui/core/Divider';
 import TickIcon from '@material-ui/icons/Check';
+import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 
 interface Props {
   anchorEl: HTMLElement | null;
   onClose(): void;
-}
-
-function Divider() {
-  return <DefaultDivider classes={{ root: 'task-list-menu-divider' }} light />;
 }
 
 export function TaskListMenu({ anchorEl, onClose }: Props) {
@@ -20,10 +16,8 @@ export function TaskListMenu({ anchorEl, onClose }: Props) {
         { selected, classes, children, onClick, ...props }: MenuItemProps,
         ref
       ) => (
-        <DefaultMenuItem
-          classes={{
-            root: `task-list-menu-item ${classes && classes.root}`.trim()
-          }}
+        <MuiMenuItem
+          classes={{ root: `mui-menu-item` }}
           onClick={evt => {
             onClose();
             onClick && onClick(evt);
@@ -31,8 +25,8 @@ export function TaskListMenu({ anchorEl, onClose }: Props) {
           {...props}
         >
           {children}
-          {selected && <TickIcon color="secondary" />}
-        </DefaultMenuItem>
+          {selected && <TickIcon />}
+        </MuiMenuItem>
       )
     ),
     [onClose]
@@ -44,15 +38,16 @@ export function TaskListMenu({ anchorEl, onClose }: Props) {
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       onClose={onClose}
-      disableAutoFocusItem
     >
-      <MenuItem classes={{ root: 'task-list-menu-title' }} disabled>
-        Sort by
+      <div className="task-list-menu-title">Sort by</div>
+      <MenuItem selected>
+        <div>My order</div>
       </MenuItem>
-      <MenuItem selected>My order</MenuItem>
-      <MenuItem>Date</MenuItem>
+      <MenuItem>
+        <div>Date</div>
+      </MenuItem>
       <Divider />
-      <MenuItem>RenameList</MenuItem>
+      <MenuItem>Rename list</MenuItem>
       <MenuItem disabled>Delete list</MenuItem>
       <MenuItem>Delete all completed tasks</MenuItem>
       <Divider />
