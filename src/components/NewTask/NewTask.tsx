@@ -11,7 +11,7 @@ export function NewTask() {
     <div className="new-task">
       <div className="add-new-task-button">
         <IconButton classes={{ root: 'add-icon-button' }} disableTouchRipple>
-          <AddIcon fontSize="small" />
+          <AddIcon fontSize="small" color="secondary" />
         </IconButton>
         <div>Add a Task</div>
       </div>

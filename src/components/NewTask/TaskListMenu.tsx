@@ -1,4 +1,4 @@
-import React, { useCallback, forwardRef } from 'react';
+import React, { useCallback, forwardRef, Ref } from 'react';
 import Menu from '@material-ui/core/Menu';
 import DefaultMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 import DefaultDivider from '@material-ui/core/Divider';
@@ -31,7 +31,7 @@ export function TaskListMenu({ anchorEl, onClose }: Props) {
           {...props}
         >
           {children}
-          {selected && <TickIcon />}
+          {selected && <TickIcon color="secondary" />}
         </DefaultMenuItem>
       )
     ),

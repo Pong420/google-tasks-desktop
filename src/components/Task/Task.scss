@@ -70,12 +70,6 @@ $border: 1px solid #e0e0e0;
 
 .toggle-completed {
   @include margin-x((10px, 5px));
-
-  &:hover {
-    path:nth-child(2) {
-      color: #4285f4;
-    }
-  }
 }
 
 .task-input {

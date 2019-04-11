@@ -2,10 +2,14 @@ import React, { useState, useMemo } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
+
+const iconProps: SvgIconProps = {
+  fontSize: 'small'
+};
 
 export function ToggleCompleted() {
   const [hover, setHover] = useState(false);
-  const Icon = useMemo(() => (hover ? TickIcon : CircleIcon), [hover]);
 
   return (
     <div
@@ -14,7 +18,11 @@ export function ToggleCompleted() {
       onMouseLeave={() => setHover(false)}
     >
       <IconButton>
-        <Icon fontSize="small" />
+        {hover ? (
+          <TickIcon {...iconProps} color="secondary" />
+        ) : (
+          <CircleIcon {...iconProps} />
+        )}
       </IconButton>
     </div>
   );
