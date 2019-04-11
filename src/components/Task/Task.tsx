@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskMenu } from './TaskMenu';
-import { useMuiMenu } from '../../utils/useMuiMenu';
+import { useMuiMenu } from '../Mui';
+import { useAdvancedCallback } from '../../utils';
 import { Schema$Task } from '../../typings';
 
 interface Props {
@@ -13,12 +14,6 @@ interface Props {
 
 // FIXME:
 // A component is changing an uncontrolled input of type undefined to be controlled
-function wrapper<T extends (...args: any[]) => any>(
-  callback: T,
-  args: Parameters<T>
-): any {
-  return useCallback(() => callback(...args), [args, callback]);
-}
 
 export function Task({
   className = '',
@@ -28,11 +23,10 @@ export function Task({
 }: Props) {
   const [task, setTask] = useState(initialTask);
   const [focus, setFocus] = useState<string>('');
-
-  const wrappedDeleteTask = wrapper(deleteTask, [task]);
-  const wrappedToggleCompleted = wrapper(toggleCompleted, [task]);
-
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
+
+  const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
+  const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
 
   // FIXME:
   useEffect(() => {
@@ -47,7 +41,7 @@ export function Task({
         .trim()}
       onContextMenu={setAnchorPosition}
     >
-      <ToggleCompleted onClick={wrappedToggleCompleted} />
+      <ToggleCompleted onClick={toggleCompletedCallback} />
       <input
         className="task-input"
         value={task.title}
@@ -58,7 +52,7 @@ export function Task({
       <TaskMenu
         onClose={onClose}
         anchorPosition={anchorPosition}
-        onDelete={wrappedDeleteTask}
+        onDelete={deleteTaskCallback}
       />
     </div>
   );

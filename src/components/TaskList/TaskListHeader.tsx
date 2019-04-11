@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
-import { useMuiMenu } from '../../utils/useMuiMenu';
+import { useMuiMenu } from '../Mui/useMuiMenu';
 import { Schema$TaskList } from '../../typings';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';

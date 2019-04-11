@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from '@material-ui/core/Menu';
-import { AnchorPosition } from '../../utils/useMuiMenu';
+import { AnchorPosition } from '../Mui/useMuiMenu';
 import { useMenuItem } from '../Mui';
 
 interface Props {
