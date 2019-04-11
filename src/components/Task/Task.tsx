@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskMenu } from './TaskMenu';
 import { useMuiMenu } from '../Mui';
-import { useAdvancedCallback } from '../../utils';
+import { useAdvancedCallback, useBoolean } from '../../utils';
 import { Schema$Task } from '../../typings';
 
 interface Props {
   className?: string;
   task: Schema$Task;
+  onChange(task: Schema$Task): void;
   deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
 }
@@ -18,11 +19,12 @@ interface Props {
 export function Task({
   className = '',
   task: initialTask,
+  onChange,
   deleteTask,
   toggleCompleted
 }: Props) {
   const [task, setTask] = useState(initialTask);
-  const [focus, setFocus] = useState<string>('');
+  const [focus, { on, off }] = useBoolean(false);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 
   const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
@@ -35,7 +37,7 @@ export function Task({
 
   return (
     <div
-      className={[`task`, className, focus]
+      className={[`task`, className, focus ? 'focus' : '']
         .filter(Boolean)
         .join(' ')
         .trim()}
@@ -45,9 +47,14 @@ export function Task({
       <input
         className="task-input"
         value={task.title}
-        onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
-        onFocus={() => setFocus('focus')}
-        onBlur={() => setFocus('')}
+        onChange={evt => {
+          const title = evt.currentTarget.value;
+          const updatedTask = { ...task, title };
+          setTask(updatedTask);
+          onChange(updatedTask);
+        }}
+        onFocus={on}
+        onBlur={off}
       />
       <TaskMenu
         onClose={onClose}

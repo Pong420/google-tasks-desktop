@@ -91,7 +91,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
 ) =>
   action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
-    debounceTime(250),
+    debounceTime(1000),
     mergeMap(action =>
       from(taskApi.tasks.update(action.payload).then(({ data }) => data)).pipe(
         map<Schema$Task, UpdateTaskSuccess>(payload => ({
