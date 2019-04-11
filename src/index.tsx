@@ -20,6 +20,9 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: '#4285f4'
+    },
+    text: {
+      primary: '#333'
     }
   },
   props: {

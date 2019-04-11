@@ -1,0 +1,13 @@
+.mui-menu-item.mui-menu-item {
+  font-size: inherit;
+
+  > div {
+    @include flex(center, space-between);
+    flex: 1 1 auto;
+
+    .text {
+      flex: 1 1 auto;
+      padding-right: 50px;
+    }
+  }
+}

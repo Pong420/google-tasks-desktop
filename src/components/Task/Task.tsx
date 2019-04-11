@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback, MouseEvent } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
-import { TaskMenu, AnchorPosition } from './TaskMenu';
+import { TaskMenu } from './TaskMenu';
+import { useMuiMenu } from '../../utils/useMuiMenu';
 import { Schema$Task } from '../../typings';
 
 interface Props {
@@ -31,18 +32,7 @@ export function Task({
   const wrappedDeleteTask = wrapper(deleteTask, [task]);
   const wrappedToggleCompleted = wrapper(toggleCompleted, [task]);
 
-  const onClose = useCallback(() => setAnchorPosition(undefined), []);
-  const [anchorPosition, setAnchorPosition] = useState<
-    AnchorPosition | undefined
-  >();
-
-  const onContextMenu = useCallback((evt: MouseEvent<HTMLElement>) => {
-    evt.preventDefault();
-    setAnchorPosition({
-      top: evt.pageY,
-      left: evt.pageX
-    });
-  }, []);
+  const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 
   // FIXME:
   useEffect(() => {
@@ -55,7 +45,7 @@ export function Task({
         .filter(Boolean)
         .join(' ')
         .trim()}
-      onContextMenu={onContextMenu}
+      onContextMenu={setAnchorPosition}
     >
       <ToggleCompleted onClick={wrappedToggleCompleted} />
       <input
@@ -66,8 +56,8 @@ export function Task({
         onBlur={() => setFocus('')}
       />
       <TaskMenu
-        anchorPosition={anchorPosition}
         onClose={onClose}
+        anchorPosition={anchorPosition}
         onDelete={wrappedDeleteTask}
       />
     </div>

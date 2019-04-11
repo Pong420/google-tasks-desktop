@@ -1,15 +1,14 @@
-import React, { useState, useCallback, forwardRef } from 'react';
+import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
 import { useMuiMenu } from '../../utils/useMuiMenu';
 import { Schema$TaskList } from '../../typings';
-import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
-import TickIcon from '@material-ui/icons/Check';
+import { useMenuItem } from '../Mui';
 
 interface Props {
   taskLists: TaskListState['taskLists'];
@@ -17,29 +16,8 @@ interface Props {
 }
 
 export function TaskListHeader({ taskLists, currentTaskList }: Props) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu(null);
-
-  const MenuItem = useCallback(
-    forwardRef(
-      (
-        { selected, classes, children, onClick, ...props }: MenuItemProps,
-        ref
-      ) => (
-        <MuiMenuItem
-          classes={{ root: 'mui-menu-item' }}
-          onClick={evt => {
-            onClose();
-            onClick && onClick(evt);
-          }}
-          {...props}
-        >
-          {children}
-          {selected && <TickIcon />}
-        </MuiMenuItem>
-      )
-    ),
-    [onClose]
-  );
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
+  const MenuItem = useMenuItem(onClose);
 
   return (
     <div className="task-list-header">
@@ -70,16 +48,14 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
               to={generatePath(PATHS.TASKLIST, { taskListId: id })}
               key={id}
             >
-              <MenuItem>
-                <div>{title}</div>
-                {currentTaskList && currentTaskList.id === id && <TickIcon />}
-              </MenuItem>
+              <MenuItem
+                text={title}
+                selected={currentTaskList && currentTaskList.id === id}
+              />
             </Link>
           ))}
           <Divider />
-          <MenuItem>
-            <div>Create new list</div>
-          </MenuItem>
+          <MenuItem text="Create new list" />
         </Menu>
       </div>
     </div>

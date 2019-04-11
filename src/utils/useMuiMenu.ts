@@ -1,21 +1,45 @@
-import { useState, useCallback, useEffect, SyntheticEvent } from 'react';
+import {
+  useState,
+  useCallback,
+  useEffect,
+  SyntheticEvent,
+  MouseEvent
+} from 'react';
+
 import { MenuProps } from '@material-ui/core/Menu';
 
-type AnchorEl = HTMLElement | null;
+export type AnchorEl = HTMLElement | null;
+export type AnchorPosition = MenuProps['anchorPosition'];
 
-export function useMuiMenu(anchorEl_: AnchorEl) {
+export function useMuiMenu() {
   const [anchorEl, setAnchorEl] = useState<AnchorEl>(null);
-  const onClose = useCallback(() => setAnchorEl(null), []);
+  const [anchorPosition, setAnchorPosition] = useState<AnchorPosition>();
+  const onClose = useCallback(() => {
+    setAnchorEl(null);
+    setAnchorPosition(undefined);
+  }, []);
 
   useEffect(() => {
-    setAnchorEl(anchorEl_);
-  }, [anchorEl_]);
+    setAnchorEl(anchorEl);
+  }, [anchorEl]);
+
+  useEffect(() => {
+    setAnchorPosition(anchorPosition);
+  }, [anchorPosition]);
 
   return {
     anchorEl,
-    onClose,
+    anchorPosition,
     setAnchorEl(evt: SyntheticEvent<HTMLElement>) {
       setAnchorEl(evt.currentTarget);
-    }
+    },
+    setAnchorPosition(evt: MouseEvent<HTMLElement>) {
+      evt.preventDefault();
+      setAnchorPosition({
+        top: evt.pageY,
+        left: evt.pageY
+      });
+    },
+    onClose
   };
 }

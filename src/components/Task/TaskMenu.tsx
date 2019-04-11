@@ -1,8 +1,7 @@
-import React, { forwardRef, useState, useCallback } from 'react';
-import Menu, { MenuProps } from '@material-ui/core/Menu';
-import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
-
-export type AnchorPosition = MenuProps['anchorPosition'];
+import React from 'react';
+import Menu from '@material-ui/core/Menu';
+import { AnchorPosition } from '../../utils/useMuiMenu';
+import { useMenuItem } from '../Mui';
 
 interface Props {
   anchorPosition?: AnchorPosition;
@@ -11,26 +10,7 @@ interface Props {
 }
 
 export function TaskMenu({ anchorPosition, onClose, onDelete }: Props) {
-  const MenuItem = useCallback(
-    forwardRef(
-      (
-        { selected, classes, children, onClick, ...props }: MenuItemProps,
-        ref
-      ) => (
-        <MuiMenuItem
-          classes={{ root: 'mui-menu-item' }}
-          onClick={evt => {
-            onClose();
-            onClick && onClick(evt);
-          }}
-          {...props}
-        >
-          {children}
-        </MuiMenuItem>
-      )
-    ),
-    [onClose]
-  );
+  const MenuItem = useMenuItem(onClose);
 
   return (
     <Menu
@@ -39,22 +19,11 @@ export function TaskMenu({ anchorPosition, onClose, onDelete }: Props) {
       anchorPosition={anchorPosition}
       anchorReference="anchorPosition"
     >
-      <MenuItem onClick={onDelete}>
-        <div>Delete</div>
-      </MenuItem>
-      <MenuItem>
-        <div>Add date/time</div>
-      </MenuItem>
-      <MenuItem>
-        <div>Add a subtask</div>
-      </MenuItem>
-      <MenuItem>
-        <div>Indent</div>
-        ⌘]
-      </MenuItem>
-      <MenuItem>
-        <div>Move to another list</div>
-      </MenuItem>
+      <MenuItem text="Delete" onClick={onDelete} />
+      <MenuItem text="Add date/time" />
+      <MenuItem text="Add a subtask" />
+      <MenuItem text="Indent" />
+      <MenuItem text="Move to another list" />
     </Menu>
   );
 }

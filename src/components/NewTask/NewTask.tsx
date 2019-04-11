@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function NewTask({ addTask }: Props) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu(null);
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   return (
     <div className="new-task">
