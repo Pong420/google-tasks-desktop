@@ -48,16 +48,19 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
 
         case TaskActionTypes.ADD_TASK:
           return from(
-            taskApi.tasks.insert(action.payload).then(({ data }) => data)
+            taskApi.tasks.insert(action.payload.params).then(({ data }) => data)
           ).pipe(
-            map<tasks_v1.Schema$Task, TaskActions>(payload => ({
+            map<tasks_v1.Schema$Task, TaskActions>(task => ({
               type: TaskActionTypes.ADD_TASK_SUCCESS,
-              payload
+              payload: {
+                uuid: action.payload.uuid,
+                task
+              }
             }))
           );
 
         case TaskActionTypes.DELETE_TASK:
-          if (action.payload.local) {
+          if (action.payload.uuid) {
             return action$.pipe(
               ofType<TaskActions, AddTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
@@ -65,7 +68,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
               mergeMap(success =>
                 deleteTaskSuccess$(
                   action.payload.taskListId,
-                  success.payload.id!
+                  success.payload.task.id!
                 )
               )
             );
