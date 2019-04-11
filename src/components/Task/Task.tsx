@@ -1,31 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
-import { tasks_v1 } from 'googleapis';
+import { Schema$Task } from '../../typings';
 
 interface Props {
   className?: string;
-  task: tasks_v1.Schema$Task;
+  task: Schema$Task;
+  deleteTask(task: Schema$Task): void;
   // onUpdate?(task: TaskData): void;
   // onDelete?(task: TaskData): void;
   // onToggleComplete?(task: TaskData): void;
 }
 
-// TODO:
-// update on value change instead of blur
+// FIXME:
+// A component is changing an uncontrolled input of type undefined to be controlled
 
-export function Task({
-  className = '',
-  task: defaultTask
-}: // onToggleComplete,
-// onDelete,
-// onUpdate
-Props) {
-  const [task, setTask] = useState(defaultTask);
+export function Task({ className = '', task: initialTask, deleteTask }: Props) {
+  const [task, setTask] = useState(initialTask);
   const [focus, setFocus] = useState<string>('');
-
-  useEffect(() => {
-    setTask(defaultTask);
-  }, [defaultTask]);
+  const wrappedDeleteTask = useCallback(() => deleteTask(task), [
+    deleteTask,
+    task
+  ]);
 
   return (
     <div
@@ -34,16 +29,11 @@ Props) {
         .join(' ')
         .trim()}
     >
-      <ToggleCompleted />
+      <ToggleCompleted onClick={wrappedDeleteTask} />
       <input
         className="task-input"
         value={task.title}
-        onChange={evt =>
-          setTask({
-            ...task,
-            title: evt.currentTarget.value
-          })
-        }
+        onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
         onFocus={() => setFocus('focus')}
         onBlur={() => setFocus('')}
       />

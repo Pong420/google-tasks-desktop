@@ -3,13 +3,18 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
+import { Schema$Task } from '../../typings';
 
-export function NewTask() {
+interface Props {
+  addTask(task?: Schema$Task): void;
+}
+
+export function NewTask({ addTask }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   return (
     <div className="new-task">
-      <div className="add-new-task-button">
+      <div className="add-new-task-button" onClick={() => addTask()}>
         <IconButton classes={{ root: 'add-icon-button' }} disableTouchRipple>
           <AddIcon color="secondary" />
         </IconButton>

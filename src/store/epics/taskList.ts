@@ -1,18 +1,10 @@
 import { empty, from } from 'rxjs';
 import { mergeMap, map, mapTo } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
-import {
-  TaskListActions,
-  TaskListActionTypes,
-  SyncTaskListSuccess,
-  AddTaskListSuccess
-} from '../actions/taskList';
-import { RootState } from '../reducers';
-import { saveTaskLists } from '../../utils/storage';
-import { taskApi } from '../../api';
-import { TaskList, TaskLists } from '../../typings';
 import { tasks_v1 } from 'googleapis';
-import uuid from 'uuid';
+import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
+import { RootState } from '../reducers';
+import { taskApi } from '../../api';
 
 // TODO: dependenics for api
 

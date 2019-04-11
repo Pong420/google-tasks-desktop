@@ -1,11 +1,8 @@
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
-import { TaskList, TaskLists } from '../../typings';
-import { getTaskLists } from '../../utils/storage';
-import uuid from 'uuid';
-import { tasks_v1 } from 'googleapis';
+import { Schema$TaskList } from '../../typings';
 
 export interface TaskListState {
-  taskLists: tasks_v1.Schema$TaskList[];
+  taskLists: Schema$TaskList[];
 }
 
 const initialState: TaskListState = {

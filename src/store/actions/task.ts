@@ -1,4 +1,5 @@
 import { tasks_v1 } from 'googleapis';
+import { Schema$Task } from '../../typings';
 
 export enum TaskActionTypes {
   GET_ALL_TASKS = 'GET_ALL_TASKS',
@@ -15,6 +16,10 @@ export enum TaskActionTypes {
   CLEAR_COMPLETED_TASKS_SUCCESS = 'CLEAR_COMPLETED_TASKS_SUCCESS'
 }
 
+interface Params$Tasks$Delete extends Schema$Task {
+  taskListId: string;
+}
+
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
   payload: tasks_v1.Params$Resource$Tasks$List;
@@ -22,15 +27,17 @@ export interface GetAllTasks {
 
 export interface GetAllTasksSuccess {
   type: TaskActionTypes.GET_ALL_TASKS_SUCCESS;
-  payload: tasks_v1.Schema$Task[];
+  payload: Schema$Task[];
 }
 
 export interface AddTask {
   type: TaskActionTypes.ADD_TASK;
+  payload: tasks_v1.Params$Resource$Tasks$Insert;
 }
 
 export interface AddTaskSuccess {
   type: TaskActionTypes.ADD_TASK_SUCCESS;
+  payload: Schema$Task;
 }
 
 export interface UpdateTask {
@@ -43,6 +50,7 @@ export interface UpdateTaskSuccess {
 
 export interface DeleteTask {
   type: TaskActionTypes.DELETE_TASK;
+  payload: Params$Tasks$Delete;
 }
 
 export interface DeleteTaskSuccess {
@@ -83,6 +91,18 @@ export const TaskActionCreators = {
   getAllTasks(payload: tasks_v1.Params$Resource$Tasks$List): GetAllTasks {
     return {
       type: TaskActionTypes.GET_ALL_TASKS,
+      payload
+    };
+  },
+  addTask(payload: tasks_v1.Params$Resource$Tasks$Insert): AddTask {
+    return {
+      type: TaskActionTypes.ADD_TASK,
+      payload
+    };
+  },
+  deleteTask(payload: Params$Tasks$Delete): DeleteTask {
+    return {
+      type: TaskActionTypes.DELETE_TASK,
       payload
     };
   }

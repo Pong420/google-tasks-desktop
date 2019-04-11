@@ -1,8 +1,9 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
-import { tasks_v1 } from 'googleapis';
+import { Schema$Task } from '../../typings';
+import uuid from 'uuid';
 
 export interface TaskState {
-  tasks: tasks_v1.Schema$Task[];
+  tasks: Schema$Task[];
 }
 
 const initialState: TaskState = {
@@ -21,6 +22,38 @@ export default function(state = initialState, action: TaskActions) {
       return {
         ...state,
         tasks: action.payload
+      };
+
+    case TaskActionTypes.ADD_TASK:
+      return {
+        ...state,
+        tasks: [
+          {
+            ...action.payload,
+            id: uuid.v4(),
+            local: true
+          },
+          ...state.tasks
+        ]
+      };
+
+    case TaskActionTypes.ADD_TASK_SUCCESS:
+      return {
+        ...state,
+        tasks: state.tasks.slice().map(task =>
+          task.id !== action.payload.id
+            ? task
+            : {
+                ...task,
+                local: false
+              }
+        )
+      };
+
+    case TaskActionTypes.DELETE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.slice().filter(({ id }) => id !== action.payload.id)
       };
 
     default:

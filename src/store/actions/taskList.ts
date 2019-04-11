@@ -1,18 +1,11 @@
 import { tasks_v1 } from 'googleapis';
-import { TaskList } from '../../typings';
 
 interface TaskListAPIParams {
   tasklist: string;
 }
 
 interface AddTaskListAPIParams {
-  localId: string;
   title: string;
-}
-
-interface TaskListApiResponse {
-  localId: string;
-  data: tasks_v1.Schema$TaskList;
 }
 
 export enum TaskListActionTypes {

@@ -1,8 +1,8 @@
 import React, { useState, useCallback, forwardRef } from 'react';
 import { Link, generatePath } from 'react-router-dom';
-import { tasks_v1 } from 'googleapis';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
+import { Schema$TaskList } from '../../typings';
 import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
@@ -12,7 +12,7 @@ import TickIcon from '@material-ui/icons/Check';
 
 interface Props {
   taskLists: TaskListState['taskLists'];
-  currentTaskList: tasks_v1.Schema$TaskList;
+  currentTaskList: Schema$TaskList;
 }
 
 export function TaskListHeader({ taskLists, currentTaskList }: Props) {

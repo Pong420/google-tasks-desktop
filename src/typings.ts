@@ -1,15 +1,15 @@
 import { tasks_v1 } from 'googleapis';
 
-export interface Task extends tasks_v1.Schema$Task {
-  taskListId: string;
-  sync: boolean;
+export interface Schema$Task extends tasks_v1.Schema$Task {
+  sync?: string;
+  local?: boolean;
 }
 
-export interface TaskList extends tasks_v1.Schema$TaskList {
+export interface Schema$TaskList extends tasks_v1.Schema$TaskList {
   sync?: string;
 }
 
-export type TaskLists = Array<[string, TaskList]>;
+export type Schema$TaskLists = Array<[string, Schema$TaskList]>;
 
 export interface OAuth2Keys {
   client_id: string;
