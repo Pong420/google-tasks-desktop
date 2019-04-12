@@ -8,6 +8,7 @@ $border: 1px solid #e0e0e0;
 
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
+  margin-top: -2px;
 
   &.focused {
     background-color: #f8f9fa;
@@ -56,7 +57,7 @@ $border: 1px solid #e0e0e0;
   }
 
   .mui-input-base {
-    min-height: 50px;
+    min-height: 46px;
   }
 }
 

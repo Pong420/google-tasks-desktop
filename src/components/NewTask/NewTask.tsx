@@ -19,7 +19,7 @@ export function NewTask({ addTask }: Props) {
         <IconButton classes={{ root: 'add-icon-button' }} disableTouchRipple>
           <AddIcon color="secondary" />
         </IconButton>
-        <div>Add a Task</div>
+        <div>Add a task</div>
       </div>
       <IconButton onClick={setAnchorEl}>
         <MoreIcon />

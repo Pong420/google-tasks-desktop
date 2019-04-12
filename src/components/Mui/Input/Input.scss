@@ -14,4 +14,11 @@
       cursor: default;
     }
   }
+
+  &.filled {
+    @include textHighlight();
+
+    background-color: #f8f9fa;
+    padding-left: 10px;
+  }
 }

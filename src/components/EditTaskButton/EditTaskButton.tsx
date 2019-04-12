@@ -42,8 +42,8 @@ export function EditTaskButton({
         handleClose={off}
         onDelete={onDelete}
       >
-        <Input placeholder="Enter title" autoFocus />
-        <Input placeholder="Add details" multiline rows={3} />
+        <Input className="filled" placeholder="Enter title" autoFocus />
+        <Input className="filled" placeholder="Add details" multiline rows={3} />
         <div className="row">
           <FormatListBulletedIcon />
           <Dropdown

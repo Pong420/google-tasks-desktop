@@ -8,13 +8,6 @@
 .fullscreen-dialog-content {
   padding: 15px;
 
-  .mui-input-base {
-    @include textHighlight();
-
-    background-color: #f8f9fa;
-    padding-left: 10px;
-  }
-
   > * {
     margin-bottom: 8px;
   }

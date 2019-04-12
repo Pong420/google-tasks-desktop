@@ -1,0 +1,28 @@
+.mui-modal-paper.mui-modal-paper {
+  @include dimen(100%);
+  @include margin-x(25px);
+
+  max-width: none;
+  padding: 15px 20px;
+
+  .modal-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .modal-actions {
+    @include flex(center, flex-end);
+
+    margin-top: 10px;
+
+    button {
+      background: none;
+      font-weight: 600;
+      text-transform: initial;
+
+      + button {
+        margin-left: 10px;
+      }
+    }
+  }
+}

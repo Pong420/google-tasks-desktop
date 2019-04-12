@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
+import { useMuiMenu, useMenuItem, Dropdown } from '../Mui';
+import { NewTaskListModal } from '../NewTaskListModal';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
-import { useMuiMenu, useMenuItem, Dropdown } from '../Mui';
 import { Schema$TaskList } from '../../typings';
 import Divider from '@material-ui/core/Divider';
+import { useBoolean } from '../../utils/useBoolean';
 
 interface Props {
   taskLists: TaskListState['taskLists'];
@@ -14,13 +16,14 @@ interface Props {
 export function TaskListHeader({ taskLists, currentTaskList }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const MenuItem = useMenuItem(onClose);
+  const [modalOpened, { on: openModal, off: closeModal }] = useBoolean(false);
 
   return (
     <div className="task-list-header">
       <div className="task-list-menu">
         <div className="task-list-menu-label">TASKS</div>
         <Dropdown
-          label={currentTaskList ? currentTaskList.title! : ''}
+          label={currentTaskList ? currentTaskList.title! : ' '}
           onClick={setAnchorEl}
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -43,9 +46,10 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
             </Link>
           ))}
           <Divider />
-          <MenuItem text="Create new list" />
+          <MenuItem text="Create new list" onClick={openModal} />
         </Dropdown>
       </div>
+      <NewTaskListModal open={modalOpened} handleClose={closeModal} />
     </div>
   );
 }
