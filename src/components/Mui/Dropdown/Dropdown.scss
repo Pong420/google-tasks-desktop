@@ -1,0 +1,7 @@
+.dropdown-button.dropdown-button {
+  @include flex(center, space-between);
+
+  font-size: inherit;
+  text-transform: initial;
+  padding: 0 0 0 10px;
+}

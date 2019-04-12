@@ -2,13 +2,9 @@ import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
-import { useMuiMenu } from '../Mui/useMuiMenu';
+import { useMuiMenu, useMenuItem, Dropdown } from '../Mui';
 import { Schema$TaskList } from '../../typings';
-import Menu from '@material-ui/core/Menu';
-import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
-import { useMenuItem } from '../Mui';
 
 interface Props {
   taskLists: TaskListState['taskLists'];
@@ -23,17 +19,9 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
     <div className="task-list-header">
       <div className="task-list-menu">
         <div className="task-list-menu-label">TASKS</div>
-        <div className="task-list-title">
-          {currentTaskList && (
-            <Button
-              classes={{ root: 'task-list-title-button' }}
-              onClick={setAnchorEl}
-            >
-              {currentTaskList.title} <ArrowDropDownIcon />
-            </Button>
-          )}
-        </div>
-        <Menu
+        <Dropdown
+          label={currentTaskList ? currentTaskList.title! : ''}
+          onClick={setAnchorEl}
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={onClose}
@@ -56,7 +44,7 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
           ))}
           <Divider />
           <MenuItem text="Create new list" />
-        </Menu>
+        </Dropdown>
       </div>
     </div>
   );
