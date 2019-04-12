@@ -4,11 +4,14 @@ import { createEpicMiddleware } from 'redux-observable';
 import { routerMiddleware } from 'connected-react-router';
 import rootEpic from './epics';
 import createRootReducer from './reducers';
+import dependencies from './epicDependencies';
 
 export const history = createBrowserHistory();
 
 export default function configureStore() {
-  const epicMiddleware = createEpicMiddleware();
+  const epicMiddleware = createEpicMiddleware({
+    dependencies
+  });
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const enhancer = composeEnhancers(

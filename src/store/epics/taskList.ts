@@ -1,19 +1,30 @@
-import { empty, from } from 'rxjs';
-import { mergeMap, map, mapTo } from 'rxjs/operators';
+import { empty, from, of, concat } from 'rxjs';
+import { mergeMap, map, mapTo, flatMap } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
-import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
+import { RouterAction } from 'connected-react-router';
+import {
+  TaskListActions,
+  TaskListActionTypes,
+  AddTaskListSuccess
+} from '../actions/taskList';
 import { RootState } from '../reducers';
+import { EpicDependencies } from '../epicDependencies';
 import { taskApi } from '../../api';
+import { PATHS } from '../../constants';
 
 // TODO: dependenics for api
 
-const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
-  action$,
-  state$
-) =>
+type CominbinedActions = TaskListActions | RouterAction;
+
+const apiEpic: Epic<
+  CominbinedActions,
+  CominbinedActions,
+  RootState,
+  EpicDependencies
+> = (action$, state$, { push }) =>
   action$.pipe(
-    ofType<TaskListActions, TaskListActions>(
+    ofType<CominbinedActions, TaskListActions>(
       ...Object.values(TaskListActionTypes)
     ),
     mergeMap(action => {
@@ -40,19 +51,29 @@ const apiEpic: Epic<TaskListActions, TaskListActions, RootState> = (
               })
               .then(({ data }) => data)
           ).pipe(
-            map<tasks_v1.Schema$TaskList, TaskListActions>(payload => ({
-              type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
-              payload
-            }))
+            flatMap(payload =>
+              concat(
+                of<AddTaskListSuccess>({
+                  type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
+                  payload
+                }),
+                push(PATHS.TASKLIST, {
+                  taskListId: payload.id
+                })
+              )
+            )
           );
 
         case TaskListActionTypes.DELETE_TASK_LIST:
-          return from(
-            taskApi.tasklists.delete({ tasklist: action.payload })
-          ).pipe(
-            mapTo<any, TaskListActions>({
-              type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS
-            })
+          return concat(
+            push(PATHS.TASKLIST, {
+              taskListId: state$.value.taskList.taskLists[0].id
+            }),
+            from(taskApi.tasklists.delete({ tasklist: action.payload })).pipe(
+              mapTo<any, TaskListActions>({
+                type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS
+              })
+            )
           );
 
         default:
