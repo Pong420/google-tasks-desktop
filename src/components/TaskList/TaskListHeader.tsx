@@ -9,11 +9,16 @@ import Divider from '@material-ui/core/Divider';
 import { useBoolean } from '../../utils/useBoolean';
 
 interface Props {
+  addTaskList(title: string): void;
   taskLists: TaskListState['taskLists'];
   currentTaskList: Schema$TaskList;
 }
 
-export function TaskListHeader({ taskLists, currentTaskList }: Props) {
+export function TaskListHeader({
+  addTaskList,
+  taskLists,
+  currentTaskList
+}: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const MenuItem = useMenuItem(onClose);
   const [modalOpened, { on: openModal, off: closeModal }] = useBoolean(false);
@@ -23,7 +28,7 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
       <div className="task-list-menu">
         <div className="task-list-menu-label">TASKS</div>
         <Dropdown
-          label={currentTaskList ? currentTaskList.title! : ' '}
+          label={currentTaskList ? currentTaskList.title! : ''}
           onClick={setAnchorEl}
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -49,7 +54,11 @@ export function TaskListHeader({ taskLists, currentTaskList }: Props) {
           <MenuItem text="Create new list" onClick={openModal} />
         </Dropdown>
       </div>
-      <NewTaskListModal open={modalOpened} handleClose={closeModal} />
+      <NewTaskListModal
+        open={modalOpened}
+        handleClose={closeModal}
+        addTaskList={addTaskList}
+      />
     </div>
   );
 }

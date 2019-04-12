@@ -1,5 +1,17 @@
 .task-list {
   @include flex($flex-direction: column);
+
+  &.disabled {
+    opacity: 0.3;
+
+    &:after {
+      @include fixed(0, null, 0);
+      @include sq-dimen(100%);
+
+      content: '';
+      z-index: 100000;
+    }
+  }
 }
 
 .task-list-header {

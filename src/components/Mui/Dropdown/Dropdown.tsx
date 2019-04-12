@@ -18,7 +18,7 @@ export function Dropdown({
   return (
     <>
       <Button classes={{ root: 'dropdown-button' }} onClick={onClick} fullWidth>
-        {label} <ArrowDropDownIcon fontSize="default" />
+        <div>{label}</div> <ArrowDropDownIcon fontSize="default" />
       </Button>
       <Menu {...props}>{children}</Menu>
     </>

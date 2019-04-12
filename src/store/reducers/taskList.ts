@@ -4,11 +4,15 @@ import { Schema$TaskList } from '../../typings';
 export interface TaskListState {
   taskLists: Schema$TaskList[];
   completedTaskLists: Schema$TaskList[];
+  creatingNewTaskList: boolean;
+  newTaskListId: string;
 }
 
 const initialState: TaskListState = {
   taskLists: [],
-  completedTaskLists: []
+  completedTaskLists: [],
+  creatingNewTaskList: false,
+  newTaskListId: ''
 };
 
 export default function(state = initialState, action: TaskListActions) {
@@ -24,9 +28,16 @@ export default function(state = initialState, action: TaskListActions) {
         taskLists: action.payload
       };
 
+    case TaskListActionTypes.ADD_TASK_LIST:
+      return {
+        ...state,
+        creatingNewTaskList: true
+      };
+
     case TaskListActionTypes.ADD_TASK_LIST_SUCCESS:
       return {
         ...state,
+        creatingNewTaskList: false,
         taskLists: [...state.taskLists, action.payload]
       };
 

@@ -104,10 +104,12 @@ export const TaskListActionCreators = {
       payload
     };
   },
-  addTaskList(payload: AddTaskListAPIParams): AddTaskList {
+  addTaskList(title: string): AddTaskList {
     return {
       type: TaskListActionTypes.ADD_TASK_LIST,
-      payload
+      payload: {
+        title
+      }
     };
   },
   updateTaskList(payload: AddTaskListAPIParams): UpdateTaskList {

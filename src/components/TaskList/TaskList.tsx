@@ -7,9 +7,10 @@ import {
   TaskListState,
   TaskListActionCreators
 } from '../../store';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, generatePath } from 'react-router-dom';
 import { TaskListHeader } from './TaskListHeader';
 import { TaskListContent } from './TaskListContent';
+import { PATHS } from '../../constants';
 
 interface MatchParams {
   taskListId: string;
@@ -25,9 +26,12 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 
 function TaskListComponent({
   match: { params },
+  history,
   loggedIn,
   taskLists,
-  getAllTaskList
+  creatingNewTaskList,
+  getAllTaskList,
+  addTaskList
 }: AuthsState &
   TaskListState &
   RouteComponentProps<MatchParams> &
@@ -45,9 +49,28 @@ function TaskListComponent({
     loggedIn && getAllTaskList();
   }, [getAllTaskList, loggedIn]);
 
+  useEffect(() => {
+    if (creatingNewTaskList) {
+      return () => {
+        // TODO:
+        // history.push(generatePath(PATHS.TASKLIST, {
+        // }))
+      };
+    }
+  }, [creatingNewTaskList]);
+
   return (
-    <div className="task-list">
-      <TaskListHeader currentTaskList={currentTaskList} taskLists={taskLists} />
+    <div
+      className={['task-list', creatingNewTaskList && 'disabled']
+        .filter(Boolean)
+        .join(' ')
+        .trim()}
+    >
+      <TaskListHeader
+        addTaskList={addTaskList}
+        currentTaskList={currentTaskList}
+        taskLists={taskLists}
+      />
       <TaskListContent
         taskListId={currentTaskList ? currentTaskList.id! : ''}
         taskLists={taskLists}
