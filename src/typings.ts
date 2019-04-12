@@ -1,8 +1,8 @@
 import { tasks_v1 } from 'googleapis';
 
 export interface Schema$Task extends tasks_v1.Schema$Task {
+  uuid: string;
   sync?: string;
-  uuid?: boolean;
 }
 
 export interface Schema$TaskList extends tasks_v1.Schema$TaskList {

@@ -1,5 +1,6 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
+import uuid from 'uuid';
 
 export interface TaskState {
   tasks: Schema$Task[];
@@ -20,7 +21,10 @@ export default function(state = initialState, action: TaskActions) {
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
       return {
         ...state,
-        tasks: action.payload
+        tasks: action.payload.map(task => ({
+          ...task,
+          uuid: uuid.v4()
+        }))
       };
 
     case TaskActionTypes.ADD_TASK:
@@ -28,8 +32,8 @@ export default function(state = initialState, action: TaskActions) {
         ...state,
         tasks: [
           {
-            id: action.payload.uuid,
-            ...action.payload.params.requestBody
+            ...action.payload.params.requestBody,
+            uuid: action.payload.uuid
           },
           ...state.tasks
         ]
@@ -38,11 +42,15 @@ export default function(state = initialState, action: TaskActions) {
     case TaskActionTypes.ADD_TASK_SUCCESS:
       return {
         ...state,
-        tasks: state.tasks
-          .slice()
-          .map(task =>
-            task.id === action.payload.uuid ? action.payload.task : task
-          )
+        tasks: state.tasks.slice().map(task =>
+          task.uuid === action.payload.uuid
+            ? {
+                ...action.payload.task,
+                ...task,
+                id: action.payload.task.id
+              }
+            : task
+        )
       };
 
     case TaskActionTypes.DELETE_TASK:

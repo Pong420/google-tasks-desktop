@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskMenu } from './TaskMenu';
 import { useMuiMenu } from '../Mui';
@@ -13,9 +13,6 @@ interface Props {
   toggleCompleted(task: Schema$Task): void;
 }
 
-// FIXME:
-// A component is changing an uncontrolled input of type undefined to be controlled
-
 export function Task({
   className = '',
   task: initialTask,
@@ -29,6 +26,9 @@ export function Task({
 
   const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
+  // const debouncedOnChangeCallback = useCallback(debounce(onChange, 500), [
+  //   onChange
+  // ]);
 
   // FIXME:
   useEffect(() => {
@@ -46,7 +46,7 @@ export function Task({
       <ToggleCompleted onClick={toggleCompletedCallback} />
       <input
         className="task-input"
-        value={task.title}
+        defaultValue={task.title}
         onChange={evt => {
           const title = evt.currentTarget.value;
           const updatedTask = { ...task, title };

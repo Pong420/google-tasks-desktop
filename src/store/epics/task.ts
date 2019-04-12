@@ -1,5 +1,12 @@
 import { empty, from } from 'rxjs';
-import { mergeMap, map, takeUntil, filter, debounceTime } from 'rxjs/operators';
+import {
+  switchMap,
+  mergeMap,
+  map,
+  takeUntil,
+  filter,
+  debounceTime
+} from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import {
   TaskActions,
@@ -11,12 +18,19 @@ import {
 import { RootState } from '../reducers';
 import { taskApi } from '../../api';
 import { tasks_v1 } from 'googleapis';
-import { Schema$Task } from '../../typings';
 
 const deleteTaskSuccess$ = (tasklist: string, task: string) =>
   from(taskApi.tasks.delete({ tasklist, task })).pipe(
     map<any, TaskActions>(() => ({
       type: TaskActionTypes.DELETE_TASK_SUCCESS
+    }))
+  );
+
+const updateTaskSuccess$ = (params: tasks_v1.Params$Resource$Tasks$Update) =>
+  from(taskApi.tasks.update(params).then(({ data }) => data)).pipe(
+    map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
+      type: TaskActionTypes.UPDATE_TASK_SUCCESS,
+      payload
     }))
   );
 
@@ -60,7 +74,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
           );
 
         case TaskActionTypes.DELETE_TASK:
-          if (action.payload.uuid) {
+          if (!action.payload.id) {
             return action$.pipe(
               ofType<TaskActions, AddTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
@@ -92,14 +106,22 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     debounceTime(1000),
-    mergeMap(action =>
-      from(taskApi.tasks.update(action.payload).then(({ data }) => data)).pipe(
-        map<Schema$Task, UpdateTaskSuccess>(payload => ({
-          type: TaskActionTypes.UPDATE_TASK_SUCCESS,
-          payload
-        }))
-      )
-    )
+    mergeMap(action => {
+      if (!action.payload.task) {
+        return action$.pipe(
+          ofType<TaskActions, AddTaskSuccess>(TaskActionTypes.ADD_TASK_SUCCESS),
+          mergeMap(success =>
+            updateTaskSuccess$({
+              tasklist: action.payload.tasklist,
+              task: success.payload.task.id,
+              requestBody: {}
+            })
+          )
+        );
+      }
+
+      return updateTaskSuccess$(action.payload);
+    })
   );
 
 export default [apiEpic, updateEpic];

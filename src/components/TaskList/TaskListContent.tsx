@@ -63,6 +63,7 @@ function TaskListContentComponent({
         tasklist: taskListId,
         task: task.id,
         requestBody: {
+          ...task,
           id: task.id,
           title: task.title
         }
@@ -83,7 +84,7 @@ function TaskListContentComponent({
       <NewTask addTask={addTaskCallback} />
       {tasks.map(task => (
         <Task
-          key={task.id}
+          key={task.uuid}
           task={task}
           onChange={onChangeCallback}
           deleteTask={deleteTaskCallback}

@@ -38,7 +38,7 @@ export interface GetAllTasks {
 
 export interface GetAllTasksSuccess {
   type: TaskActionTypes.GET_ALL_TASKS_SUCCESS;
-  payload: Schema$Task[];
+  payload: tasks_v1.Schema$Task[];
 }
 
 export interface AddTask {
@@ -53,12 +53,12 @@ export interface AddTaskSuccess {
 
 export interface UpdateTask {
   type: TaskActionTypes.UPDATE_TASK;
-  payload: tasks_v1.Params$Resource$Tasks$Patch;
+  payload: tasks_v1.Params$Resource$Tasks$Update;
 }
 
 export interface UpdateTaskSuccess {
   type: TaskActionTypes.UPDATE_TASK_SUCCESS;
-  payload: Schema$Task;
+  payload: tasks_v1.Schema$Task;
 }
 
 export interface DeleteTask {
@@ -121,7 +121,7 @@ export const TaskActionCreators = {
       payload
     };
   },
-  updateTask(payload: tasks_v1.Params$Resource$Tasks$Patch): UpdateTask {
+  updateTask(payload: tasks_v1.Params$Resource$Tasks$Update): UpdateTask {
     return {
       type: TaskActionTypes.UPDATE_TASK,
       payload
