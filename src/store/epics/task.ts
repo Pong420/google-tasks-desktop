@@ -1,12 +1,5 @@
 import { empty, from } from 'rxjs';
-import {
-  switchMap,
-  mergeMap,
-  map,
-  takeUntil,
-  filter,
-  debounceTime
-} from 'rxjs/operators';
+import { mergeMap, map, takeUntil, filter } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import {
   TaskActions,
@@ -102,10 +95,9 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
 const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
-) =>
-  action$.pipe(
+) => {
+  return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
-    debounceTime(1000),
     mergeMap(action => {
       if (!action.payload.task) {
         return action$.pipe(
@@ -114,7 +106,11 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
             updateTaskSuccess$({
               tasklist: action.payload.tasklist,
               task: success.payload.task.id,
-              requestBody: {}
+              requestBody: {
+                ...success.payload.task,
+                ...action.payload.requestBody,
+                id: success.payload.task.id
+              }
             })
           )
         );
@@ -123,5 +119,6 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
       return updateTaskSuccess$(action.payload);
     })
   );
+};
 
 export default [apiEpic, updateEpic];

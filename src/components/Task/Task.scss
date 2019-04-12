@@ -31,6 +31,10 @@ $border: 1px solid #e0e0e0;
 
   &.focus,
   &:hover {
+    .edit-task-button {
+      visibility: visible;
+    }
+
     &,
     & + .task {
       .task-input.task-input {
@@ -65,23 +69,26 @@ $border: 1px solid #e0e0e0;
   .task-input {
     border-top: 1px solid transparent;
     min-height: 50px;
+    padding-right: 10px;
+
+    input {
+      border: none;
+      background-color: transparent;
+      font-size: 14px;
+      outline: none;
+      padding: 0;
+
+      &:hover:not(:focus) {
+        cursor: default;
+      }
+    }
+  }
+
+  .edit-task-button {
+    visibility: hidden;
   }
 }
 
 .toggle-completed {
   @include margin-x((10px, 5px));
-}
-
-.task-input {
-  @include sq-dimen(100%);
-
-  border: none;
-  background-color: transparent;
-  font-size: 14px;
-  outline: none;
-  padding: 0;
-
-  &:hover:not(:focus) {
-    cursor: default;
-  }
 }
