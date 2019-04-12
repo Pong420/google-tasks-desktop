@@ -10,7 +10,7 @@ const initialState: TaskState = {
   tasks: []
 };
 
-export default function(state = initialState, action: TaskActions) {
+export default function(state = initialState, action: TaskActions): TaskState {
   switch (action.type) {
     case TaskActionTypes.GET_ALL_TASKS:
       return {

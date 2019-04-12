@@ -15,7 +15,7 @@ const initialState: TaskListState = {
   newTaskListId: ''
 };
 
-export default function(state = initialState, action: TaskListActions) {
+export default function(state = initialState, action: TaskListActions): TaskListState {
   switch (action.type) {
     case TaskListActionTypes.GET_ALL_TASK_LIST:
       return {

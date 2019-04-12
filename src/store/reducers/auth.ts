@@ -15,7 +15,7 @@ const initialState: AuthsState = {
   loggedIn: false
 };
 
-export default function(state = initialState, action: AuthActions) {
+export default function(state = initialState, action: AuthActions): AuthsState {
   switch (action.type) {
     case AuthActionTypes.AUTHENTICATE:
       return {

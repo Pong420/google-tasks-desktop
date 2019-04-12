@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import store from './store';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { ConnectedRouter } from 'connected-react-router';
+import configureStore, { history } from './store';
+import App from './App';
 import 'typeface-open-sans';
 
 import './index.scss';
+
+const store = configureStore();
 
 const theme = createMuiTheme({
   typography: {
@@ -25,15 +28,6 @@ const theme = createMuiTheme({
     }
   },
   props: {
-    MuiMenu: {
-      disableAutoFocusItem: true,
-      PaperProps: {
-        style: {
-          borderRadius: '8px',
-          boxShadow: `0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2)`
-        }
-      }
-    },
     MuiDialog: {
       PaperProps: {
         style: {
@@ -55,7 +49,9 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <Provider store={store}>
-      <App />
+      <ConnectedRouter history={history}>
+        <App />
+      </ConnectedRouter>
     </Provider>
   </MuiThemeProvider>,
   document.getElementById('root')
