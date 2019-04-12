@@ -1,0 +1,23 @@
+.fullscreen-diaglog-header {
+  @include dimen(100%, $header-height);
+  @include flex(center, flex-end);
+  @include fake-border($borderWidth: 1px, $color: #f1f3f4);
+  @include padding-x(10px);
+}
+
+.fullscreen-dialog-content {
+  padding: 15px;
+
+  .mui-input-base {
+    @include textHighlight();
+
+    background-color: #f8f9fa;
+    margin-bottom: 8px;
+    padding-left: 10px;
+
+    // &:not(.multiline) {
+    //   font-size: 16px;
+    //   font-weight: bold;
+    // }
+  }
+}

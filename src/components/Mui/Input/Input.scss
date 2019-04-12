@@ -1,0 +1,17 @@
+.mui-input-base {
+  border-top: 1px solid transparent;
+  font-size: inherit !important;
+  min-height: 40px;
+  padding-right: 10px;
+
+  input,
+  textarea {
+    font-size: inherit;
+    outline: none;
+    padding: 0;
+
+    &:hover:not(:focus) {
+      cursor: default;
+    }
+  }
+}

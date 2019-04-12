@@ -2,6 +2,7 @@
 @import './mixins/position';
 @import './mixins/size';
 @import './mixins/textOverflow';
+@import './mixins/textHighlight';
 
 @mixin fake-border(
   $position: bottom,

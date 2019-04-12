@@ -2,10 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskMenu } from './TaskMenu';
 import { EditTaskButton } from '../EditTaskButton';
-import { useMuiMenu } from '../Mui';
+import { useMuiMenu, Input } from '../Mui';
 import { useAdvancedCallback, useBoolean } from '../../utils';
 import { Schema$Task } from '../../typings';
-import InputBase from '@material-ui/core/InputBase';
 import debounce from 'lodash/debounce';
 
 interface Props {
@@ -35,15 +34,14 @@ export function Task({
 
   return (
     <div
-      className={[`task`, className, focus ? 'focus' : '']
+      className={[`task`, className, focus ? 'focused' : '']
         .filter(Boolean)
         .join(' ')
         .trim()}
       onContextMenu={setAnchorPosition}
     >
       <ToggleCompleted onClick={toggleCompletedCallback} />
-      <InputBase
-        className="task-input"
+      <Input
         defaultValue={task.title}
         onChange={evt => {
           const title = evt.currentTarget.value;
