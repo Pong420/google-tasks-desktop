@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskMenu } from './TaskMenu';
 import { EditTaskButton } from '../EditTaskButton';
@@ -35,6 +35,11 @@ export function Task({
   const debouncedOnChangeCallback = useCallback(debounce(onChange, 1000), [
     onChange
   ]);
+
+  // FIXME:
+  useEffect(() => {
+    setTask(initialTask);
+  }, [initialTask]);
 
   return (
     <div

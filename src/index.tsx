@@ -5,6 +5,7 @@ import store from './store';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import 'typeface-open-sans';
 
 import './index.scss';
 
