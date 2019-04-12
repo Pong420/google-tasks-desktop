@@ -5,7 +5,6 @@ import {
   SyntheticEvent,
   MouseEvent
 } from 'react';
-
 import { MenuProps } from '@material-ui/core/Menu';
 
 export type AnchorEl = HTMLElement | null;

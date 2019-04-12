@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { TaskListState, TaskListActionCreators, RootState } from '../../store';
-import { useMenuItem } from '../Mui';
-import Menu from '@material-ui/core/Menu';
+import { matchPath } from 'react-router-dom';
+import { TaskListActionCreators, RootState } from '../../store';
+import { useMenuItem, Menu } from '../Mui';
+import { PATHS } from '../../constants';
 import Divider from '@material-ui/core/Divider';
 import pkg from '../../../package.json';
 
@@ -14,21 +14,31 @@ interface Props {
 }
 
 interface MatchParams {
-  taskListId: string;
+  taskListId?: string;
 }
 
-const mapStateToProps = ({ taskList }: RootState) => ({ ...taskList });
+const mapStateToProps = ({ taskList, router }: RootState) => ({
+  ...taskList,
+  match: matchPath<MatchParams>(router.location.pathname, {
+    path: PATHS.TASKLIST
+  })!
+});
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskListActionCreators, dispatch);
 
 function TaskListMenuComponent({
-  match: { params },
   anchorEl,
   onClose,
   taskLists,
-  completedTaskLists
-}: Props & RouteComponentProps<MatchParams> & TaskListState) {
+  delteTaskList,
+  completedTaskLists,
+  match
+}: Props & ReturnType<typeof mapStateToProps> & typeof TaskListActionCreators) {
   const MenuItem = useMenuItem(onClose);
+  const delteTaskListCallback = useCallback(
+    () => match.params.taskListId && delteTaskList(match.params.taskListId),
+    [delteTaskList, match.params.taskListId]
+  );
 
   return (
     <Menu
@@ -44,7 +54,8 @@ function TaskListMenuComponent({
       <MenuItem text="Rename list" />
       <MenuItem
         text="Delete list"
-        disabled={!taskLists[0] || taskLists[0].id === params.taskListId}
+        disabled={!taskLists[0] || taskLists[0].id === match.params.taskListId}
+        onClick={delteTaskListCallback}
       />
       <MenuItem
         text="Delete all completed tasks"
@@ -60,9 +71,7 @@ function TaskListMenuComponent({
   );
 }
 
-export const TaskListMenu = withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(TaskListMenuComponent)
-);
+export const TaskListMenu = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TaskListMenuComponent);

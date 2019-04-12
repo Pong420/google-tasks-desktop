@@ -7,13 +7,12 @@ import {
   TaskListState,
   TaskListActionCreators
 } from '../../store';
-import { RouteComponentProps, generatePath } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { TaskListHeader } from './TaskListHeader';
 import { TaskListContent } from './TaskListContent';
-import { PATHS } from '../../constants';
 
 interface MatchParams {
-  taskListId: string;
+  taskListId?: string;
 }
 
 const mapStateToProps = ({ auth, taskList }: RootState, ownProps: any) => ({
@@ -26,7 +25,6 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 
 function TaskListComponent({
   match: { params },
-  history,
   loggedIn,
   taskLists,
   creatingNewTaskList,
@@ -48,16 +46,6 @@ function TaskListComponent({
   useEffect(() => {
     loggedIn && getAllTaskList();
   }, [getAllTaskList, loggedIn]);
-
-  useEffect(() => {
-    if (creatingNewTaskList) {
-      return () => {
-        // TODO:
-        // history.push(generatePath(PATHS.TASKLIST, {
-        // }))
-      };
-    }
-  }, [creatingNewTaskList]);
 
   return (
     <div

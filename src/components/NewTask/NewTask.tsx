@@ -3,7 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
-import { useMuiMenu } from '../Mui/useMuiMenu';
+import { useMuiMenu } from '../Mui/Menu/useMuiMenu';
 import { Schema$Task } from '../../typings';
 
 interface Props {

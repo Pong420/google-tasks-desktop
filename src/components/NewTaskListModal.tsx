@@ -1,31 +1,43 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, SyntheticEvent } from 'react';
 import { Input, Modal, ModalProps } from './Mui';
 
 interface Props extends Pick<ModalProps, 'open' | 'handleClose'> {
   addTaskList(title: string): void;
 }
 
-export function NewTaskListModal({ addTaskList, ...props }: Props) {
+export function NewTaskListModal({
+  addTaskList,
+  handleClose,
+  ...props
+}: Props) {
   const [title, setTitle] = useState('');
   const onChangeCallback = useCallback(evt => setTitle(evt.target.value), []);
-  const handleConfirmCallback = useCallback(() => addTaskList(title), [
-    addTaskList,
-    title
-  ]);
+  const handleConfirmCallback = useCallback(
+    (evt?: SyntheticEvent<any>) => {
+      evt && evt.preventDefault();
+      addTaskList(title);
+      setTitle('');
+      handleClose();
+    },
+    [addTaskList, handleClose, title]
+  );
 
   return (
     <Modal
       title="Create new list"
-      {...props}
+      handleClose={handleClose}
       handleConfirm={handleConfirmCallback}
+      {...props}
     >
-      <Input
-        className="filled"
-        placeholder="Enter name"
-        value={title}
-        onChange={onChangeCallback}
-        autoFocus
-      />
+      <form onSubmit={handleConfirmCallback}>
+        <Input
+          className="filled"
+          placeholder="Enter name"
+          value={title}
+          onChange={onChangeCallback}
+          autoFocus
+        />
+      </form>
     </Modal>
   );
 }

@@ -22,6 +22,10 @@ $height: 36px;
 }
 
 .edit-task-dropdown-paper {
+  &.edit-task-dropdown-paper {
+    max-height: $height * 5;
+  }
+
   .mui-menu-item {
     height: $height;
     padding: 0px 10px;

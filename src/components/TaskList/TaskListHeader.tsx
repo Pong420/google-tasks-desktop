@@ -5,8 +5,8 @@ import { NewTaskListModal } from '../NewTaskListModal';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
 import { Schema$TaskList } from '../../typings';
-import Divider from '@material-ui/core/Divider';
 import { useBoolean } from '../../utils/useBoolean';
+import Divider from '@material-ui/core/Divider';
 
 interface Props {
   addTaskList(title: string): void;
@@ -33,24 +33,26 @@ export function TaskListHeader({
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={onClose}
+          anchorReference="anchorPosition"
           anchorPosition={{
             top: anchorEl ? anchorEl.offsetTop + anchorEl.offsetHeight + 3 : 0,
             left: window.innerWidth
           }}
-          anchorReference="anchorPosition"
         >
-          {taskLists.map(({ id, title }) => (
-            <Link
-              to={generatePath(PATHS.TASKLIST, { taskListId: id })}
-              key={id}
-            >
-              <MenuItem
-                text={title}
-                selected={currentTaskList && currentTaskList.id === id}
-              />
-            </Link>
-          ))}
-          <Divider />
+          <div className="dropdown-list-container">
+            {taskLists.map(({ id, title }) => (
+              <Link
+                to={generatePath(PATHS.TASKLIST, { taskListId: id })}
+                key={id}
+              >
+                <MenuItem
+                  text={title}
+                  selected={currentTaskList && currentTaskList.id === id}
+                />
+              </Link>
+            ))}
+          </div>
+          {taskLists.length && <Divider />}
           <MenuItem text="Create new list" onClick={openModal} />
         </Dropdown>
       </div>

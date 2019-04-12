@@ -51,7 +51,6 @@ export function Task({
     >
       <ToggleCompleted onClick={toggleCompletedCallback} />
       <Input
-        autoFocus
         fullWidth
         defaultValue={task.title}
         onChange={evt => {
