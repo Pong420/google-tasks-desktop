@@ -6,9 +6,11 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import CloseIcon from '@material-ui/icons/Close';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 
-interface Props {
+export interface FullScreenDialogProps {
+  className?: string;
   open: boolean;
   handleClose(): void;
+  onDelete?(): void;
   children?: ReactNode;
 }
 
@@ -25,19 +27,32 @@ function DeleteIcon() {
   );
 }
 
-export function FullScreenDialog({ children, open, handleClose }: Props) {
+export function FullScreenDialog({
+  className = '',
+  children,
+  open,
+  handleClose,
+  onDelete
+}: FullScreenDialogProps) {
   return (
     <Dialog
       fullScreen
       open={open}
       onClose={handleClose}
       TransitionComponent={Transition}
+      className={className}
       classes={{ paper: 'fullscreen-dialog-paper' }}
+      transitionDuration={300}
+      BackdropProps={{
+        open: false
+      }}
     >
       <div className="fullscreen-diaglog-header">
-        <IconButton>
-          <DeleteIcon />
-        </IconButton>
+        {onDelete && (
+          <IconButton onClick={onDelete}>
+            <DeleteIcon />
+          </IconButton>
+        )}
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>

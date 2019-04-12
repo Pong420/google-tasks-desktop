@@ -1,0 +1,29 @@
+$height: 36px;
+
+.edit-task {
+  .row {
+    @include flex(center);
+
+    > :first-child {
+      margin-right: 10px;
+    }
+
+    .dropdown-button {
+      min-height: $height;
+      line-height: $height;
+      background: #f8f9fa;
+    }
+
+    button {
+      text-transform: initial;
+      color: #5f6368;
+    }
+  }
+}
+
+.edit-task-dropdown-paper {
+  .mui-menu-item {
+    height: $height;
+    padding: 0px 10px;
+  }
+}

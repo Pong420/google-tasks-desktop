@@ -12,21 +12,10 @@
     @include textHighlight();
 
     background-color: #f8f9fa;
-    margin-bottom: 8px;
     padding-left: 10px;
   }
 
-  .row {
-    @include flex(center);
-
-    > :first-child {
-      margin-right: 10px;
-    }
-
-    .dropdown-button {
-      $height: 36px;
-      min-height: $height;
-      line-height: $height;
-    }
+  > * {
+    margin-bottom: 8px;
   }
 }

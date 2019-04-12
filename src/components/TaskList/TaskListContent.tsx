@@ -5,10 +5,12 @@ import { tasks_v1 } from 'googleapis';
 import { Task } from '../Task';
 import { NewTask } from '../NewTask';
 import { TaskState, TaskActionCreators, RootState } from '../../store';
-import { Schema$Task } from '../../typings';
+import { Schema$Task, Schema$TaskList } from '../../typings';
 
 interface Props {
   taskListId: string;
+  taskLists: Schema$TaskList[];
+  currentTaskList: Schema$TaskList;
 }
 
 const mapStateToProps = ({ task }: RootState) => ({ ...task });
@@ -17,7 +19,9 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 
 function TaskListContentComponent({
   tasks,
+  taskLists,
   taskListId,
+  currentTaskList,
   getAllTasks,
   addTask,
   deleteTask,
@@ -86,6 +90,8 @@ function TaskListContentComponent({
         <Task
           key={task.uuid}
           task={task}
+          taskLists={taskLists}
+          currentTaskList={currentTaskList}
           onChange={onChangeCallback}
           deleteTask={deleteTaskCallback}
           toggleCompleted={toggleCompletedCllaback}

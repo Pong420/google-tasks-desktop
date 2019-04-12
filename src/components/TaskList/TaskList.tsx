@@ -50,6 +50,8 @@ function TaskListComponent({
       <TaskListHeader currentTaskList={currentTaskList} taskLists={taskLists} />
       <TaskListContent
         taskListId={currentTaskList ? currentTaskList.id! : ''}
+        taskLists={taskLists}
+        currentTaskList={currentTaskList}
       />
     </div>
   );

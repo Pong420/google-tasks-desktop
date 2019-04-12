@@ -20,13 +20,7 @@ export function Dropdown({
       <Button classes={{ root: 'dropdown-button' }} onClick={onClick} fullWidth>
         {label} <ArrowDropDownIcon fontSize="default" />
       </Button>
-      <Menu
-        {...props}
-        // classes={{ paper: 'dropdown-menu-paper' }}
-        // MenuListProps={{ classes: { root: 'dropdown-menu-list' } }}
-      >
-        {children}
-      </Menu>
+      <Menu {...props}>{children}</Menu>
     </>
   );
 }
