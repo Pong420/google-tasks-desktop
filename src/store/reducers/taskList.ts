@@ -3,19 +3,20 @@ import { Schema$TaskList } from '../../typings';
 
 export interface TaskListState {
   taskLists: Schema$TaskList[];
-  completedTaskLists: Schema$TaskList[];
   creatingNewTaskList: boolean;
   newTaskListId: string;
 }
 
 const initialState: TaskListState = {
   taskLists: [],
-  completedTaskLists: [],
   creatingNewTaskList: false,
   newTaskListId: ''
 };
 
-export default function(state = initialState, action: TaskListActions): TaskListState {
+export default function(
+  state = initialState,
+  action: TaskListActions
+): TaskListState {
   switch (action.type) {
     case TaskListActionTypes.GET_ALL_TASK_LIST:
       return {

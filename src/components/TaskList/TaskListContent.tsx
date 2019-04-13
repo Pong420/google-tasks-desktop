@@ -86,17 +86,23 @@ function TaskListContentComponent({
   return (
     <div className="task-list-content">
       <NewTask addTask={addTaskCallback} />
-      {tasks.map(task => (
-        <Task
-          key={task.uuid}
-          task={task}
-          taskLists={taskLists}
-          currentTaskList={currentTaskList}
-          onChange={onChangeCallback}
-          deleteTask={deleteTaskCallback}
-          toggleCompleted={toggleCompletedCllaback}
-        />
-      ))}
+      {tasks.map(task => {
+        // if (task.status === 'completed') {
+        //   return null;
+        // }
+
+        return (
+          <Task
+            key={task.uuid}
+            task={task}
+            taskLists={taskLists}
+            currentTaskList={currentTaskList}
+            onChange={onChangeCallback}
+            deleteTask={deleteTaskCallback}
+            toggleCompleted={toggleCompletedCllaback}
+          />
+        );
+      })}
     </div>
   );
 }

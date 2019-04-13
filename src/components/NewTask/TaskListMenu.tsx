@@ -31,7 +31,6 @@ function TaskListMenuComponent({
   onClose,
   taskLists,
   delteTaskList,
-  completedTaskLists,
   match
 }: Props & ReturnType<typeof mapStateToProps> & typeof TaskListActionCreators) {
   const MenuItem = useMenuItem(onClose);
@@ -57,10 +56,7 @@ function TaskListMenuComponent({
         disabled={!taskLists[0] || taskLists[0].id === match.params.taskListId}
         onClick={delteTaskListCallback}
       />
-      <MenuItem
-        text="Delete all completed tasks"
-        disabled={!completedTaskLists.length}
-      />
+      <MenuItem text="Delete all completed tasks" />
       <Divider />
       <MenuItem text="Keyboard shortcuts" />
       <MenuItem
