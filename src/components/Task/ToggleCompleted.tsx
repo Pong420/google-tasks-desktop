@@ -5,10 +5,11 @@ import TickIcon from '@material-ui/icons/Check';
 import { useBoolean } from '../../utils/useBoolean';
 
 interface Props {
+  completed?: boolean;
   onClick?(evt: MouseEvent<HTMLElement>): void;
 }
 
-export function ToggleCompleted({ onClick }: Props) {
+export function ToggleCompleted({ completed, onClick }: Props) {
   const [hover, { on, off }] = useBoolean(false);
 
   return (
@@ -19,7 +20,7 @@ export function ToggleCompleted({ onClick }: Props) {
       onMouseLeave={off}
     >
       <IconButton>
-        {hover ? <TickIcon color="secondary" /> : <CircleIcon />}
+        {completed || hover ? <TickIcon color="secondary" /> : <CircleIcon />}
       </IconButton>
     </div>
   );

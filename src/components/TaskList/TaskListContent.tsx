@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { tasks_v1 } from 'googleapis';
-import { Task } from '../Task';
+import { TodoTask, CompletedTask } from '../Task';
 import { NewTask } from '../NewTask';
 import { TaskState, TaskActionCreators, RootState } from '../../store';
 import { Schema$Task, Schema$TaskList } from '../../typings';
@@ -18,7 +18,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispatch);
 
 function TaskListContentComponent({
-  tasks,
+  todoTasks,
+  completedTasks,
   taskLists,
   taskListId,
   currentTaskList,
@@ -86,18 +87,24 @@ function TaskListContentComponent({
   return (
     <div className="task-list-content">
       <NewTask addTask={addTaskCallback} />
-      {tasks.map(task => {
-        // if (task.status === 'completed') {
-        //   return null;
-        // }
-
+      {todoTasks.map(task => {
         return (
-          <Task
+          <TodoTask
             key={task.uuid}
             task={task}
             taskLists={taskLists}
             currentTaskList={currentTaskList}
             onChange={onChangeCallback}
+            deleteTask={deleteTaskCallback}
+            toggleCompleted={toggleCompletedCllaback}
+          />
+        );
+      })}
+      {completedTasks.map(task => {
+        return (
+          <CompletedTask
+            key={task.uuid}
+            task={task}
             deleteTask={deleteTaskCallback}
             toggleCompleted={toggleCompletedCllaback}
           />

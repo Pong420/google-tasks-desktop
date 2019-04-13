@@ -4,7 +4,6 @@ $border: 1px solid #e0e0e0;
   @include dimen(100%);
   @include flex(center);
   @include relative();
-  @include textHighlight();
 
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
@@ -17,7 +16,7 @@ $border: 1px solid #e0e0e0;
 
   &.focused,
   &:hover {
-    .edit-task-button {
+    input + * {
       visibility: visible;
     }
 
@@ -52,7 +51,7 @@ $border: 1px solid #e0e0e0;
     border-bottom-color: #e0e0e0;
   }
 
-  .edit-task-button {
+  input + * {
     visibility: hidden;
   }
 
@@ -63,4 +62,14 @@ $border: 1px solid #e0e0e0;
 
 .toggle-completed {
   @include margin-x((10px, 5px));
+}
+
+.todo-task {
+  @include textHighlight();
+}
+
+.completed-task {
+  input {
+    text-decoration: line-through;
+  }
 }
