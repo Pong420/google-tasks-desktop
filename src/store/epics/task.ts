@@ -1,5 +1,5 @@
-import { empty, from } from 'rxjs';
-import { mergeMap, map, takeUntil, filter, take } from 'rxjs/operators';
+import { empty, from, forkJoin } from 'rxjs';
+import { mergeMap, map, takeUntil, filter, take, mapTo } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import {
   TaskActions,
@@ -34,6 +34,8 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
       if (!state$.value.auth.loggedIn) {
         return empty();
       }
+
+      const tasklist = state$.value.taskList.currentTaskListId;
 
       switch (action.type) {
         case TaskActionTypes.GET_ALL_TASKS:
@@ -85,6 +87,17 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
           return deleteTaskSuccess$(
             action.payload.taskListId,
             action.payload.id!
+          );
+
+        case TaskActionTypes.DELETE_COMPLETED_TASKS:
+          return forkJoin(
+            ...action.payload.map(task =>
+              from(taskApi.tasks.delete({ tasklist, task: task.id }))
+            )
+          ).pipe(
+            mapTo<any, TaskActions>({
+              type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
+            })
           );
 
         default:

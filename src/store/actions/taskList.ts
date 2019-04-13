@@ -60,11 +60,12 @@ export interface AddTaskListSuccess {
 
 export interface UpdateTaskList {
   type: TaskListActionTypes.UPDATE_TASK_LIST;
-  payload: AddTaskListAPIParams;
+  payload: tasks_v1.Params$Resource$Tasklists$Patch;
 }
 
 export interface UpdateTaskListSuccess {
   type: TaskListActionTypes.UPDATE_TASK_LIST_SUCCESS;
+  payload: tasks_v1.Schema$TaskList;
 }
 
 export interface DeleteTaskList {
@@ -120,7 +121,9 @@ export const TaskListActionCreators = {
       }
     };
   },
-  updateTaskList(payload: AddTaskListAPIParams): UpdateTaskList {
+  updateTaskList(
+    payload: tasks_v1.Params$Resource$Tasklists$Patch
+  ): UpdateTaskList {
     return {
       type: TaskListActionTypes.UPDATE_TASK_LIST,
       payload

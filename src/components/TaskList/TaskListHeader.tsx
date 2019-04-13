@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
-import { useMuiMenu, useMenuItem, Dropdown } from '../Mui';
-import { NewTaskListModal } from '../NewTaskListModal';
+import { useMuiMenu, useMenuItem, Dropdown, FormModal } from '../Mui';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
 import { Schema$TaskList } from '../../typings';
@@ -56,10 +55,11 @@ export function TaskListHeader({
           <MenuItem text="Create new list" onClick={openModal} />
         </Dropdown>
       </div>
-      <NewTaskListModal
+      <FormModal
+        title="Create new list"
         open={modalOpened}
         handleClose={closeModal}
-        addTaskList={addTaskList}
+        handleConfirm={addTaskList}
       />
     </div>
   );

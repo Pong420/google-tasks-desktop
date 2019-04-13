@@ -1,7 +1,6 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import uuid from 'uuid';
-import { tasks_v1 } from 'googleapis';
 
 export interface TaskState {
   tasks: Schema$Task[];
@@ -80,6 +79,14 @@ export default function(state = initialState, action: TaskActions): TaskState {
                 ...task,
                 ...action.payload.requestBody
               }
+        )
+      };
+
+    case TaskActionTypes.DELETE_COMPLETED_TASKS:
+      return {
+        ...state,
+        ...classify(state.tasks, task =>
+          task.status === 'completed' ? null : task
         )
       };
 

@@ -25,6 +25,7 @@ export function NewTaskListModal({
   return (
     <Modal
       title="Create new list"
+      confirmLabel="Done"
       handleClose={handleClose}
       handleConfirm={handleConfirmCallback}
       {...props}

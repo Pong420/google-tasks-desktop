@@ -13,8 +13,8 @@ export enum TaskActionTypes {
   DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS',
   MOVE_TASK = 'MOVE_TASK',
   MOVE_TASK_SUCCESS = 'MOVE_TASK_SUCCESS',
-  CLEAR_COMPLETED_TASKS = 'CLEAR_COMPLETED_TASKS',
-  CLEAR_COMPLETED_TASKS_SUCCESS = 'CLEAR_COMPLETED_TASKS_SUCCESS'
+  DELETE_COMPLETED_TASKS = 'DELETE_COMPLETED_TASKS',
+  DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS'
 }
 
 interface Payload$AddTask {
@@ -78,12 +78,13 @@ export interface MoveTaskSuccess {
   type: TaskActionTypes.MOVE_TASK_SUCCESS;
 }
 
-export interface ClearCompletedTasks {
-  type: TaskActionTypes.CLEAR_COMPLETED_TASKS;
+export interface DeleteCompletedTasks {
+  type: TaskActionTypes.DELETE_COMPLETED_TASKS;
+  payload: Schema$Task[];
 }
 
-export interface ClearCompletedTasksSuccess {
-  type: TaskActionTypes.CLEAR_COMPLETED_TASKS_SUCCESS;
+export interface DeleteCompletedTasksSuccess {
+  type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS;
 }
 
 export type TaskActions =
@@ -97,8 +98,8 @@ export type TaskActions =
   | DeleteTaskSuccess
   | MoveTask
   | MoveTaskSuccess
-  | ClearCompletedTasks
-  | ClearCompletedTasksSuccess;
+  | DeleteCompletedTasks
+  | DeleteCompletedTasksSuccess;
 export const TaskActionCreators = {
   getAllTasks(payload: tasks_v1.Params$Resource$Tasks$List): GetAllTasks {
     return {
@@ -124,6 +125,12 @@ export const TaskActionCreators = {
   updateTask(payload: tasks_v1.Params$Resource$Tasks$Update): UpdateTask {
     return {
       type: TaskActionTypes.UPDATE_TASK,
+      payload
+    };
+  },
+  deleteCompletedTasks(payload: Schema$Task[]): DeleteCompletedTasks {
+    return {
+      type: TaskActionTypes.DELETE_COMPLETED_TASKS,
       payload
     };
   }

@@ -3,6 +3,7 @@ import { Schema$TaskList } from '../../typings';
 
 export interface TaskListState {
   taskLists: Schema$TaskList[];
+  currentTaskListId: string;
   currentTaskList: Schema$TaskList | null;
   creatingNewTaskList: boolean;
 }
@@ -10,6 +11,7 @@ export interface TaskListState {
 const initialState: TaskListState = {
   taskLists: [],
   currentTaskList: null,
+  currentTaskListId: '',
   creatingNewTaskList: false
 };
 
@@ -32,6 +34,7 @@ export default function(
     case TaskListActionTypes.SET_CURRENT_TASK_LIST:
       return {
         ...state,
+        currentTaskListId: action.payload.id!,
         currentTaskList: action.payload
       };
 
@@ -52,6 +55,28 @@ export default function(
       return {
         ...state,
         taskLists: state.taskLists.filter(({ id }) => id !== action.payload)
+      };
+
+    case TaskListActionTypes.UPDATE_TASK_LIST:
+      let updated = state.currentTaskList;
+      if (updated === action.payload.tasklist) {
+        updated = {
+          ...updated,
+          ...action.payload.requestBody
+        };
+      }
+
+      return {
+        ...state,
+        currentTaskList: updated,
+        taskLists: state.taskLists.map(taskList =>
+          taskList.id === action.payload.tasklist
+            ? {
+                ...taskList,
+                ...action.payload.requestBody
+              }
+            : taskList
+        )
       };
 
     default:

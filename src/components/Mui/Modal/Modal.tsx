@@ -1,9 +1,10 @@
 import React, { useCallback, ReactNode } from 'react';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
+import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 
-export interface ModalProps {
+export interface ModalProps extends DialogProps {
   title: string;
+  confirmLabel: string;
   open: boolean;
   children?: ReactNode;
   handleClose(): void;
@@ -12,10 +13,12 @@ export interface ModalProps {
 
 export function Modal({
   title,
+  confirmLabel,
   open,
   children,
   handleClose,
-  handleConfirm
+  handleConfirm,
+  ...props
 }: ModalProps) {
   const confirm = useCallback(() => {
     handleConfirm();
@@ -27,13 +30,14 @@ export function Modal({
       open={open}
       onClose={handleClose}
       classes={{ root: 'mui-modal', paper: 'mui-modal-paper' }}
+      {...props}
     >
       <div className="modal-title">{title}</div>
       <div className="modal-content">{children}</div>
       <div className="modal-actions">
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={confirm} color="secondary">
-          Done
+          {confirmLabel}
         </Button>
       </div>
     </Dialog>
