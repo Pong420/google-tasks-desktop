@@ -29,3 +29,19 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+#nprogress {
+  .bar {
+    background: $secondary-color;
+    height: 3px;
+  }
+
+  .peg {
+    box-shadow: 0 0 10px $secondary-color, 0 0 5px $secondary-color;
+  }
+
+  .spinner-icon {
+    border-top-color: $secondary-color;
+    border-left-color: $secondary-color;
+  }
+}

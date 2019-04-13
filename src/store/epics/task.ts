@@ -1,6 +1,15 @@
 import { empty, from, forkJoin } from 'rxjs';
-import { mergeMap, map, takeUntil, filter, take, mapTo } from 'rxjs/operators';
+import {
+  mergeMap,
+  map,
+  takeUntil,
+  filter,
+  take,
+  mapTo,
+  tap
+} from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
+import { tasks_v1 } from 'googleapis';
 import {
   TaskActions,
   TaskActionTypes,
@@ -10,7 +19,7 @@ import {
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { taskApi } from '../../api';
-import { tasks_v1 } from 'googleapis';
+import { EpicDependencies } from '../epicDependencies';
 
 const deleteTaskSuccess$ = (tasklist: string, task: string) =>
   from(taskApi.tasks.delete({ tasklist, task })).pipe(
@@ -27,7 +36,11 @@ const updateTaskSuccess$ = (params: tasks_v1.Params$Resource$Tasks$Update) =>
     }))
   );
 
-const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
+const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
+  action$,
+  state$,
+  { nprogress }
+) =>
   action$.pipe(
     filter(action => !/Update/i.test(action.type)),
     mergeMap(action => {
@@ -39,6 +52,8 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
 
       switch (action.type) {
         case TaskActionTypes.GET_ALL_TASKS:
+          nprogress.inc(0.4);
+
           return from(
             taskApi.tasks
               .list({
@@ -48,6 +63,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
               })
               .then(({ data }) => data)
           ).pipe(
+            tap(() => nprogress.done()),
             map<tasks_v1.Schema$Tasks, TaskActions>(({ items }) => ({
               type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
               payload: items || []

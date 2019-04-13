@@ -1,5 +1,5 @@
 import { empty, from, of, concat } from 'rxjs';
-import { mergeMap, switchMap, map, mapTo, flatMap } from 'rxjs/operators';
+import { mergeMap, switchMap, map, mapTo, flatMap, tap } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
 import {
@@ -33,7 +33,7 @@ const apiEpic: Epic<
   CominbinedActions,
   RootState,
   EpicDependencies
-> = (action$, state$, { push }) =>
+> = (action$, state$, { push, nprogress }) =>
   action$.pipe(
     ofType<CominbinedActions, TaskListActions>(
       ...Object.values(TaskListActionTypes)
@@ -45,6 +45,8 @@ const apiEpic: Epic<
 
       switch (action.type) {
         case TaskListActionTypes.GET_ALL_TASK_LIST:
+          nprogress.start();
+
           return from(taskApi.tasklists.list().then(({ data }) => data)).pipe(
             map<tasks_v1.Schema$TaskLists, TaskListActions>(({ items }) => ({
               type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
@@ -53,6 +55,8 @@ const apiEpic: Epic<
           );
 
         case TaskListActionTypes.ADD_TASK_LIST:
+          nprogress.inc(0.25);
+
           return from(
             taskApi.tasklists
               .insert({
