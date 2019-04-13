@@ -6,7 +6,8 @@
   padding: 15px 20px;
 
   .modal-title {
-    font-weight: 600;
+    @include typeface('Nunito Sans', 700);
+
     margin-bottom: 10px;
   }
 
@@ -16,8 +17,9 @@
     margin-top: 10px;
 
     button {
+      @include typeface('Nunito Sans', 600);
+
       background: none;
-      font-weight: 600;
       text-transform: initial;
 
       + button {

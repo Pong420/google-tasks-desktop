@@ -27,6 +27,7 @@ export function TaskListHeader({
       <div className="task-list-menu">
         <div className="task-list-menu-label">TASKS</div>
         <Dropdown
+          classes={{ paper: 'task-list-dropdown' }}
           label={currentTaskList ? currentTaskList.title! : ''}
           onClick={setAnchorEl}
           anchorEl={anchorEl}

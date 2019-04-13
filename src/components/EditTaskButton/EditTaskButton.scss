@@ -14,6 +14,19 @@ $height: 36px;
       background: #f8f9fa;
     }
 
+    &.row-task-list {
+      button {
+        @include typeface('Nunito Sans', 600);
+      }
+    }
+
+    &.row-date,
+    &.row-subtask {
+      button {
+        @include typeface('Nunito Sans', 700);
+      }
+    }
+
     button {
       text-transform: initial;
       color: #5f6368;

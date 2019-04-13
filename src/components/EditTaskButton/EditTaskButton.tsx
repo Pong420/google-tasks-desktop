@@ -43,8 +43,13 @@ export function EditTaskButton({
         onDelete={onDelete}
       >
         <Input className="filled" placeholder="Enter title" autoFocus />
-        <Input className="filled" placeholder="Add details" multiline rows={3} />
-        <div className="row">
+        <Input
+          className="filled"
+          placeholder="Add details"
+          multiline
+          rows={3}
+        />
+        <div className="row row-task-list">
           <FormatListBulletedIcon />
           <Dropdown
             label={currentTaskList ? currentTaskList.title! : ''}
@@ -78,11 +83,11 @@ export function EditTaskButton({
             ))}
           </Dropdown>
         </div>
-        <div className="row">
+        <div className="row row-date">
           <EventAvailableIcon />
           <Button>Add date/time</Button>
         </div>
-        <div className="row">
+        <div className="row row-subtask">
           <SubdirectoryIcon />
           <Button>Add Subtasks</Button>
         </div>
