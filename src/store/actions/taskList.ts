@@ -1,4 +1,5 @@
 import { tasks_v1 } from 'googleapis';
+import { Schema$TaskList } from '../../typings';
 
 interface TaskListAPIParams {
   tasklist: string;
@@ -13,6 +14,7 @@ export enum TaskListActionTypes {
   GET_ALL_TASK_LIST_SUCCESS = 'GET_ALL_TASK_LIST_SUCCESS',
   GET_TASK_LIST = 'GET_TASK_LIST',
   GET_TASK_LIST_SUCCESS = 'GET_TASK_LIST_SUCCESS',
+  SET_CURRENT_TASK_LIST = 'SET_CURRENT_TASK_LIST',
   ADD_TASK_LIST = 'ADD_TASK_LIST',
   ADD_TASK_LIST_SUCCESS = 'ADD_TASK_LIST_SUCCESS',
   UPDATE_TASK_LIST = 'UPDATE_TASK_LIST',
@@ -39,6 +41,11 @@ export interface GetTaskList {
 
 export interface GetTaskListSuccess {
   type: TaskListActionTypes.GET_TASK_LIST_SUCCESS;
+}
+
+export interface SetCurrentTaskList {
+  type: TaskListActionTypes.SET_CURRENT_TASK_LIST;
+  payload: Schema$TaskList;
 }
 
 export interface AddTaskList {
@@ -83,6 +90,7 @@ export type TaskListActions =
   | GetAllTaskListSuccess
   | GetTaskList
   | GetTaskListSuccess
+  | SetCurrentTaskList
   | AddTaskList
   | AddTaskListSuccess
   | UpdateTaskList

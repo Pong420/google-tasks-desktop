@@ -3,14 +3,14 @@ import { Schema$TaskList } from '../../typings';
 
 export interface TaskListState {
   taskLists: Schema$TaskList[];
+  currentTaskList: Schema$TaskList | null;
   creatingNewTaskList: boolean;
-  newTaskListId: string;
 }
 
 const initialState: TaskListState = {
   taskLists: [],
-  creatingNewTaskList: false,
-  newTaskListId: ''
+  currentTaskList: null,
+  creatingNewTaskList: false
 };
 
 export default function(
@@ -27,6 +27,12 @@ export default function(
       return {
         ...state,
         taskLists: action.payload
+      };
+
+    case TaskListActionTypes.SET_CURRENT_TASK_LIST:
+      return {
+        ...state,
+        currentTaskList: action.payload
       };
 
     case TaskListActionTypes.ADD_TASK_LIST:

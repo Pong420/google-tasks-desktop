@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import {
@@ -7,13 +7,8 @@ import {
   TaskListState,
   TaskListActionCreators
 } from '../../store';
-import { RouteComponentProps } from 'react-router-dom';
 import { TaskListHeader } from './TaskListHeader';
 import { TaskListContent } from './TaskListContent';
-
-interface MatchParams {
-  taskListId?: string;
-}
 
 const mapStateToProps = ({ auth, taskList }: RootState, ownProps: any) => ({
   ...auth,
@@ -24,25 +19,13 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskListActionCreators, dispatch);
 
 function TaskListComponent({
-  match: { params },
   loggedIn,
   taskLists,
+  currentTaskList,
   creatingNewTaskList,
   getAllTaskList,
   addTaskList
-}: AuthsState &
-  TaskListState &
-  RouteComponentProps<MatchParams> &
-  typeof TaskListActionCreators) {
-  const currentTaskList = useMemo(() => {
-    let current = taskLists[0];
-    if (params.taskListId) {
-      current = taskLists.find(({ id }) => id === params.taskListId) || current;
-    }
-
-    return current || null;
-  }, [params.taskListId, taskLists]);
-
+}: AuthsState & TaskListState & typeof TaskListActionCreators) {
   useEffect(() => {
     loggedIn && getAllTaskList();
   }, [getAllTaskList, loggedIn]);
@@ -56,13 +39,13 @@ function TaskListComponent({
     >
       <TaskListHeader
         addTaskList={addTaskList}
-        currentTaskList={currentTaskList}
+        currentTaskList={currentTaskList!}
         taskLists={taskLists}
       />
       <TaskListContent
         taskListId={currentTaskList ? currentTaskList.id! : ''}
         taskLists={taskLists}
-        currentTaskList={currentTaskList}
+        currentTaskList={currentTaskList!}
       />
     </div>
   );
