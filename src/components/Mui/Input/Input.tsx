@@ -9,7 +9,10 @@ export function Input({ className, ...props }: InputBaseProps) {
         .filter(Boolean)
         .join(' ')
         .trim()}
-      classes={{ focused: 'focused', multiline: 'multiline' }}
+      classes={{
+        focused: 'focused',
+        multiline: 'multiline'
+      }}
       {...props}
     />
   );

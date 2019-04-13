@@ -1,4 +1,6 @@
 $border: 1px solid $border-color;
+$min-task-height: 50px;
+$mutiline-padding-y: 12px;
 
 .task {
   @include dimen(100%);
@@ -16,7 +18,8 @@ $border: 1px solid $border-color;
 
   &.focused,
   &:hover {
-    input + * {
+    // input endAdornment
+    .mui-input-base.multiline button {
       visibility: visible;
     }
 
@@ -51,17 +54,28 @@ $border: 1px solid $border-color;
     border-bottom-color: $border-color;
   }
 
-  input + * {
-    visibility: hidden;
+  .toggle-completed {
+    @include margin-x((10px, 5px));
   }
 
-  .mui-input-base {
-    min-height: 46px;
-  }
-}
+  .mui-input-base.multiline {
+    min-height: $min-task-height;
 
-.toggle-completed {
-  @include margin-x((10px, 5px));
+    @include padding-y(0px);
+
+    //input endAdornment
+    button {
+      visibility: hidden;
+    }
+
+    > div:nth-child(1) {
+      @include padding-y($mutiline-padding-y);
+
+      + button {
+        @include margin-x(5px);
+      }
+    }
+  }
 }
 
 .todo-task {
@@ -69,7 +83,8 @@ $border: 1px solid $border-color;
 }
 
 .completed-task {
-  input {
+  input,
+  textarea {
     text-decoration: line-through;
   }
 }

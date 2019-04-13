@@ -21,6 +21,8 @@
   @include padding-x($padding-x);
 
   .task-list-menu {
+    @include dimen(100%);
+
     .task-list-menu-label {
       color: #80868b;
       font-size: 10px;
@@ -33,7 +35,10 @@
 
     button {
       @include typeface('Nunito Sans', 600);
+
       font-size: 15px;
+      margin-right: 0;
+      margin-left: auto;
     }
   }
 }

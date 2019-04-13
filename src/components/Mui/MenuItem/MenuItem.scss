@@ -5,9 +5,13 @@
 
   > div {
     @include flex(center, space-between);
+
     flex: 1 1 auto;
+    max-width: 100%;
 
     .text {
+      @include text-overflow-ellipsis();
+
       flex: 1 1 auto;
       padding-right: 50px;
     }

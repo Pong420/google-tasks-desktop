@@ -54,6 +54,7 @@ export function Task({
         completed={task.status === 'completed'}
       />
       <Input
+        multiline
         fullWidth
         defaultValue={task.title}
         onChange={evt => {
