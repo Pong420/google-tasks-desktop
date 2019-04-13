@@ -46,16 +46,20 @@ const theme = createMuiTheme({
   }
 });
 
-ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <App />
-      </ConnectedRouter>
-    </Provider>
-  </MuiThemeProvider>,
-  document.getElementById('root')
-);
+const render = (Component: React.ComponentType<any>) => {
+  return ReactDOM.render(
+    <MuiThemeProvider theme={theme}>
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <Component />
+        </ConnectedRouter>
+      </Provider>
+    </MuiThemeProvider>,
+    document.getElementById('root')
+  );
+};
+
+render(App);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
@@ -63,5 +67,8 @@ ReactDOM.render(
 serviceWorker.unregister();
 
 if (module.hot) {
-  module.hot.accept();
+  module.hot.accept('./App', () => {
+    const NextApp = require('./App').default;
+    render(NextApp);
+  });
 }
