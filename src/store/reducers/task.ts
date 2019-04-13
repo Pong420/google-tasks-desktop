@@ -33,21 +33,21 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.ADD_TASK:
+      const newTask = {
+        ...action.payload.params.requestBody,
+        uuid: action.payload.uuid
+      };
+
       return {
         ...state,
-        tasks: [
-          {
-            ...action.payload.params.requestBody,
-            uuid: action.payload.uuid
-          },
-          ...state.tasks
-        ]
+        tasks: [newTask, ...state.tasks],
+        todoTasks: [newTask, ...state.todoTasks]
       };
 
     case TaskActionTypes.ADD_TASK_SUCCESS:
       return {
         ...state,
-        tasks: state.tasks.slice().map(task =>
+        ...classify(state.tasks, task =>
           task.uuid === action.payload.uuid
             ? {
                 ...action.payload.task,
@@ -61,13 +61,19 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.DELETE_TASK:
       return {
         ...state,
-        tasks: state.tasks.slice().filter(({ id }) => id !== action.payload.id)
+        ...classify(state.tasks, task => {
+          if (task.id === action.payload.id) {
+            return null;
+          }
+
+          return task;
+        })
       };
 
     case TaskActionTypes.UPDATE_TASK:
       return {
         ...state,
-        ...classify(state.tasks.slice(), task =>
+        ...classify(state.tasks, task =>
           task.id !== action.payload.task
             ? task
             : {
@@ -84,7 +90,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
 function classify(
   data: Schema$Task[],
-  middleware: (task: Schema$Task) => Schema$Task
+  middleware: (task: Schema$Task) => Schema$Task | null = task => task
 ) {
   const tasks: Schema$Task[] = [];
   const todoTasks: Schema$Task[] = [];
@@ -92,13 +98,16 @@ function classify(
 
   data.forEach(task_ => {
     const task = middleware(task_);
-    if (task.status === 'completed') {
-      completedTasks.push(task);
-    } else {
-      todoTasks.push(task);
-    }
 
-    tasks.push(task);
+    if (task !== null) {
+      if (task.status === 'completed') {
+        completedTasks.push(task);
+      } else {
+        todoTasks.push(task);
+      }
+
+      tasks.push(task);
+    }
   });
 
   return { tasks, todoTasks, completedTasks };

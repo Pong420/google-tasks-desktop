@@ -50,6 +50,10 @@ function TaskListContentComponent({
 
   const toggleCompletedCllaback = useCallback(
     (task: Schema$Task) => {
+      if (!task.title || !task.title.trim()) {
+        return deleteTaskCallback(task);
+      }
+
       return updateTask({
         tasklist: taskListId,
         task: task.id,
@@ -59,7 +63,7 @@ function TaskListContentComponent({
         }
       });
     },
-    [taskListId, updateTask]
+    [deleteTaskCallback, taskListId, updateTask]
   );
 
   const onChangeCallback = useCallback(

@@ -1,5 +1,5 @@
 import { empty, from } from 'rxjs';
-import { mergeMap, map, takeUntil, filter } from 'rxjs/operators';
+import { mergeMap, map, takeUntil, filter, take } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import {
   TaskActions,
@@ -77,7 +77,8 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState> = (action$, state$) =>
                   action.payload.taskListId,
                   success.payload.task.id!
                 )
-              )
+              ),
+              take(1)
             );
           }
 
@@ -112,7 +113,8 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
                 id: success.payload.task.id
               }
             })
-          )
+          ),
+          take(1)
         );
       }
 
