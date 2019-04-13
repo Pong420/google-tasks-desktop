@@ -52,3 +52,26 @@
   max-height: 200px;
   overflow: auto;
 }
+
+.completed-tasks {
+  @include dimen(100%);
+  @include fixed(null, 0, 0);
+
+  background-color: $primary-color;
+  max-height: calc(100vh - #{$header-height});
+  overflow: auto;
+  z-index: 11;
+}
+
+.completed-tasks-header {
+  @include dimen(100%, 50px);
+  @include flex(center, space-between);
+  @include padding-x(($padding-x, 10px));
+
+  border-top: 1px solid $border-color;
+  cursor: pointer;
+}
+
+.completed-tasks-content {
+  overflow: hidden;
+}

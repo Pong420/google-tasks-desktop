@@ -5,7 +5,7 @@ type Props = [
   {
     on(): void;
     off(): void;
-    toogle(): void;
+    toggle(): void;
   }
 ];
 
@@ -17,7 +17,7 @@ export function useBoolean(initialState: boolean = false): Props {
     {
       on: () => setFlag(true),
       off: () => setFlag(false),
-      toogle: useCallback(() => setFlag(!flag), [flag])
+      toggle: useCallback(() => setFlag(!flag), [flag])
     }
   ];
 }
