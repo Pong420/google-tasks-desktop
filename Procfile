@@ -1,2 +1,2 @@
-react: npm run app:dev
+react: yarn app:dev
 electron: node scripts/electron-wait-react.js

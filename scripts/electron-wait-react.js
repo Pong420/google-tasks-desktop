@@ -13,11 +13,11 @@ const tryConnection = () =>
     if (!startedElectron) {
       console.log('starting electron');
       startedElectron = true;
-      exec('npm run electron:dev');
+      exec('yarn electron:dev');
     }
   });
 
-exec('npm run electron:compile', tryConnection);
+exec('yarn electron:compile', tryConnection);
 
 client.on('error', error => {
   setTimeout(tryConnection, 1000);
