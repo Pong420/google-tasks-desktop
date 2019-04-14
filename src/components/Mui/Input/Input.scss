@@ -19,7 +19,10 @@
     @include textHighlight();
 
     background-color: #f8f9fa;
-    border-bottom: 1px solid $border-color;
     padding-left: 10px;
+  }
+
+  &.bottom-border {
+    border-bottom: 1px solid $border-color;
   }
 }

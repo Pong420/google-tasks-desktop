@@ -49,7 +49,7 @@ export function FormModal({
       <form onSubmit={submitCallback}>
         <Input
           autoFocus
-          className="filled"
+          className="filled bottom-border"
           value={value}
           onChange={evt => setValue(evt.currentTarget.value)}
           placeholder="Enter name"

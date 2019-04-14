@@ -63,6 +63,9 @@ export function EditTaskButton({
               left: anchorEl ? anchorEl.offsetLeft : 0
             }}
             anchorReference="anchorPosition"
+            buttonProps={{
+              fullWidth: true
+            }}
             PaperProps={{
               style: {
                 width: `calc(100% - ${anchorEl && anchorEl.offsetLeft + 15}px)`

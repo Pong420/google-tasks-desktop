@@ -1,4 +1,12 @@
-import React, { useState, useCallback, useEffect, ReactNode } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  ReactNode,
+  MouseEvent,
+  ChangeEvent
+} from 'react';
 import { InputProps } from '@material-ui/core/Input';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskMenu } from './TaskMenu';
@@ -28,12 +36,29 @@ export function Task({
 }: TaskProps) {
   const [task, setTask] = useState(initialTask);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
-
   const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const focus = useCallback(
+    (evt: MouseEvent<HTMLElement>) =>
+      evt.target === inputRef.current!.parentElement &&
+      inputRef.current!.focus(),
+    []
+  );
+
   const debouncedOnChangeCallback = useCallback(
     onChange ? debounce(onChange, 1000) : () => {},
     [onChange]
+  );
+  const onChangeCallback = useCallback(
+    (evt: ChangeEvent<HTMLTextAreaElement>) => {
+      const title = evt.currentTarget.value;
+      const updatedTask = { ...task, title };
+      setTask(updatedTask);
+      debouncedOnChangeCallback(updatedTask);
+    },
+    [debouncedOnChangeCallback, task]
   );
 
   // FIXME:
@@ -54,16 +79,14 @@ export function Task({
         completed={task.status === 'completed'}
       />
       <Input
+        autoFocus={!task.id}
         multiline
         fullWidth
         defaultValue={task.title}
-        onChange={evt => {
-          const title = evt.currentTarget.value;
-          const updatedTask = { ...task, title };
-          setTask(updatedTask);
-          debouncedOnChangeCallback(updatedTask);
-        }}
+        inputRef={inputRef}
         endAdornment={endAdornment}
+        onChange={onChangeCallback}
+        onClick={focus}
         {...inputProps}
       />
       <TaskMenu

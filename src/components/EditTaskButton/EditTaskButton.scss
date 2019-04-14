@@ -42,5 +42,18 @@ $height: 36px;
   .mui-menu-item {
     height: $height;
     padding: 0px 10px;
+
+    > div {
+      flex-direction: row-reverse;
+
+      .text {
+        padding-right: 0;
+        padding-left: 40px;
+
+        + svg {
+          @include absolute(null, null, 15px);
+        }
+      }
+    }
   }
 }
