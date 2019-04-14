@@ -5,7 +5,7 @@ import { EditTaskButton } from '../EditTaskButton';
 import { Schema$TaskList } from '../../typings';
 import { useBoolean } from '../../utils/useBoolean';
 
-interface Props extends Omit<TaskProps, 'endAdornment'> {
+export interface TodoTaskProps extends Omit<TaskProps, 'endAdornment'> {
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList;
 }
@@ -15,7 +15,7 @@ export function TodoTask({
   taskLists,
   currentTaskList,
   ...props
-}: Props) {
+}: TodoTaskProps) {
   const [focus, { on, off }] = useBoolean(false);
 
   return (

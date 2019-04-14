@@ -2,7 +2,9 @@ import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { tasks_v1 } from 'googleapis';
+import { SortEnd } from 'react-sortable-hoc';
 import { TodoTask } from '../Task';
+import { TodoTasks } from './TodoTasks';
 import { CompletedTasks } from './CompletedTasks';
 import { NewTask } from '../NewTask';
 import { TaskState, TaskActionCreators, RootState } from '../../store';
@@ -25,6 +27,7 @@ function TaskListContentComponent({
   taskListId,
   currentTaskList,
   getAllTasks,
+  sortTasks,
   addTask,
   deleteTask,
   updateTask
@@ -94,21 +97,15 @@ function TaskListContentComponent({
       <div className="task-list-content">
         <div className="task-list-scroll-content">
           <NewTask addTask={addTaskCallback} />
-          <div className="todo-tasks">
-            {todoTasks.map(task => {
-              return (
-                <TodoTask
-                  key={task.uuid}
-                  task={task}
-                  taskLists={taskLists}
-                  currentTaskList={currentTaskList}
-                  onChange={onChangeCallback}
-                  deleteTask={deleteTaskCallback}
-                  toggleCompleted={toggleCompletedCllaback}
-                />
-              );
-            })}
-          </div>
+          <TodoTasks
+            todoTasks={todoTasks}
+            taskLists={taskLists}
+            currentTaskList={currentTaskList}
+            onChange={onChangeCallback}
+            deleteTask={deleteTaskCallback}
+            toggleCompleted={toggleCompletedCllaback}
+            onSortEnd={sortTasks}
+          />
         </div>
         <CompletedTasks
           completedTasks={completedTasks}

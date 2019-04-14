@@ -1,5 +1,6 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
+import arrayMove from 'array-move';
 import uuid from 'uuid';
 
 export interface TaskState {
@@ -79,6 +80,18 @@ export default function(state = initialState, action: TaskActions): TaskState {
                 ...task,
                 ...action.payload.requestBody
               }
+        )
+      };
+
+    case TaskActionTypes.SORT_TASKS:
+      return {
+        ...state,
+        ...classify(
+          arrayMove(
+            state.todoTasks,
+            action.payload.oldIndex,
+            action.payload.newIndex
+          )
         )
       };
 

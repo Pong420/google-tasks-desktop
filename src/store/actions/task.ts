@@ -1,4 +1,5 @@
 import { tasks_v1 } from 'googleapis';
+import { SortEnd } from 'react-sortable-hoc';
 import { Schema$Task } from '../../typings';
 import uuid from 'uuid';
 
@@ -14,7 +15,8 @@ export enum TaskActionTypes {
   MOVE_TASK = 'MOVE_TASK',
   MOVE_TASK_SUCCESS = 'MOVE_TASK_SUCCESS',
   DELETE_COMPLETED_TASKS = 'DELETE_COMPLETED_TASKS',
-  DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS'
+  DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS',
+  SORT_TASKS = 'SORT_TASKS'
 }
 
 interface Payload$AddTask {
@@ -87,6 +89,11 @@ export interface DeleteCompletedTasksSuccess {
   type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS;
 }
 
+export interface SortTasks {
+  type: TaskActionTypes.SORT_TASKS;
+  payload: SortEnd;
+}
+
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
@@ -99,7 +106,9 @@ export type TaskActions =
   | MoveTask
   | MoveTaskSuccess
   | DeleteCompletedTasks
-  | DeleteCompletedTasksSuccess;
+  | DeleteCompletedTasksSuccess
+  | SortTasks;
+
 export const TaskActionCreators = {
   getAllTasks(payload: tasks_v1.Params$Resource$Tasks$List): GetAllTasks {
     return {
@@ -131,6 +140,12 @@ export const TaskActionCreators = {
   deleteCompletedTasks(payload: Schema$Task[]): DeleteCompletedTasks {
     return {
       type: TaskActionTypes.DELETE_COMPLETED_TASKS,
+      payload
+    };
+  },
+  sortTasks(payload: SortEnd) {
+    return {
+      type: TaskActionTypes.SORT_TASKS,
       payload
     };
   }

@@ -9,6 +9,7 @@
     content: '';
     margin: auto;
     transition: width 0.3s;
+    z-index: 11;
   }
 
   &.focused {
