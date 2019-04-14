@@ -1,4 +1,4 @@
-import { empty, from, forkJoin } from 'rxjs';
+import { empty, from, forkJoin, timer } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -6,7 +6,9 @@ import {
   filter,
   take,
   mapTo,
-  tap
+  tap,
+  debounce,
+  debounceTime
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -122,12 +124,25 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
     })
   );
 
+let temp = '';
+
+// FIXME:
 const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
   return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
+    debounce(action => {
+      let time = 0;
+      if (!temp || action.payload.requestBody.uuid === temp) {
+        time = 1000;
+      }
+
+      temp = action.payload.requestBody.uuid;
+
+      return timer(time);
+    }),
     mergeMap(action => {
       if (!action.payload.task) {
         return action$.pipe(

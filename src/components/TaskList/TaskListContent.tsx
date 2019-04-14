@@ -62,6 +62,7 @@ function TaskListContentComponent({
         tasklist: taskListId,
         task: task.id,
         requestBody: {
+          ...task,
           id: task.id,
           status: task.status === 'completed' ? 'needsAction' : 'completed'
         }

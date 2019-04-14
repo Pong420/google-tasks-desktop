@@ -47,8 +47,9 @@ export function Task({
     []
   );
 
+  // FIXME: remove debouce
   const debouncedOnChangeCallback = useCallback(
-    onChange ? debounce(onChange, 1000) : () => {},
+    onChange ? debounce(onChange, 0) : () => {},
     [onChange]
   );
   const onChangeCallback = useCallback(

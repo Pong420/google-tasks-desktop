@@ -62,7 +62,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task => {
-          if (task.id === action.payload.id) {
+          if (task.uuid === action.payload.uuid) {
             return null;
           }
 
@@ -74,12 +74,12 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task =>
-          task.id !== action.payload.task
-            ? task
-            : {
+          task.uuid === action.payload.requestBody.uuid
+            ? {
                 ...task,
                 ...action.payload.requestBody
               }
+            : task
         )
       };
 
