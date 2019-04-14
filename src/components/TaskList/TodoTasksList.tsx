@@ -20,7 +20,7 @@ interface Props {
 
 interface SortableListProps extends Props {
   dragging?: boolean;
-  newIndex: number | null;
+  insertAfter: number | null;
 }
 
 interface TodoTasksProps extends Props {
@@ -32,19 +32,21 @@ const SortableItem = SortableElement((props: TodoTaskProps) => (
 ));
 
 const SortableList = SortableContainer(
-  ({ dragging, todoTasks, newIndex, ...props }: SortableListProps) => {
+  ({ dragging, todoTasks, insertAfter, ...props }: SortableListProps) => {
     return (
       <div
-        className="todo-tasks"
+        className="todo-tasks-list"
         style={{ pointerEvents: dragging ? 'none' : 'auto' }}
       >
         {todoTasks.map((task, index) => (
           <SortableItem
             {...props}
-            className={newIndex === index ? 'border-bottom' : ''}
-            index={index}
             task={task}
+            index={index}
             key={task.uuid + '@' + index}
+            className={
+              dragging && insertAfter === index ? 'highlight-bottom-border' : ''
+            }
           />
         ))}
       </div>
@@ -52,29 +54,30 @@ const SortableList = SortableContainer(
   }
 );
 
-export function TodoTasks({ onSortEnd, ...props }: TodoTasksProps) {
+export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
   const [dragging, { on, off }] = useBoolean();
-  const [newIndex, setNewIndex] = useState<number | null>(null);
+  const [insertAfter, setInsertAfter] = useState<number | null>(null);
 
   return (
     <SortableList
       {...props}
       dragging={dragging}
-      newIndex={newIndex}
+      insertAfter={insertAfter}
       lockAxis="y"
       helperClass="dragging"
+      distance={5}
       onSortMove={on}
       onSortOver={({ newIndex, oldIndex, index }: SortOver) => {
-        const target =
-          newIndex - oldIndex > 0
-            ? newIndex > index
-              ? oldIndex + 1
-              : oldIndex
-            : newIndex > index
-            ? newIndex
-            : newIndex - 1;
+        let insertAfter: number | null = null;
+        const move = newIndex - oldIndex > 0 ? 'down' : 'up';
 
-        setNewIndex(target);
+        if (move === 'down') {
+          insertAfter = newIndex > index ? oldIndex + 1 : oldIndex;
+        } else if (move === 'up') {
+          insertAfter = newIndex > index ? newIndex : newIndex - 1;
+        }
+
+        setInsertAfter(insertAfter);
       }}
       onSortEnd={(params: SortEnd) => {
         onSortEnd(params);

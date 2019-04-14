@@ -71,7 +71,7 @@
   overflow: auto;
 }
 
-.completed-tasks {
+.completed-tasks-list {
   @include dimen(100%);
   @include flex($flex-direction: column);
 
@@ -82,7 +82,7 @@
   padding-bottom: 2px;
 }
 
-.completed-tasks-header {
+.completed-tasks-list-header {
   @include dimen(100%, 50px);
   @include flex(center, space-between);
   @include fake-border($borderWidth: 1px, $color: #f1f3f4);
@@ -94,7 +94,7 @@
   flex: 0 0 auto;
 }
 
-.completed-tasks-content {
+.completed-tasks-list-content {
   overflow: hidden;
   overflow: auto;
 }

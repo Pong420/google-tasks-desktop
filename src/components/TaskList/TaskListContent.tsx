@@ -4,8 +4,8 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { tasks_v1 } from 'googleapis';
 import { SortEnd } from 'react-sortable-hoc';
 import { TodoTask } from '../Task';
-import { TodoTasks } from './TodoTasks';
-import { CompletedTasks } from './CompletedTasks';
+import { TodoTasksList } from './TodoTasksList';
+import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from '../NewTask';
 import { TaskState, TaskActionCreators, RootState } from '../../store';
 import { Schema$Task, Schema$TaskList } from '../../typings';
@@ -97,7 +97,7 @@ function TaskListContentComponent({
       <div className="task-list-content">
         <div className="task-list-scroll-content">
           <NewTask addTask={addTaskCallback} />
-          <TodoTasks
+          <TodoTasksList
             todoTasks={todoTasks}
             taskLists={taskLists}
             currentTaskList={currentTaskList}
@@ -107,7 +107,7 @@ function TaskListContentComponent({
             onSortEnd={sortTasks}
           />
         </div>
-        <CompletedTasks
+        <CompletedTasksList
           completedTasks={completedTasks}
           deleteTask={deleteTaskCallback}
           toggleCompleted={toggleCompletedCllaback}

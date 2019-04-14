@@ -12,7 +12,7 @@ interface Props {
   toggleCompleted(task: Schema$Task): void;
 }
 
-export function CompletedTasks({
+export function CompletedTasksList({
   completedTasks,
   deleteTask,
   toggleCompleted
@@ -26,15 +26,15 @@ export function CompletedTasks({
   ]);
 
   return (
-    <div className="completed-tasks">
-      <div className="completed-tasks-header" onClick={toggle}>
+    <div className="completed-tasks-list">
+      <div className="completed-tasks-list-header" onClick={toggle}>
         Completed ({completedTasks.length})
         <IconButton>
           <Icon fontSize="default" />
         </IconButton>
       </div>
       <div
-        className="completed-tasks-content"
+        className="completed-tasks-list-content"
         style={{ height: expanded ? 'auto' : 0 }}
       >
         {completedTasks.map(task => {
