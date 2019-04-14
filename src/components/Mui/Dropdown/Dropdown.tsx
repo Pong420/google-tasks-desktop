@@ -28,7 +28,9 @@ export function Dropdown({
       >
         <div>{label}</div> <ArrowDropDownIcon fontSize="default" />
       </Button>
-      <Menu {...props}>{children}</Menu>
+      <Menu {...props} classes={{ paper: 'dropdown-menu-paper' }}>
+        {children}
+      </Menu>
     </>
   );
 }

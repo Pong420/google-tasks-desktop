@@ -9,6 +9,7 @@ export interface ModalProps extends DialogProps {
   children?: ReactNode;
   handleClose(): void;
   handleConfirm(): void;
+  autoFocusConfirmButon?: boolean;
 }
 
 export function Modal({
@@ -18,6 +19,7 @@ export function Modal({
   children,
   handleClose,
   handleConfirm,
+  autoFocusConfirmButon = true,
   ...props
 }: ModalProps) {
   const confirm = useCallback(() => {
@@ -36,7 +38,11 @@ export function Modal({
       <div className="modal-content">{children}</div>
       <div className="modal-actions">
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={confirm} color="secondary">
+        <Button
+          onClick={confirm}
+          color="secondary"
+          autoFocus={autoFocusConfirmButon}
+        >
           {confirmLabel}
         </Button>
       </div>

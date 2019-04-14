@@ -1,4 +1,5 @@
 .task-list {
+  @include dimen(100%, 100vh);
   @include flex($flex-direction: column);
 
   &.disabled {
@@ -52,13 +53,16 @@
 }
 
 .task-list-content {
+  @include dimen(100%, 100%);
+  @include flex($flex-direction: column);
+
   max-height: calc(100vh - #{$header-height});
   overflow: auto;
-  padding-bottom: 10px;
+  z-index: 1;
 
-  .dropdown-button {
-    min-height: 26px;
-    line-height: 26px;
+  .task-list-scroll-content {
+    flex: 1 1 auto;
+    overflow: auto;
   }
 }
 
@@ -69,24 +73,28 @@
 
 .completed-tasks {
   @include dimen(100%);
-  @include fixed(null, 0, 0);
+  @include flex($flex-direction: column);
 
   background-color: $primary-color;
+  flex: 0 0 auto;
+  // margin-top: -2px;
   max-height: calc(100vh - #{$header-height});
-  overflow: auto;
-  z-index: 11;
+  padding-bottom: 2px;
 }
 
 .completed-tasks-header {
   @include dimen(100%, 50px);
   @include flex(center, space-between);
+  @include fake-border($borderWidth: 1px, $color: #f1f3f4);
   @include typeface('Nunito Sans', 600);
   @include padding-x(($padding-x, 10px));
 
   border-top: 1px solid $border-color;
   cursor: pointer;
+  flex: 0 0 auto;
 }
 
 .completed-tasks-content {
   overflow: hidden;
+  overflow: auto;
 }

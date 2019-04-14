@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -8,7 +8,7 @@ import {
   RootState
 } from '../../store';
 import { useMenuItem, Menu, Modal, FormModal } from '../Mui';
-import { useBoolean } from '../../utils';
+import { useBoolean, useAdvancedCallback } from '../../utils';
 import Divider from '@material-ui/core/Divider';
 import pkg from '../../../package.json';
 
@@ -34,6 +34,15 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
     dispatch
   );
 
+function useNotZero(initialVal: number) {
+  const [value, setValue] = useState(initialVal);
+  useEffect(() => {
+    initialVal && setValue(initialVal);
+  }, [initialVal]);
+
+  return value;
+}
+
 function TaskListMenuComponent({
   anchorEl,
   onClose,
@@ -54,9 +63,30 @@ function TaskListMenuComponent({
 
   const MenuItem = useMenuItem(onClose);
 
-  const delteTaskListCallback = useCallback(
-    () => taskListId && delteTaskList(taskListId),
-    [delteTaskList, taskListId]
+  const [
+    DeleteCompletedTaskModalOpend,
+    DeleteCompletedTaskModal
+  ] = useBoolean();
+  const [DeleteTaskListModalOpend, DeleteTaskListModal] = useBoolean();
+  const [RenameTaskModalOpend, RenameTaskModal] = useBoolean();
+
+  const totalTask = useNotZero(tasks.length);
+  const numOfCompletedTask = useNotZero(completedTasks.length);
+
+  const delteTaskListCallback = useAdvancedCallback(
+    taskListId => taskListId && delteTaskList(taskListId),
+    [taskListId]
+  );
+
+  const onDeleteTaskListCallback = useAdvancedCallback(
+    showModal =>
+      showModal ? DeleteTaskListModal.on() : delteTaskListCallback(),
+    [!!tasks.length]
+  );
+
+  const deleteCompletedTasksCallback = useAdvancedCallback(
+    deleteCompletedTasks,
+    [completedTasks]
   );
 
   const renameTaskListCallback = useCallback(
@@ -64,13 +94,6 @@ function TaskListMenuComponent({
       updateTaskList({ tasklist: currentTaskListId, requestBody: { title } }),
     [currentTaskListId, updateTaskList]
   );
-
-  const [
-    DeleteCompletedTaskModalOpend,
-    DeleteCompletedTaskModal
-  ] = useBoolean();
-  const [DeleteTaskListModalOpend, DeleteTaskListModal] = useBoolean();
-  const [RenameTaskModalOpend, RenameTaskModal] = useBoolean();
 
   if (!currentTaskList) {
     return null;
@@ -92,9 +115,7 @@ function TaskListMenuComponent({
         <MenuItem
           text="Delete list"
           disabled={!taskLists[0] || taskLists[0].id === taskListId}
-          onClick={() =>
-            tasks.length ? DeleteTaskListModal.on() : delteTaskListCallback()
-          }
+          onClick={onDeleteTaskListCallback}
         />
         <MenuItem
           text="Delete all completed tasks"
@@ -115,16 +136,16 @@ function TaskListMenuComponent({
         handleClose={DeleteTaskListModal.off}
         handleConfirm={delteTaskListCallback}
       >
-        Deleting this list will also delete {tasks.length} task.
+        Deleting this list will also delete {totalTask} task.
       </Modal>
       <Modal
         title="Delete all completed tasks?"
         confirmLabel="Delete"
         open={DeleteCompletedTaskModalOpend}
         handleClose={DeleteCompletedTaskModal.off}
-        handleConfirm={() => deleteCompletedTasks(completedTasks)}
+        handleConfirm={deleteCompletedTasksCallback}
       >
-        {completedTasks.length} completed task will be permanently removed.
+        {numOfCompletedTask} completed task will be permanently removed.
       </Modal>
       <FormModal
         title="Rename list"

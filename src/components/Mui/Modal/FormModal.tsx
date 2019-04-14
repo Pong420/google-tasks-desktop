@@ -44,6 +44,7 @@ export function FormModal({
       handleConfirm={handleConfirmCallback}
       handleClose={handleClose}
       onExited={() => setValue(defaultValue)}
+      autoFocusConfirmButon={false}
       {...props}
     >
       <form onSubmit={submitCallback}>

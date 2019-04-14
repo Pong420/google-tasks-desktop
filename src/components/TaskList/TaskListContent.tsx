@@ -90,29 +90,33 @@ function TaskListContentComponent({
   }, [getAllTasks, taskListId]);
 
   return (
-    <div className="task-list-content">
-      <NewTask addTask={addTaskCallback} />
-      <div>
-        {todoTasks.map(task => {
-          return (
-            <TodoTask
-              key={task.uuid}
-              task={task}
-              taskLists={taskLists}
-              currentTaskList={currentTaskList}
-              onChange={onChangeCallback}
-              deleteTask={deleteTaskCallback}
-              toggleCompleted={toggleCompletedCllaback}
-            />
-          );
-        })}
+    <>
+      <div className="task-list-content">
+        <div className="task-list-scroll-content">
+          <NewTask addTask={addTaskCallback} />
+          <div className="todo-tasks">
+            {todoTasks.map(task => {
+              return (
+                <TodoTask
+                  key={task.uuid}
+                  task={task}
+                  taskLists={taskLists}
+                  currentTaskList={currentTaskList}
+                  onChange={onChangeCallback}
+                  deleteTask={deleteTaskCallback}
+                  toggleCompleted={toggleCompletedCllaback}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <CompletedTasks
+          completedTasks={completedTasks}
+          deleteTask={deleteTaskCallback}
+          toggleCompleted={toggleCompletedCllaback}
+        />
       </div>
-      <CompletedTasks
-        completedTasks={completedTasks}
-        deleteTask={deleteTaskCallback}
-        toggleCompleted={toggleCompletedCllaback}
-      />
-    </div>
+    </>
   );
 }
 

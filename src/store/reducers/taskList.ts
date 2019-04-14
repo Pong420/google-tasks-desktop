@@ -28,7 +28,16 @@ export default function(
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
       return {
         ...state,
-        taskLists: action.payload
+        taskLists: [
+          ...action.payload.slice(0, 1),
+          ...action.payload.slice(1).sort((a, b) => {
+            if (a.updated && b.updated) {
+              return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
+            }
+
+            return 0;
+          })
+        ]
       };
 
     case TaskListActionTypes.SET_CURRENT_TASK_LIST:
