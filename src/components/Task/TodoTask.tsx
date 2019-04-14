@@ -6,6 +6,7 @@ import { Schema$TaskList } from '../../typings';
 import { useBoolean } from '../../utils/useBoolean';
 
 export interface TodoTaskProps extends Omit<TaskProps, 'endAdornment'> {
+  className?: string;
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList;
 }
@@ -13,6 +14,7 @@ export interface TodoTaskProps extends Omit<TaskProps, 'endAdornment'> {
 export function TodoTask({
   task,
   taskLists,
+  className = '',
   currentTaskList,
   ...props
 }: TodoTaskProps) {
@@ -20,7 +22,7 @@ export function TodoTask({
 
   return (
     <Task
-      className={[`todo-task`, focus ? 'focused' : '']
+      className={[`todo-task`, focus ? 'focused' : '', className]
         .filter(Boolean)
         .join(' ')
         .trim()}

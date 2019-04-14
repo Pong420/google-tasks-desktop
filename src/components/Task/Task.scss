@@ -23,17 +23,14 @@ $mutiline-padding-y: 12px;
   border-bottom: 1px solid transparent;
   margin-top: -2px;
 
+  .mui-input-base {
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+  }
+
   &.focused {
     background-color: #f8f9fa;
     border-color: $border-color;
-  }
-
-  &.focused,
-  &:hover {
-    // input endAdornment
-    .mui-input-base.multiline button {
-      visibility: visible;
-    }
 
     &,
     & + .task {
@@ -43,20 +40,29 @@ $mutiline-padding-y: 12px;
     }
   }
 
-  &:not(.focused) {
-    &:hover {
-      @include float;
+  &:hover,
+  &.focused {
+    // input endAdornment
+    .mui-input-base.multiline button {
+      visibility: visible;
     }
   }
 
-  &:nth-child(n + 2) {
+  &:not(.focused):hover {
+    @include float;
+  }
+
+  &:first-child {
     .mui-input-base {
-      border-top-color: $border-color;
+      border-top-color: transparent;
     }
   }
 
   &:last-child {
     border-bottom-color: $border-color;
+    .mui-input-base {
+      border-bottom-color: transparent;
+    }
   }
 
   .toggle-completed {
@@ -64,9 +70,9 @@ $mutiline-padding-y: 12px;
   }
 
   .mui-input-base.multiline {
-    min-height: $min-task-height;
-
     @include padding-y(0px);
+
+    min-height: $min-task-height;
 
     //input endAdornment
     button {
@@ -94,15 +100,11 @@ $mutiline-padding-y: 12px;
     box-shadow: 0px 5px 10px #ccc;
     left: auto !important;
     right: 5px !important;
-    overflow: hidden;
     width: calc(100% - 60px) !important;
+  }
 
-    &:before {
-      @include fixed(0, null, 0);
-      @include sq-dimen(100%);
-
-      content: '';
-    }
+  &.border-bottom {
+    border-bottom: 2px solid $secondary-color;
   }
 }
 

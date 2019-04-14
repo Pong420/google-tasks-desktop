@@ -86,12 +86,10 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.SORT_TASKS:
       return {
         ...state,
-        ...classify(
-          arrayMove(
-            state.todoTasks,
-            action.payload.oldIndex,
-            action.payload.newIndex
-          )
+        todoTasks: arrayMove(
+          state.todoTasks,
+          action.payload.oldIndex,
+          action.payload.newIndex
         )
       };
 
