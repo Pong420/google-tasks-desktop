@@ -11,7 +11,7 @@ const oAuth2Client = new google.auth.OAuth2(
   OAuth2Keys.redirect_uris[0]
 );
 
-export const taskApi = google.tasks({
+export const { tasks: tasksAPI, tasklists: taskListAPI } = google.tasks({
   version: 'v1',
   auth: oAuth2Client
 });

@@ -5,10 +5,6 @@ interface TaskListAPIParams {
   tasklist: string;
 }
 
-interface AddTaskListAPIParams {
-  title: string;
-}
-
 export enum TaskListActionTypes {
   GET_ALL_TASK_LIST = 'GET_ALL_TASK_LIST',
   GET_ALL_TASK_LIST_SUCCESS = 'GET_ALL_TASK_LIST_SUCCESS',
@@ -50,7 +46,7 @@ export interface SetCurrentTaskList {
 
 export interface AddTaskList {
   type: TaskListActionTypes.ADD_TASK_LIST;
-  payload: AddTaskListAPIParams;
+  payload: tasks_v1.Params$Resource$Tasklists$Insert;
 }
 
 export interface AddTaskListSuccess {
@@ -117,7 +113,9 @@ export const TaskListActionCreators = {
     return {
       type: TaskListActionTypes.ADD_TASK_LIST,
       payload: {
-        title
+        requestBody: {
+          title
+        }
       }
     };
   },

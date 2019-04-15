@@ -1,4 +1,4 @@
-import { empty, from, forkJoin, timer, of } from 'rxjs';
+import { empty, from, forkJoin, timer } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -21,18 +21,19 @@ import {
   UpdateTaskSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
-import { taskApi } from '../../api';
+import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
+import merge from 'lodash/merge';
 
-const deleteTaskSuccess$ = (tasklist: string, task: string) =>
-  from(taskApi.tasks.delete({ tasklist, task })).pipe(
+const deleteTaskSuccess$ = (tasklist: string, task?: string) =>
+  from(tasksAPI.delete({ tasklist, task })).pipe(
     map<any, TaskActions>(() => ({
       type: TaskActionTypes.DELETE_TASK_SUCCESS
     }))
   );
 
 const updateTaskSuccess$ = (params: tasks_v1.Params$Resource$Tasks$Update) =>
-  from(taskApi.tasks.update(params).then(({ data }) => data)).pipe(
+  from(tasksAPI.patch(params).then(({ data }) => data)).pipe(
     map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
       type: TaskActionTypes.UPDATE_TASK_SUCCESS,
       payload
@@ -51,22 +52,16 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
         return empty();
       }
 
+      // FIXME: remove
       const tasklist = state$.value.taskList.currentTaskListId;
 
       switch (action.type) {
         case TaskActionTypes.GET_ALL_TASKS:
           nprogress.inc(0.4);
 
-          return from(
-            taskApi.tasks
-              .list({
-                ...action.payload,
-                showCompleted: true,
-                showHidden: true
-              })
-              .then(({ data }) => data)
-          ).pipe(
+          return from(tasksAPI.list(action.payload)).pipe(
             tap(() => nprogress.done()),
+            map(({ data }) => data),
             map<tasks_v1.Schema$Tasks, TaskActions>(({ items }) => ({
               type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
               payload: items || []
@@ -75,14 +70,13 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.ADD_TASK:
-          return from(
-            taskApi.tasks.insert(action.payload.params).then(({ data }) => data)
-          ).pipe(
+          return from(tasksAPI.insert(action.payload.params)).pipe(
+            map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => ({
               type: TaskActionTypes.ADD_TASK_SUCCESS,
               payload: {
-                uuid: action.payload.uuid,
-                task
+                task,
+                uuid: action.payload.uuid
               }
             }))
           );
@@ -108,14 +102,12 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
 
           return deleteTaskSuccess$(
             action.payload.tasklist,
-            action.payload.task!
+            action.payload.task
           );
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
           return forkJoin(
-            ...action.payload.map(task =>
-              from(taskApi.tasks.delete({ tasklist, task: task.id }))
-            )
+            ...action.payload.map(task => deleteTaskSuccess$(tasklist, task.id))
           ).pipe(
             mapTo<any, TaskActions>({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
@@ -149,7 +141,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
             return empty();
           }
 
-          if (!action.payload.task) {
+          if (action.payload.task === undefined) {
             return action$.pipe(
               ofType<TaskActions, AddTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
@@ -162,11 +154,10 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
                 return updateTaskSuccess$({
                   tasklist: action.payload.tasklist,
                   task: success.payload.task.id,
-                  requestBody: {
-                    ...success.payload.task,
-                    ...action.payload.requestBody,
-                    id: success.payload.task.id
-                  }
+                  requestBody: merge(
+                    success.payload.task,
+                    action.payload.requestBody
+                  )
                 });
               })
             );

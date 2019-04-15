@@ -1,9 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { tasks_v1 } from 'googleapis';
-import { SortEnd } from 'react-sortable-hoc';
-import { TodoTask } from '../Task';
 import { TodoTasksList } from './TodoTasksList';
 import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from '../NewTask';
@@ -33,21 +30,21 @@ function TaskListContentComponent({
   updateTask
 }: TaskState & typeof TaskActionCreators & Props) {
   const addTaskCallback = useCallback(
-    (requestBody?: tasks_v1.Schema$Task) => {
+    (task?: Schema$Task) => {
       return addTask({
         tasklist: taskListId,
-        requestBody
+        requestBody: task
       });
     },
     [addTask, taskListId]
   );
 
   const deleteTaskCallback = useCallback(
-    (requestBody: Schema$Task) => {
+    (task: Schema$Task) => {
       return deleteTask({
         tasklist: taskListId,
-        task: requestBody.id,
-        requestBody
+        task: task.id,
+        requestBody: task
       });
     },
     [deleteTask, taskListId]
@@ -88,10 +85,7 @@ function TaskListContentComponent({
   );
 
   useEffect(() => {
-    taskListId &&
-      getAllTasks({
-        tasklist: taskListId
-      });
+    taskListId && getAllTasks(taskListId);
   }, [getAllTasks, taskListId]);
 
   return (

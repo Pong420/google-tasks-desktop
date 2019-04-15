@@ -1,5 +1,5 @@
 import { empty, from, of, concat } from 'rxjs';
-import { mergeMap, switchMap, map, mapTo, flatMap, tap } from 'rxjs/operators';
+import { mergeMap, switchMap, map, mapTo } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
 import {
@@ -15,10 +15,8 @@ import {
 } from '../actions/taskList';
 import { RootState } from '../reducers';
 import { EpicDependencies } from '../epicDependencies';
-import { taskApi } from '../../api';
+import { taskListAPI } from '../../api';
 import { PATHS } from '../../constants';
-
-// TODO: dependenics for api
 
 type CominbinedActions = TaskListActions | RouterAction;
 
@@ -47,7 +45,8 @@ const apiEpic: Epic<
         case TaskListActionTypes.GET_ALL_TASK_LIST:
           nprogress.start();
 
-          return from(taskApi.tasklists.list().then(({ data }) => data)).pipe(
+          return from(taskListAPI.list()).pipe(
+            map(({ data }) => data),
             map<tasks_v1.Schema$TaskLists, TaskListActions>(({ items }) => ({
               type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
               payload: items!.map(taskList => taskList)
@@ -57,16 +56,9 @@ const apiEpic: Epic<
         case TaskListActionTypes.ADD_TASK_LIST:
           nprogress.inc(0.25);
 
-          return from(
-            taskApi.tasklists
-              .insert({
-                requestBody: {
-                  title: action.payload.title
-                }
-              })
-              .then(({ data }) => data)
-          ).pipe(
-            flatMap(payload =>
+          return from(taskListAPI.insert(action.payload)).pipe(
+            map(({ data }) => data),
+            mergeMap(payload =>
               concat(
                 of<AddTaskListSuccess>({
                   type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
@@ -84,7 +76,7 @@ const apiEpic: Epic<
             push(PATHS.TASKLIST, {
               taskListId: state$.value.taskList.taskLists[0].id
             }),
-            from(taskApi.tasklists.delete({ tasklist: action.payload })).pipe(
+            from(taskListAPI.delete({ tasklist: action.payload })).pipe(
               mapTo<any, TaskListActions>({
                 type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS
               })
@@ -92,9 +84,8 @@ const apiEpic: Epic<
           );
 
         case TaskListActionTypes.UPDATE_TASK_LIST:
-          return from(
-            taskApi.tasklists.patch(action.payload).then(({ data }) => data)
-          ).pipe(
+          return from(taskListAPI.patch(action.payload)).pipe(
+            map(({ data }) => data),
             map<tasks_v1.Schema$TaskList, TaskListActions>(payload => ({
               type: TaskListActionTypes.UPDATE_TASK_LIST_SUCCESS,
               payload

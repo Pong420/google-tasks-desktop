@@ -116,10 +116,14 @@ export type TaskActions =
   | SortTasks;
 
 export const TaskActionCreators = {
-  getAllTasks(payload: tasks_v1.Params$Resource$Tasks$List): GetAllTasks {
+  getAllTasks(tasklist: string): GetAllTasks {
     return {
       type: TaskActionTypes.GET_ALL_TASKS,
-      payload
+      payload: {
+        tasklist,
+        showCompleted: true,
+        showHidden: true
+      }
     };
   },
   addTask(params: tasks_v1.Params$Resource$Tasks$Insert): AddTask {

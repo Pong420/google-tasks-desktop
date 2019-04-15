@@ -1,5 +1,6 @@
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { Schema$TaskList } from '../../typings';
+import merge from 'lodash/merge';
 
 export interface TaskListState {
   taskLists: Schema$TaskList[];
@@ -67,23 +68,17 @@ export default function(
       };
 
     case TaskListActionTypes.UPDATE_TASK_LIST:
-      let updated = state.currentTaskList;
-      if (updated === action.payload.tasklist) {
-        updated = {
-          ...updated,
-          ...action.payload.requestBody
-        };
+      let current = state.currentTaskList;
+      if (current === action.payload.tasklist) {
+        current = merge(current, action.payload.requestBody);
       }
 
       return {
         ...state,
-        currentTaskList: updated,
+        currentTaskList: current,
         taskLists: state.taskLists.map(taskList =>
           taskList.id === action.payload.tasklist
-            ? {
-                ...taskList,
-                ...action.payload.requestBody
-              }
+            ? merge(taskList, action.payload.requestBody)
             : taskList
         )
       };
