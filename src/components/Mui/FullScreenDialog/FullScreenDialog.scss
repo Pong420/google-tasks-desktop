@@ -6,7 +6,9 @@
 }
 
 .fullscreen-dialog-content {
+  @include sq-dimen(100%);
   padding: 15px;
+  overflow: auto;
 
   > * {
     margin-bottom: 8px;

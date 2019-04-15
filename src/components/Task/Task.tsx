@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { InputProps } from '@material-ui/core/Input';
 import { ToggleCompleted } from './ToggleCompleted';
-import { TaskMenu } from './TaskMenu';
+import { TaskContextMenu } from './TaskContextMenu';
 import { useMuiMenu, Input } from '../Mui';
 import { useAdvancedCallback } from '../../utils/useAdvancedCallback';
 import { Schema$Task } from '../../typings';
@@ -90,7 +90,7 @@ export function Task({
         onClick={focus}
         {...inputProps}
       />
-      <TaskMenu
+      <TaskContextMenu
         onClose={onClose}
         anchorPosition={anchorPosition}
         onDelete={deleteTaskCallback}

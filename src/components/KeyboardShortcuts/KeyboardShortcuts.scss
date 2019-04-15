@@ -1,0 +1,36 @@
+.keyboard-shortcuts {
+  color: #202124;
+
+  h4 {
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .keyboard-shortcuts-section {
+    margin-top: 20px;
+
+    .keyboard-shortcuts-type {
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .keyboard-shortcuts-row {
+      @include flex(center, space-between);
+      @include padding-y(12px);
+
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .keyboard-shortcuts-label {
+      @include dimen(100%);
+    }
+
+    .keyboard-shortcuts-key {
+      min-width: 75x;
+      text-align: right;
+      padding-left: 10px;
+    }
+  }
+}

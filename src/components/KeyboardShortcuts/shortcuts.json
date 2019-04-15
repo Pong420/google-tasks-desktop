@@ -1,0 +1,22 @@
+{
+  "Actions": [
+    { "label": "Enter details view", "key": "Shift + Enter" },
+    { "label": "Mark complete/incomplete", "key": "Space" },
+    { "label": "Enter inline edit mode", "key": "Enter" },
+    { "label": "Delete", "key": "Delete" },
+    { "label": "Move task up/down", "key": "⌥Up/Down" },
+    { "label": "Indent", "key": "⌘]" },
+    { "label": "Unindent", "key": "⌘[" }
+  ],
+  "Inline edit actions": [
+    { "label": "Exit edit mode", "key": "Esc" },
+    { "label": "Add a task", "key": "Enter" },
+    { "label": "Add a subtask", "key": "⌘Enter" }
+  ],
+  "Details view": [{ "label": "Exit details view", "key": "Esc" }],
+  "Application": [
+    { "label": "Undo (if possible)", "key": "⌘z" },
+    { "label": "Open shortcuts", "key": "⌘/" },
+    { "label": "Jump to main panel", "key": "⌘⌥," }
+  ]
+}

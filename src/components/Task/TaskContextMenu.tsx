@@ -8,7 +8,7 @@ interface Props {
   onDelete(): void;
 }
 
-export function TaskMenu({ anchorPosition, onClose, onDelete }: Props) {
+export function TaskContextMenu({ anchorPosition, onClose, onDelete }: Props) {
   const MenuItem = useMenuItem(onClose);
 
   return (
@@ -19,10 +19,10 @@ export function TaskMenu({ anchorPosition, onClose, onDelete }: Props) {
       anchorReference="anchorPosition"
     >
       <MenuItem text="Delete" onClick={onDelete} />
-      <MenuItem text="Add date/time" />
-      <MenuItem text="Add a subtask" />
-      <MenuItem text="Indent" />
-      <MenuItem text="Move to another list" />
+      <MenuItem text="Add date/time" disabled />
+      <MenuItem text="Add a subtask" disabled />
+      <MenuItem text="Indent" disabled />
+      <MenuItem text="Move to another list" disabled />
     </Menu>
   );
 }

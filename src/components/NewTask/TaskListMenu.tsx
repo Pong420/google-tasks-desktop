@@ -2,13 +2,14 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { KeyboardShortcuts } from '../KeyboardShortcuts';
+import { useMenuItem, Menu, Modal, FormModal } from '../Mui';
+import { useBoolean, useAdvancedCallback } from '../../utils';
 import {
   TaskListActionCreators,
   TaskActionCreators,
   RootState
 } from '../../store';
-import { useMenuItem, Menu, Modal, FormModal } from '../Mui';
-import { useBoolean, useAdvancedCallback } from '../../utils';
 import Divider from '@material-ui/core/Divider';
 import pkg from '../../../package.json';
 
@@ -64,11 +65,12 @@ function TaskListMenuComponent({
   const MenuItem = useMenuItem(onClose);
 
   const [
-    DeleteCompletedTaskModalOpend,
-    DeleteCompletedTaskModal
+    deleteCompletedTaskModalOpend,
+    deleteCompletedTaskModal
   ] = useBoolean();
-  const [DeleteTaskListModalOpend, DeleteTaskListModal] = useBoolean();
-  const [RenameTaskModalOpend, RenameTaskModal] = useBoolean();
+  const [deleteTaskListModalOpend, deleteTaskListModal] = useBoolean();
+  const [renameTaskModalOpend, renameTaskModal] = useBoolean();
+  const [keyboardShortcutsOpened, keyboardShortcuts] = useBoolean();
 
   const totalTask = useNotZero(tasks.length);
   const numOfCompletedTask = useNotZero(completedTasks.length);
@@ -80,7 +82,7 @@ function TaskListMenuComponent({
 
   const onDeleteTaskListCallback = useAdvancedCallback(
     showModal =>
-      showModal ? DeleteTaskListModal.on() : delteTaskListCallback(),
+      showModal ? deleteTaskListModal.on() : delteTaskListCallback(),
     [!!tasks.length]
   );
 
@@ -108,10 +110,10 @@ function TaskListMenuComponent({
         onClose={onClose}
       >
         <div className="task-list-menu-title">Sort by</div>
-        <MenuItem text="My order" selected />
-        <MenuItem text="Date" />
+        <MenuItem text="My order" selected disabled />
+        <MenuItem text="Date" disabled />
         <Divider />
-        <MenuItem text="Rename list" onClick={RenameTaskModal.on} />
+        <MenuItem text="Rename list" onClick={renameTaskModal.on} />
         <MenuItem
           text="Delete list"
           disabled={!taskLists[0] || taskLists[0].id === taskListId}
@@ -120,20 +122,25 @@ function TaskListMenuComponent({
         <MenuItem
           text="Delete all completed tasks"
           disabled={!completedTasks.length}
-          onClick={DeleteCompletedTaskModal.on}
+          onClick={deleteCompletedTaskModal.on}
         />
         <Divider />
-        <MenuItem text="Keyboard shortcuts" />
+        <MenuItem
+          text="Keyboard shortcuts"
+          onClick={keyboardShortcuts.on}
+          disabled
+        />
         <MenuItem
           text="Github"
           onClick={() => window.open(pkg.repository.url, 'blank')}
         />
+        <MenuItem text="Logout" />
       </Menu>
       <Modal
         title="Delete this list?"
         confirmLabel="Delete"
-        open={DeleteTaskListModalOpend}
-        handleClose={DeleteTaskListModal.off}
+        open={deleteTaskListModalOpend}
+        handleClose={deleteTaskListModal.off}
         handleConfirm={delteTaskListCallback}
       >
         Deleting this list will also delete {totalTask} task.
@@ -141,8 +148,8 @@ function TaskListMenuComponent({
       <Modal
         title="Delete all completed tasks?"
         confirmLabel="Delete"
-        open={DeleteCompletedTaskModalOpend}
-        handleClose={DeleteCompletedTaskModal.off}
+        open={deleteCompletedTaskModalOpend}
+        handleClose={deleteCompletedTaskModal.off}
         handleConfirm={deleteCompletedTasksCallback}
       >
         {numOfCompletedTask} completed task will be permanently removed.
@@ -150,9 +157,13 @@ function TaskListMenuComponent({
       <FormModal
         title="Rename list"
         defaultValue={currentTaskList ? currentTaskList.title : ''}
-        open={RenameTaskModalOpend}
-        handleClose={RenameTaskModal.off}
+        open={renameTaskModalOpend}
+        handleClose={renameTaskModal.off}
         handleConfirm={renameTaskListCallback}
+      />
+      <KeyboardShortcuts
+        open={keyboardShortcutsOpened}
+        handleClose={keyboardShortcuts.off}
       />
     </>
   );
