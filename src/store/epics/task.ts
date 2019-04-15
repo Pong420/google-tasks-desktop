@@ -8,10 +8,16 @@ import {
   mapTo,
   tap,
   debounce,
-  debounceTime
+  debounceTime,
+  pluck,
+  distinctUntilChanged,
+  exhaustMap,
+  concatMap,
+  switchMap
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
+import isEqual from 'lodash/fp/isEqual';
 import {
   TaskActions,
   TaskActionTypes,
@@ -124,8 +130,6 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
     })
   );
 
-let temp = '';
-
 // FIXME:
 const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
@@ -133,36 +137,40 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
 ) => {
   return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
-    debounce(action => {
-      let time = 0;
-      if (!temp || action.payload.requestBody.uuid === temp) {
-        time = 1000;
-      }
-
-      temp = action.payload.requestBody.uuid;
-
-      return timer(time);
-    }),
-    mergeMap(action => {
-      if (!action.payload.task) {
-        return action$.pipe(
-          ofType<TaskActions, AddTaskSuccess>(TaskActionTypes.ADD_TASK_SUCCESS),
-          mergeMap(success =>
-            updateTaskSuccess$({
-              tasklist: action.payload.tasklist,
-              task: success.payload.task.id,
+    exhaustMap(action => {
+      return state$.pipe(
+        map(({ task }) =>
+          task.tasks.find(task => task.uuid === action.payload.requestBody.uuid)
+        ),
+        map(task => {
+          if (task) {
+            return {
+              id: task.id,
+              title: task.title,
+              status: task.status,
+              uuid: task.uuid
+            };
+          }
+          return null;
+        }),
+        debounceTime(1000),
+        distinctUntilChanged(isEqual),
+        mergeMap(data => {
+          if (data && data.id) {
+            return updateTaskSuccess$({
+              ...action.payload,
+              task: data.id,
               requestBody: {
-                ...success.payload.task,
-                ...action.payload.requestBody,
-                id: success.payload.task.id
+                ...data
               }
-            })
-          ),
-          take(1)
-        );
-      }
+            });
+          }
 
-      return updateTaskSuccess$(action.payload);
+          return empty();
+        })
+      );
+
+      // return updateTaskSuccess$(action.payload);
     })
   );
 };
