@@ -43,10 +43,11 @@ function TaskListContentComponent({
   );
 
   const deleteTaskCallback = useCallback(
-    (task: Schema$Task) => {
+    (requestBody: Schema$Task) => {
       return deleteTask({
-        taskListId,
-        ...task
+        tasklist: taskListId,
+        task: requestBody.id,
+        requestBody
       });
     },
     [deleteTask, taskListId]

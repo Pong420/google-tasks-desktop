@@ -1,23 +1,18 @@
-import { empty, from, forkJoin, timer } from 'rxjs';
+import { empty, from, forkJoin, timer, of } from 'rxjs';
 import {
   mergeMap,
   map,
   takeUntil,
   filter,
-  take,
   mapTo,
   tap,
   debounce,
-  debounceTime,
-  pluck,
-  distinctUntilChanged,
-  exhaustMap,
-  concatMap,
+  groupBy,
+  takeWhile,
   switchMap
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
-import isEqual from 'lodash/fp/isEqual';
 import {
   TaskActions,
   TaskActionTypes,
@@ -93,24 +88,27 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.DELETE_TASK:
-          if (!action.payload.id) {
+          if (!action.payload.task) {
             return action$.pipe(
               ofType<TaskActions, AddTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
+              takeWhile(
+                success =>
+                  success.payload.uuid === action.payload.requestBody.uuid
+              ),
               mergeMap(success =>
                 deleteTaskSuccess$(
-                  action.payload.taskListId,
+                  action.payload.tasklist,
                   success.payload.task.id!
                 )
-              ),
-              take(1)
+              )
             );
           }
 
           return deleteTaskSuccess$(
-            action.payload.taskListId,
-            action.payload.id!
+            action.payload.tasklist,
+            action.payload.task!
           );
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
@@ -137,40 +135,46 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
 ) => {
   return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
-    exhaustMap(action => {
-      return state$.pipe(
-        map(({ task }) =>
-          task.tasks.find(task => task.uuid === action.payload.requestBody.uuid)
-        ),
-        map(task => {
-          if (task) {
-            return {
-              id: task.id,
-              title: task.title,
-              status: task.status,
-              uuid: task.uuid
-            };
-          }
-          return null;
-        }),
-        debounceTime(1000),
-        distinctUntilChanged(isEqual),
-        mergeMap(data => {
-          if (data && data.id) {
-            return updateTaskSuccess$({
-              ...action.payload,
-              task: data.id,
-              requestBody: {
-                ...data
-              }
-            });
+    groupBy(action => action.payload.requestBody.uuid),
+    mergeMap(group$ => {
+      return group$.pipe(
+        debounce(action => timer(action.payload.task ? 1000 : 0)),
+        switchMap(action => {
+          // FIXME: make this better
+          if (
+            !state$.value.task.tasks.find(
+              task => task.uuid === action.payload.requestBody.uuid
+            )
+          ) {
+            return empty();
           }
 
-          return empty();
+          if (!action.payload.task) {
+            return action$.pipe(
+              ofType<TaskActions, AddTaskSuccess>(
+                TaskActionTypes.ADD_TASK_SUCCESS
+              ),
+              takeWhile(
+                success =>
+                  success.payload.uuid === action.payload.requestBody.uuid
+              ),
+              mergeMap(success => {
+                return updateTaskSuccess$({
+                  tasklist: action.payload.tasklist,
+                  task: success.payload.task.id,
+                  requestBody: {
+                    ...success.payload.task,
+                    ...action.payload.requestBody,
+                    id: success.payload.task.id
+                  }
+                });
+              })
+            );
+          }
+
+          return updateTaskSuccess$(action.payload);
         })
       );
-
-      // return updateTaskSuccess$(action.payload);
     })
   );
 };

@@ -29,12 +29,13 @@ interface Payload$AddTaskSuccess {
   task: tasks_v1.Schema$Task;
 }
 
-interface Payload$DeleteTask extends Schema$Task {
-  taskListId: string;
+interface Payload$DeleteTask extends tasks_v1.Params$Resource$Tasks$Delete {
+  tasklist: string;
+  requestBody: Schema$Task;
 }
 
-interface Params$Resource$Tasks$Update
-  extends tasks_v1.Params$Resource$Tasks$Update {
+interface Payload$UpdateTask extends tasks_v1.Params$Resource$Tasks$Update {
+  tasklist: string;
   requestBody: Schema$Task;
 }
 
@@ -60,7 +61,7 @@ export interface AddTaskSuccess {
 
 export interface UpdateTask {
   type: TaskActionTypes.UPDATE_TASK;
-  payload: Params$Resource$Tasks$Update;
+  payload: Payload$UpdateTask;
 }
 
 export interface UpdateTaskSuccess {
@@ -136,7 +137,7 @@ export const TaskActionCreators = {
       payload
     };
   },
-  updateTask(payload: Params$Resource$Tasks$Update): UpdateTask {
+  updateTask(payload: Payload$UpdateTask): UpdateTask {
     return {
       type: TaskActionTypes.UPDATE_TASK,
       payload

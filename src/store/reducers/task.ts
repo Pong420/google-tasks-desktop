@@ -2,6 +2,7 @@ import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
+import merge from 'lodash/merge';
 
 export interface TaskState {
   tasks: Schema$Task[];
@@ -49,11 +50,9 @@ export default function(state = initialState, action: TaskActions): TaskState {
         ...state,
         ...classify(state.tasks, task =>
           task.uuid === action.payload.uuid
-            ? {
-                ...action.payload.task,
-                ...task,
+            ? merge(action.payload.task, task, {
                 id: action.payload.task.id
-              }
+              })
             : task
         )
       };
@@ -62,7 +61,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task => {
-          if (task.uuid === action.payload.uuid) {
+          if (task.uuid === action.payload.requestBody.uuid) {
             return null;
           }
 
@@ -75,10 +74,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         ...state,
         ...classify(state.tasks, task =>
           task.uuid === action.payload.requestBody.uuid
-            ? {
-                ...task,
-                ...action.payload.requestBody
-              }
+            ? merge(task, action.payload.requestBody)
             : task
         )
       };
