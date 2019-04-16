@@ -9,6 +9,7 @@ import { useBoolean, useAdvancedCallback } from '../../utils';
 import {
   TaskListActionCreators,
   TaskActionCreators,
+  AuthActionCreators,
   RootState
 } from '../../store';
 import Divider from '@material-ui/core/Divider';
@@ -30,7 +31,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
       ...TaskListActionCreators,
-      ...TaskActionCreators
+      ...TaskActionCreators,
+      ...AuthActionCreators
     },
     dispatch
   );
@@ -55,7 +57,8 @@ function TaskListMenuComponent({
   currentTaskListId,
   delteTaskList,
   deleteCompletedTasks,
-  updateTaskList
+  updateTaskList,
+  logout
 }: Props &
   RouteComponentProps<MatchParams> &
   ReturnType<typeof mapStateToProps> &
@@ -132,7 +135,7 @@ function TaskListMenuComponent({
           disabled
         />
         <MenuItem text="Preferences" onClick={preferences.on} />
-        <MenuItem text="Logout" />
+        <MenuItem text="Logout" onClick={logout} />
       </Menu>
       <Modal
         title="Delete this list?"

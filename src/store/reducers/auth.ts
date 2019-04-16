@@ -39,6 +39,7 @@ export default function(state = initialState, action: AuthActions): AuthsState {
     case AuthActionTypes.LOGOUT:
       return {
         ...state,
+        autoLogin: false,
         loggedIn: false
       };
 
