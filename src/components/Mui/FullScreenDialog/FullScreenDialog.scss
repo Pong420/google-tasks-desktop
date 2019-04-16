@@ -10,7 +10,26 @@
   padding: 15px;
   overflow: auto;
 
-  > * {
-    margin-bottom: 8px;
+  h4 {
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .fullscreen-dialog-section {
+    margin-top: 20px;
+
+    .fullscreen-dialog-section-title {
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .fullscreen-dialog-row {
+      @include flex(center, space-between);
+      @include padding-y(12px);
+
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
   }
 }

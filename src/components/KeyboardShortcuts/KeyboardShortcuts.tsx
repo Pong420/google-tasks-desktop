@@ -16,17 +16,17 @@ export function KeyboardShortcuts({ ...props }: Props) {
       <div className="keyboard-shortcuts-content">
         {Object.entries(shortcuts).map(([type, rows]) => {
           return (
-            <div className="keyboard-shortcuts-section" key={type}>
-              <div className="keyboard-shortcuts-type">{type}</div>
+            <FullScreenDialog.Section key={type}>
+              <FullScreenDialog.Title children={type} />
               {rows.map(({ label, key }, index) => {
                 return (
-                  <div className="keyboard-shortcuts-row" key={index}>
+                  <FullScreenDialog.Row key={index}>
                     <div className="keyboard-shortcuts-label">{label}</div>
-                    <div className="keyboard-shortcuts-keys">{key}</div>
-                  </div>
+                    <div className="keyboard-shortcuts-key">{key}</div>
+                  </FullScreenDialog.Row>
                 );
               })}
-            </div>
+            </FullScreenDialog.Section>
           );
         })}
       </div>

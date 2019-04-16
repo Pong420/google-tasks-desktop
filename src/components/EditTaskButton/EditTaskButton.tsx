@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/EditOutlined';
 import {
+  DeleteIcon,
   Dropdown,
   FullScreenDialog,
   Input,
@@ -13,23 +15,40 @@ import { Schema$Task, Schema$TaskList } from '../../typings';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
-import { Button } from '@material-ui/core';
 
 interface Props {
   task: Schema$Task;
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList;
-  onDelete(): void;
+  deleteTask(task: Schema$Task): void;
+  updateTask?(task: Schema$Task): void;
 }
 
+// FIXME:
 export function EditTaskButton({
-  onDelete,
+  task: initialTask,
+  deleteTask,
+  updateTask,
   taskLists,
   currentTaskList
 }: Props) {
   const [open, { on, off }] = useBoolean();
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const MenuItem = useMenuItem(onClose);
+
+  const [task, setTask] = useState(initialTask);
+  const onExitCallback = useCallback(() => {
+    updateTask && updateTask(task);
+  }, [task, updateTask]);
+  const deleteTaskCallback = useCallback(() => {
+    deleteTask(task);
+    off();
+  }, [deleteTask, off, task]);
+
+  // FIXME:
+  useEffect(() => {
+    setTask(initialTask);
+  }, [initialTask]);
 
   return (
     <>
@@ -40,16 +59,29 @@ export function EditTaskButton({
         className="edit-task"
         open={open}
         handleClose={off}
-        onDelete={onDelete}
+        onExit={onExitCallback}
+        headerComponents={
+          <IconButton onClick={deleteTaskCallback}>
+            <DeleteIcon />
+          </IconButton>
+        }
       >
-        <Input className="filled" placeholder="Enter title" autoFocus />
+        <Input
+          autoFocus
+          className="filled edit-task-title-input"
+          placeholder="Enter title"
+          value={task.title}
+          onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
+          readOnly
+        />
         <Input
           className="filled"
-          placeholder="Add details"
+          placeholder="Add details ( Not supported )"
           multiline
           rows={3}
+          readOnly
         />
-        <div className="row row-task-list">
+        <div className="edit-task-row row-task-list">
           <FormatListBulletedIcon />
           <Dropdown
             label={currentTaskList ? currentTaskList.title! : ''}
@@ -64,7 +96,8 @@ export function EditTaskButton({
             }}
             anchorReference="anchorPosition"
             buttonProps={{
-              fullWidth: true
+              fullWidth: true,
+              disabled: true
             }}
             PaperProps={{
               style: {
@@ -86,13 +119,13 @@ export function EditTaskButton({
             ))}
           </Dropdown>
         </div>
-        <div className="row row-date">
+        <div className="edit-task-row row-date">
           <EventAvailableIcon />
-          <Button>Add date/time</Button>
+          <Button disabled>Add date/time</Button>
         </div>
-        <div className="row row-subtask">
+        <div className="edit-task-row row-subtask">
           <SubdirectoryIcon />
-          <Button>Add Subtasks</Button>
+          <Button disabled>Add Subtasks</Button>
         </div>
       </FullScreenDialog>
     </>

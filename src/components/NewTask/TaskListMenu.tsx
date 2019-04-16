@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { KeyboardShortcuts } from '../KeyboardShortcuts';
+import { Preferences } from '../Preferences';
 import { useMenuItem, Menu, Modal, FormModal } from '../Mui';
 import { useBoolean, useAdvancedCallback } from '../../utils';
 import {
@@ -11,7 +12,6 @@ import {
   RootState
 } from '../../store';
 import Divider from '@material-ui/core/Divider';
-import pkg from '../../../package.json';
 
 interface Props {
   anchorEl: HTMLElement | null;
@@ -71,6 +71,7 @@ function TaskListMenuComponent({
   const [deleteTaskListModalOpend, deleteTaskListModal] = useBoolean();
   const [renameTaskModalOpend, renameTaskModal] = useBoolean();
   const [keyboardShortcutsOpened, keyboardShortcuts] = useBoolean();
+  const [preferencesOpened, preferences] = useBoolean();
 
   const totalTask = useNotZero(tasks.length);
   const numOfCompletedTask = useNotZero(completedTasks.length);
@@ -130,10 +131,7 @@ function TaskListMenuComponent({
           onClick={keyboardShortcuts.on}
           disabled
         />
-        <MenuItem
-          text="Github"
-          onClick={() => window.open(pkg.repository.url, 'blank')}
-        />
+        <MenuItem text="Preferences" onClick={preferences.on} />
         <MenuItem text="Logout" />
       </Menu>
       <Modal
@@ -165,6 +163,7 @@ function TaskListMenuComponent({
         open={keyboardShortcutsOpened}
         handleClose={keyboardShortcuts.off}
       />
+      <Preferences open={preferencesOpened} handleClose={preferences.off} />
     </>
   );
 }

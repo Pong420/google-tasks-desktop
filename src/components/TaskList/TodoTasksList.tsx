@@ -13,7 +13,7 @@ interface Props {
   todoTasks: Schema$Task[];
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList;
-  onChange(task: Schema$Task): void;
+  updateTask(task: Schema$Task): void;
   deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
 }

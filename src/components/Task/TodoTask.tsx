@@ -36,7 +36,8 @@ export function TodoTask({
           task={task}
           taskLists={taskLists}
           currentTaskList={currentTaskList}
-          onDelete={() => {}}
+          deleteTask={props.deleteTask}
+          updateTask={props.updateTask}
         />
       }
       {...props}

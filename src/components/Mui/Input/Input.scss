@@ -1,11 +1,10 @@
-.mui-input-base {
-  font-size: inherit !important;
-  min-height: 40px;
+.mui-input-base.mui-input-base {
+  font-size: inherit;
+  min-height: 2.85em;
   padding-right: 10px;
 
   input,
   textarea {
-    font-size: inherit;
     outline: none;
     padding: 0;
 

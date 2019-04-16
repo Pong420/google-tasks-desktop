@@ -69,7 +69,7 @@ function TaskListContentComponent({
     [deleteTaskCallback, taskListId, updateTask]
   );
 
-  const onChangeCallback = useCallback(
+  const updateTaskCallback = useCallback(
     (task: Schema$Task) => {
       return updateTask({
         tasklist: taskListId,
@@ -97,7 +97,7 @@ function TaskListContentComponent({
             todoTasks={todoTasks}
             taskLists={taskLists}
             currentTaskList={currentTaskList}
-            onChange={onChangeCallback}
+            updateTask={updateTaskCallback}
             deleteTask={deleteTaskCallback}
             toggleCompleted={toggleCompletedCllaback}
             onSortEnd={sortTasks}

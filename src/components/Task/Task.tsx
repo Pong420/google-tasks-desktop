@@ -13,22 +13,21 @@ import { TaskContextMenu } from './TaskContextMenu';
 import { useMuiMenu, Input } from '../Mui';
 import { useAdvancedCallback } from '../../utils/useAdvancedCallback';
 import { Schema$Task } from '../../typings';
-import debounce from 'lodash/debounce';
 
 export interface TaskProps {
   className?: string;
   task: Schema$Task;
-  onChange?(task: Schema$Task): void;
   deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
   endAdornment: ReactNode;
   inputProps?: InputProps;
+  updateTask?(task: Schema$Task): void;
 }
 
 export function Task({
   className = '',
   task: initialTask,
-  onChange,
+  updateTask,
   deleteTask,
   toggleCompleted,
   endAdornment,
@@ -47,19 +46,14 @@ export function Task({
     []
   );
 
-  // FIXME: remove debouce
-  const debouncedOnChangeCallback = useCallback(
-    onChange ? debounce(onChange, 0) : () => {},
-    [onChange]
-  );
   const onChangeCallback = useCallback(
     (evt: ChangeEvent<HTMLTextAreaElement>) => {
       const title = evt.currentTarget.value;
       const updatedTask = { ...task, title };
       setTask(updatedTask);
-      debouncedOnChangeCallback(updatedTask);
+      updateTask && updateTask(updatedTask);
     },
-    [debouncedOnChangeCallback, task]
+    [task, updateTask]
   );
 
   // FIXME:

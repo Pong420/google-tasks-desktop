@@ -1,16 +1,19 @@
 import React, { ReactNode } from 'react';
-import Dialog from '@material-ui/core/Dialog';
+import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
-import { DeleteIcon } from '../DeleteIcon';
 
-export interface FullScreenDialogProps {
+export interface FullScreenDialogProps extends DialogProps {
   className?: string;
+  children?: ReactNode;
   open: boolean;
   handleClose(): void;
-  onDelete?(): void;
+  headerComponents?: ReactNode;
+}
+
+interface ContainerProps {
   children?: ReactNode;
 }
 
@@ -23,7 +26,8 @@ export function FullScreenDialog({
   children,
   open,
   handleClose,
-  onDelete
+  headerComponents,
+  ...props
 }: FullScreenDialogProps) {
   return (
     <Dialog
@@ -37,13 +41,10 @@ export function FullScreenDialog({
       BackdropProps={{
         open: false
       }}
+      {...props}
     >
       <div className="fullscreen-diaglog-header">
-        {onDelete && (
-          <IconButton onClick={onDelete}>
-            <DeleteIcon />
-          </IconButton>
-        )}
+        {headerComponents}
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
@@ -52,5 +53,17 @@ export function FullScreenDialog({
     </Dialog>
   );
 }
+
+FullScreenDialog.Section = ({ children }: ContainerProps) => {
+  return <div className="fullscreen-dialog-section">{children}</div>;
+};
+
+FullScreenDialog.Title = ({ children }: ContainerProps) => {
+  return <div className="fullscreen-dialog-section-title">{children}</div>;
+};
+
+FullScreenDialog.Row = ({ children }: ContainerProps) => {
+  return <div className="fullscreen-dialog-row">{children}</div>;
+};
 
 export default FullScreenDialog;
