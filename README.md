@@ -1,14 +1,38 @@
 ## Google Tasks Desktop (WIP)
 
-google task desktop client, working in prorgress
+:warning: Project still working in prorgress. Don't use it if you have important data in google tasks
 
-### Installation
+<div>
+  <img src="./screenshot/1.png" width="320px">
+  <img src="./screenshot/2.png" width="320px">
+</div>
 
-yarn is requeired, otherwise you should replace 'yarn' in package.json
+### Project Setup
 
-```
-yarn install
-```
+- yarn is requeired, otherwise you should replace `yarn` in `package.json` and `scripts/electron-wait-react.js`
+
+- Enable [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
+
+- Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
+
+- In Google API Console [Credentials](https://console.developers.google.com/apis/credentials) section.
+  Create credentials => OAuth client ID => Other => Create. After, you should get a json file like this.
+
+  ```json
+  {
+    "installed": {
+      "client_id": "...",
+      "project_id": "...",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://oauth2.googleapis.com/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_secret": "...",
+      "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"]
+    }
+  }
+  ```
+
+  Then rename the json file to `oauth2.keys.json` and put it into `src/constants`
 
 ### Development
 

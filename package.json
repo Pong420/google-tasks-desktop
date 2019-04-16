@@ -1,5 +1,5 @@
 {
-  "name": "google-task-deskop",
+  "name": "google-task-desktop",
   "version": "1.0.0",
   "scripts": {
     "dev": "nf start",
@@ -114,6 +114,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "yarn tslint",
+      "prettier --ignore-path .eslintignore --write",
       "git add"
     ],
     "{*.json,.{babelrc,eslintrc,prettierrc}}": [
@@ -148,6 +149,7 @@
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
     "node-sass": "^4.11.0",
+    "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
     "tslint": "^5.15.0",
     "tslint-config-prettier": "^1.18.0",
