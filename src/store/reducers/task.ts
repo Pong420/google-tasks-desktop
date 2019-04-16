@@ -25,9 +25,16 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
+      const sortedTasks = action.payload.sort((a, b) => {
+        if (a.position && b.position) {
+          return a.position > b.position ? 1 : -1;
+        }
+        return 0;
+      });
+
       return {
         ...state,
-        ...classify(action.payload as Schema$Task[], task => ({
+        ...classify(sortedTasks as Schema$Task[], task => ({
           ...task,
           uuid: uuid.v4()
         }))
@@ -80,13 +87,16 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.SORT_TASKS:
+      const newIndex = state.tasks.indexOf(
+        state.todoTasks[action.payload.newIndex]
+      );
+      const oldIndex = state.tasks.indexOf(
+        state.todoTasks[action.payload.oldIndex]
+      );
+
       return {
         ...state,
-        todoTasks: arrayMove(
-          state.todoTasks,
-          action.payload.oldIndex,
-          action.payload.newIndex
-        )
+        ...classify(arrayMove(state.tasks, oldIndex, newIndex))
       };
 
     case TaskActionTypes.DELETE_COMPLETED_TASKS:

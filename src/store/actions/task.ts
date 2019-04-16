@@ -16,7 +16,8 @@ export enum TaskActionTypes {
   MOVE_TASK_SUCCESS = 'MOVE_TASK_SUCCESS',
   DELETE_COMPLETED_TASKS = 'DELETE_COMPLETED_TASKS',
   DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS',
-  SORT_TASKS = 'SORT_TASKS'
+  SORT_TASKS = 'SORT_TASKS',
+  SORT_TASKS_SUCCESS = 'SORT_TASKS_SUCCESS'
 }
 
 interface Payload$AddTask {
@@ -99,6 +100,10 @@ export interface SortTasks {
   payload: SortEnd;
 }
 
+export interface SortTasksSuccess {
+  type: TaskActionTypes.SORT_TASKS_SUCCESS;
+}
+
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
@@ -112,7 +117,8 @@ export type TaskActions =
   | MoveTaskSuccess
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
-  | SortTasks;
+  | SortTasks
+  | SortTasksSuccess;
 
 export const TaskActionCreators = {
   getAllTasks(): GetAllTasks {

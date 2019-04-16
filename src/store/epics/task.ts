@@ -18,7 +18,9 @@ import {
   TaskActionTypes,
   AddTaskSuccess,
   UpdateTask,
-  UpdateTaskSuccess
+  UpdateTaskSuccess,
+  SortTasks,
+  SortTasksSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
@@ -34,10 +36,19 @@ const deleteTaskSuccess$ = (tasklist: string, task?: string) =>
 
 const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
   delete params.requestBody.completed;
-  return from(tasksAPI.update(params).then(({ data }) => data)).pipe(
+  return from(tasksAPI.update(params)).pipe(
+    map(({ data }) => data),
     map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
       type: TaskActionTypes.UPDATE_TASK_SUCCESS,
       payload
+    }))
+  );
+};
+
+const sortTasksSuccess$ = (params: tasks_v1.Params$Resource$Tasks$Move) => {
+  return from(tasksAPI.move(params)).pipe(
+    map<any, SortTasksSuccess>(() => ({
+      type: TaskActionTypes.SORT_TASKS_SUCCESS
     }))
   );
 };
@@ -48,7 +59,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   { nprogress }
 ) =>
   action$.pipe(
-    filter(action => !/Update/i.test(action.type)),
+    filter(action => !/Update|Sort/i.test(action.type)),
     mergeMap(action => {
       if (!state$.value.auth.loggedIn) {
         return empty();
@@ -175,4 +186,35 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-export default [apiEpic, updateEpic];
+const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
+  action$,
+  state$
+) => {
+  return action$.pipe(
+    ofType<TaskActions, SortTasks>(TaskActionTypes.SORT_TASKS),
+    groupBy(action => {
+      const task = state$.value.task.todoTasks[action.payload.oldIndex];
+      return task.uuid;
+    }),
+    mergeMap(group$ => {
+      return group$.pipe(
+        mergeMap(action => {
+          const todoTasks = state$.value.task.todoTasks.slice(0);
+          const { currentTaskListId } = state$.value.taskList;
+          const { id: task } = todoTasks[action.payload.newIndex];
+          const { id: previous } = todoTasks[action.payload.newIndex - 1] || {
+            id: undefined
+          };
+
+          return sortTasksSuccess$({
+            tasklist: currentTaskListId,
+            task,
+            previous
+          });
+        })
+      );
+    })
+  );
+};
+
+export default [apiEpic, updateEpic, sortTaskEpic];

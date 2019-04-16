@@ -16,6 +16,7 @@ export function TodoTask({
   taskLists,
   className = '',
   currentTaskList,
+  inputProps,
   ...props
 }: TodoTaskProps) {
   const [focus, { on, off }] = useBoolean(false);
@@ -29,7 +30,8 @@ export function TodoTask({
       task={task}
       inputProps={{
         onFocus: on,
-        onBlur: off
+        onBlur: off,
+        ...inputProps
       }}
       endAdornment={
         <EditTaskButton
