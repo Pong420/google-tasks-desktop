@@ -85,7 +85,7 @@ function TaskListContentComponent({
   );
 
   useEffect(() => {
-    taskListId && getAllTasks(taskListId);
+    taskListId && getAllTasks();
   }, [getAllTasks, taskListId]);
 
   return (

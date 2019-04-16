@@ -60,7 +60,13 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
         case TaskActionTypes.GET_ALL_TASKS:
           nprogress.inc(0.4);
 
-          return from(tasksAPI.list(action.payload)).pipe(
+          return from(
+            tasksAPI.list({
+              tasklist,
+              showCompleted: true,
+              showHidden: false
+            })
+          ).pipe(
             tap(() => nprogress.done()),
             map(({ data }) => data),
             map<tasks_v1.Schema$Tasks, TaskActions>(({ items }) => ({
@@ -107,9 +113,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
-          return forkJoin(
-            ...action.payload.map(task => deleteTaskSuccess$(tasklist, task.id))
-          ).pipe(
+          return from(tasksAPI.clear({ tasklist })).pipe(
             mapTo<any, TaskActions>({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
             })

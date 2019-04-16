@@ -41,7 +41,6 @@ interface Payload$UpdateTask extends tasks_v1.Params$Resource$Tasks$Update {
 
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
-  payload: tasks_v1.Params$Resource$Tasks$List;
 }
 
 export interface GetAllTasksSuccess {
@@ -116,14 +115,9 @@ export type TaskActions =
   | SortTasks;
 
 export const TaskActionCreators = {
-  getAllTasks(tasklist: string): GetAllTasks {
+  getAllTasks(): GetAllTasks {
     return {
-      type: TaskActionTypes.GET_ALL_TASKS,
-      payload: {
-        tasklist,
-        showCompleted: true,
-        showHidden: true
-      }
+      type: TaskActionTypes.GET_ALL_TASKS
     };
   },
   addTask(params: tasks_v1.Params$Resource$Tasks$Insert): AddTask {
