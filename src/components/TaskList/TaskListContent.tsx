@@ -57,31 +57,24 @@ function TaskListContentComponent({
       }
 
       return updateTask({
-        tasklist: taskListId,
-        task: task.id,
-        requestBody: {
-          ...task,
-          id: task.id,
-          status: task.status === 'completed' ? 'needsAction' : 'completed'
-        }
+        ...task,
+        id: task.id,
+        status: task.status === 'completed' ? 'needsAction' : 'completed'
       });
     },
-    [deleteTaskCallback, taskListId, updateTask]
+    [deleteTaskCallback, updateTask]
   );
 
+  // FIXME:
   const updateTaskCallback = useCallback(
     (task: Schema$Task) => {
       return updateTask({
-        tasklist: taskListId,
-        task: task.id,
-        requestBody: {
-          ...task,
-          id: task.id,
-          title: task.title
-        }
+        ...task,
+        id: task.id,
+        title: task.title
       });
     },
-    [taskListId, updateTask]
+    [updateTask]
   );
 
   useEffect(() => {

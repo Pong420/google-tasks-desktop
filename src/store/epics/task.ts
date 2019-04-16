@@ -131,57 +131,64 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
-  const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
-    delete params.requestBody.completed;
+  const tasklistId$ = state$.pipe(
+    map(({ taskList }) => taskList.currentTaskListId)
+  );
 
-    return from(tasksAPI.update(params)).pipe(
-      map(({ data }) => data),
-      map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
-        type: TaskActionTypes.UPDATE_TASK_SUCCESS,
-        payload
-      }))
+  const tasks$ = state$.pipe(map(({ task }) => task.tasks));
+
+  const request$ = (requestBody: Schema$Task) => {
+    delete requestBody.completed;
+
+    return tasklistId$.pipe(
+      switchMap(tasklist =>
+        from(
+          tasksAPI.update({
+            tasklist,
+            task: requestBody.id,
+            requestBody
+          })
+        ).pipe(
+          map(({ data }) => data),
+          map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
+            type: TaskActionTypes.UPDATE_TASK_SUCCESS,
+            payload
+          }))
+        )
+      ),
+      take(1)
     );
   };
 
   return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
-    groupBy(action => action.payload.requestBody.uuid),
+    groupBy(action => action.payload.uuid),
     mergeMap(group$ => {
       return group$.pipe(
-        debounce(action => timer(action.payload.task ? 1000 : 0)),
+        debounce(action => timer(action.payload.id ? 1000 : 0)),
         switchMap(action => {
           // FIXME: make this better
           if (
             !state$.value.task.tasks.find(
-              task => task.uuid === action.payload.requestBody.uuid
+              task => task.uuid === action.payload.uuid
             )
           ) {
             return empty();
           }
 
-          if (action.payload.task === undefined) {
+          if (action.payload.id === undefined) {
             return action$.pipe(
               ofType<TaskActions, AddTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
-              filter(
-                success =>
-                  success.payload.uuid === action.payload.requestBody.uuid
-              ),
+              filter(success => success.payload.uuid === action.payload.uuid),
               mergeMap(success => {
-                return updateTaskSuccess$({
-                  tasklist: action.payload.tasklist,
-                  task: success.payload.task.id,
-                  requestBody: merge(
-                    success.payload.task,
-                    action.payload.requestBody
-                  )
-                });
+                return request$(merge(success.payload.task, action.payload));
               })
             );
           }
 
-          return updateTaskSuccess$(action.payload);
+          return request$(action.payload);
         })
       );
     })
