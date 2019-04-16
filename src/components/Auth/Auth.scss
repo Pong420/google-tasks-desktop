@@ -1,0 +1,27 @@
+.auth {
+  @include flex(center, center, column);
+  @include fixed(0, null, 0);
+  @include sq-dimen(100%);
+
+  background-color: $primary-color;
+  padding: $padding-x;
+  z-index: 100000000;
+
+  .logo {
+    justify-self: flex-start;
+  }
+
+  h4 {
+    margin-bottom: 100px;
+  }
+
+  form {
+    @include dimen(100%);
+    @include flex(center, center, $wrap: wrap);
+
+    .mui-input-base {
+      margin: 5px 0 15px;
+      box-shadow: 0 3px 10px #e9e9e9;
+    }
+  }
+}
