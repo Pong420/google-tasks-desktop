@@ -32,13 +32,15 @@ const deleteTaskSuccess$ = (tasklist: string, task?: string) =>
     }))
   );
 
-const updateTaskSuccess$ = (params: tasks_v1.Params$Resource$Tasks$Update) =>
-  from(tasksAPI.patch(params).then(({ data }) => data)).pipe(
+const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
+  delete params.requestBody.completed;
+  return from(tasksAPI.update(params).then(({ data }) => data)).pipe(
     map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
       type: TaskActionTypes.UPDATE_TASK_SUCCESS,
       payload
     }))
   );
+};
 
 const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   action$,
@@ -52,7 +54,6 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
         return empty();
       }
 
-      // FIXME: remove
       const tasklist = state$.value.taskList.currentTaskListId;
 
       switch (action.type) {
