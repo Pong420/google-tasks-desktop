@@ -1,4 +1,4 @@
-import { empty, from, timer } from 'rxjs';
+import { empty, from, timer, of } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -10,7 +10,13 @@ import {
   groupBy,
   takeWhile,
   switchMap,
-  delay
+  delay,
+  switchAll,
+  findIndex,
+  pairwise,
+  take,
+  first,
+  combineLatest
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -35,36 +41,6 @@ const deleteTaskSuccess$ = (tasklist: string, task?: string) =>
       type: TaskActionTypes.DELETE_TASK_SUCCESS
     }))
   );
-
-const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
-  delete params.requestBody.completed;
-
-  return from(tasksAPI.update(params)).pipe(
-    map(({ data }) => data),
-    map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
-      type: TaskActionTypes.UPDATE_TASK_SUCCESS,
-      payload
-    }))
-  );
-};
-
-const sortTasksSuccess$ = (
-  tasklist: string,
-  { id: task }: Schema$Task,
-  previous?: Schema$Task
-) => {
-  return from(
-    tasksAPI.move({
-      tasklist,
-      task,
-      previous: previous && previous.id
-    })
-  ).pipe(
-    map<any, SortTasksSuccess>(() => ({
-      type: TaskActionTypes.SORT_TASKS_SUCCESS
-    }))
-  );
-};
 
 const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   action$,
@@ -102,7 +78,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
 
         case TaskActionTypes.ADD_TASK:
           return from(tasksAPI.insert(action.payload.params)).pipe(
-            delay(15000),
+            delay(1000),
             map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => ({
               type: TaskActionTypes.ADD_TASK_SUCCESS,
@@ -155,6 +131,18 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
+  const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
+    delete params.requestBody.completed;
+
+    return from(tasksAPI.update(params)).pipe(
+      map(({ data }) => data),
+      map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
+        type: TaskActionTypes.UPDATE_TASK_SUCCESS,
+        payload
+      }))
+    );
+  };
+
   return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     groupBy(action => action.payload.requestBody.uuid),
@@ -204,20 +192,42 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
+  const tasklistId$ = state$.pipe(
+    map(({ taskList }) => taskList.currentTaskListId)
+  );
+
+  const todoTasks$ = state$.pipe(map(({ task }) => task.todoTasks));
+
+  const request$ = (task: Schema$Task) =>
+    todoTasks$.pipe(
+      mergeMap(todoTasks => from([undefined, ...todoTasks])),
+      pairwise(),
+      filter(([_, b]) => !!b && b.uuid === task.uuid),
+      tap(arg => arg),
+      combineLatest(tasklistId$),
+      switchMap(([[previous, target], tasklist]) =>
+        from(
+          tasksAPI.move({
+            tasklist,
+            task: target!.id,
+            previous: previous && previous.id
+          })
+        )
+      ),
+      map<any, SortTasksSuccess>(() => ({
+        type: TaskActionTypes.SORT_TASKS_SUCCESS
+      })),
+      take(1)
+    );
+
   return action$.pipe(
     ofType<TaskActions, SortTasks>(TaskActionTypes.SORT_TASKS),
-    groupBy(action => {
-      const task = state$.value.task.todoTasks[action.payload.oldIndex];
-      return task.uuid;
-    }),
+    combineLatest(todoTasks$),
+    groupBy(([action, todoTasks]) => todoTasks[action.payload.oldIndex].id),
     mergeMap(group$ => {
       return group$.pipe(
-        switchMap(action => {
-          const tasklist = state$.value.taskList.currentTaskListId;
-          const todoTasks = state$.value.task.todoTasks;
+        switchMap(([action, todoTasks]) => {
           const target = todoTasks[action.payload.newIndex];
-          const previous: Schema$Task | undefined =
-            todoTasks[action.payload.newIndex - 1];
 
           if (!target.id) {
             return action$.pipe(
@@ -225,28 +235,17 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               filter(success => success.payload.uuid === target.uuid),
-              delay(500), // required, otherwise task update request will be ignored
-              mergeMap(success => {
-                const { todoTasks } = state$.value.task;
-                const currentIndex = todoTasks.findIndex(
-                  ({ uuid }) => uuid === success.payload.uuid
-                );
-
-                if (currentIndex !== -1) {
-                  // TODO: handle previous task is not submit
-                  return sortTasksSuccess$(
-                    tasklist,
-                    todoTasks[currentIndex],
-                    todoTasks[currentIndex - 1]
-                  );
-                }
-
-                return empty();
-              })
+              mergeMap(success =>
+                request$({
+                  ...success.payload.task,
+                  uuid: success.payload.uuid
+                })
+              ),
+              take(1)
             );
           }
 
-          return sortTasksSuccess$(tasklist, target, previous);
+          return request$(target);
         })
       );
     })
