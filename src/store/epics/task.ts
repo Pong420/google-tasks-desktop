@@ -1,4 +1,4 @@
-import { empty, from, forkJoin, timer } from 'rxjs';
+import { empty, from, timer } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -9,7 +9,8 @@ import {
   debounce,
   groupBy,
   takeWhile,
-  switchMap
+  switchMap,
+  delay
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -26,6 +27,7 @@ import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import merge from 'lodash/merge';
+import { Schema$Task } from '../../typings';
 
 const deleteTaskSuccess$ = (tasklist: string, task?: string) =>
   from(tasksAPI.delete({ tasklist, task })).pipe(
@@ -36,6 +38,7 @@ const deleteTaskSuccess$ = (tasklist: string, task?: string) =>
 
 const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
   delete params.requestBody.completed;
+
   return from(tasksAPI.update(params)).pipe(
     map(({ data }) => data),
     map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
@@ -45,8 +48,18 @@ const updateTaskSuccess$ = (params: UpdateTask['payload']) => {
   );
 };
 
-const sortTasksSuccess$ = (params: tasks_v1.Params$Resource$Tasks$Move) => {
-  return from(tasksAPI.move(params)).pipe(
+const sortTasksSuccess$ = (
+  tasklist: string,
+  { id: task }: Schema$Task,
+  previous?: Schema$Task
+) => {
+  return from(
+    tasksAPI.move({
+      tasklist,
+      task,
+      previous: previous && previous.id
+    })
+  ).pipe(
     map<any, SortTasksSuccess>(() => ({
       type: TaskActionTypes.SORT_TASKS_SUCCESS
     }))
@@ -89,6 +102,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
 
         case TaskActionTypes.ADD_TASK:
           return from(tasksAPI.insert(action.payload.params)).pipe(
+            delay(15000),
             map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => ({
               type: TaskActionTypes.ADD_TASK_SUCCESS,
@@ -162,7 +176,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
               ofType<TaskActions, AddTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
-              takeWhile(
+              filter(
                 success =>
                   success.payload.uuid === action.payload.requestBody.uuid
               ),
@@ -198,19 +212,41 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     }),
     mergeMap(group$ => {
       return group$.pipe(
-        mergeMap(action => {
-          const todoTasks = state$.value.task.todoTasks.slice(0);
-          const { currentTaskListId } = state$.value.taskList;
-          const { id: task } = todoTasks[action.payload.newIndex];
-          const { id: previous } = todoTasks[action.payload.newIndex - 1] || {
-            id: undefined
-          };
+        switchMap(action => {
+          const tasklist = state$.value.taskList.currentTaskListId;
+          const todoTasks = state$.value.task.todoTasks;
+          const target = todoTasks[action.payload.newIndex];
+          const previous: Schema$Task | undefined =
+            todoTasks[action.payload.newIndex - 1];
 
-          return sortTasksSuccess$({
-            tasklist: currentTaskListId,
-            task,
-            previous
-          });
+          if (!target.id) {
+            return action$.pipe(
+              ofType<TaskActions, AddTaskSuccess>(
+                TaskActionTypes.ADD_TASK_SUCCESS
+              ),
+              filter(success => success.payload.uuid === target.uuid),
+              delay(500), // required, otherwise task update request will be ignored
+              mergeMap(success => {
+                const { todoTasks } = state$.value.task;
+                const currentIndex = todoTasks.findIndex(
+                  ({ uuid }) => uuid === success.payload.uuid
+                );
+
+                if (currentIndex !== -1) {
+                  // TODO: handle previous task is not submit
+                  return sortTasksSuccess$(
+                    tasklist,
+                    todoTasks[currentIndex],
+                    todoTasks[currentIndex - 1]
+                  );
+                }
+
+                return empty();
+              })
+            );
+          }
+
+          return sortTasksSuccess$(tasklist, target, previous);
         })
       );
     })
