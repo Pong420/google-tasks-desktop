@@ -25,19 +25,10 @@ interface Payload$AddTask {
   params: tasks_v1.Params$Resource$Tasks$Insert;
 }
 
-interface Payload$AddTaskSuccess {
-  uuid: string;
-  task: tasks_v1.Schema$Task;
-}
-
 interface Payload$DeleteTask extends tasks_v1.Params$Resource$Tasks$Delete {
   tasklist: string;
   requestBody: Schema$Task;
 }
-
-// interface Payload$UpdateTask extends tasks_v1.Params$Resource$Tasks$Update {
-//   requestBody: Schema$Task;
-// }
 
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
@@ -55,7 +46,7 @@ export interface AddTask {
 
 export interface AddTaskSuccess {
   type: TaskActionTypes.ADD_TASK_SUCCESS;
-  payload: Payload$AddTaskSuccess;
+  payload: Schema$Task;
 }
 
 export interface UpdateTask {

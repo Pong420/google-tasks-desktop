@@ -63,8 +63,8 @@ export default function(state = initialState, action: TaskActions): TaskState {
         ...state,
         ...classify(state.tasks, task =>
           task.uuid === action.payload.uuid
-            ? merge(action.payload.task, task, {
-                id: action.payload.task.id
+            ? merge(action.payload, task, {
+                id: action.payload.id
               })
             : task
         )

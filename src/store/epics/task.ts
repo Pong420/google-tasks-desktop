@@ -82,7 +82,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
             map<tasks_v1.Schema$Task, TaskActions>(task => ({
               type: TaskActionTypes.ADD_TASK_SUCCESS,
               payload: {
-                task,
+                ...task,
                 uuid: action.payload.uuid
               }
             }))
@@ -99,10 +99,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
                   success.payload.uuid === action.payload.requestBody.uuid
               ),
               mergeMap(success =>
-                deleteTaskSuccess$(
-                  action.payload.tasklist,
-                  success.payload.task.id!
-                )
+                deleteTaskSuccess$(action.payload.tasklist, success.payload.id!)
               )
             );
           }
@@ -134,7 +131,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
     map(({ taskList }) => taskList.currentTaskListId)
   );
 
-  const tasks$ = state$.pipe(map(({ task }) => task.tasks));
+  // const tasks$ = state$.pipe(map(({ task }) => task.tasks));
 
   const request$ = (requestBody: Schema$Task) => {
     delete requestBody.completed;
@@ -182,9 +179,9 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
               ),
               filter(success => success.payload.uuid === action.payload.uuid),
               take(1),
-              switchMap(success => {
-                return request$(merge(success.payload.task, action.payload));
-              })
+              switchMap(success =>
+                request$(merge(success.payload, action.payload))
+              )
             );
           }
 
@@ -243,12 +240,7 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
               ),
               filter(success => success.payload.uuid === target.uuid),
               take(1),
-              switchMap(success =>
-                request$({
-                  ...success.payload.task,
-                  uuid: success.payload.uuid
-                })
-              )
+              switchMap(success => request$(success.payload))
             );
           }
 
