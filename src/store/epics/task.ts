@@ -78,7 +78,6 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
 
         case TaskActionTypes.ADD_TASK:
           return from(tasksAPI.insert(action.payload.params)).pipe(
-            delay(1000),
             map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => ({
               type: TaskActionTypes.ADD_TASK_SUCCESS,
@@ -182,7 +181,8 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               filter(success => success.payload.uuid === action.payload.uuid),
-              mergeMap(success => {
+              take(1),
+              switchMap(success => {
                 return request$(merge(success.payload.task, action.payload));
               })
             );
@@ -224,7 +224,7 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
       map<any, SortTasksSuccess>(() => ({
         type: TaskActionTypes.SORT_TASKS_SUCCESS
       })),
-      take(1)
+      take(1) // TODO: check this
     );
 
   return action$.pipe(
@@ -242,13 +242,13 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               filter(success => success.payload.uuid === target.uuid),
-              mergeMap(success =>
+              take(1),
+              switchMap(success =>
                 request$({
                   ...success.payload.task,
                   uuid: success.payload.uuid
                 })
-              ),
-              take(1)
+              )
             );
           }
 

@@ -27,8 +27,14 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
       const sortedTasks = action.payload.sort((a, b) => {
         if (a.position && b.position) {
-          return a.position > b.position ? 1 : -1;
+          if (a.position > b.position) return 1;
+          if (a.position < b.position) return -1;
         }
+
+        if (a.updated && b.updated) {
+          return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
+        }
+
         return 0;
       });
 
