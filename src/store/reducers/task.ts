@@ -48,8 +48,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.ADD_TASK:
       const newTask = {
-        ...action.payload.params.requestBody,
-        uuid: action.payload.uuid
+        uuid: action.payload
       };
 
       return {
@@ -74,7 +73,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task => {
-          if (task.uuid === action.payload.requestBody.uuid) {
+          if (task.uuid === action.payload.uuid) {
             return null;
           }
 

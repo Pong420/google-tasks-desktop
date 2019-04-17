@@ -29,31 +29,10 @@ function TaskListContentComponent({
   deleteTask,
   updateTask
 }: TaskState & typeof TaskActionCreators & Props) {
-  const addTaskCallback = useCallback(
-    (task?: Schema$Task) => {
-      return addTask({
-        tasklist: taskListId,
-        requestBody: task
-      });
-    },
-    [addTask, taskListId]
-  );
-
-  const deleteTaskCallback = useCallback(
-    (task: Schema$Task) => {
-      return deleteTask({
-        tasklist: taskListId,
-        task: task.id,
-        requestBody: task
-      });
-    },
-    [deleteTask, taskListId]
-  );
-
   const toggleCompletedCllaback = useCallback(
     (task: Schema$Task) => {
       if (!task.title || !task.title.trim()) {
-        return deleteTaskCallback(task);
+        return deleteTask(task);
       }
 
       return updateTask({
@@ -62,7 +41,7 @@ function TaskListContentComponent({
         status: task.status === 'completed' ? 'needsAction' : 'completed'
       });
     },
-    [deleteTaskCallback, updateTask]
+    [deleteTask, updateTask]
   );
 
   // FIXME:
@@ -85,20 +64,20 @@ function TaskListContentComponent({
     <>
       <div className="task-list-content">
         <div className="task-list-scroll-content">
-          <NewTask addTask={addTaskCallback} />
+          <NewTask addTask={addTask} />
           <TodoTasksList
             todoTasks={todoTasks}
             taskLists={taskLists}
             currentTaskList={currentTaskList}
             updateTask={updateTaskCallback}
-            deleteTask={deleteTaskCallback}
+            deleteTask={deleteTask}
             toggleCompleted={toggleCompletedCllaback}
             onSortEnd={sortTasks}
           />
         </div>
         <CompletedTasksList
           completedTasks={completedTasks}
-          deleteTask={deleteTaskCallback}
+          deleteTask={deleteTask}
           toggleCompleted={toggleCompletedCllaback}
         />
       </div>

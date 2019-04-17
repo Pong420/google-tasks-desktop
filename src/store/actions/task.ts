@@ -20,16 +20,6 @@ export enum TaskActionTypes {
   SORT_TASKS_SUCCESS = 'SORT_TASKS_SUCCESS'
 }
 
-interface Payload$AddTask {
-  uuid: string;
-  params: tasks_v1.Params$Resource$Tasks$Insert;
-}
-
-interface Payload$DeleteTask extends tasks_v1.Params$Resource$Tasks$Delete {
-  tasklist: string;
-  requestBody: Schema$Task;
-}
-
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
 }
@@ -41,7 +31,7 @@ export interface GetAllTasksSuccess {
 
 export interface AddTask {
   type: TaskActionTypes.ADD_TASK;
-  payload: Payload$AddTask;
+  payload: string; // uuid
 }
 
 export interface AddTaskSuccess {
@@ -61,7 +51,7 @@ export interface UpdateTaskSuccess {
 
 export interface DeleteTask {
   type: TaskActionTypes.DELETE_TASK;
-  payload: Payload$DeleteTask;
+  payload: Schema$Task;
 }
 
 export interface DeleteTaskSuccess {
@@ -116,16 +106,13 @@ export const TaskActionCreators = {
       type: TaskActionTypes.GET_ALL_TASKS
     };
   },
-  addTask(params: tasks_v1.Params$Resource$Tasks$Insert): AddTask {
+  addTask(): AddTask {
     return {
       type: TaskActionTypes.ADD_TASK,
-      payload: {
-        uuid: uuid.v4(),
-        params
-      }
+      payload: uuid.v4()
     };
   },
-  deleteTask(payload: Payload$DeleteTask): DeleteTask {
+  deleteTask(payload: Schema$Task): DeleteTask {
     return {
       type: TaskActionTypes.DELETE_TASK,
       payload
