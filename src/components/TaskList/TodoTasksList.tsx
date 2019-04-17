@@ -43,6 +43,9 @@ const SortableList = SortableContainer(
             {...props}
             task={task}
             index={index}
+            inputProps={{
+              autoFocus: index === 0 && !task.id
+            }}
             key={task.uuid + '@' + index}
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''

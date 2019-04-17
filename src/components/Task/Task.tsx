@@ -5,7 +5,8 @@ import React, {
   useRef,
   ReactNode,
   MouseEvent,
-  ChangeEvent
+  ChangeEvent,
+  useLayoutEffect
 } from 'react';
 import { InputProps } from '@material-ui/core/Input';
 import { ToggleCompleted } from './ToggleCompleted';
@@ -38,14 +39,6 @@ export function Task({
   const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const focus = useCallback(
-    (evt: MouseEvent<HTMLElement>) =>
-      evt.target === inputRef.current!.parentElement &&
-      inputRef.current!.focus(),
-    []
-  );
-
   const onChangeCallback = useCallback(
     (evt: ChangeEvent<HTMLTextAreaElement>) => {
       const title = evt.currentTarget.value;
@@ -74,14 +67,11 @@ export function Task({
         completed={task.status === 'completed'}
       />
       <Input
-        autoFocus={!task.id}
         multiline
         fullWidth
         defaultValue={task.title}
-        inputRef={inputRef}
         endAdornment={endAdornment}
         onChange={onChangeCallback}
-        onClick={focus}
         {...inputProps}
       />
       <TaskContextMenu

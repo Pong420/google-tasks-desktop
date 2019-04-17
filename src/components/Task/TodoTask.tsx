@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useCallback, MouseEvent } from 'react';
 import { Omit } from 'react-redux';
 import { Task, TaskProps } from './Task';
 import { EditTaskButton } from '../EditTaskButton';
@@ -19,18 +19,27 @@ export function TodoTask({
   inputProps,
   ...props
 }: TodoTaskProps) {
-  const [focus, { on, off }] = useBoolean(false);
+  const [focused, { on, off }] = useBoolean(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const focus = useCallback(
+    (evt: MouseEvent<HTMLElement>) =>
+      evt.target === inputRef.current!.parentElement &&
+      inputRef.current!.focus(),
+    []
+  );
 
   return (
     <Task
-      className={[`todo-task`, focus ? 'focused' : '', className]
+      className={[`todo-task`, focused ? 'focused' : '', className]
         .filter(Boolean)
         .join(' ')
         .trim()}
       task={task}
       inputProps={{
+        inputRef,
         onFocus: on,
         onBlur: off,
+        onClick: focus,
         ...inputProps
       }}
       endAdornment={
