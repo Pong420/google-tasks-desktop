@@ -6,14 +6,15 @@ import {
   SortOver
 } from 'react-sortable-hoc';
 import { TodoTask, TodoTaskProps } from '../Task';
-import { Schema$Task, Schema$TaskList } from '../../typings';
 import { useBoolean } from '../../utils';
+import { Schema$Task, Schema$TaskList } from '../../typings';
+import { Payload$Optional$AddTask } from '../../store';
 
 interface Props {
   todoTasks: Schema$Task[];
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList;
-  addTask(task: Schema$Task): void;
+  addTask(params?: Payload$Optional$AddTask): void;
   updateTask(task: Schema$Task): void;
   deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
@@ -44,9 +45,6 @@ const SortableList = SortableContainer(
             {...props}
             task={task}
             index={index}
-            inputProps={{
-              autoFocus: index === 0 && !task.id
-            }}
             key={task.uuid + '@' + index}
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''

@@ -3,20 +3,23 @@ import React, {
   useCallback,
   MouseEvent,
   ChangeEvent,
-  useMemo
+  useMemo,
+  useEffect
 } from 'react';
 import { Omit } from 'react-redux';
-import { Task, TaskProps } from './Task';
-import { EditTaskButton } from '../EditTaskButton';
-import { Schema$TaskList, Schema$Task } from '../../typings';
-import { useBoolean, classes } from '../../utils';
 import { HotKeys, KeyMap } from 'react-hotkeys';
+import { Task, TaskProps } from './Task';
+import { TaskDetailsView, EditTaskButton } from '../TaskDetailsView';
+import { useBoolean, classes } from '../../utils';
+import { Schema$TaskList, Schema$Task } from '../../typings';
+import { Payload$Optional$AddTask } from '../../store';
 
 export interface TodoTaskProps extends Omit<TaskProps, 'endAdornment'> {
   className?: string;
+  index: number;
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList;
-  addTask(task?: Schema$Task): void;
+  addTask(payload?: Payload$Optional$AddTask): void;
   updateTask(task: Schema$Task): void;
 }
 
@@ -25,7 +28,8 @@ interface HotKeysHandler {
 }
 
 const keyMap: KeyMap = {
-  ADD_TASK: 'enter'
+  ADD_TASK: 'enter',
+  ENTER_EDIT_TASK: 'shift+enter'
 };
 
 function withPreventDefault(
@@ -41,13 +45,14 @@ export function TodoTask({
   task,
   taskLists,
   className = '',
+  index,
   currentTaskList,
   inputProps,
   addTask,
   updateTask,
   ...props
 }: TodoTaskProps) {
-  const [focused, { on, off }] = useBoolean(false);
+  const [focused, { on, off }] = useBoolean();
   const inputRef = useRef<HTMLInputElement>(null);
   const focus = useCallback(
     (evt: MouseEvent<HTMLElement>) =>
@@ -55,6 +60,8 @@ export function TodoTask({
       inputRef.current!.focus(),
     []
   );
+
+  const [detailsViewOpened, detailsView] = useBoolean();
 
   const onChangeCallback = useCallback(
     (evt: ChangeEvent<HTMLTextAreaElement>) => {
@@ -68,35 +75,46 @@ export function TodoTask({
 
   const handlers = useMemo<HotKeysHandler>(
     () => ({
-      ADD_TASK: withPreventDefault(() => addTask())
+      ADD_TASK: withPreventDefault(() => addTask({ insertAfter: index })),
+      ENTER_EDIT_TASK: withPreventDefault(detailsView.on)
     }),
-    [addTask]
+    [addTask, detailsView.on, index]
   );
 
+  // auto focus
+  useEffect(() => {
+    if (inputRef.current && !task.id) {
+      inputRef.current.focus();
+    }
+  }, [task.id]);
+
   return (
-    <HotKeys keyMap={keyMap} handlers={handlers}>
-      <Task
-        className={classes(`todo-task`, focused && 'focused', className)}
+    <>
+      <HotKeys keyMap={keyMap} handlers={handlers}>
+        <Task
+          className={classes(`todo-task`, focused && 'focused', className)}
+          task={task}
+          inputProps={{
+            inputRef,
+            onFocus: on,
+            onBlur: off,
+            onClick: focus,
+            onChange: onChangeCallback,
+            ...inputProps
+          }}
+          endAdornment={<EditTaskButton onClick={detailsView.on} />}
+          {...props}
+        />
+      </HotKeys>
+      <TaskDetailsView
+        open={detailsViewOpened}
+        handleClose={detailsView.off}
         task={task}
-        inputProps={{
-          inputRef,
-          onFocus: on,
-          onBlur: off,
-          onClick: focus,
-          onChange: onChangeCallback,
-          ...inputProps
-        }}
-        endAdornment={
-          <EditTaskButton
-            task={task}
-            taskLists={taskLists}
-            currentTaskList={currentTaskList}
-            deleteTask={props.deleteTask}
-            updateTask={updateTask}
-          />
-        }
-        {...props}
+        taskLists={taskLists}
+        currentTaskList={currentTaskList}
+        updateTask={updateTask}
+        deleteTask={props.deleteTask}
       />
-    </HotKeys>
+    </>
   );
 }

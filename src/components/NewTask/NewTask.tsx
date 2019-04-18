@@ -4,10 +4,10 @@ import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
 import { useMuiMenu } from '../Mui/Menu/useMuiMenu';
-import { Schema$Task } from '../../typings';
+import { Payload$Optional$AddTask } from '../../store';
 
 interface Props {
-  addTask(task?: Schema$Task): void;
+  addTask(payload?: Payload$Optional$AddTask): void;
 }
 
 export function NewTask({ addTask }: Props) {
