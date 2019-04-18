@@ -9,6 +9,7 @@ import {
 } from '../../store';
 import { TaskListHeader } from './TaskListHeader';
 import { TaskListContent } from './TaskListContent';
+import { classes } from '../../utils/classes';
 
 const mapStateToProps = ({ auth, taskList }: RootState, ownProps: any) => ({
   ...auth,
@@ -31,12 +32,7 @@ function TaskListComponent({
   }, [getAllTaskList, loggedIn]);
 
   return (
-    <div
-      className={['task-list', creatingNewTaskList && 'disabled']
-        .filter(Boolean)
-        .join(' ')
-        .trim()}
-    >
+    <div className={classes('task-list', creatingNewTaskList && 'disabled')}>
       <TaskListHeader
         addTaskList={addTaskList}
         currentTaskList={currentTaskList!}
