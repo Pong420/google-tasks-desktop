@@ -9,36 +9,39 @@
 
 ### Project Setup
 
-- yarn is required, otherwise you should replace `yarn` in `package.json` and `scripts/electron-wait-react.js`
+`yarn` is required, otherwise you should replace `yarn` in `package.json` and `scripts/electron-wait-react.js`
 
-- Enable [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
+1. Enable [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
 
-- Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
+2. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
-- In Google API Console [Credentials](https://console.developers.google.com/apis/credentials) section.
-  Create credentials => OAuth client ID => Other => Create. After, you should get a json file like this.
+3. In Google API Console [Credentials](https://console.developers.google.com/apis/credentials) section.
+   Create credentials => OAuth client ID => Other => Create. After, you should get a json file like this.
 
-  ```json
-  {
-    "installed": {
-      "client_id": "...",
-      "project_id": "...",
-      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-      "token_uri": "https://oauth2.googleapis.com/token",
-      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_secret": "...",
-      "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"]
-    }
+```json
+{
+  "installed": {
+    "client_id": "...",
+    "project_id": "...",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "...",
+    "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"]
   }
-  ```
+}
+```
 
-- Finally rename the json file to `oauth2.keys.json` and put it into `src/constants`
+4. Finally rename the json file to `oauth2.keys.json` and put it into `src/constants`
 
-### Know Issue
+### TODO
 
-Any actions on a new task that created recently may cause error.
-
-- New task => Edit the task immediate => Drag the task to other postion. Your change may not recorded
+- [ ] Support Window & Linux
+- [ ] Keyboard shortcuts
+- [ ] Improve / check performace
+- [ ] Dark Theme
+- [ ] Sync data periodically
+- [ ] Animation
 
 ### Development
 
