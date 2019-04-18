@@ -1,4 +1,4 @@
-import { empty, from, timer, of } from 'rxjs';
+import { empty, from, timer } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -10,12 +10,8 @@ import {
   groupBy,
   switchMap,
   pairwise,
-  take,
   takeWhile,
-  first,
-  combineLatest,
-  catchError,
-  distinctUntilChanged
+  take
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -45,10 +41,9 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
         return empty();
       }
 
-      // TODO: check this
       const tasklist = state$.value.taskList.currentTaskListId;
 
-      const deleteTaskSuccess$ = (task?: string) =>
+      const deleteTaskRequest$ = (task?: string) =>
         from(tasksAPI.delete({ tasklist, task })).pipe(
           map<any, TaskActions>(() => ({
             type: TaskActionTypes.DELETE_TASK_SUCCESS
@@ -98,11 +93,11 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
               takeWhile(
                 success => success.payload.uuid === action.payload.uuid
               ),
-              mergeMap(success => deleteTaskSuccess$(success.payload.id!))
+              mergeMap(success => deleteTaskRequest$(success.payload.id!))
             );
           }
 
-          return deleteTaskSuccess$(action.payload.id);
+          return deleteTaskRequest$(action.payload.id);
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
           return from(tasksAPI.clear({ tasklist })).pipe(
@@ -122,7 +117,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
-  const request$ = (requestBody: Schema$Task) => {
+  const updateTaskRequest$ = (requestBody: Schema$Task) => {
     delete requestBody.completed;
 
     if (!requestBody.id) {
@@ -140,10 +135,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
       map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
         type: TaskActionTypes.UPDATE_TASK_SUCCESS,
         payload
-      })),
-      catchError(err => {
-        return empty();
-      })
+      }))
     );
   };
 
@@ -172,12 +164,12 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
                 success => success.payload.uuid === action.payload.uuid
               ),
               mergeMap(success =>
-                request$({ ...success.payload, ...action.payload })
+                updateTaskRequest$({ ...success.payload, ...action.payload })
               )
             );
           }
 
-          return request$(action.payload);
+          return updateTaskRequest$(action.payload);
         })
       );
     })
@@ -188,14 +180,16 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
-  const todoTasks$ = state$.pipe(map(({ task }) => task.todoTasks));
+  const todoTasks$ = state$.pipe(
+    map(({ task }) => task.todoTasks),
+    take(1)
+  );
 
-  const request$ = (task: Schema$Task) =>
+  const sortTaskRequest$ = (task: Schema$Task) =>
     todoTasks$.pipe(
       switchMap(todoTasks => from([undefined, ...todoTasks])),
       pairwise(),
       filter(([_, b]) => !!b && b.uuid === task.uuid),
-      tap(arg => arg),
       switchMap(([previous, target]) =>
         from(
           tasksAPI.move({
@@ -213,6 +207,7 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   return action$.pipe(
     ofType<TaskActions, SortTasks>(TaskActionTypes.SORT_TASKS),
     groupBy(action => {
+      // TODO: Make it better
       const todoTasks = state$.value.task.todoTasks;
       return todoTasks[action.payload.oldIndex].id;
     }),
@@ -228,15 +223,15 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               takeWhile(success => success.payload.uuid === target.uuid),
-              switchMap(success => request$(success.payload))
+              switchMap(success => sortTaskRequest$(success.payload))
             );
           }
 
-          return request$(target);
+          return sortTaskRequest$(target);
         })
       );
     })
   );
 };
 
-export default [apiEpic, updateEpic];
+export default [apiEpic, updateEpic, sortTaskEpic];

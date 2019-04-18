@@ -87,7 +87,9 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
       onSortMove={on}
       onSortOver={onSortOverCallback}
       onSortEnd={(params: SortEnd) => {
-        onSortEnd(params);
+        if (params.newIndex !== params.oldIndex) {
+          onSortEnd(params);
+        }
         off();
       }}
     />
