@@ -1,4 +1,5 @@
 import { tasks_v1 } from 'googleapis';
+import { Omit } from 'react-redux';
 import { SortEnd } from 'react-sortable-hoc';
 import { Schema$Task } from '../../typings';
 import uuid from 'uuid';
@@ -20,6 +21,14 @@ export enum TaskActionTypes {
   SORT_TASKS_SUCCESS = 'SORT_TASKS_SUCCESS'
 }
 
+export interface Payload$Optional$AddTask {
+  insertAfter?: number;
+}
+
+export interface Payload$AddTask extends Payload$Optional$AddTask {
+  uuid: string;
+}
+
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
 }
@@ -31,7 +40,7 @@ export interface GetAllTasksSuccess {
 
 export interface AddTask {
   type: TaskActionTypes.ADD_TASK;
-  payload: string; // uuid
+  payload: Payload$AddTask;
 }
 
 export interface AddTaskSuccess {
@@ -106,10 +115,13 @@ export const TaskActionCreators = {
       type: TaskActionTypes.GET_ALL_TASKS
     };
   },
-  addTask(): AddTask {
+  addTask(payload?: Payload$Optional$AddTask): AddTask {
     return {
       type: TaskActionTypes.ADD_TASK,
-      payload: uuid.v4()
+      payload: {
+        ...payload,
+        uuid: uuid.v4()
+      }
     };
   },
   deleteTask(payload: Schema$Task): DeleteTask {

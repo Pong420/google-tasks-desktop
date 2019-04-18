@@ -71,14 +71,19 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.ADD_TASK:
-          return from(tasksAPI.insert({ tasklist })).pipe(
+          const previousTask =
+            typeof action.payload.insertAfter === 'number' &&
+            state$.value.task.todoTasks[action.payload.insertAfter];
+          const previous = previousTask ? previousTask.id : undefined;
+
+          return from(tasksAPI.insert({ tasklist, previous })).pipe(
             map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => {
               return {
                 type: TaskActionTypes.ADD_TASK_SUCCESS,
                 payload: {
                   ...task,
-                  uuid: action.payload
+                  uuid: action.payload.uuid
                 }
               };
             })
