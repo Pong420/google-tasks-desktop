@@ -7,17 +7,10 @@ import {
 } from 'react-sortable-hoc';
 import { TodoTask, TodoTaskProps } from '../Task';
 import { useBoolean } from '../../utils';
-import { Schema$Task, Schema$TaskList } from '../../typings';
-import { Payload$Optional$AddTask } from '../../store';
+import { Schema$Task } from '../../typings';
 
 interface Props {
   todoTasks: Schema$Task[];
-  taskLists: Schema$TaskList[];
-  currentTaskList: Schema$TaskList;
-  addTask(params?: Payload$Optional$AddTask): void;
-  updateTask(task: Schema$Task): void;
-  deleteTask(task: Schema$Task): void;
-  toggleCompleted(task: Schema$Task): void;
 }
 
 interface SortableListProps extends Props {

@@ -142,7 +142,7 @@ export const TaskActionCreators = {
       payload
     };
   },
-  moveTasks(payload: SortEnd) {
+  moveTask(payload: SortEnd) {
     return {
       type: TaskActionTypes.MOVE_TASKS,
       payload

@@ -6,21 +6,19 @@ import React, {
   useMemo,
   useEffect
 } from 'react';
-import { Omit } from 'react-redux';
+import { Dispatch, bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { HotKeys, KeyMap } from 'react-hotkeys';
-import { Task, TaskProps } from './Task';
+import { Task } from './Task';
 import { TaskDetailsView, EditTaskButton } from '../TaskDetailsView';
 import { useBoolean, classes } from '../../utils';
-import { Schema$TaskList, Schema$Task } from '../../typings';
-import { Payload$Optional$AddTask } from '../../store';
+import { RootState, TaskActionCreators } from '../../store';
+import { Schema$Task } from '../../typings';
 
-export interface TodoTaskProps extends Omit<TaskProps, 'endAdornment'> {
+export interface TodoTaskProps {
   className?: string;
   index: number;
-  taskLists: Schema$TaskList[];
-  currentTaskList: Schema$TaskList;
-  addTask(payload?: Payload$Optional$AddTask): void;
-  updateTask(task: Schema$Task): void;
+  task: Schema$Task;
 }
 
 interface HotKeysHandler {
@@ -29,7 +27,9 @@ interface HotKeysHandler {
 
 const keyMap: KeyMap = {
   ADD_TASK: 'enter',
-  ENTER_EDIT_TASK: 'shift+enter'
+  ENTER_EDIT_TASK: 'shift+enter',
+  MOVE_TASK_UP: 'option+up',
+  MOVE_TASK_DOWN: 'option+down'
 };
 
 function withPreventDefault(
@@ -41,8 +41,17 @@ function withPreventDefault(
   };
 }
 
-export function TodoTask({
+const mapStatetoProps = ({ task, taskList }: RootState, ownProps: any) => ({
+  ...task,
+  ...taskList,
+  ...ownProps
+});
+const mapDispatchToProps = (dispath: Dispatch) =>
+  bindActionCreators(TaskActionCreators, dispath);
+
+function TodoTaskComponent({
   task,
+  todoTasks,
   taskLists,
   className = '',
   index,
@@ -50,8 +59,11 @@ export function TodoTask({
   inputProps,
   addTask,
   updateTask,
-  ...props
-}: TodoTaskProps) {
+  deleteTask,
+  moveTask
+}: TodoTaskProps &
+  ReturnType<typeof mapStatetoProps> &
+  ReturnType<typeof mapDispatchToProps>) {
   const [focused, { on, off }] = useBoolean();
   const inputRef = useRef<HTMLInputElement>(null);
   const focus = useCallback(
@@ -73,12 +85,26 @@ export function TodoTask({
     [task, updateTask]
   );
 
+  const moveTaskCallback = useCallback(
+    (step: 1 | -1) => {
+      // TODO: keep focus
+      const oldIndex = index;
+      const newIndex = oldIndex + step;
+      if (newIndex >= 0 && newIndex < todoTasks.length) {
+        moveTask({ newIndex, oldIndex });
+      }
+    },
+    [index, moveTask, todoTasks.length]
+  );
+
   const handlers = useMemo<HotKeysHandler>(
     () => ({
       ADD_TASK: withPreventDefault(() => addTask({ insertAfter: index })),
-      ENTER_EDIT_TASK: withPreventDefault(detailsView.on)
+      ENTER_EDIT_TASK: withPreventDefault(detailsView.on),
+      MOVE_TASK_UP: withPreventDefault(() => moveTaskCallback(-1)),
+      MOVE_TASK_DOWN: withPreventDefault(() => moveTaskCallback(1))
     }),
-    [addTask, detailsView.on, index]
+    [addTask, detailsView.on, index, moveTaskCallback]
   );
 
   // auto focus
@@ -103,7 +129,8 @@ export function TodoTask({
             ...inputProps
           }}
           endAdornment={<EditTaskButton onClick={detailsView.on} />}
-          {...props}
+          deleteTask={deleteTask}
+          toggleCompleted={() => {}}
         />
       </HotKeys>
       <TaskDetailsView
@@ -113,8 +140,13 @@ export function TodoTask({
         taskLists={taskLists}
         currentTaskList={currentTaskList}
         updateTask={updateTask}
-        deleteTask={props.deleteTask}
+        deleteTask={deleteTask}
       />
     </>
   );
 }
+
+export const TodoTask = connect(
+  mapStatetoProps,
+  mapDispatchToProps
+)(TodoTaskComponent);

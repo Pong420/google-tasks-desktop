@@ -20,11 +20,9 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 function TaskListContentComponent({
   todoTasks,
   completedTasks,
-  taskLists,
   taskListId,
-  currentTaskList,
   getAllTasks,
-  moveTasks,
+  moveTask,
   addTask,
   deleteTask,
   updateTask
@@ -43,17 +41,6 @@ function TaskListContentComponent({
     [deleteTask, updateTask]
   );
 
-  // FIXME:
-  const updateTaskCallback = useCallback(
-    (task: Schema$Task) => {
-      return updateTask({
-        ...task,
-        title: task.title
-      });
-    },
-    [updateTask]
-  );
-
   useEffect(() => {
     taskListId && getAllTasks();
   }, [getAllTasks, taskListId]);
@@ -63,16 +50,7 @@ function TaskListContentComponent({
       <div className="task-list-content">
         <div className="task-list-scroll-content">
           <NewTask addTask={addTask} />
-          <TodoTasksList
-            todoTasks={todoTasks}
-            taskLists={taskLists}
-            currentTaskList={currentTaskList}
-            addTask={addTask}
-            updateTask={updateTaskCallback}
-            deleteTask={deleteTask}
-            toggleCompleted={toggleCompletedCllaback}
-            onSortEnd={moveTasks}
-          />
+          <TodoTasksList todoTasks={todoTasks} onSortEnd={moveTask} />
         </div>
         <CompletedTasksList
           completedTasks={completedTasks}
