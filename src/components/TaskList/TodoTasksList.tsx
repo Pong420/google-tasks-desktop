@@ -28,6 +28,8 @@ const SortableItem = SortableElement((props: TodoTaskProps) => (
 
 const SortableList = SortableContainer(
   ({ dragging, todoTasks, insertAfter, ...props }: SortableListProps) => {
+    const [focusIndex, setFocusIndex] = useState<number | null>(null);
+
     return (
       <div
         className="todo-tasks-list"
@@ -39,6 +41,8 @@ const SortableList = SortableContainer(
             task={task}
             index={index}
             key={task.uuid + '@' + index}
+            focused={focusIndex === index}
+            setFocusIndex={setFocusIndex}
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''
             }
