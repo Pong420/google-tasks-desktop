@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, MouseEvent } from 'react';
+import React, { useRef, useCallback, MouseEvent, ChangeEvent } from 'react';
 import { Omit } from 'react-redux';
 import { Task, TaskProps } from './Task';
 import { EditTaskButton } from '../EditTaskButton';
@@ -28,6 +28,14 @@ export function TodoTask({
     []
   );
 
+  const onChangeCallback = useCallback(
+    (evt: ChangeEvent<HTMLTextAreaElement>) => {
+      props.updateTask &&
+        props.updateTask({ ...task, title: evt.currentTarget.value });
+    },
+    [props, task]
+  );
+
   return (
     <Task
       className={[`todo-task`, focused ? 'focused' : '', className]
@@ -40,6 +48,7 @@ export function TodoTask({
         onFocus: on,
         onBlur: off,
         onClick: focus,
+        onChange: onChangeCallback,
         ...inputProps
       }}
       endAdornment={

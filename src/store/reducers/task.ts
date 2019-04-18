@@ -2,7 +2,6 @@ import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
-import merge from 'lodash/merge';
 
 export interface TaskState {
   tasks: Schema$Task[];
@@ -62,9 +61,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         ...state,
         ...classify(state.tasks, task =>
           task.uuid === action.payload.uuid
-            ? merge(action.payload, task, {
-                id: action.payload.id
-              })
+            ? { ...action.payload, ...task }
             : task
         )
       };
@@ -85,7 +82,9 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task =>
-          task.uuid === action.payload.uuid ? merge(task, action.payload) : task
+          task.uuid === action.payload.uuid
+            ? { ...task, ...action.payload }
+            : task
         )
       };
 
@@ -123,7 +122,7 @@ function classify(
   const todoTasks: Schema$Task[] = [];
   const completedTasks: Schema$Task[] = [];
 
-  data.forEach(task_ => {
+  data.slice().forEach(task_ => {
     const task = middleware(task_);
 
     if (task !== null) {

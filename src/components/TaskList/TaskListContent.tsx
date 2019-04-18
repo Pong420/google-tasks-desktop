@@ -37,7 +37,6 @@ function TaskListContentComponent({
 
       return updateTask({
         ...task,
-        id: task.id,
         status: task.status === 'completed' ? 'needsAction' : 'completed'
       });
     },
@@ -49,7 +48,6 @@ function TaskListContentComponent({
     (task: Schema$Task) => {
       return updateTask({
         ...task,
-        id: task.id,
         title: task.title
       });
     },

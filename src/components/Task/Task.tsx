@@ -39,16 +39,6 @@ export function Task({
   const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
 
-  const onChangeCallback = useCallback(
-    (evt: ChangeEvent<HTMLTextAreaElement>) => {
-      const title = evt.currentTarget.value;
-      const updatedTask = { ...task, title };
-      setTask(updatedTask);
-      updateTask && updateTask(updatedTask);
-    },
-    [task, updateTask]
-  );
-
   // FIXME:
   useEffect(() => {
     setTask(initialTask);
@@ -71,7 +61,6 @@ export function Task({
         fullWidth
         defaultValue={task.title}
         endAdornment={endAdornment}
-        onChange={onChangeCallback}
         {...inputProps}
       />
       <TaskContextMenu
