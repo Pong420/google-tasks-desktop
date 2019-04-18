@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   SortableContainer,
   SortableElement,
@@ -43,6 +43,9 @@ const SortableList = SortableContainer(
             {...props}
             task={task}
             index={index}
+            inputProps={{
+              autoFocus: index === 0 && !task.id
+            }}
             key={task.uuid + '@' + index}
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''
@@ -57,6 +60,21 @@ const SortableList = SortableContainer(
 export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
   const [dragging, { on, off }] = useBoolean();
   const [insertAfter, setInsertAfter] = useState<number | null>(null);
+  const onSortOverCallback = useCallback(
+    ({ newIndex, oldIndex, index }: SortOver) => {
+      let insertAfter: number | null = null;
+      const move = newIndex - oldIndex > 0 ? 'down' : 'up';
+
+      if (move === 'down') {
+        insertAfter = newIndex > index ? oldIndex + 1 : oldIndex;
+      } else if (move === 'up') {
+        insertAfter = newIndex > index ? newIndex : newIndex - 1;
+      }
+
+      setInsertAfter(insertAfter);
+    },
+    []
+  );
 
   return (
     <SortableList
@@ -67,20 +85,11 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
       helperClass="dragging"
       distance={5}
       onSortMove={on}
-      onSortOver={({ newIndex, oldIndex, index }: SortOver) => {
-        let insertAfter: number | null = null;
-        const move = newIndex - oldIndex > 0 ? 'down' : 'up';
-
-        if (move === 'down') {
-          insertAfter = newIndex > index ? oldIndex + 1 : oldIndex;
-        } else if (move === 'up') {
-          insertAfter = newIndex > index ? newIndex : newIndex - 1;
-        }
-
-        setInsertAfter(insertAfter);
-      }}
+      onSortOver={onSortOverCallback}
       onSortEnd={(params: SortEnd) => {
-        onSortEnd(params);
+        if (params.newIndex !== params.oldIndex) {
+          onSortEnd(params);
+        }
         off();
       }}
     />

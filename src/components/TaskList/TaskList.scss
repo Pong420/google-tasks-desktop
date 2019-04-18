@@ -8,6 +8,7 @@
     &:after {
       @include fixed(0, null, 0);
       @include sq-dimen(100%);
+      @include noSelect;
 
       content: '';
       z-index: 100000;

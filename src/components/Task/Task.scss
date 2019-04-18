@@ -101,6 +101,10 @@ $mutiline-padding-y: 12px;
     left: auto !important;
     right: 5px !important;
     width: calc(100% - 60px) !important;
+
+    .edit-task-button {
+      display: none;
+    }
   }
 
   &.highlight-bottom-border {

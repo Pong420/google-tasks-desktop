@@ -34,6 +34,12 @@
 
 - Finally rename the json file to `oauth2.keys.json` and put it into `src/constants`
 
+### Know Issue
+
+Any actions on a new task that created recently may cause error.
+
+- New task => Edit the task immediate => Drag the task to other postion. Your change may not recorded
+
 ### Development
 
 ```

@@ -2,7 +2,6 @@ import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
-import merge from 'lodash/merge';
 
 export interface TaskState {
   tasks: Schema$Task[];
@@ -25,9 +24,22 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
+      const sortedTasks = action.payload.sort((a, b) => {
+        if (a.position && b.position) {
+          if (a.position > b.position) return 1;
+          if (a.position < b.position) return -1;
+        }
+
+        if (a.updated && b.updated) {
+          return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
+        }
+
+        return 0;
+      });
+
       return {
         ...state,
-        ...classify(action.payload as Schema$Task[], task => ({
+        ...classify(sortedTasks as Schema$Task[], task => ({
           ...task,
           uuid: uuid.v4()
         }))
@@ -35,8 +47,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.ADD_TASK:
       const newTask = {
-        ...action.payload.params.requestBody,
-        uuid: action.payload.uuid
+        uuid: action.payload
       };
 
       return {
@@ -50,9 +61,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         ...state,
         ...classify(state.tasks, task =>
           task.uuid === action.payload.uuid
-            ? merge(action.payload.task, task, {
-                id: action.payload.task.id
-              })
+            ? { ...action.payload, ...task }
             : task
         )
       };
@@ -61,7 +70,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task => {
-          if (task.uuid === action.payload.requestBody.uuid) {
+          if (task.uuid === action.payload.uuid) {
             return null;
           }
 
@@ -73,20 +82,23 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return {
         ...state,
         ...classify(state.tasks, task =>
-          task.uuid === action.payload.requestBody.uuid
-            ? merge(task, action.payload.requestBody)
+          task.uuid === action.payload.uuid
+            ? { ...task, ...action.payload }
             : task
         )
       };
 
     case TaskActionTypes.SORT_TASKS:
+      const newIndex = state.tasks.indexOf(
+        state.todoTasks[action.payload.newIndex]
+      );
+      const oldIndex = state.tasks.indexOf(
+        state.todoTasks[action.payload.oldIndex]
+      );
+
       return {
         ...state,
-        todoTasks: arrayMove(
-          state.todoTasks,
-          action.payload.oldIndex,
-          action.payload.newIndex
-        )
+        ...classify(arrayMove(state.tasks, oldIndex, newIndex))
       };
 
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
@@ -110,7 +122,7 @@ function classify(
   const todoTasks: Schema$Task[] = [];
   const completedTasks: Schema$Task[] = [];
 
-  data.forEach(task_ => {
+  data.slice().forEach(task_ => {
     const task = middleware(task_);
 
     if (task !== null) {

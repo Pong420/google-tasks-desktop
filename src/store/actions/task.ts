@@ -16,32 +16,12 @@ export enum TaskActionTypes {
   MOVE_TASK_SUCCESS = 'MOVE_TASK_SUCCESS',
   DELETE_COMPLETED_TASKS = 'DELETE_COMPLETED_TASKS',
   DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS',
-  SORT_TASKS = 'SORT_TASKS'
-}
-
-interface Payload$AddTask {
-  uuid: string;
-  params: tasks_v1.Params$Resource$Tasks$Insert;
-}
-
-interface Payload$AddTaskSuccess {
-  uuid: string;
-  task: tasks_v1.Schema$Task;
-}
-
-interface Payload$DeleteTask extends tasks_v1.Params$Resource$Tasks$Delete {
-  tasklist: string;
-  requestBody: Schema$Task;
-}
-
-interface Payload$UpdateTask extends tasks_v1.Params$Resource$Tasks$Update {
-  tasklist: string;
-  requestBody: Schema$Task;
+  SORT_TASKS = 'SORT_TASKS',
+  SORT_TASKS_SUCCESS = 'SORT_TASKS_SUCCESS'
 }
 
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
-  payload: tasks_v1.Params$Resource$Tasks$List;
 }
 
 export interface GetAllTasksSuccess {
@@ -51,17 +31,17 @@ export interface GetAllTasksSuccess {
 
 export interface AddTask {
   type: TaskActionTypes.ADD_TASK;
-  payload: Payload$AddTask;
+  payload: string; // uuid
 }
 
 export interface AddTaskSuccess {
   type: TaskActionTypes.ADD_TASK_SUCCESS;
-  payload: Payload$AddTaskSuccess;
+  payload: Schema$Task;
 }
 
 export interface UpdateTask {
   type: TaskActionTypes.UPDATE_TASK;
-  payload: Payload$UpdateTask;
+  payload: Schema$Task;
 }
 
 export interface UpdateTaskSuccess {
@@ -71,7 +51,7 @@ export interface UpdateTaskSuccess {
 
 export interface DeleteTask {
   type: TaskActionTypes.DELETE_TASK;
-  payload: Payload$DeleteTask;
+  payload: Schema$Task;
 }
 
 export interface DeleteTaskSuccess {
@@ -100,6 +80,10 @@ export interface SortTasks {
   payload: SortEnd;
 }
 
+export interface SortTasksSuccess {
+  type: TaskActionTypes.SORT_TASKS_SUCCESS;
+}
+
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
@@ -113,35 +97,28 @@ export type TaskActions =
   | MoveTaskSuccess
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
-  | SortTasks;
+  | SortTasks
+  | SortTasksSuccess;
 
 export const TaskActionCreators = {
-  getAllTasks(tasklist: string): GetAllTasks {
+  getAllTasks(): GetAllTasks {
     return {
-      type: TaskActionTypes.GET_ALL_TASKS,
-      payload: {
-        tasklist,
-        showCompleted: true,
-        showHidden: true
-      }
+      type: TaskActionTypes.GET_ALL_TASKS
     };
   },
-  addTask(params: tasks_v1.Params$Resource$Tasks$Insert): AddTask {
+  addTask(): AddTask {
     return {
       type: TaskActionTypes.ADD_TASK,
-      payload: {
-        uuid: uuid.v4(),
-        params
-      }
+      payload: uuid.v4()
     };
   },
-  deleteTask(payload: Payload$DeleteTask): DeleteTask {
+  deleteTask(payload: Schema$Task): DeleteTask {
     return {
       type: TaskActionTypes.DELETE_TASK,
       payload
     };
   },
-  updateTask(payload: Payload$UpdateTask): UpdateTask {
+  updateTask(payload: Schema$Task): UpdateTask {
     return {
       type: TaskActionTypes.UPDATE_TASK,
       payload

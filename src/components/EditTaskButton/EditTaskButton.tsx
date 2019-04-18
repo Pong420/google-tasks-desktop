@@ -40,6 +40,7 @@ export function EditTaskButton({
   const onExitCallback = useCallback(() => {
     updateTask && updateTask(task);
   }, [task, updateTask]);
+
   const deleteTaskCallback = useCallback(() => {
     deleteTask(task);
     off();

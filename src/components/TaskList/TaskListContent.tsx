@@ -29,83 +29,53 @@ function TaskListContentComponent({
   deleteTask,
   updateTask
 }: TaskState & typeof TaskActionCreators & Props) {
-  const addTaskCallback = useCallback(
-    (task?: Schema$Task) => {
-      return addTask({
-        tasklist: taskListId,
-        requestBody: task
-      });
-    },
-    [addTask, taskListId]
-  );
-
-  const deleteTaskCallback = useCallback(
-    (task: Schema$Task) => {
-      return deleteTask({
-        tasklist: taskListId,
-        task: task.id,
-        requestBody: task
-      });
-    },
-    [deleteTask, taskListId]
-  );
-
   const toggleCompletedCllaback = useCallback(
     (task: Schema$Task) => {
       if (!task.title || !task.title.trim()) {
-        return deleteTaskCallback(task);
+        return deleteTask(task);
       }
 
       return updateTask({
-        tasklist: taskListId,
-        task: task.id,
-        requestBody: {
-          ...task,
-          id: task.id,
-          status: task.status === 'completed' ? 'needsAction' : 'completed'
-        }
+        ...task,
+        status: task.status === 'completed' ? 'needsAction' : 'completed'
       });
     },
-    [deleteTaskCallback, taskListId, updateTask]
+    [deleteTask, updateTask]
   );
 
+  // FIXME:
   const updateTaskCallback = useCallback(
     (task: Schema$Task) => {
       return updateTask({
-        tasklist: taskListId,
-        task: task.id,
-        requestBody: {
-          ...task,
-          id: task.id,
-          title: task.title
-        }
+        ...task,
+        title: task.title
       });
     },
-    [taskListId, updateTask]
+    [updateTask]
   );
 
   useEffect(() => {
-    taskListId && getAllTasks(taskListId);
+    taskListId && getAllTasks();
   }, [getAllTasks, taskListId]);
 
   return (
     <>
       <div className="task-list-content">
         <div className="task-list-scroll-content">
-          <NewTask addTask={addTaskCallback} />
+          <NewTask addTask={addTask} />
           <TodoTasksList
             todoTasks={todoTasks}
             taskLists={taskLists}
             currentTaskList={currentTaskList}
             updateTask={updateTaskCallback}
-            deleteTask={deleteTaskCallback}
+            deleteTask={deleteTask}
             toggleCompleted={toggleCompletedCllaback}
             onSortEnd={sortTasks}
           />
         </div>
         <CompletedTasksList
           completedTasks={completedTasks}
-          deleteTask={deleteTaskCallback}
+          deleteTask={deleteTask}
           toggleCompleted={toggleCompletedCllaback}
         />
       </div>
