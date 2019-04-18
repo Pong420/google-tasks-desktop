@@ -19,6 +19,8 @@ export interface TodoTaskProps {
   className?: string;
   index: number;
   task: Schema$Task;
+  focused: boolean;
+  setFocusIndex(indxe: number): void;
 }
 
 interface HotKeysHandler {
@@ -50,11 +52,13 @@ const mapDispatchToProps = (dispath: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispath);
 
 function TodoTaskComponent({
+  className = '',
+  index,
+  focused,
+  setFocusIndex,
   task,
   todoTasks,
   taskLists,
-  className = '',
-  index,
   currentTaskList,
   inputProps,
   addTask,
@@ -64,9 +68,8 @@ function TodoTaskComponent({
 }: TodoTaskProps &
   ReturnType<typeof mapStatetoProps> &
   ReturnType<typeof mapDispatchToProps>) {
-  const [focused, { on, off }] = useBoolean();
   const inputRef = useRef<HTMLInputElement>(null);
-  const focus = useCallback(
+  const onClickCallback = useCallback(
     (evt: MouseEvent<HTMLElement>) =>
       evt.target === inputRef.current!.parentElement &&
       inputRef.current!.focus(),
@@ -87,50 +90,53 @@ function TodoTaskComponent({
 
   const moveTaskCallback = useCallback(
     (step: 1 | -1) => {
-      // TODO: keep focus
       const oldIndex = index;
       const newIndex = oldIndex + step;
       if (newIndex >= 0 && newIndex < todoTasks.length) {
         moveTask({ newIndex, oldIndex });
+        setFocusIndex(newIndex);
       }
     },
-    [index, moveTask, todoTasks.length]
+    [index, moveTask, setFocusIndex, todoTasks.length]
   );
 
   const handlers = useMemo<HotKeysHandler>(
     () => ({
-      ADD_TASK: withPreventDefault(() => addTask({ insertAfter: index })),
+      ADD_TASK: withPreventDefault(() => {
+        addTask({ insertAfter: index });
+        setFocusIndex(index + 1);
+      }),
       ENTER_EDIT_TASK: withPreventDefault(detailsView.on),
       MOVE_TASK_UP: withPreventDefault(() => moveTaskCallback(-1)),
       MOVE_TASK_DOWN: withPreventDefault(() => moveTaskCallback(1))
     }),
-    [addTask, detailsView.on, index, moveTaskCallback]
+    [addTask, detailsView.on, index, moveTaskCallback, setFocusIndex]
   );
 
   // auto focus
   useEffect(() => {
-    if (inputRef.current && !task.id) {
+    if (inputRef.current && focused) {
       inputRef.current.focus();
     }
-  }, [task.id]);
+  }, [focused]);
 
   return (
     <>
       <HotKeys keyMap={keyMap} handlers={handlers}>
         <Task
-          className={classes(`todo-task`, focused && 'focused', className)}
+          className={classes(`todo-task`, className, focused && 'focused')}
           task={task}
           inputProps={{
             inputRef,
-            onFocus: on,
-            onBlur: off,
-            onClick: focus,
+            onFocus: () => setFocusIndex(index),
+            onBlur: () => setFocusIndex(null),
+            onClick: onClickCallback,
             onChange: onChangeCallback,
             ...inputProps
           }}
           endAdornment={<EditTaskButton onClick={detailsView.on} />}
           deleteTask={deleteTask}
-          toggleCompleted={() => {}}
+          toggleCompleted={() => {}} // TODO:
         />
       </HotKeys>
       <TaskDetailsView
