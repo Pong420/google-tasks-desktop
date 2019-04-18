@@ -9,7 +9,7 @@
 
 ### Project Setup
 
-- yarn is requeired, otherwise you should replace `yarn` in `package.json` and `scripts/electron-wait-react.js`
+- yarn is required, otherwise you should replace `yarn` in `package.json` and `scripts/electron-wait-react.js`
 
 - Enable [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
 
@@ -32,7 +32,7 @@
   }
   ```
 
-  Then rename the json file to `oauth2.keys.json` and put it into `src/constants`
+- Finally rename the json file to `oauth2.keys.json` and put it into `src/constants`
 
 ### Development
 
