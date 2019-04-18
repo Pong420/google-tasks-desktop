@@ -67,6 +67,7 @@ function TaskListContentComponent({
             todoTasks={todoTasks}
             taskLists={taskLists}
             currentTaskList={currentTaskList}
+            addTask={addTask}
             updateTask={updateTaskCallback}
             deleteTask={deleteTask}
             toggleCompleted={toggleCompletedCllaback}
