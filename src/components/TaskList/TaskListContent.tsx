@@ -24,7 +24,7 @@ function TaskListContentComponent({
   taskListId,
   currentTaskList,
   getAllTasks,
-  sortTasks,
+  moveTasks,
   addTask,
   deleteTask,
   updateTask
@@ -71,7 +71,7 @@ function TaskListContentComponent({
             updateTask={updateTaskCallback}
             deleteTask={deleteTask}
             toggleCompleted={toggleCompletedCllaback}
-            onSortEnd={sortTasks}
+            onSortEnd={moveTasks}
           />
         </div>
         <CompletedTasksList
