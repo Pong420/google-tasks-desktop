@@ -181,7 +181,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
+const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
@@ -190,7 +190,7 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     take(1)
   );
 
-  const sortTaskRequest$ = (task: Schema$Task) =>
+  const moveTaskRequest$ = (task: Schema$Task) =>
     todoTasks$.pipe(
       switchMap(todoTasks => from([undefined, ...todoTasks])),
       pairwise(),
@@ -205,12 +205,12 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
         )
       ),
       map<any, SortTasksSuccess>(() => ({
-        type: TaskActionTypes.SORT_TASKS_SUCCESS
+        type: TaskActionTypes.MOVE_TASKS_SUCCESS
       }))
     );
 
   return action$.pipe(
-    ofType<TaskActions, SortTasks>(TaskActionTypes.SORT_TASKS),
+    ofType<TaskActions, SortTasks>(TaskActionTypes.MOVE_TASKS),
     groupBy(action => {
       // TODO: Make it better
       const todoTasks = state$.value.task.todoTasks;
@@ -228,15 +228,15 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               takeWhile(success => success.payload.uuid === target.uuid),
-              switchMap(success => sortTaskRequest$(success.payload))
+              switchMap(success => moveTaskRequest$(success.payload))
             );
           }
 
-          return sortTaskRequest$(target);
+          return moveTaskRequest$(target);
         })
       );
     })
   );
 };
 
-export default [apiEpic, updateEpic, sortTaskEpic];
+export default [apiEpic, updateEpic, moveTaskEpic];

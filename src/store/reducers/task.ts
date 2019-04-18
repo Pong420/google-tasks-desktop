@@ -95,7 +95,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         )
       };
 
-    case TaskActionTypes.SORT_TASKS:
+    case TaskActionTypes.MOVE_TASKS:
       const newIndex = state.tasks.indexOf(
         state.todoTasks[action.payload.newIndex]
       );
