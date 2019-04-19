@@ -158,7 +158,6 @@
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
-    "@material-ui/styles": "^3.0.0-alpha.10",
     "array-move": "^2.1.0",
     "connected-react-router": "^6.4.0",
     "electron-devtools-installer": "^2.2.4",
@@ -180,7 +179,6 @@
     "typeface-nunito-sans": "^0.0.72",
     "typeface-roboto": "^0.0.54",
     "typescript": "3.4.4",
-    "utility-types": "^3.5.0",
     "uuid": "^3.3.2"
   },
   "devEngines": {
