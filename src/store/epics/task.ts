@@ -1,4 +1,4 @@
-import { empty, from, timer } from 'rxjs';
+import { empty, from, timer, forkJoin } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -58,7 +58,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
             tasksAPI.list({
               tasklist,
               showCompleted: true,
-              showHidden: false
+              showHidden: true
             })
           ).pipe(
             tap(() => nprogress.done()),
@@ -105,7 +105,9 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           return deleteTaskRequest$(action.payload.id);
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
-          return from(tasksAPI.clear({ tasklist })).pipe(
+          return forkJoin(
+            ...action.payload.map(task => deleteTaskRequest$(task.id))
+          ).pipe(
             mapTo<any, TaskActions>({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
             })
