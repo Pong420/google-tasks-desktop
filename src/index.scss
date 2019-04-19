@@ -21,6 +21,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+  &:not(.drawin) {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
 img {
   vertical-align: middle;
 }
@@ -44,8 +52,4 @@ a {
     border-top-color: $secondary-color;
     border-left-color: $secondary-color;
   }
-}
-
-::-webkit-scrollbar {
-  display: none;
 }
