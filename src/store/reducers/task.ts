@@ -47,13 +47,20 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.ADD_TASK:
       const newTask = {
-        uuid: action.payload
+        uuid: action.payload.uuid
       };
+
+      const tasks = state.tasks.slice();
+      const index =
+        typeof action.payload.insertAfter === 'number'
+          ? tasks.indexOf(state.todoTasks[action.payload.insertAfter]) + 1
+          : 0;
+
+      tasks.splice(index, 0, newTask);
 
       return {
         ...state,
-        tasks: [newTask, ...state.tasks],
-        todoTasks: [newTask, ...state.todoTasks]
+        ...classify(tasks)
       };
 
     case TaskActionTypes.ADD_TASK_SUCCESS:
@@ -88,7 +95,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         )
       };
 
-    case TaskActionTypes.SORT_TASKS:
+    case TaskActionTypes.MOVE_TASKS:
       const newIndex = state.tasks.indexOf(
         state.todoTasks[action.payload.newIndex]
       );

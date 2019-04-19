@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { TodoTasksList } from './TodoTasksList';
@@ -20,15 +20,15 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 function TaskListContentComponent({
   todoTasks,
   completedTasks,
-  taskLists,
   taskListId,
-  currentTaskList,
   getAllTasks,
-  sortTasks,
+  moveTask,
   addTask,
   deleteTask,
   updateTask
 }: TaskState & typeof TaskActionCreators & Props) {
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
+
   const toggleCompletedCllaback = useCallback(
     (task: Schema$Task) => {
       if (!task.title || !task.title.trim()) {
@@ -43,17 +43,6 @@ function TaskListContentComponent({
     [deleteTask, updateTask]
   );
 
-  // FIXME:
-  const updateTaskCallback = useCallback(
-    (task: Schema$Task) => {
-      return updateTask({
-        ...task,
-        title: task.title
-      });
-    },
-    [updateTask]
-  );
-
   useEffect(() => {
     taskListId && getAllTasks();
   }, [getAllTasks, taskListId]);
@@ -62,15 +51,13 @@ function TaskListContentComponent({
     <>
       <div className="task-list-content">
         <div className="task-list-scroll-content">
-          <NewTask addTask={addTask} />
+          <NewTask addTask={addTask} setFocusIndex={setFocusIndex} />
           <TodoTasksList
+            onSortEnd={moveTask}
             todoTasks={todoTasks}
-            taskLists={taskLists}
-            currentTaskList={currentTaskList}
-            updateTask={updateTaskCallback}
-            deleteTask={deleteTask}
             toggleCompleted={toggleCompletedCllaback}
-            onSortEnd={sortTasks}
+            focusIndex={focusIndex}
+            setFocusIndex={setFocusIndex}
           />
         </div>
         <CompletedTasksList

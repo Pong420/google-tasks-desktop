@@ -129,11 +129,7 @@ function TaskListMenuComponent({
           onClick={deleteCompletedTaskModal.on}
         />
         <Divider />
-        <MenuItem
-          text="Keyboard shortcuts"
-          onClick={keyboardShortcuts.on}
-          disabled
-        />
+        <MenuItem text="Keyboard shortcuts" onClick={keyboardShortcuts.on} />
         <MenuItem text="Preferences" onClick={preferences.on} />
         <MenuItem text="Logout" onClick={logout} />
       </Menu>

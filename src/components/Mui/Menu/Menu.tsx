@@ -25,8 +25,8 @@ export function Menu({ classes, children, PaperProps, ...props }: MenuProps) {
 
   return (
     <MuiMenu
-      classes={mregedClasses}
       disableAutoFocusItem
+      classes={mregedClasses}
       PaperProps={mregedPaperProps}
       {...props}
     >
