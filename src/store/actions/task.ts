@@ -6,7 +6,7 @@ import uuid from 'uuid';
 export enum TaskActionTypes {
   GET_ALL_TASKS = 'GET_ALL_TASKS',
   GET_ALL_TASKS_SUCCESS = 'GET_ALL_TASKS_SUCCESS',
-  ADD_TASK = 'ADD_TASK',
+  NEW_TASK = 'NEW_TASK',
   ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS',
   UPDATE_TASK = 'UPDATE_TASK',
   UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS',
@@ -20,11 +20,11 @@ export enum TaskActionTypes {
   MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS'
 }
 
-export interface Payload$Optional$AddTask {
+export interface Payload$Optional$NewTask {
   insertAfter?: number;
 }
 
-export interface Payload$AddTask extends Payload$Optional$AddTask {
+export interface Payload$NewTask extends Payload$Optional$NewTask {
   uuid: string;
 }
 
@@ -37,12 +37,12 @@ export interface GetAllTasksSuccess {
   payload: tasks_v1.Schema$Task[];
 }
 
-export interface AddTask {
-  type: TaskActionTypes.ADD_TASK;
-  payload: Payload$AddTask;
+export interface NewTask {
+  type: TaskActionTypes.NEW_TASK;
+  payload: Payload$NewTask;
 }
 
-export interface AddTaskSuccess {
+export interface NewTaskSuccess {
   type: TaskActionTypes.ADD_TASK_SUCCESS;
   payload: Schema$Task;
 }
@@ -95,8 +95,8 @@ export interface SortTasksSuccess {
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
-  | AddTask
-  | AddTaskSuccess
+  | NewTask
+  | NewTaskSuccess
   | UpdateTask
   | UpdateTaskSuccess
   | DeleteTask
@@ -114,9 +114,9 @@ export const TaskActionCreators = {
       type: TaskActionTypes.GET_ALL_TASKS
     };
   },
-  addTask(payload?: Payload$Optional$AddTask): AddTask {
+  newTask(payload?: Payload$Optional$NewTask): NewTask {
     return {
-      type: TaskActionTypes.ADD_TASK,
+      type: TaskActionTypes.NEW_TASK,
       payload: {
         ...payload,
         uuid: uuid.v4()

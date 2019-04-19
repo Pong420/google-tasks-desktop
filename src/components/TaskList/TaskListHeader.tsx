@@ -8,13 +8,13 @@ import { useBoolean } from '../../utils/useBoolean';
 import Divider from '@material-ui/core/Divider';
 
 interface Props {
-  addTaskList(title: string): void;
+  newTaskList(title: string): void;
   taskLists: TaskListState['taskLists'];
   currentTaskList: Schema$TaskList;
 }
 
 export function TaskListHeader({
-  addTaskList,
+  newTaskList,
   taskLists,
   currentTaskList
 }: Props) {
@@ -77,7 +77,7 @@ export function TaskListHeader({
         title="Create new list"
         open={modalOpened}
         handleClose={closeModal}
-        handleConfirm={addTaskList}
+        handleConfirm={newTaskList}
       />
     </div>
   );

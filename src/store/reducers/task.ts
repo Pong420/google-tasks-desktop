@@ -45,7 +45,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         }))
       };
 
-    case TaskActionTypes.ADD_TASK:
+    case TaskActionTypes.NEW_TASK:
       const newTask = {
         uuid: action.payload.uuid
       };

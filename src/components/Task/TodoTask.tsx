@@ -45,7 +45,7 @@ function TodoTaskComponent({
   taskLists,
   currentTaskList,
   inputProps,
-  addTask,
+  newTask,
   updateTask,
   deleteTask,
   moveTask
@@ -81,10 +81,10 @@ function TodoTaskComponent({
     }
   }, [focused]);
 
-  const addTaskCallback = useCallback(() => {
-    addTask({ insertAfter: index });
+  const newTaskCallback = useCallback(() => {
+    newTask({ insertAfter: index });
     setFocusIndex(index + 1);
-  }, [addTask, index, setFocusIndex]);
+  }, [newTask, index, setFocusIndex]);
 
   const deleteTaskCallback = useCallback(() => {
     if (task.title === '') {
@@ -105,7 +105,7 @@ function TodoTaskComponent({
     [index, moveTask, setFocusIndex, todoTasks.length]
   );
 
-  useHotkeys('enter', addTaskCallback, focused);
+  useHotkeys('enter', newTaskCallback, focused);
   useHotkeys('backspace', deleteTaskCallback, focused, false);
   useHotkeys('shift+enter', detailsView.on, focused);
   useHotkeys('option+up', () => moveTaskCallback(-1), focused);

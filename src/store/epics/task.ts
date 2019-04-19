@@ -18,7 +18,7 @@ import { tasks_v1 } from 'googleapis';
 import {
   TaskActions,
   TaskActionTypes,
-  AddTaskSuccess,
+  NewTaskSuccess,
   UpdateTask,
   UpdateTaskSuccess,
   SortTasks,
@@ -70,7 +70,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
             takeUntil(action$.pipe(ofType(TaskActionTypes.GET_ALL_TASKS)))
           );
 
-        case TaskActionTypes.ADD_TASK:
+        case TaskActionTypes.NEW_TASK:
           const previousTask =
             typeof action.payload.insertAfter === 'number' &&
             state$.value.task.todoTasks[action.payload.insertAfter];
@@ -92,7 +92,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
         case TaskActionTypes.DELETE_TASK:
           if (!action.payload) {
             return action$.pipe(
-              ofType<TaskActions, AddTaskSuccess>(
+              ofType<TaskActions, NewTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               takeWhile(
@@ -162,7 +162,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
 
           if (action.payload.id === undefined) {
             return action$.pipe(
-              ofType<TaskActions, AddTaskSuccess>(
+              ofType<TaskActions, NewTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               takeWhile(
@@ -225,7 +225,7 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
 
           if (!target.id) {
             return action$.pipe(
-              ofType<TaskActions, AddTaskSuccess>(
+              ofType<TaskActions, NewTaskSuccess>(
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               takeWhile(success => success.payload.uuid === target.uuid),

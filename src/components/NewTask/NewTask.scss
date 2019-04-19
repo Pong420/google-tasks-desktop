@@ -5,7 +5,7 @@
   cursor: pointer;
   padding-right: 10px;
 
-  .add-new-task-button {
+  .new-task-button {
     @include flex(center);
     @include margin-x(10px);
 

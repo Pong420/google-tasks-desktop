@@ -24,7 +24,7 @@ function TaskListComponent({
   currentTaskList,
   creatingNewTaskList,
   getAllTaskList,
-  addTaskList
+  newTaskList
 }: AuthsState & TaskListState & typeof TaskListActionCreators) {
   useEffect(() => {
     loggedIn && getAllTaskList();
@@ -33,7 +33,7 @@ function TaskListComponent({
   return (
     <div className={classes('task-list', creatingNewTaskList && 'disabled')}>
       <TaskListHeader
-        addTaskList={addTaskList}
+        newTaskList={newTaskList}
         currentTaskList={currentTaskList!}
         taskLists={taskLists}
       />

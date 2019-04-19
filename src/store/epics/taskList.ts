@@ -10,7 +10,7 @@ import {
 import {
   TaskListActions,
   TaskListActionTypes,
-  AddTaskListSuccess,
+  NewTaskListSuccess,
   SetCurrentTaskList
 } from '../actions/taskList';
 import { RootState } from '../reducers';
@@ -60,7 +60,7 @@ const apiEpic: Epic<
             map(({ data }) => data),
             mergeMap(payload =>
               concat(
-                of<AddTaskListSuccess>({
+                of<NewTaskListSuccess>({
                   type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
                   payload
                 }),

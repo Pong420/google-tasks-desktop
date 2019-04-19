@@ -44,12 +44,12 @@ export interface SetCurrentTaskList {
   payload: Schema$TaskList;
 }
 
-export interface AddTaskList {
+export interface NewTaskList {
   type: TaskListActionTypes.ADD_TASK_LIST;
   payload: tasks_v1.Params$Resource$Tasklists$Insert;
 }
 
-export interface AddTaskListSuccess {
+export interface NewTaskListSuccess {
   type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS;
   payload: tasks_v1.Schema$TaskList;
 }
@@ -88,8 +88,8 @@ export type TaskListActions =
   | GetTaskList
   | GetTaskListSuccess
   | SetCurrentTaskList
-  | AddTaskList
-  | AddTaskListSuccess
+  | NewTaskList
+  | NewTaskListSuccess
   | UpdateTaskList
   | UpdateTaskListSuccess
   | DeleteTaskList
@@ -109,7 +109,7 @@ export const TaskListActionCreators = {
       payload
     };
   },
-  addTaskList(title: string): AddTaskList {
+  newTaskList(title: string): NewTaskList {
     return {
       type: TaskListActionTypes.ADD_TASK_LIST,
       payload: {
