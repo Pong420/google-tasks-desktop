@@ -68,10 +68,10 @@
         "portable",
         "zip"
       ],
-      "icon": "public/favicon.ico"
+      "icon": "public/icon/icon.ico"
     },
     "nsis": {
-      "installerIcon": "public/favicon.ico",
+      "installerIcon": "public/icon/icon.ico",
       "license": "LICENSE",
       "warningsAsErrors": false
     },
