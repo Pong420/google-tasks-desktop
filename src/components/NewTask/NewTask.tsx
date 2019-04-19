@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
-import { useMuiMenu } from '../Mui/Menu/useMuiMenu';
+import { useMuiMenu, IconButton } from '../Mui';
 import { Payload$Optional$NewTask } from '../../store';
 
 interface Props {
@@ -22,14 +21,14 @@ export function NewTask({ newTask, setFocusIndex }: Props) {
   return (
     <div className="new-task">
       <div className="new-task-button" onClick={newTaskCallback}>
-        <IconButton classes={{ root: 'add-icon-button' }} disableTouchRipple>
-          <AddIcon color="secondary" />
-        </IconButton>
+        <IconButton
+          icon={AddIcon}
+          iconProps={{ color: 'secondary' }}
+          disableTouchRipple
+        />
         <div>Add a task</div>
       </div>
-      <IconButton onClick={setAnchorEl}>
-        <MoreIcon />
-      </IconButton>
+      <IconButton icon={MoreIcon} onClick={setAnchorEl} />
       <TaskListMenu anchorEl={anchorEl} onClose={onClose} />
     </div>
   );

@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { CompletedTask } from '../Task';
+import { IconButton } from '../Mui/IconButton';
 import { Schema$Task } from '../../typings';
 import { useBoolean } from '../../utils/useBoolean';
-import IconButton from '@material-ui/core/IconButton';
 import ExpandIcon from '@material-ui/icons/ExpandLess';
 import CollapseIcon from '@material-ui/icons/ExpandMore';
 

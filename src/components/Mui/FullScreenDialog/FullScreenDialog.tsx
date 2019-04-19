@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
+import { IconButton } from '../../Mui/IconButton';
 
 export interface FullScreenDialogProps extends DialogProps {
   className?: string;
@@ -45,9 +45,11 @@ export function FullScreenDialog({
     >
       <div className="fullscreen-diaglog-header">
         {headerComponents}
-        <IconButton onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
+        <IconButton
+          tooltip="Close task"
+          icon={CloseIcon}
+          onClick={handleClose}
+        />
       </div>
       <div className="fullscreen-dialog-content">{children}</div>
     </Dialog>

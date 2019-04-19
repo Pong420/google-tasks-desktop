@@ -1,7 +1,8 @@
 import React, { MouseEvent } from 'react';
-import IconButton from '@material-ui/core/IconButton';
+
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
+import { IconButton } from '../Mui/IconButton';
 import { useBoolean } from '../../utils/useBoolean';
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 
 export function ToggleCompleted({ completed, onClick }: Props) {
   const [hover, { on, off }] = useBoolean(false);
+  const tick = completed || hover;
 
   return (
     <div
@@ -19,8 +21,8 @@ export function ToggleCompleted({ completed, onClick }: Props) {
       onMouseEnter={on}
       onMouseLeave={off}
     >
-      <IconButton>
-        {completed || hover ? <TickIcon color="secondary" /> : <CircleIcon />}
+      <IconButton tooltip={tick ? 'Mark complete' : 'Mark incomplete'}>
+        {tick ? <TickIcon color="secondary" /> : <CircleIcon />}
       </IconButton>
     </div>
   );
