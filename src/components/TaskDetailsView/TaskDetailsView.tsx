@@ -5,16 +5,16 @@ import {
   FullScreenDialog,
   FullScreenDialogProps,
   Input,
+  IconButton,
   useMuiMenu,
   useMenuItem
 } from '../Mui';
-import { Schema$Task, Schema$TaskList } from '../../typings';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/EditOutlined';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import { Schema$Task, Schema$TaskList } from '../../typings';
 
 interface Props extends FullScreenDialogProps {
   task: Schema$Task;
@@ -26,9 +26,12 @@ interface Props extends FullScreenDialogProps {
 
 export function EditTaskButton({ onClick }: { onClick(): void }) {
   return (
-    <IconButton className="edit-task-button" onClick={onClick}>
-      <EditIcon />
-    </IconButton>
+    <IconButton
+      className="edit-task-button"
+      tooltip="Edit details"
+      icon={EditIcon}
+      onClick={onClick}
+    />
   );
 }
 
@@ -65,9 +68,11 @@ export function TaskDetailsView({
       handleClose={handleClose}
       onExit={onExitCallback}
       headerComponents={
-        <IconButton onClick={deleteTaskCallback}>
-          <DeleteIcon />
-        </IconButton>
+        <IconButton
+          tooltip="Delete"
+          icon={DeleteIcon}
+          onClick={deleteTaskCallback}
+        />
       }
       {...props}
     >
