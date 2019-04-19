@@ -36,10 +36,11 @@
 
 ### TODO
 
-- [ ] Support Window & Linux
-- [ ] Keyboard shortcuts
-- [ ] Improve / check performace
+- [x] Support Window & Linux
+- [x] Keyboard shortcuts
 - [ ] Dark Theme
+- [ ] Add Note
+- [ ] Improve / check performace
 - [ ] Sync data periodically
 - [ ] Animation
 
