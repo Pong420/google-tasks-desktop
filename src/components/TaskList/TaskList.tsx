@@ -11,10 +11,9 @@ import { TaskListHeader } from './TaskListHeader';
 import { TaskListContent } from './TaskListContent';
 import { classes } from '../../utils/classes';
 
-const mapStateToProps = ({ auth, taskList }: RootState, ownProps: any) => ({
+const mapStateToProps = ({ auth, taskList }: RootState) => ({
   ...auth,
-  ...taskList,
-  ...ownProps
+  ...taskList
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskListActionCreators, dispatch);

@@ -19,7 +19,7 @@ interface SortableListProps extends Props {
 }
 
 interface TodoTasksProps extends Props {
-  onSortEnd(sortEnd: SortEnd): void;
+  onSortEnd(sortEnd: Pick<SortEnd, 'newIndex' | 'oldIndex'>): void;
 }
 
 const SortableItem = SortableElement((props: TodoTaskProps) => (
@@ -82,7 +82,7 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
       distance={5}
       onSortMove={on}
       onSortOver={onSortOverCallback}
-      onSortEnd={(params: SortEnd) => {
+      onSortEnd={(params: Pick<SortEnd, 'newIndex' | 'oldIndex'>) => {
         if (params.newIndex !== params.oldIndex) {
           onSortEnd(params);
         }
