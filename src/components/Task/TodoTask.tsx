@@ -18,6 +18,7 @@ export interface TodoTaskProps extends Pick<TaskProps, 'inputProps'> {
   className?: string;
   index: number;
   task: Schema$Task;
+  toggleCompleted(task: Schema$Task): void;
   focused: boolean;
   setFocusIndex(indxe: number | null): void;
 }
@@ -38,6 +39,7 @@ function TodoTaskComponent({
   index,
   focused,
   setFocusIndex,
+  toggleCompleted,
   task,
   todoTasks,
   taskLists,
@@ -70,8 +72,12 @@ function TodoTaskComponent({
 
   // auto focus
   useEffect(() => {
-    if (inputRef.current && focused) {
-      inputRef.current.focus();
+    if (inputRef.current) {
+      if (focused) {
+        inputRef.current.focus();
+      } else {
+        inputRef.current.blur();
+      }
     }
   }, [focused]);
 
@@ -104,6 +110,7 @@ function TodoTaskComponent({
   useHotkeys('shift+enter', detailsView.on, focused);
   useHotkeys('option+up', () => moveTaskCallback(-1), focused);
   useHotkeys('option+down', () => moveTaskCallback(1), focused);
+  useHotkeys('esc', () => setFocusIndex(null), focused);
 
   return (
     <>
@@ -120,7 +127,7 @@ function TodoTaskComponent({
         }}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
         deleteTask={deleteTask}
-        toggleCompleted={() => {}} // TODO:
+        toggleCompleted={toggleCompleted} // TODO:
       />
       <TaskDetailsView
         open={detailsViewOpened}

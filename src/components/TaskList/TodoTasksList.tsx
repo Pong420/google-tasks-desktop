@@ -11,6 +11,9 @@ import { Schema$Task } from '../../typings';
 
 interface Props {
   todoTasks: Schema$Task[];
+  toggleCompleted(task: Schema$Task): void;
+  focusIndex: number | null;
+  setFocusIndex(indxe: number | null): void;
 }
 
 interface SortableListProps extends Props {
@@ -18,7 +21,7 @@ interface SortableListProps extends Props {
   insertAfter: number | null;
 }
 
-interface TodoTasksProps extends Props {
+interface TodoTasksListProps extends Props {
   onSortEnd(sortEnd: Pick<SortEnd, 'newIndex' | 'oldIndex'>): void;
 }
 
@@ -27,9 +30,14 @@ const SortableItem = SortableElement((props: TodoTaskProps) => (
 ));
 
 const SortableList = SortableContainer(
-  ({ dragging, todoTasks, insertAfter, ...props }: SortableListProps) => {
-    const [focusIndex, setFocusIndex] = useState<number | null>(null);
-
+  ({
+    dragging,
+    todoTasks,
+    insertAfter,
+    focusIndex,
+    setFocusIndex,
+    ...props
+  }: SortableListProps) => {
     return (
       <div
         className="todo-tasks-list"
@@ -53,7 +61,7 @@ const SortableList = SortableContainer(
   }
 );
 
-export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
+export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
   const [dragging, { on, off }] = useBoolean();
   const [insertAfter, setInsertAfter] = useState<number | null>(null);
   const onSortOverCallback = useCallback(
