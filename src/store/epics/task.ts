@@ -214,10 +214,11 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     groupBy(action => {
       // TODO: Make it better
       const todoTasks = state$.value.task.todoTasks;
-      return todoTasks[action.payload.oldIndex].id;
+      return todoTasks[action.payload.newIndex].uuid;
     }),
     mergeMap(group$ => {
       return group$.pipe(
+        debounce(() => timer(500)),
         switchMap(action => {
           const todoTasks = state$.value.task.todoTasks;
           const target = todoTasks[action.payload.newIndex];
