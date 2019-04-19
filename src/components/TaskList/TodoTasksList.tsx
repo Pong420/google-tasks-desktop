@@ -6,16 +6,14 @@ import {
   SortOver
 } from 'react-sortable-hoc';
 import { TodoTask, TodoTaskProps } from '../Task';
-import { Schema$Task, Schema$TaskList } from '../../typings';
 import { useBoolean } from '../../utils';
+import { Schema$Task } from '../../typings';
 
 interface Props {
   todoTasks: Schema$Task[];
-  taskLists: Schema$TaskList[];
-  currentTaskList: Schema$TaskList;
-  updateTask(task: Schema$Task): void;
-  deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
+  focusIndex: number | null;
+  setFocusIndex(indxe: number | null): void;
 }
 
 interface SortableListProps extends Props {
@@ -23,8 +21,8 @@ interface SortableListProps extends Props {
   insertAfter: number | null;
 }
 
-interface TodoTasksProps extends Props {
-  onSortEnd(sortEnd: SortEnd): void;
+interface TodoTasksListProps extends Props {
+  onSortEnd(sortEnd: Pick<SortEnd, 'newIndex' | 'oldIndex'>): void;
 }
 
 const SortableItem = SortableElement((props: TodoTaskProps) => (
@@ -32,7 +30,14 @@ const SortableItem = SortableElement((props: TodoTaskProps) => (
 ));
 
 const SortableList = SortableContainer(
-  ({ dragging, todoTasks, insertAfter, ...props }: SortableListProps) => {
+  ({
+    dragging,
+    todoTasks,
+    insertAfter,
+    focusIndex,
+    setFocusIndex,
+    ...props
+  }: SortableListProps) => {
     return (
       <div
         className="todo-tasks-list"
@@ -43,10 +48,9 @@ const SortableList = SortableContainer(
             {...props}
             task={task}
             index={index}
-            inputProps={{
-              autoFocus: index === 0 && !task.id
-            }}
             key={task.uuid + '@' + index}
+            focused={focusIndex === index}
+            setFocusIndex={setFocusIndex}
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''
             }
@@ -57,7 +61,7 @@ const SortableList = SortableContainer(
   }
 );
 
-export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
+export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
   const [dragging, { on, off }] = useBoolean();
   const [insertAfter, setInsertAfter] = useState<number | null>(null);
   const onSortOverCallback = useCallback(
@@ -86,7 +90,7 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksProps) {
       distance={5}
       onSortMove={on}
       onSortOver={onSortOverCallback}
-      onSortEnd={(params: SortEnd) => {
+      onSortEnd={(params: Pick<SortEnd, 'newIndex' | 'oldIndex'>) => {
         if (params.newIndex !== params.oldIndex) {
           onSortEnd(params);
         }

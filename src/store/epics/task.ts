@@ -71,14 +71,19 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.ADD_TASK:
-          return from(tasksAPI.insert({ tasklist })).pipe(
+          const previousTask =
+            typeof action.payload.insertAfter === 'number' &&
+            state$.value.task.todoTasks[action.payload.insertAfter];
+          const previous = previousTask ? previousTask.id : undefined;
+
+          return from(tasksAPI.insert({ tasklist, previous })).pipe(
             map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => {
               return {
                 type: TaskActionTypes.ADD_TASK_SUCCESS,
                 payload: {
                   ...task,
-                  uuid: action.payload
+                  uuid: action.payload.uuid
                 }
               };
             })
@@ -176,7 +181,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
+const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
@@ -185,7 +190,7 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     take(1)
   );
 
-  const sortTaskRequest$ = (task: Schema$Task) =>
+  const moveTaskRequest$ = (task: Schema$Task) =>
     todoTasks$.pipe(
       switchMap(todoTasks => from([undefined, ...todoTasks])),
       pairwise(),
@@ -200,19 +205,20 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
         )
       ),
       map<any, SortTasksSuccess>(() => ({
-        type: TaskActionTypes.SORT_TASKS_SUCCESS
+        type: TaskActionTypes.MOVE_TASKS_SUCCESS
       }))
     );
 
   return action$.pipe(
-    ofType<TaskActions, SortTasks>(TaskActionTypes.SORT_TASKS),
+    ofType<TaskActions, SortTasks>(TaskActionTypes.MOVE_TASKS),
     groupBy(action => {
       // TODO: Make it better
       const todoTasks = state$.value.task.todoTasks;
-      return todoTasks[action.payload.oldIndex].id;
+      return todoTasks[action.payload.newIndex].uuid;
     }),
     mergeMap(group$ => {
       return group$.pipe(
+        debounce(() => timer(500)),
         switchMap(action => {
           const todoTasks = state$.value.task.todoTasks;
           const target = todoTasks[action.payload.newIndex];
@@ -223,15 +229,15 @@ const sortTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
                 TaskActionTypes.ADD_TASK_SUCCESS
               ),
               takeWhile(success => success.payload.uuid === target.uuid),
-              switchMap(success => sortTaskRequest$(success.payload))
+              switchMap(success => moveTaskRequest$(success.payload))
             );
           }
 
-          return sortTaskRequest$(target);
+          return moveTaskRequest$(target);
         })
       );
     })
   );
 };
 
-export default [apiEpic, updateEpic, sortTaskEpic];
+export default [apiEpic, updateEpic, moveTaskEpic];

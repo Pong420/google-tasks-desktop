@@ -1,17 +1,17 @@
 $height: 36px;
 
-.edit-task {
+.task-details-view {
   .fullscreen-dialog-content > * {
     margin-bottom: 8px;
   }
 
-  .mui-input-base.edit-task-title-input {
+  .mui-input-base.task-details-view-title-field {
     @include typeface('Nunito Sans', 600);
 
     font-size: 16px;
   }
 
-  .edit-task-row {
+  .task-details-view-row {
     @include flex(center);
 
     > :first-child {
@@ -44,8 +44,8 @@ $height: 36px;
   }
 }
 
-.edit-task-dropdown-paper {
-  &.edit-task-dropdown-paper {
+.task-details-view-dropdown-paper {
+  &.task-details-view-dropdown-paper {
     max-height: $height * 5;
   }
 
