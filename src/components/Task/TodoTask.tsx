@@ -7,22 +7,25 @@ import React, {
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Task } from './Task';
+import { Task, TaskProps } from './Task';
 import { TaskDetailsView, EditTaskButton } from '../TaskDetailsView';
 import { useBoolean, classes } from '../../utils';
 import { useHotkeys } from '../../utils/useHotkeys';
 import { RootState, TaskActionCreators } from '../../store';
 import { Schema$Task } from '../../typings';
 
-export interface TodoTaskProps {
+export interface TodoTaskProps extends Pick<TaskProps, 'inputProps'> {
   className?: string;
   index: number;
   task: Schema$Task;
   focused: boolean;
-  setFocusIndex(indxe: number): void;
+  setFocusIndex(indxe: number | null): void;
 }
 
-const mapStatetoProps = ({ task, taskList }: RootState, ownProps: any) => ({
+const mapStatetoProps = (
+  { task, taskList }: RootState,
+  ownProps: TodoTaskProps
+) => ({
   ...task,
   ...taskList,
   ...ownProps
@@ -44,9 +47,7 @@ function TodoTaskComponent({
   updateTask,
   deleteTask,
   moveTask
-}: TodoTaskProps &
-  ReturnType<typeof mapStatetoProps> &
-  ReturnType<typeof mapDispatchToProps>) {
+}: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const onClickCallback = useCallback(
     (evt: MouseEvent<HTMLElement>) =>
@@ -87,12 +88,12 @@ function TodoTaskComponent({
   }, [deleteTask, index, setFocusIndex, task]);
 
   const moveTaskCallback = useCallback(
-    (step: 1 | -1) => {
+    (step: number) => {
       const oldIndex = index;
       const newIndex = oldIndex + step;
       if (newIndex >= 0 && newIndex < todoTasks.length) {
         setFocusIndex(newIndex);
-        setTimeout(() => moveTask({ newIndex, oldIndex }), 0); // not sure the reason but required
+        setTimeout(() => moveTask({ newIndex, oldIndex }), 0); // not sure the reason of setTimeout but required
       }
     },
     [index, moveTask, setFocusIndex, todoTasks.length]

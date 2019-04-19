@@ -1,5 +1,4 @@
 import { tasks_v1 } from 'googleapis';
-import { Omit } from 'react-redux';
 import { SortEnd } from 'react-sortable-hoc';
 import { Schema$Task } from '../../typings';
 import uuid from 'uuid';
@@ -86,7 +85,7 @@ export interface DeleteCompletedTasksSuccess {
 
 export interface SortTasks {
   type: TaskActionTypes.MOVE_TASKS;
-  payload: SortEnd;
+  payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>;
 }
 
 export interface SortTasksSuccess {
@@ -142,7 +141,7 @@ export const TaskActionCreators = {
       payload
     };
   },
-  moveTask(payload: SortEnd) {
+  moveTask(payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>) {
     return {
       type: TaskActionTypes.MOVE_TASKS,
       payload

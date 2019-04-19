@@ -19,7 +19,7 @@ import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 interface Props extends FullScreenDialogProps {
   task: Schema$Task;
   taskLists: Schema$TaskList[];
-  currentTaskList: Schema$TaskList;
+  currentTaskList: Schema$TaskList | null;
   deleteTask(task: Schema$Task): void;
   updateTask?(task: Schema$Task): void;
 }
@@ -119,7 +119,7 @@ export function TaskDetailsView({
             <MenuItem
               key={id}
               text={title}
-              selected={currentTaskList && currentTaskList.id === id}
+              selected={currentTaskList !== null && currentTaskList.id === id}
             />
           ))}
         </Dropdown>
