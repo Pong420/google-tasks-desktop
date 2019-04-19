@@ -17,8 +17,12 @@
   background-position: center $position;
 }
 
-@mixin app-region {
+@mixin app-region-drag {
   -webkit-app-region: drag;
+}
+
+@mixin app-region-no-drag {
+  -webkit-app-region: no-drag;
 }
 
 @mixin noSelect {
