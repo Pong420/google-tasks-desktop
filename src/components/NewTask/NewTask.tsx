@@ -4,24 +4,24 @@ import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
 import { useMuiMenu } from '../Mui/Menu/useMuiMenu';
-import { Payload$Optional$AddTask } from '../../store';
+import { Payload$Optional$NewTask } from '../../store';
 
 interface Props {
-  addTask(payload?: Payload$Optional$AddTask): void;
+  newTask(payload?: Payload$Optional$NewTask): void;
   setFocusIndex(index: number | null): void;
 }
 
-export function NewTask({ addTask, setFocusIndex }: Props) {
+export function NewTask({ newTask, setFocusIndex }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
-  const addTaskCallback = useCallback(() => {
-    addTask();
+  const newTaskCallback = useCallback(() => {
+    newTask();
     setTimeout(() => setFocusIndex(0), 0);
-  }, [addTask, setFocusIndex]);
+  }, [newTask, setFocusIndex]);
 
   return (
     <div className="new-task">
-      <div className="add-new-task-button" onClick={addTaskCallback}>
+      <div className="new-task-button" onClick={newTaskCallback}>
         <IconButton classes={{ root: 'add-icon-button' }} disableTouchRipple>
           <AddIcon color="secondary" />
         </IconButton>

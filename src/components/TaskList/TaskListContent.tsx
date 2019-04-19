@@ -23,7 +23,7 @@ function TaskListContentComponent({
   taskListId,
   getAllTasks,
   moveTask,
-  addTask,
+  newTask,
   deleteTask,
   updateTask
 }: TaskState & typeof TaskActionCreators & Props) {
@@ -51,7 +51,7 @@ function TaskListContentComponent({
     <>
       <div className="task-list-content">
         <div className="task-list-scroll-content">
-          <NewTask addTask={addTask} setFocusIndex={setFocusIndex} />
+          <NewTask newTask={newTask} setFocusIndex={setFocusIndex} />
           <TodoTasksList
             onSortEnd={moveTask}
             todoTasks={todoTasks}
