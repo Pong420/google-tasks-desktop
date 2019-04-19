@@ -164,12 +164,12 @@
     "electron-devtools-installer": "^2.2.4",
     "googleapis": "^39.2.0",
     "history": "^4.9.0",
+    "hotkeys-js": "^3.6.2",
     "lodash": "^4.17.11",
     "nprogress": "^0.2.0",
     "pong-react-scripts": "2.1.8-3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-hotkeys": "^1.1.4",
     "react-redux": "^6.0.1",
     "react-router-dom": "^5.0.0",
     "react-sortable-hoc": "^1.8.3",
@@ -179,6 +179,7 @@
     "typeface-nunito-sans": "^0.0.72",
     "typeface-roboto": "^0.0.54",
     "typescript": "3.4.2",
+    "utility-types": "^3.5.0",
     "uuid": "^3.3.2"
   },
   "devEngines": {
