@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { Link, generatePath } from 'react-router-dom';
+import { AppRegion } from '../AppRegion';
 import { useMuiMenu, useMenuItem, Dropdown, FormModal } from '../Mui';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
@@ -35,8 +36,11 @@ export function TaskListHeader({
 
   return (
     <div className="task-list-header">
+      <AppRegion />
       <div className="task-list-menu">
-        <div className="task-list-menu-label">TASKS</div>
+        <div className="task-list-menu-label">
+          <span>TASKS</span>
+        </div>
         <Dropdown
           classes={{ paper: 'task-list-dropdown' }}
           label={currentTaskList ? currentTaskList.title! : ''}

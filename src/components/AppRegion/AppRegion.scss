@@ -1,0 +1,10 @@
+.app-region {
+  @include absolute(0, null, 0);
+  @include sq-dimen(100%);
+
+  > div {
+    @include sq-dimen(100%);
+
+    align-items: flex-start !important;
+  }
+}
