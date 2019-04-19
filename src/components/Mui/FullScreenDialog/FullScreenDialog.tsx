@@ -4,6 +4,7 @@ import Slide from '@material-ui/core/Slide';
 import CloseIcon from '@material-ui/icons/Close';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import { IconButton } from '../../Mui/IconButton';
+import { ScrollContent } from '../../ScrollContent';
 
 export interface FullScreenDialogProps extends DialogProps {
   className?: string;
@@ -51,7 +52,9 @@ export function FullScreenDialog({
           onClick={handleClose}
         />
       </div>
-      <div className="fullscreen-dialog-content">{children}</div>
+      <div className="fullscreen-dialog-content">
+        <ScrollContent>{children}</ScrollContent>
+      </div>
     </Dialog>
   );
 }

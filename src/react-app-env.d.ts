@@ -1,6 +1,7 @@
 /// <reference types="react-scripts" />
 
 declare module 'react-desktop/macOs';
+declare module 'simplebar';
 
 declare module '*.png';
 declare module '*.jpg';
