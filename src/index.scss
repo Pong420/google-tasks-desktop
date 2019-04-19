@@ -45,3 +45,7 @@ a {
     border-left-color: $secondary-color;
   }
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
