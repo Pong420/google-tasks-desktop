@@ -59,7 +59,7 @@
   @include flex($flex-direction: column);
 
   max-height: calc(100vh - #{$header-height});
-  overflow: auto;
+  overflow: hidden;
   z-index: 1;
 
   .task-list-scroll-content {
@@ -97,6 +97,9 @@
 }
 
 .completed-tasks-list-content {
+  @include flex();
+  @include sq-dimen(100%);
+
+  flex: 1 1 auto;
   overflow: hidden;
-  overflow: auto;
 }

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { CompletedTask } from '../Task';
+import { ScrollContent } from '../ScrollContent';
 import { IconButton } from '../Mui/IconButton';
 import { Schema$Task } from '../../typings';
 import { useBoolean } from '../../utils/useBoolean';
@@ -37,16 +38,18 @@ export function CompletedTasksList({
         className="completed-tasks-list-content"
         style={{ height: expanded ? 'auto' : 0 }}
       >
-        {completedTasks.map(task => {
-          return (
-            <CompletedTask
-              key={task.uuid}
-              task={task}
-              deleteTask={deleteTask}
-              toggleCompleted={toggleCompleted}
-            />
-          );
-        })}
+        <ScrollContent>
+          {completedTasks.map(task => {
+            return (
+              <CompletedTask
+                key={task.uuid}
+                task={task}
+                deleteTask={deleteTask}
+                toggleCompleted={toggleCompleted}
+              />
+            );
+          })}
+        </ScrollContent>
       </div>
     </div>
   );
