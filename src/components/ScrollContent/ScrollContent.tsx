@@ -1,9 +1,9 @@
 import React, {
   useRef,
   useLayoutEffect,
+  useCallback,
   ReactNode,
-  HTMLAttributes,
-  useCallback
+  HTMLAttributes
 } from 'react';
 import { createPortal } from 'react-dom';
 import Simplebar from 'simplebar';
@@ -29,7 +29,7 @@ function Container({ children, container: getContainer }: ContainerProps) {
 }
 
 export function ScrollContent({ children, className = '', ...props }: Props) {
-  const useSimplebar = process.platform === 'darwin';
+  const useSimplebar = process.platform !== 'darwin';
   const el = useRef<HTMLDivElement | null>(null);
   const getContainer = useCallback(
     () => el.current && el.current.querySelector('.simplebar-resize-wrapper'),
