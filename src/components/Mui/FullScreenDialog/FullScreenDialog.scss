@@ -10,9 +10,14 @@
 }
 
 .fullscreen-dialog-content {
+  @include flex();
   @include sq-dimen(100%);
-  padding: 15px;
-  overflow: auto;
+
+  overflow: hidden;
+
+  .scroll-content {
+    padding: 15px;
+  }
 
   h4 {
     margin-top: 0;
