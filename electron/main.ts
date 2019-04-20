@@ -6,8 +6,9 @@ import { MenuBuilder } from './menu';
 let mainWindow: BrowserWindow | null = null;
 
 const isDevelopment = process.env.NODE_ENV === 'development';
+
 const webPreferences: WebPreferences = {
-  preload: path.resolve(`${__dirname}/preload/index.js`)
+  preload: path.join(__dirname, './preload/index.js')
 };
 
 async function createWindow() {

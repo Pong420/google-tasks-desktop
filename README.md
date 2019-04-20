@@ -38,7 +38,7 @@
 
 - [x] Support Window & Linux
 - [x] Keyboard shortcuts
-- [ ] Dark Theme
+- [x] Dark Theme
 - [ ] Add Note
 - [ ] Improve / check performace
 - [ ] Sync data periodically
