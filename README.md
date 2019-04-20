@@ -3,8 +3,10 @@
 :warning: Project still working in prorgress. Don't use it if you have important data in google tasks
 
 <div>
-  <img src="./screenshot/1.png" width="320px">
-  <img src="./screenshot/2.png" width="320px">
+  <img src="./screenshot/1.png" width="24%">
+  <img src="./screenshot/2.png" width="24%">
+  <img src="./screenshot/3.png" width="24%">
+  <img src="./screenshot/4.png" width="24%">
 </div>
 
 ### Project Setup
