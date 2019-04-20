@@ -15,10 +15,11 @@ export function IconButton({
   icon: Icon,
   iconProps,
   children,
+  className = '',
   ...props
 }: Props) {
   return (
-    <MuiIconButton className="mui-icon-button" {...props}>
+    <MuiIconButton className={`mui-icon-button ${className}`.trim()} {...props}>
       <Tooltip
         title={tooltip}
         PopperProps={{

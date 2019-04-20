@@ -1,6 +1,6 @@
 .mui-menu-item.mui-menu-item {
   @include padding-y(8px);
-
+  color: var(--text-color);
   font-size: inherit;
 
   > div {
