@@ -1,11 +1,10 @@
-$border: 1px solid $border-color;
+$border: 1px solid var(--border-color);
 $min-task-height: 50px;
 $mutiline-padding-y: 12px;
 
 @mixin float {
-  border-color: $border-color;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
-    0 2px 6px 2px rgba(177, 204, 224, 0.149);
+  background: var(--task-focused-background-color);
+  border-color: var(--border-color);
   z-index: 10;
 
   .mui-input-base {
@@ -18,19 +17,19 @@ $mutiline-padding-y: 12px;
   @include flex(center);
   @include relative();
 
-  background-color: $primary-color;
+  background-color: var(--main-color);
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   margin-top: -2px;
 
   .mui-input-base {
-    border-top: 1px solid $border-color;
-    border-bottom: 1px solid $border-color;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
   }
 
   &.focused {
-    background-color: #f8f9fa;
-    border-color: $border-color;
+    background-color: var(--task-focused-background-color);
+    border-color: var(--border-color);
 
     &,
     & + .task {
@@ -43,7 +42,7 @@ $mutiline-padding-y: 12px;
   &:hover,
   &.focused {
     // input endAdornment
-    .mui-input-base.multiline button {
+    .mui-input-base.multiline .mui-icon-button {
       visibility: visible;
     }
   }
@@ -59,7 +58,7 @@ $mutiline-padding-y: 12px;
   }
 
   &:last-child {
-    border-bottom-color: $border-color;
+    border-bottom-color: var(--border-color);
     .mui-input-base {
       border-bottom-color: transparent;
     }
@@ -75,14 +74,14 @@ $mutiline-padding-y: 12px;
     min-height: $min-task-height;
 
     //input endAdornment
-    button {
+    .mui-icon-button {
       visibility: hidden;
     }
 
     > div:nth-child(1) {
       @include padding-y($mutiline-padding-y);
 
-      + button {
+      + .mui-icon-button {
         @include margin-x(5px);
       }
     }
@@ -97,7 +96,6 @@ $mutiline-padding-y: 12px;
     @include float;
 
     border-radius: 12.5px;
-    box-shadow: 0px 5px 10px #ccc;
     left: auto !important;
     right: 5px !important;
     width: calc(100% - 60px) !important;

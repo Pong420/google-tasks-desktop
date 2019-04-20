@@ -3,7 +3,8 @@
   @include fixed(0, null, 0);
   @include sq-dimen(100%);
 
-  background-color: $primary-color;
+  background-color: var(--main-color);
+  color: var(--text-color);
   padding: $padding-x;
   z-index: 100000000;
 
@@ -21,7 +22,6 @@
 
     .mui-input-base {
       margin: 5px 0 15px;
-      box-shadow: 0 3px 10px #e9e9e9;
     }
   }
 }

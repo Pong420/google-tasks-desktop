@@ -23,8 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 
 release
-electron/*.js
-electron/*.js.map
+electron/**/*.js
+electron/**/*.js.map
 *.tsbuildinfo
 
 src/constants/oauth2.keys.json

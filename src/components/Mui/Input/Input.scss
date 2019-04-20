@@ -5,6 +5,7 @@
 
   input,
   textarea {
+    color: var(--text-color);
     outline: none;
     padding: 0;
 
@@ -16,11 +17,11 @@
   &.filled {
     @include textHighlight();
 
-    background-color: #f8f9fa;
+    background-color: var(--task-focused-background-color);
     padding-left: 10px;
   }
 
   &.bottom-border {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid var(--border-color);
   }
 }

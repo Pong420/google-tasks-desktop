@@ -6,17 +6,9 @@ import { MenuBuilder } from './menu';
 let mainWindow: BrowserWindow | null = null;
 
 const isDevelopment = process.env.NODE_ENV === 'development';
-const webPreferences: WebPreferences = isDevelopment
-  ? {
-      // if you have CROS issue, you could uncomment below config
-      // webSecurity: false
-    }
-  : {
-      // Disable Node.js Integration for Remote Content
-      // https://electronjs.org/docs/tutorial/security#2-disable-nodejs-integration-for-remote-content
-      // nodeIntegration: false,
-      // nodeIntegrationInWorker: false
-    };
+const webPreferences: WebPreferences = {
+  preload: path.resolve(`${__dirname}/preload/index.js`)
+};
 
 async function createWindow() {
   if (isDevelopment) {
