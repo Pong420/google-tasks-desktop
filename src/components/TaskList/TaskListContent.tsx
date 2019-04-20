@@ -4,6 +4,7 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { TodoTasksList } from './TodoTasksList';
 import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from '../NewTask';
+import { ScrollContent } from '../ScrollContent';
 import { TaskState, TaskActionCreators, RootState } from '../../store';
 import { Schema$Task, Schema$TaskList } from '../../typings';
 
@@ -50,7 +51,7 @@ function TaskListContentComponent({
   return (
     <>
       <div className="task-list-content">
-        <div className="task-list-scroll-content">
+        <ScrollContent className="task-list-scroll-content">
           <NewTask newTask={newTask} setFocusIndex={setFocusIndex} />
           <TodoTasksList
             onSortEnd={moveTask}
@@ -59,7 +60,7 @@ function TaskListContentComponent({
             focusIndex={focusIndex}
             setFocusIndex={setFocusIndex}
           />
-        </div>
+        </ScrollContent>
         <CompletedTasksList
           completedTasks={completedTasks}
           deleteTask={deleteTask}

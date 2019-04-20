@@ -176,6 +176,7 @@
     "redux": "^4.0.1",
     "redux-observable": "^1.1.0",
     "rxjs": "^6.4.0",
+    "simplebar": "^4.0.0-alpha.3",
     "typeface-nunito-sans": "^0.0.72",
     "typeface-roboto": "^0.0.54",
     "typescript": "3.4.4",
