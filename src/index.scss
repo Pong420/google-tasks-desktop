@@ -13,10 +13,11 @@ body,
 body {
   @include typeface();
 
-  margin: 0;
-  padding: 0;
   color: #5f6368;
   font-size: 14px;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
