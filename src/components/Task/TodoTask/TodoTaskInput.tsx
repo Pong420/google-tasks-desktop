@@ -9,7 +9,7 @@ interface Props extends InputBaseComponentProps {
 export function TodoTaskInput({ inputRef, notes, ...inputProps }: Props) {
   return (
     <div className="task-input-content">
-      <Input multiline fullWidth inputProps={inputProps} inputRef={inputRef} />
+      <Input multiline inputProps={inputProps} inputRef={inputRef} />
       {notes && <div className="task-notes">{notes}</div>}
     </div>
   );
