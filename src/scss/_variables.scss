@@ -21,3 +21,6 @@
 
 $header-height: 70px;
 $padding-x: 20px;
+
+$mui-menu-z-index: 1300; // default
+$app-region-z-index: $mui-menu-z-index + 10;

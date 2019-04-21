@@ -6,7 +6,7 @@
   background-color: var(--main-color);
   color: var(--text-color);
   padding: $padding-x;
-  z-index: 100000000;
+  z-index: $app-region-z-index - 1;
 
   .logo {
     justify-self: flex-start;

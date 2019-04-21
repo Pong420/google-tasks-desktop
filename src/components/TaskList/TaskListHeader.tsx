@@ -1,6 +1,5 @@
 import React, { useRef, useCallback } from 'react';
 import { Link, generatePath } from 'react-router-dom';
-import { AppRegion } from '../AppRegion';
 import { useMuiMenu, useMenuItem, Dropdown, FormModal } from '../Mui';
 import { ScrollContent, SimplebarAPI } from '../ScrollContent';
 import { TaskListState } from '../../store';
@@ -40,7 +39,6 @@ export function TaskListHeader({
 
   return (
     <div className="task-list-header">
-      <AppRegion />
       <div className="task-list-menu">
         <div className="task-list-menu-label">
           <span>TASKS</span>

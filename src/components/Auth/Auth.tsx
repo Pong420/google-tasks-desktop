@@ -23,9 +23,9 @@ export function AuthComponent({
     autoLogin && authenticate();
   }, [authenticate, autoLogin]);
 
-  if (autoLogin || loggedIn) {
-    return null;
-  }
+  // if (autoLogin || loggedIn) {
+  //   return null;
+  // }
 
   return (
     <div className="auth">
