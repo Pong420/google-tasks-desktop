@@ -15,7 +15,6 @@ declare interface Window {
   __REDUX_DEVTOOLS_EXTENSION__: any;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
   __setTheme(theme?: THEME): void;
-  USER_TEHEME: THEME;
 }
 
 // https://codesandbox.io/s/github/piotrwitek/typesafe-actions-todo-app
