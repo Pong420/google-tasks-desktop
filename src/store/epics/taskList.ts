@@ -37,7 +37,7 @@ const apiEpic: Epic<
       ...Object.values(TaskListActionTypes)
     ),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn) {
+      if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
         return empty();
       }
 

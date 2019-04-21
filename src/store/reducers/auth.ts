@@ -2,7 +2,6 @@ import fs from 'fs';
 import { AuthActions, AuthActionTypes } from '../actions/auth';
 import { TOKEN_PATH } from '../../constants';
 
-// TODO:
 export interface AuthsState {
   autoLogin: boolean;
   waiting: boolean;

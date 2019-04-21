@@ -37,7 +37,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   action$.pipe(
     filter(action => !/Update|Sort/i.test(action.type)),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn) {
+      if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
         return empty();
       }
 
