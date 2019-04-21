@@ -1,17 +1,7 @@
 .scroll-content {
   @include dimen(100%);
-}
 
-#root {
-  &:not(.darwin) {
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  &.darwin {
-    .scroll-content {
-      overflow: auto;
-    }
+  [data-platform='darwin'] & {
+    overflow: auto;
   }
 }

@@ -29,7 +29,7 @@
     "files": [
       "build/index.html",
       "build/**/*",
-      "electron/*.js",
+      "electron/**/*.js",
       "package.json"
     ],
     "extraFiles": [

@@ -24,8 +24,8 @@
     -->
     <title>Google Tasks</title>
     <script>
-      window.onload = () =>
-        document.querySelector('#root').classList.add(process.platform);
+      __setTheme();
+      document.documentElement.setAttribute('data-platform', process.platform);
     </script>
   </head>
   <body>

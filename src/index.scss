@@ -10,10 +10,14 @@ body,
   min-height: 100vh;
 }
 
+html {
+  background-color: var(--main-color);
+}
+
 body {
   @include typeface();
 
-  color: #5f6368;
+  color: var(--text-secondary-color);
   font-size: 14px;
   margin: 0;
   overflow: hidden;
@@ -33,16 +37,16 @@ a {
 
 #nprogress {
   .bar {
-    background: $secondary-color;
+    background: var(--secondary-color);
     height: 3px;
   }
 
   .peg {
-    box-shadow: 0 0 10px $secondary-color, 0 0 5px $secondary-color;
+    box-shadow: 0 0 10px var(--secondary-color), 0 0 5px var(--secondary-color);
   }
 
   .spinner-icon {
-    border-top-color: $secondary-color;
-    border-left-color: $secondary-color;
+    border-top-color: var(--secondary-color);
+    border-left-color: var(--secondary-color);
   }
 }

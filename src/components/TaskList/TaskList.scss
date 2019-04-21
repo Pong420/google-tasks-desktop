@@ -19,7 +19,7 @@
 .task-list-header {
   @include dimen(100%, $header-height);
   @include flex(center, flex-end);
-  @include fake-border($borderWidth: 1px, $color: #f1f3f4);
+  @include fake-border($borderWidth: 1px, $color: var(--main-light-color));
   @include padding-x($padding-x);
   @include relative();
 
@@ -77,7 +77,7 @@
   @include dimen(100%);
   @include flex($flex-direction: column);
 
-  background-color: $primary-color;
+  background-color: var(--main-color);
   flex: 0 0 auto;
   // margin-top: -2px;
   max-height: calc(100vh - #{$header-height});
@@ -85,13 +85,13 @@
 }
 
 .completed-tasks-list-header {
-  @include dimen(100%, 50px);
+  @include dimen(100%, 54px);
   @include flex(center, space-between);
-  @include fake-border($borderWidth: 1px, $color: #f1f3f4);
+  @include fake-border($borderWidth: 1px, $color: var(--main-light-color));
   @include typeface('Nunito Sans', 600);
   @include padding-x(($padding-x, 10px));
 
-  border-top: 1px solid $border-color;
+  border-top: 1px solid var(--border-color);
   cursor: pointer;
   flex: 0 0 auto;
 }
