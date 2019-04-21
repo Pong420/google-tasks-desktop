@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactNode } from 'react';
-import { InputProps } from '@material-ui/core/Input';
+import { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskContextMenu } from './TaskContextMenu';
 import { useMuiMenu, Input } from '../Mui';
@@ -13,7 +13,7 @@ export interface TaskProps {
   deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
   endAdornment: ReactNode;
-  inputProps?: InputProps;
+  inputBaseProps?: InputBaseProps;
 }
 
 export function Task({
@@ -22,7 +22,7 @@ export function Task({
   deleteTask,
   toggleCompleted,
   endAdornment,
-  inputProps
+  inputBaseProps
 }: TaskProps) {
   const [task, setTask] = useState(initialTask);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
@@ -44,11 +44,10 @@ export function Task({
         completed={task.status === 'completed'}
       />
       <Input
-        multiline
         fullWidth
         defaultValue={task.title}
         endAdornment={endAdornment}
-        {...inputProps}
+        {...inputBaseProps}
       />
       <TaskContextMenu
         onClose={onClose}

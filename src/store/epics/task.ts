@@ -11,7 +11,8 @@ import {
   switchMap,
   pairwise,
   takeWhile,
-  take
+  take,
+  distinctUntilChanged
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -28,6 +29,7 @@ import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
+import isEqual from 'lodash/fp/isEqual';
 
 const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   action$,
@@ -152,6 +154,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
     mergeMap(group$ => {
       return group$.pipe(
         debounce(action => timer(action.payload.id ? 1000 : 0)), // make this better
+        distinctUntilChanged(isEqual),
         switchMap(action => {
           // FIXME: make this better
           if (
