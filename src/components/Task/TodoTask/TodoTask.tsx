@@ -10,7 +10,9 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Task } from '..';
 import { TodoTaskInput } from './TodoTaskInput';
+import { TodoTaskMenu } from './TodoTaskMenu';
 import { TaskDetailsView, EditTaskButton } from '../../TaskDetailsView';
+import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
 import { useBoolean, classes } from '../../../utils';
 import { useHotkeys } from '../../../utils/useHotkeys';
 import { RootState, TaskActionCreators } from '../../../store';
@@ -51,6 +53,8 @@ function TodoTaskComponent({
   deleteTask,
   moveTask
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
+  const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const onClickCallback = useCallback(
     (evt: MouseEvent<HTMLElement>) =>
@@ -100,18 +104,29 @@ function TodoTaskComponent({
       const newIndex = oldIndex + step;
       if (newIndex >= 0 && newIndex < todoTasks.length) {
         setFocusIndex(newIndex);
-        setTimeout(() => moveTask({ newIndex, oldIndex }), 0); // not sure the reason of setTimeout but required
+        // not sure the reason of setTimeout but required
+        setTimeout(() => moveTask({ newIndex, oldIndex }), 0);
       }
     },
     [index, moveTask, setFocusIndex, todoTasks.length]
   );
 
+  const moveUpCallback = useCallback(() => moveTaskCallback(-1), [
+    moveTaskCallback
+  ]);
+  const moveDownCallback = useCallback(() => moveTaskCallback(1), [
+    moveTaskCallback
+  ]);
+  const escKeyDownCallback = useCallback(() => () => setFocusIndex(null), [
+    setFocusIndex
+  ]);
+
   useHotkeys('enter', newTaskCallback, focused);
   useHotkeys('backspace', deleteTaskCallback, focused, false);
   useHotkeys('shift+enter', detailsView.on, focused);
-  useHotkeys('option+up', () => moveTaskCallback(-1), focused);
-  useHotkeys('option+down', () => moveTaskCallback(1), focused);
-  useHotkeys('esc', () => setFocusIndex(null), focused);
+  useHotkeys('option+up', moveUpCallback, focused);
+  useHotkeys('option+down', moveDownCallback, focused);
+  useHotkeys('esc', escKeyDownCallback, focused);
 
   const todoInputProps = useMemo(() => {
     return {
@@ -126,7 +141,6 @@ function TodoTaskComponent({
         task={task}
         inputBaseProps={{
           inputRef,
-          multiline: true,
           onFocus: () => setFocusIndex(index),
           onBlur: () => setFocusIndex(null),
           onClick: onClickCallback,
@@ -135,8 +149,13 @@ function TodoTaskComponent({
           inputProps: todoInputProps
         }}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
-        deleteTask={deleteTask}
-        toggleCompleted={toggleCompleted} // TODO:
+        onContextMenu={setAnchorPosition}
+        toggleCompleted={toggleCompleted}
+      />
+      <TodoTaskMenu
+        onClose={onClose}
+        onDelete={deleteTaskCallback}
+        anchorPosition={anchorPosition}
       />
       <TaskDetailsView
         open={detailsViewOpened}

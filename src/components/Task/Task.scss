@@ -21,7 +21,7 @@ $min-task-height: 50px;
   border-bottom: 1px solid transparent;
   margin-top: -2px;
 
-  > .mui-input-base {
+  .task-input-base {
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
     min-height: $min-task-height;
@@ -38,7 +38,7 @@ $min-task-height: 50px;
 
     &,
     & + .task {
-      > .mui-input-base.mui-input-base {
+      .task-input-base {
         border-color: transparent;
       }
     }
@@ -47,7 +47,7 @@ $min-task-height: 50px;
   &:hover,
   &.focused {
     // input endAdornment
-    > .mui-input-base .mui-icon-button {
+    .task-input-base .mui-icon-button {
       visibility: visible;
     }
   }
@@ -57,14 +57,14 @@ $min-task-height: 50px;
   }
 
   &:first-child {
-    > .mui-input-base {
+    .task-input-base {
       border-top-color: transparent;
     }
   }
 
   &:last-child {
     border-bottom-color: var(--border-color);
-    > .mui-input-base {
+    .task-input-base {
       border-bottom-color: transparent;
     }
   }
@@ -73,18 +73,11 @@ $min-task-height: 50px;
     @include margin-x((10px, 5px));
   }
 
-  > .mui-input-base {
+  .task-input-base {
     //input endAdornment
     .mui-icon-button {
       @include margin-x(5px);
       visibility: hidden;
     }
-  }
-}
-
-.completed-task {
-  input,
-  textarea {
-    text-decoration: line-through;
   }
 }

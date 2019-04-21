@@ -1,8 +1,7 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode, MouseEvent } from 'react';
 import { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
-import { TaskContextMenu } from './TaskContextMenu';
-import { useMuiMenu, Input } from '../Mui';
+import { Input } from '../Mui/Input';
 import { useAdvancedCallback } from '../../utils/useAdvancedCallback';
 import { Schema$Task } from '../../typings';
 import { classes } from '../../utils/classes';
@@ -10,23 +9,21 @@ import { classes } from '../../utils/classes';
 export interface TaskProps {
   className?: string;
   task: Schema$Task;
-  deleteTask(task: Schema$Task): void;
   toggleCompleted(task: Schema$Task): void;
   endAdornment: ReactNode;
   inputBaseProps?: InputBaseProps;
+  onContextMenu?(evt: MouseEvent<HTMLDivElement>): any;
 }
 
 export function Task({
   className = '',
   task: initialTask,
-  deleteTask,
   toggleCompleted,
   endAdornment,
-  inputBaseProps
+  inputBaseProps,
+  onContextMenu
 }: TaskProps) {
   const [task, setTask] = useState(initialTask);
-  const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
-  const deleteTaskCallback = useAdvancedCallback(deleteTask, [task]);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
 
   // FIXME:
@@ -35,24 +32,17 @@ export function Task({
   }, [initialTask]);
 
   return (
-    <div
-      className={classes(`task`, className)}
-      onContextMenu={setAnchorPosition}
-    >
+    <div className={classes(`task`, className)} onContextMenu={onContextMenu}>
       <ToggleCompleted
         onClick={toggleCompletedCallback}
         completed={task.status === 'completed'}
       />
       <Input
-        fullWidth
-        defaultValue={task.title}
+        multiline
+        className="task-input-base"
+        value={task.title}
         endAdornment={endAdornment}
         {...inputBaseProps}
-      />
-      <TaskContextMenu
-        onClose={onClose}
-        onDelete={deleteTaskCallback}
-        anchorPosition={anchorPosition}
       />
     </div>
   );
