@@ -3,11 +3,14 @@
   @include textHighlight();
 
   &.dragging {
+    @include padding-x((0px, 20px));
+
     border-radius: 12.5px;
     border: 1px solid var(--border-color);
     left: auto !important;
     right: 5px !important;
     width: calc(100% - 60px) !important;
+    z-index: 1000;
 
     [data-theme^='light'] & {
       box-shadow: 0px 5px 10px #ccc;
@@ -16,27 +19,13 @@
     .edit-task-button {
       display: none;
     }
+
+    .toggle-completed {
+      margin-left: 0;
+    }
   }
 
   &.highlight-bottom-border {
     border-bottom: 2px solid var(--secondary-color);
-  }
-
-  .task-input-content {
-    @include dimen(100%);
-    @include padding-y(12px);
-  }
-
-  .mui-input-base {
-    min-height: 0;
-    padding: 0;
-  }
-
-  .task-notes {
-    @include multi-line-ellipsis($line-height: 16px);
-    @include margin-y(2px);
-
-    color: var(--text-secondary-color);
-    font-size: 12px;
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactNode, MouseEvent } from 'react';
-import { InputBaseProps } from '@material-ui/core/InputBase';
+import InputBase, { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
-import { Input } from '../Mui/Input';
+import { TaskInput } from './TaskInput';
 import { useAdvancedCallback } from '../../utils/useAdvancedCallback';
 import { Schema$Task } from '../../typings';
 import { classes } from '../../utils/classes';
@@ -37,11 +37,16 @@ export function Task({
         onClick={toggleCompletedCallback}
         completed={task.status === 'completed'}
       />
-      <Input
-        multiline
+      <InputBase
+        fullWidth
         className="task-input-base"
         value={task.title}
         endAdornment={endAdornment}
+        inputComponent={TaskInput}
+        inputProps={{
+          task,
+          ...(inputBaseProps && inputBaseProps.inputProps)
+        }}
         {...inputBaseProps}
       />
     </div>
