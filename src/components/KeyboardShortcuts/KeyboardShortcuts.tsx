@@ -9,6 +9,16 @@ interface Props extends FullScreenDialogProps {
   temp?: string;
 }
 
+function replaceKeyName(str: string) {
+  switch (process.platform) {
+    case 'darwin':
+      return str.replace('Alt', '⌥');
+
+    default:
+      return str;
+  }
+}
+
 export function KeyboardShortcuts({ ...props }: Props) {
   return (
     <FullScreenDialog {...props} className="keyboard-shortcuts">
@@ -22,7 +32,9 @@ export function KeyboardShortcuts({ ...props }: Props) {
                 return (
                   <FullScreenDialog.Row key={index}>
                     <div className="keyboard-shortcuts-label">{label}</div>
-                    <div className="keyboard-shortcuts-key">{key}</div>
+                    <div className="keyboard-shortcuts-key">
+                      {replaceKeyName(key)}
+                    </div>
                   </FullScreenDialog.Row>
                 );
               })}
