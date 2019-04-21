@@ -32,6 +32,7 @@ export function Modal({
       open={open}
       onClose={handleClose}
       classes={{ root: 'mui-modal', paper: 'mui-modal-paper' }}
+      BackdropProps={{ classes: { root: 'mui-menu-backdrop' } }}
       {...props}
     >
       <div className="modal-title">{title}</div>

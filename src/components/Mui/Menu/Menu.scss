@@ -1,7 +1,3 @@
 .mui-menu-paper.mui-menu-paper {
   background-color: var(--main-lighter-color);
 }
-
-.mui-menu-backdrop {
-  @include app-region-no-drag;
-}
