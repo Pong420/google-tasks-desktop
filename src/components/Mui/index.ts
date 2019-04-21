@@ -6,3 +6,5 @@ export * from './DeleteIcon';
 export * from './Modal';
 export * from './Menu';
 export * from './MenuItem';
+
+import './index.scss';
