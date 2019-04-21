@@ -4,7 +4,10 @@
 
   > div {
     @include sq-dimen(100%);
-
     align-items: flex-start !important;
+
+    > div:nth-child(1) {
+      z-index: $app-region-z-index;
+    }
   }
 }
