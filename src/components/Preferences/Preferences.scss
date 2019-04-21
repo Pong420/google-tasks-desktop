@@ -1,8 +1,69 @@
 .preferences {
-  color: #202124;
+  color: var(--text-color);
 
   .preferences-label {
     white-space: nowrap;
     padding-right: 10px;
+  }
+
+  .preferences-theme-selector {
+    @include dimen(100%);
+    @include flex(center, space-evenly);
+  }
+
+  .preferences-theme {
+    text-align: center;
+    line-height: 1.5em;
+
+    > div {
+      @include dimen(70px, 45px);
+      @include relative();
+
+      border-radius: 5px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      overflow: hidden;
+
+      &:after {
+        $size: 7px;
+        @include absolute(6px, null, 6px);
+        @include sq-dimen($size);
+
+        content: '';
+        background: #ff5f57;
+        border-radius: 50%;
+        box-shadow: $size * 1.5 0 0 #ffbd2e, $size * 3 0 0 #28ca41;
+      }
+
+      &:before {
+        @include absolute(0, null, 0);
+        @include sq-dimen(100%);
+
+        border-radius: 3px;
+        content: '';
+      }
+
+      &.selected {
+        border-color: var(--secondary-color);
+      }
+    }
+
+    &.light {
+      &:after {
+        content: 'Light';
+      }
+      > div:before {
+        background-color: #eee;
+      }
+    }
+
+    &.dark {
+      &:after {
+        content: 'Dark';
+      }
+      > div:before {
+        background-color: #232323;
+      }
+    }
   }
 }

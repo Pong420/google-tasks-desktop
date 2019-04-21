@@ -7,17 +7,8 @@ export const theme = createMuiTheme({
     useNextVariants: true
   },
   palette: {
-    type: 'light',
-    primary: {
-      main: '#fff'
-    },
     secondary: {
       main: '#4285f4'
-    },
-    text: {
-      primary: '#202124',
-      secondary: '#5f6368',
-      disabled: '#b8b8b8'
     }
   },
   props: {
@@ -27,6 +18,9 @@ export const theme = createMuiTheme({
     },
     MuiSvgIcon: {
       fontSize: 'small',
+      color: 'inherit'
+    },
+    MuiButton: {
       color: 'inherit'
     }
   }

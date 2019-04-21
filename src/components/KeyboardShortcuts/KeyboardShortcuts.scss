@@ -1,5 +1,5 @@
 .keyboard-shortcuts {
-  color: #202124;
+  color: var(--text-color);
 
   .keyboard-shortcuts-label {
     @include dimen(100%);
