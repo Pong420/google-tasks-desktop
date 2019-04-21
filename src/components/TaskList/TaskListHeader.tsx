@@ -2,6 +2,7 @@ import React, { useRef, useCallback } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { AppRegion } from '../AppRegion';
 import { useMuiMenu, useMenuItem, Dropdown, FormModal } from '../Mui';
+import { ScrollContent, SimplebarAPI } from '../ScrollContent';
 import { TaskListState } from '../../store';
 import { PATHS } from '../../constants';
 import { Schema$TaskList } from '../../typings';
@@ -23,15 +24,18 @@ export function TaskListHeader({
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const MenuItem = useMenuItem(onClose);
 
-  const listContainerRef = useRef<HTMLDivElement>(null);
+  const simplebarRef = useRef<SimplebarAPI | null>(null);
   const selectedItemRef = useRef<HTMLAnchorElement | null>(null);
   const scrollToSelectedItem = useCallback(() => {
-    if (listContainerRef.current && selectedItemRef.current) {
-      listContainerRef.current.scrollTop =
-        selectedItemRef.current.offsetTop -
-        selectedItemRef.current.offsetHeight * 2 -
-        10;
-    }
+    // setTimeout is not a good solution but work ...
+    setTimeout(() => {
+      if (simplebarRef.current && selectedItemRef.current) {
+        simplebarRef.current.getScrollElement().scrollTop =
+          selectedItemRef.current.offsetTop -
+          selectedItemRef.current.offsetHeight * 2 -
+          10;
+      }
+    }, 0);
   }, []);
 
   return (
@@ -42,7 +46,8 @@ export function TaskListHeader({
           <span>TASKS</span>
         </div>
         <Dropdown
-          classes={{ paper: 'task-list-dropdown' }}
+          buttonProps={{ classes: { root: 'task-list-dropdown-button' } }}
+          classes={{ paper: 'task-list-dropdown-paper' }}
           label={currentTaskList ? currentTaskList.title! : ''}
           onClick={setAnchorEl}
           onClose={onClose}
@@ -55,23 +60,25 @@ export function TaskListHeader({
             left: window.innerWidth
           }}
         >
-          <div className="dropdown-list-container" ref={listContainerRef}>
-            {taskLists.map(({ id, title }) => {
-              const selected = currentTaskList && currentTaskList.id === id;
-              return (
-                <Link
-                  key={id}
-                  to={generatePath(PATHS.TASKLIST, { taskListId: id })}
-                  innerRef={node => {
-                    if (selected) {
-                      selectedItemRef.current = node;
-                    }
-                  }}
-                >
-                  <MenuItem text={title} selected={selected} />
-                </Link>
-              );
-            })}
+          <div className="dropdown-list-container">
+            <ScrollContent simplebarRef={simplebarRef}>
+              {taskLists.map(({ id, title }) => {
+                const selected = currentTaskList && currentTaskList.id === id;
+                return (
+                  <Link
+                    key={id}
+                    to={generatePath(PATHS.TASKLIST, { taskListId: id })}
+                    innerRef={node => {
+                      if (selected) {
+                        selectedItemRef.current = node;
+                      }
+                    }}
+                  >
+                    <MenuItem text={title} selected={selected} />
+                  </Link>
+                );
+              })}
+            </ScrollContent>
           </div>
           {taskLists.length && <Divider />}
           <MenuItem text="Create new list" onClick={openModal} />
