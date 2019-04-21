@@ -10,9 +10,7 @@ export function CompletedTask({ task, ...props }: Props) {
     <Task
       className="completed-task"
       task={task}
-      inputProps={{
-        readOnly: true
-      }}
+      inputBaseProps={{ readOnly: true }}
       endAdornment={
         <IconButton
           tooltip="Delete"

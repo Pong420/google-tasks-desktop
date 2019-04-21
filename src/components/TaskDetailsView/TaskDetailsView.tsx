@@ -76,20 +76,18 @@ export function TaskDetailsView({
       }
       {...props}
     >
-      <h4>This part currently not supported</h4>
       <Input
         className="filled task-details-view-title-field"
         placeholder="Enter title"
         value={task.title}
         onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
-        readOnly
       />
       <Input
         className="filled"
         placeholder="Add details"
         multiline
-        rows={3}
-        readOnly
+        value={task.notes}
+        onChange={evt => setTask({ ...task, notes: evt.currentTarget.value })}
       />
       <div className="task-details-view-row row-task-list">
         <FormatListBulletedIcon />

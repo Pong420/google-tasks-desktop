@@ -1,6 +1,5 @@
 $border: 1px solid var(--border-color);
 $min-task-height: 50px;
-$mutiline-padding-y: 12px;
 
 @mixin float {
   background: var(--task-focused-background-color);
@@ -22,9 +21,15 @@ $mutiline-padding-y: 12px;
   border-bottom: 1px solid transparent;
   margin-top: -2px;
 
-  .mui-input-base {
+  > .mui-input-base {
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
+    min-height: $min-task-height;
+  }
+
+  .mui-input-base {
+    font-size: 14px;
+    line-height: 20px;
   }
 
   &.focused {
@@ -33,7 +38,7 @@ $mutiline-padding-y: 12px;
 
     &,
     & + .task {
-      .mui-input-base.mui-input-base {
+      > .mui-input-base.mui-input-base {
         border-color: transparent;
       }
     }
@@ -42,7 +47,7 @@ $mutiline-padding-y: 12px;
   &:hover,
   &.focused {
     // input endAdornment
-    .mui-input-base.multiline .mui-icon-button {
+    > .mui-input-base .mui-icon-button {
       visibility: visible;
     }
   }
@@ -52,14 +57,14 @@ $mutiline-padding-y: 12px;
   }
 
   &:first-child {
-    .mui-input-base {
+    > .mui-input-base {
       border-top-color: transparent;
     }
   }
 
   &:last-child {
     border-bottom-color: var(--border-color);
-    .mui-input-base {
+    > .mui-input-base {
       border-bottom-color: transparent;
     }
   }
@@ -68,50 +73,12 @@ $mutiline-padding-y: 12px;
     @include margin-x((10px, 5px));
   }
 
-  .mui-input-base.multiline {
-    @include padding-y(0px);
-
-    min-height: $min-task-height;
-
+  > .mui-input-base {
     //input endAdornment
     .mui-icon-button {
+      @include margin-x(5px);
       visibility: hidden;
     }
-
-    > div:nth-child(1) {
-      @include padding-y($mutiline-padding-y);
-
-      + .mui-icon-button {
-        @include margin-x(5px);
-      }
-    }
-  }
-}
-
-.todo-task {
-  @include noSelect;
-  @include textHighlight();
-
-  &.dragging {
-    @include float;
-
-    border-radius: 12.5px;
-    border: 1px solid var(--border-color);
-    left: auto !important;
-    right: 5px !important;
-    width: calc(100% - 60px) !important;
-
-    [data-theme^='light'] & {
-      box-shadow: 0px 5px 10px #ccc;
-    }
-
-    .edit-task-button {
-      display: none;
-    }
-  }
-
-  &.highlight-bottom-border {
-    border-bottom: 2px solid var(--secondary-color);
   }
 }
 

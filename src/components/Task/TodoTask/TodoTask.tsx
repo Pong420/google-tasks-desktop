@@ -3,18 +3,20 @@ import React, {
   useCallback,
   MouseEvent,
   ChangeEvent,
-  useEffect
+  useEffect,
+  useMemo
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Task, TaskProps } from './Task';
-import { TaskDetailsView, EditTaskButton } from '../TaskDetailsView';
-import { useBoolean, classes } from '../../utils';
-import { useHotkeys } from '../../utils/useHotkeys';
-import { RootState, TaskActionCreators } from '../../store';
-import { Schema$Task } from '../../typings';
+import { Task } from '..';
+import { TodoTaskInput } from './TodoTaskInput';
+import { TaskDetailsView, EditTaskButton } from '../../TaskDetailsView';
+import { useBoolean, classes } from '../../../utils';
+import { useHotkeys } from '../../../utils/useHotkeys';
+import { RootState, TaskActionCreators } from '../../../store';
+import { Schema$Task } from '../../../typings';
 
-export interface TodoTaskProps extends Pick<TaskProps, 'inputProps'> {
+export interface TodoTaskProps {
   className?: string;
   index: number;
   task: Schema$Task;
@@ -44,7 +46,6 @@ function TodoTaskComponent({
   todoTasks,
   taskLists,
   currentTaskList,
-  inputProps,
   newTask,
   updateTask,
   deleteTask,
@@ -112,18 +113,26 @@ function TodoTaskComponent({
   useHotkeys('option+down', () => moveTaskCallback(1), focused);
   useHotkeys('esc', () => setFocusIndex(null), focused);
 
+  const todoInputProps = useMemo(() => {
+    return {
+      notes: task.notes
+    };
+  }, [task.notes]);
+
   return (
     <>
       <Task
         className={classes(`todo-task`, className, focused && 'focused')}
         task={task}
-        inputProps={{
+        inputBaseProps={{
           inputRef,
+          multiline: true,
           onFocus: () => setFocusIndex(index),
           onBlur: () => setFocusIndex(null),
           onClick: onClickCallback,
           onChange: onChangeCallback,
-          ...inputProps
+          inputComponent: TodoTaskInput,
+          inputProps: todoInputProps
         }}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
         deleteTask={deleteTask}
