@@ -1,7 +1,7 @@
 {
   "Actions": [
     { "label": "Add a task", "key": "Enter" },
-    { "label": "Move task up/down", "key": "⌥ + Up/Down" },
+    { "label": "Move task up/down", "key": "Alt + Up/Down" },
     { "label": "Enter details view", "key": "Shift + Enter" }
   ],
   "Details view": [{ "label": "Exit details view", "key": "Esc" }]
