@@ -48,13 +48,13 @@ export default function(
         currentTaskList: action.payload
       };
 
-    case TaskListActionTypes.ADD_TASK_LIST:
+    case TaskListActionTypes.NEW_TASK_LIST:
       return {
         ...state,
         creatingNewTaskList: true
       };
 
-    case TaskListActionTypes.ADD_TASK_LIST_SUCCESS:
+    case TaskListActionTypes.NEW_TASK_LIST_SUCCESS:
       return {
         ...state,
         creatingNewTaskList: false,

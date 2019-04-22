@@ -1,6 +1,6 @@
 import React from 'react';
-import { AnchorPosition } from '../Mui/Menu/useMuiMenu';
-import { useMenuItem, Menu } from '../Mui';
+import { AnchorPosition } from '../../Mui/Menu/useMuiMenu';
+import { useMenuItem, Menu } from '../../Mui';
 
 interface Props {
   anchorPosition?: AnchorPosition;
@@ -8,7 +8,7 @@ interface Props {
   onDelete(): void;
 }
 
-export function TaskContextMenu({ anchorPosition, onClose, onDelete }: Props) {
+export function TodoTaskMenu({ anchorPosition, onClose, onDelete }: Props) {
   const MenuItem = useMenuItem(onClose);
 
   return (

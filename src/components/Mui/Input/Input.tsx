@@ -6,8 +6,8 @@ export function Input({ className, ...props }: InputBaseProps) {
   return (
     <InputBase
       fullWidth
-      className={classes('mui-input-base', className)}
       classes={{
+        root: classes('mui-input-base', className),
         focused: 'focused',
         multiline: 'multiline'
       }}

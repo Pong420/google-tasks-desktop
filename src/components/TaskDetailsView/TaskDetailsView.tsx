@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DeleteIcon,
   Dropdown,
+  EditIcon,
   FullScreenDialog,
   FullScreenDialogProps,
   Input,
@@ -10,7 +11,6 @@ import {
   useMenuItem
 } from '../Mui';
 import Button from '@material-ui/core/Button';
-import EditIcon from '@material-ui/icons/EditOutlined';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
@@ -21,7 +21,7 @@ interface Props extends FullScreenDialogProps {
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList | null;
   deleteTask(task: Schema$Task): void;
-  updateTask?(task: Schema$Task): void;
+  updateTask(task: Schema$Task): void;
 }
 
 export function EditTaskButton({ onClick }: { onClick(): void }) {
@@ -46,16 +46,25 @@ export function TaskDetailsView({
 }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const MenuItem = useMenuItem(handleClose);
+  const notesInputRef = useRef<HTMLTextAreaElement>(null);
+  const shouldDeleteTask = useRef<boolean>(false);
 
   const [task, setTask] = useState(initialTask);
+
   const onExitCallback = useCallback(() => {
-    updateTask && updateTask(task);
+    updateTask(task);
   }, [task, updateTask]);
 
   const deleteTaskCallback = useCallback(() => {
-    deleteTask(task);
+    if (shouldDeleteTask.current) {
+      deleteTask(task);
+    }
+  }, [deleteTask, task]);
+
+  const deleteBtnClickedCallback = useCallback(() => {
+    shouldDeleteTask.current = true;
     handleClose();
-  }, [deleteTask, handleClose, task]);
+  }, [handleClose]);
 
   // FIXME:
   useEffect(() => {
@@ -67,29 +76,32 @@ export function TaskDetailsView({
       className="task-details-view"
       handleClose={handleClose}
       onExit={onExitCallback}
+      onExited={deleteTaskCallback}
       headerComponents={
         <IconButton
           tooltip="Delete"
           icon={DeleteIcon}
-          onClick={deleteTaskCallback}
+          onClick={deleteBtnClickedCallback}
         />
       }
       {...props}
     >
-      <h4>This part currently not supported</h4>
       <Input
+        multiline
         className="filled task-details-view-title-field"
         placeholder="Enter title"
         value={task.title}
         onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
-        readOnly
+        onKeyPress={evt => evt.which === 13 && evt.preventDefault()}
       />
       <Input
-        className="filled"
-        placeholder="Add details"
         multiline
-        rows={3}
-        readOnly
+        className="filled task-details-view-notes-field"
+        placeholder="Add details"
+        value={task.notes}
+        inputRef={notesInputRef}
+        onClick={() => notesInputRef.current!.focus()}
+        onChange={evt => setTask({ ...task, notes: evt.currentTarget.value })}
       />
       <div className="task-details-view-row row-task-list">
         <FormatListBulletedIcon />

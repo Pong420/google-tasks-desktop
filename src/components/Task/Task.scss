@@ -1,20 +1,10 @@
 $border: 1px solid var(--border-color);
 $min-task-height: 50px;
-$mutiline-padding-y: 12px;
-
-@mixin float {
-  background: var(--task-focused-background-color);
-  border-color: var(--border-color);
-  z-index: 10;
-
-  .mui-input-base {
-    border-color: transparent;
-  }
-}
 
 .task {
   @include dimen(100%);
   @include flex(center);
+  @include padding-x(10px);
   @include relative();
 
   background-color: var(--main-color);
@@ -22,102 +12,87 @@ $mutiline-padding-y: 12px;
   border-bottom: 1px solid transparent;
   margin-top: -2px;
 
-  .mui-input-base {
+  .task-input-base {
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-  }
-
-  &.focused {
-    background-color: var(--task-focused-background-color);
-    border-color: var(--border-color);
-
-    &,
-    & + .task {
-      .mui-input-base.mui-input-base {
-        border-color: transparent;
-      }
-    }
+    min-height: $min-task-height;
   }
 
   &:hover,
+  &.focused,
+  &.dragging {
+    background-color: var(--task-focused-background-color);
+    border-color: var(--border-color);
+  }
+  &:hover,
   &.focused {
+    &,
+    & + .task {
+      .task-input-base {
+        border-color: transparent;
+      }
+    }
+
     // input endAdornment
-    .mui-input-base.multiline .mui-icon-button {
+    .task-input-base .mui-icon-button {
       visibility: visible;
     }
   }
 
-  &:not(.focused):hover {
-    @include float;
+  &:hover {
+    z-index: 1;
   }
 
   &:first-child {
-    .mui-input-base {
+    .task-input-base {
       border-top-color: transparent;
     }
   }
 
   &:last-child {
     border-bottom-color: var(--border-color);
-    .mui-input-base {
+    .task-input-base {
       border-bottom-color: transparent;
     }
   }
 
   .toggle-completed {
-    @include margin-x((10px, 5px));
+    align-self: flex-start;
+    margin-top: 4px;
   }
 
-  .mui-input-base.multiline {
-    @include padding-y(0px);
-
-    min-height: $min-task-height;
-
+  .task-input-base {
     //input endAdornment
     .mui-icon-button {
       visibility: hidden;
+      align-self: flex-start;
+      margin-top: 3px;
     }
+  }
 
-    > div:nth-child(1) {
-      @include padding-y($mutiline-padding-y);
+  .task-input-content {
+    @include dimen(100%);
+    @include margin-x(5px);
+    @include padding-y(12px);
 
-      + .mui-icon-button {
-        @include margin-x(5px);
+    .mui-input-base {
+      $line-height: 20px;
+      font-size: 14px;
+      line-height: $line-height;
+      min-height: 0;
+      padding: 0;
+
+      textarea {
+        min-height: $line-height;
       }
     }
   }
-}
 
-.todo-task {
-  @include noSelect;
-  @include textHighlight();
+  .task-notes {
+    @include multi-line-ellipsis($line-height: 16px);
+    @include margin-y(2px);
 
-  &.dragging {
-    @include float;
-
-    border-radius: 12.5px;
-    border: 1px solid var(--border-color);
-    left: auto !important;
-    right: 5px !important;
-    width: calc(100% - 60px) !important;
-
-    [data-theme^='light'] & {
-      box-shadow: 0px 5px 10px #ccc;
-    }
-
-    .edit-task-button {
-      display: none;
-    }
-  }
-
-  &.highlight-bottom-border {
-    border-bottom: 2px solid var(--secondary-color);
-  }
-}
-
-.completed-task {
-  input,
-  textarea {
-    text-decoration: line-through;
+    color: var(--text-secondary-color);
+    font-size: 12px;
   }
 }

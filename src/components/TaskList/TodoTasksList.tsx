@@ -80,9 +80,18 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
     []
   );
 
+  const onSortEndCallack = useCallback(
+    (params: Pick<SortEnd, 'newIndex' | 'oldIndex'>) => {
+      if (params.newIndex !== params.oldIndex) {
+        onSortEnd(params);
+      }
+      off();
+    },
+    [off, onSortEnd]
+  );
+
   return (
     <SortableList
-      {...props}
       dragging={dragging}
       insertAfter={insertAfter}
       lockAxis="y"
@@ -90,12 +99,8 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
       distance={5}
       onSortMove={on}
       onSortOver={onSortOverCallback}
-      onSortEnd={(params: Pick<SortEnd, 'newIndex' | 'oldIndex'>) => {
-        if (params.newIndex !== params.oldIndex) {
-          onSortEnd(params);
-        }
-        off();
-      }}
+      onSortEnd={onSortEndCallack}
+      {...props}
     />
   );
 }
