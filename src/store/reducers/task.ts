@@ -63,7 +63,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         ...classify(tasks)
       };
 
-    case TaskActionTypes.ADD_TASK_SUCCESS:
+    case TaskActionTypes.NEW_TASK_SUCCESS:
       return {
         ...state,
         ...classify(state.tasks, task =>

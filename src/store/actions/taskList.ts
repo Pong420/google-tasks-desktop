@@ -11,8 +11,8 @@ export enum TaskListActionTypes {
   GET_TASK_LIST = 'GET_TASK_LIST',
   GET_TASK_LIST_SUCCESS = 'GET_TASK_LIST_SUCCESS',
   SET_CURRENT_TASK_LIST = 'SET_CURRENT_TASK_LIST',
-  ADD_TASK_LIST = 'ADD_TASK_LIST',
-  ADD_TASK_LIST_SUCCESS = 'ADD_TASK_LIST_SUCCESS',
+  NEW_TASK_LIST = 'NEW_TASK_LIST',
+  NEW_TASK_LIST_SUCCESS = 'NEW_TASK_LIST_SUCCESS',
   UPDATE_TASK_LIST = 'UPDATE_TASK_LIST',
   UPDATE_TASK_LIST_SUCCESS = 'UPDATE_TASK_LIST_SUCCESS',
   DELETE_TASK_LIST = 'DELETE_TASK_LIST',
@@ -45,12 +45,12 @@ export interface SetCurrentTaskList {
 }
 
 export interface NewTaskList {
-  type: TaskListActionTypes.ADD_TASK_LIST;
+  type: TaskListActionTypes.NEW_TASK_LIST;
   payload: tasks_v1.Params$Resource$Tasklists$Insert;
 }
 
 export interface NewTaskListSuccess {
-  type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS;
+  type: TaskListActionTypes.NEW_TASK_LIST_SUCCESS;
   payload: tasks_v1.Schema$TaskList;
 }
 
@@ -111,7 +111,7 @@ export const TaskListActionCreators = {
   },
   newTaskList(title: string): NewTaskList {
     return {
-      type: TaskListActionTypes.ADD_TASK_LIST,
+      type: TaskListActionTypes.NEW_TASK_LIST,
       payload: {
         requestBody: {
           title
