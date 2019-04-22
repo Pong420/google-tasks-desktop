@@ -53,7 +53,7 @@ const apiEpic: Epic<
             }))
           );
 
-        case TaskListActionTypes.ADD_TASK_LIST:
+        case TaskListActionTypes.NEW_TASK_LIST:
           nprogress.inc(0.25);
 
           return from(taskListAPI.insert(action.payload)).pipe(
@@ -61,7 +61,7 @@ const apiEpic: Epic<
             mergeMap(payload =>
               concat(
                 of<NewTaskListSuccess>({
-                  type: TaskListActionTypes.ADD_TASK_LIST_SUCCESS,
+                  type: TaskListActionTypes.NEW_TASK_LIST_SUCCESS,
                   payload
                 }),
                 push(PATHS.TASKLIST, {

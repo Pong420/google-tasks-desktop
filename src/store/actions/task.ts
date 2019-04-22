@@ -7,7 +7,7 @@ export enum TaskActionTypes {
   GET_ALL_TASKS = 'GET_ALL_TASKS',
   GET_ALL_TASKS_SUCCESS = 'GET_ALL_TASKS_SUCCESS',
   NEW_TASK = 'NEW_TASK',
-  ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS',
+  NEW_TASK_SUCCESS = 'NEW_TASK_SUCCESS',
   UPDATE_TASK = 'UPDATE_TASK',
   UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS',
   DELETE_TASK = 'DELETE_TASK',
@@ -43,7 +43,7 @@ export interface NewTask {
 }
 
 export interface NewTaskSuccess {
-  type: TaskActionTypes.ADD_TASK_SUCCESS;
+  type: TaskActionTypes.NEW_TASK_SUCCESS;
   payload: Schema$Task;
 }
 

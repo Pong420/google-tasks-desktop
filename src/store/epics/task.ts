@@ -82,7 +82,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
             map(({ data }) => data),
             map<tasks_v1.Schema$Task, TaskActions>(task => {
               return {
-                type: TaskActionTypes.ADD_TASK_SUCCESS,
+                type: TaskActionTypes.NEW_TASK_SUCCESS,
                 payload: {
                   ...task,
                   uuid: action.payload.uuid
@@ -95,7 +95,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           if (!action.payload) {
             return action$.pipe(
               ofType<TaskActions, NewTaskSuccess>(
-                TaskActionTypes.ADD_TASK_SUCCESS
+                TaskActionTypes.NEW_TASK_SUCCESS
               ),
               takeWhile(
                 success => success.payload.uuid === action.payload.uuid
@@ -168,7 +168,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
           if (action.payload.id === undefined) {
             return action$.pipe(
               ofType<TaskActions, NewTaskSuccess>(
-                TaskActionTypes.ADD_TASK_SUCCESS
+                TaskActionTypes.NEW_TASK_SUCCESS
               ),
               takeWhile(
                 success => success.payload.uuid === action.payload.uuid
@@ -231,7 +231,7 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
           if (!target.id) {
             return action$.pipe(
               ofType<TaskActions, NewTaskSuccess>(
-                TaskActionTypes.ADD_TASK_SUCCESS
+                TaskActionTypes.NEW_TASK_SUCCESS
               ),
               takeWhile(success => success.payload.uuid === target.uuid),
               switchMap(success => moveTaskRequest$(success.payload))
