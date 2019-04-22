@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DeleteIcon,
   Dropdown,
+  EditIcon,
   FullScreenDialog,
   FullScreenDialogProps,
   Input,
@@ -10,7 +11,6 @@ import {
   useMenuItem
 } from '../Mui';
 import Button from '@material-ui/core/Button';
-import EditIcon from '@material-ui/icons/EditOutlined';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';

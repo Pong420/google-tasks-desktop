@@ -56,10 +56,17 @@ $min-task-height: 50px;
     }
   }
 
+  .toggle-completed {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+
   .task-input-base {
     //input endAdornment
     .mui-icon-button {
       visibility: hidden;
+      align-self: flex-start;
+      margin-top: 3px;
     }
   }
 
