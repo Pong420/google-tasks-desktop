@@ -92,12 +92,16 @@ function TodoTaskComponent({
     setFocusIndex(index + 1);
   }, [newTask, index, setFocusIndex]);
 
-  const backspaceCallback = useCallback(() => {
-    if (task.title === '') {
-      deleteTask(task);
-      setFocusIndex(index - 1);
-    }
-  }, [deleteTask, index, setFocusIndex, task]);
+  const backspaceCallback = useCallback(
+    evt => {
+      if (task.title === '') {
+        evt.preventDefault();
+        deleteTask(task);
+        setFocusIndex(index - 1);
+      }
+    },
+    [deleteTask, index, setFocusIndex, task]
+  );
 
   const moveTaskCallback = useCallback(
     (step: number) => {
