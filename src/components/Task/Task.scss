@@ -76,8 +76,7 @@ $min-task-height: 50px;
       padding: 0;
 
       textarea {
-        // The textarea will be come scrollable if it contains is one line and focused
-        overflow: hidden;
+        min-height: $line-height;
       }
     }
   }
