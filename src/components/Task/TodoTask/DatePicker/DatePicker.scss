@@ -1,19 +1,13 @@
-.date-picker {
-  margin-top: 50px;
-}
-
 .calender-header {
   @include flex(center, space-between);
-  @include padding-x(7px);
 
   .month-year {
     @include typeface('Nunito Sans', 700);
+    color: var(--date-color);
   }
 }
 
 .calendar-content {
-  @include padding-x(10px);
-
   display: grid;
   grid-template-columns: repeat(7, auto);
 
@@ -47,10 +41,13 @@
     color: var(--date-color);
     cursor: pointer;
 
+    .grid-content {
+      border-radius: 50%;
+    }
+
     &.today {
       .grid-content {
         background-color: #d2e3fc;
-        border-radius: 50%;
         color: #1967d2;
       }
     }
@@ -58,7 +55,6 @@
     &.selected {
       .grid-content {
         background-color: var(--secondary-color);
-        border-radius: 50%;
         color: #fff;
       }
     }

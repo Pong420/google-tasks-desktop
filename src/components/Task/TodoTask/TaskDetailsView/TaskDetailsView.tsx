@@ -1,20 +1,18 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DeleteIcon,
-  Dropdown,
   EditIcon,
   FullScreenDialog,
   FullScreenDialogProps,
   Input,
-  IconButton,
-  useMuiMenu,
-  useMenuItem
-} from '../Mui';
+  IconButton
+} from '../../../Mui';
+import { TaskListDropdown } from './TaskListDropdown';
+import { Schema$Task, Schema$TaskList } from '../../../../typings';
 import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
-import { Schema$Task, Schema$TaskList } from '../../typings';
 
 interface Props extends FullScreenDialogProps {
   task: Schema$Task;
@@ -22,6 +20,7 @@ interface Props extends FullScreenDialogProps {
   currentTaskList: Schema$TaskList | null;
   deleteTask(task: Schema$Task): void;
   updateTask(task: Schema$Task): void;
+  openDateTimeModal(): void;
 }
 
 export function EditTaskButton({ onClick }: { onClick(): void }) {
@@ -41,11 +40,10 @@ export function TaskDetailsView({
   updateTask,
   deleteTask,
   task: initialTask,
-  handleClose,
+  handleClose, // TODO: check this
+  openDateTimeModal,
   ...props
 }: Props) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-  const MenuItem = useMenuItem(handleClose);
   const notesInputRef = useRef<HTMLTextAreaElement>(null);
   const shouldDeleteTask = useRef<boolean>(false);
 
@@ -105,45 +103,14 @@ export function TaskDetailsView({
       />
       <div className="task-details-view-row row-task-list">
         <FormatListBulletedIcon />
-        <Dropdown
-          label={currentTaskList ? currentTaskList.title! : ''}
-          classes={{ paper: 'task-details-view-dropdown-paper' }}
-          anchorEl={anchorEl}
-          onClick={setAnchorEl}
-          onClose={onClose}
-          open={Boolean(anchorEl)}
-          anchorPosition={{
-            top: anchorEl ? anchorEl.offsetTop : 0,
-            left: anchorEl ? anchorEl.offsetLeft : 0
-          }}
-          anchorReference="anchorPosition"
-          buttonProps={{
-            fullWidth: true,
-            disabled: true
-          }}
-          PaperProps={{
-            style: {
-              width: `calc(100% - ${anchorEl && anchorEl.offsetLeft + 15}px)`
-            }
-          }}
-          MenuListProps={{
-            style: {
-              padding: 0
-            }
-          }}
-        >
-          {taskLists.map(({ id, title }) => (
-            <MenuItem
-              key={id}
-              text={title}
-              selected={currentTaskList !== null && currentTaskList.id === id}
-            />
-          ))}
-        </Dropdown>
+        <TaskListDropdown
+          currentTaskList={currentTaskList}
+          taskLists={taskLists}
+        />
       </div>
       <div className="task-details-view-row row-date">
         <EventAvailableIcon />
-        <Button disabled>Add date/time</Button>
+        <Button onClick={openDateTimeModal}>Add date/time</Button>
       </div>
       <div className="task-details-view-row row-subtask">
         <SubdirectoryIcon />

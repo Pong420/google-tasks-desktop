@@ -9,7 +9,8 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Task } from '..';
 import { TodoTaskMenu } from './TodoTaskMenu';
-import { TaskDetailsView, EditTaskButton } from '../../TaskDetailsView';
+import { DateTimeModal } from './DateTimeModal';
+import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
 import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
 import { useBoolean, classes } from '../../../utils';
 import { useHotkeys } from '../../../utils/useHotkeys';
@@ -53,6 +54,7 @@ function TodoTaskComponent({
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
+  const [dateTimeModalOpened, dateTimeModal] = useBoolean(index === 0);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const clickToFocusCallback = useCallback(
@@ -153,6 +155,7 @@ function TodoTaskComponent({
         onClose={onClose}
         onDelete={deleteTaskCallback}
         anchorPosition={anchorPosition}
+        openDateTimeModal={dateTimeModal.on}
       />
       <TaskDetailsView
         open={detailsViewOpened}
@@ -162,6 +165,13 @@ function TodoTaskComponent({
         currentTaskList={currentTaskList}
         updateTask={updateTask}
         deleteTask={deleteTask}
+        openDateTimeModal={dateTimeModal.on}
+      />
+      <DateTimeModal
+        confirmLabel="OK"
+        open={dateTimeModalOpened}
+        handleClose={dateTimeModal.off}
+        handleConfirm={dateTimeModal.off}
       />
     </>
   );

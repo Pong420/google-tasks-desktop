@@ -1,7 +1,7 @@
 import React, { useState, useRef, HTMLAttributes, useCallback } from 'react';
 import { DateHelper } from './date';
-import { IconButton } from '../Mui/IconButton';
-import { classes } from '../../utils/classes';
+import { IconButton } from '../../../Mui/IconButton';
+import { classes } from '../../../../utils/classes';
 import LeftArrowIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
 import RightArrowIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 

@@ -34,9 +34,10 @@ $height: 36px;
     }
 
     .dropdown-button {
+      background: var(--task-focused-background-color);
       min-height: $height;
       line-height: $height;
-      background: var(--task-focused-background-color);
+      padding: 0 0 0 10px;
     }
 
     &.row-task-list {

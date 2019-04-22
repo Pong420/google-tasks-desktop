@@ -17,16 +17,17 @@
 
   .modal-actions {
     @include flex(center, flex-end);
-
+    flex: 0 0 auto;
     margin-top: 10px;
 
     button {
-      @include typeface('Nunito Sans', 600);
+      @include typeface('Nunito Sans', 700);
 
       background: none;
       text-transform: initial;
 
       + button {
+        color: var(--secondary-color);
         margin-left: 10px;
       }
     }
