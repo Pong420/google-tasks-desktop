@@ -1,3 +1,28 @@
+:root {
+  --main-color: #fff;
+  --secondary-color: #4285f4;
+  --text-color: #202124;
+  --text-secondary-color: #5f6368;
+  --main-light-color: #f1f3f4; // new task button
+  --main-lighter-color: #fff;
+  --border-color: #e0e0e0;
+  --task-focused-background-color: #f8f9fa;
+  --day-color: #9e9e9e;
+  --date-color: #000;
+}
+
+[data-theme^='dark'] {
+  --main-color: #000;
+  --text-color: #dfdedb;
+  --text-secondary-color: #a09c97;
+  --main-light-color: #252525;
+  --main-lighter-color: #191919;
+  --border-color: #313030;
+  --task-focused-background-color: #232323; // #070605
+  --day-color: #9e9e9e;
+  --date-color: #fff;
+}
+
 *,
 *:before,
 *:after {
