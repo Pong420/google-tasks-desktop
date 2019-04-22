@@ -5,9 +5,25 @@ $height: 36px;
     margin-bottom: 8px;
   }
 
-  .mui-input-base.task-details-view-title-field {
-    @include typeface('Nunito Sans', 600);
-    font-size: 16px;
+  .mui-input-base {
+    &.task-details-view-title-field {
+      @include typeface('Nunito Sans', 600);
+      font-size: 16px;
+
+      textarea::placeholder {
+        font-size: 14px;
+      }
+    }
+
+    &.task-details-view-notes-field {
+      $line-height: 20px;
+      font-size: 14px;
+      line-height: 20px;
+
+      > div {
+        min-height: $line-height * 3;
+      }
+    }
   }
 
   .task-details-view-row {
@@ -40,10 +56,6 @@ $height: 36px;
       text-transform: initial;
       color: var(--text-secondary-color);
     }
-  }
-
-  .mui-input-base.multiline {
-    min-height: 48px; // TODO: may change
   }
 }
 

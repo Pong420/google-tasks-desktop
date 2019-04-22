@@ -77,15 +77,17 @@ export function TaskDetailsView({
       {...props}
     >
       <Input
+        multiline
         className="filled task-details-view-title-field"
         placeholder="Enter title"
         value={task.title}
         onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
+        onKeyPress={evt => evt.which === 13 && evt.preventDefault()}
       />
       <Input
-        className="filled"
-        placeholder="Add details"
         multiline
+        className="filled task-details-view-notes-field"
+        placeholder="Add details"
         value={task.notes}
         onChange={evt => setTask({ ...task, notes: evt.currentTarget.value })}
       />

@@ -1,7 +1,7 @@
 .mui-input-base.mui-input-base {
   font-size: inherit;
-  min-height: 2.85em;
-  padding-right: 10px;
+  min-height: 40px;
+  padding: 7px 10px 6px;
 
   input,
   textarea {
@@ -16,9 +16,7 @@
 
   &.filled {
     @include textHighlight();
-
     background-color: var(--task-focused-background-color);
-    padding-left: 10px;
   }
 
   &.bottom-border {
