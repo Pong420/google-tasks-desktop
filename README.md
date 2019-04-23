@@ -41,10 +41,15 @@
 - [x] Support Window & Linux
 - [x] Keyboard shortcuts
 - [x] Dark Theme
-- [ ] Add Note
+- [x] Add Note
+- [ ] Add Date
 - [ ] Improve / check performace
 - [ ] Sync data periodically
 - [ ] Animation
+
+### Know issue
+
+- Add Time is supported as API limitation
 
 ### Development
 
