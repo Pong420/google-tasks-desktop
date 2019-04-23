@@ -54,7 +54,7 @@ function TodoTaskComponent({
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
-  const [dateTimeModalOpened, dateTimeModal] = useBoolean(index === 0);
+  const [dateTimeModalOpened, dateTimeModal] = useBoolean();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const clickToFocusCallback = useCallback(
@@ -145,7 +145,10 @@ function TodoTaskComponent({
           onFocus: () => setFocusIndex(index),
           onBlur: () => setFocusIndex(null),
           onClick: clickToFocusCallback,
-          onChange: onChangeCallback
+          onChange: onChangeCallback,
+          inputProps: {
+            onDueDateBtnClick: dateTimeModal.on
+          }
         }}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
         onContextMenu={setAnchorPosition}

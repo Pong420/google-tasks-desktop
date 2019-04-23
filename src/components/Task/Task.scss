@@ -72,6 +72,7 @@ $min-task-height: 50px;
 
   .task-input-content {
     @include dimen(100%);
+    @include flex($flex-direction: column);
     @include margin-x(5px);
     @include padding-y(12px);
 
@@ -94,5 +95,34 @@ $min-task-height: 50px;
 
     color: var(--text-secondary-color);
     font-size: 12px;
+  }
+
+  .task-due-date-button {
+    @include flex(center, center);
+
+    align-self: flex-start;
+    background-color: var(--task-focused-background-color);
+    border: 1px solid var(--main-light-color);
+    border-radius: 3px;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 6px;
+    padding: 6px 7px 5px;
+
+    svg {
+      color: var(--secondary-color);
+      font-size: 16px;
+      margin-right: 6px;
+    }
+
+    &:hover {
+      background-color: var(--main-color);
+
+      [data-theme^='light'] & {
+        box-shadow: 0px 5px 10px #ccc;
+      }
+    }
   }
 }

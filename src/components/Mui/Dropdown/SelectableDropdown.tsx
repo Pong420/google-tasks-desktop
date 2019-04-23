@@ -31,6 +31,7 @@ export function SelectableDropdown({
   scrollToIndex,
   calcMenuWidth,
   paperClassName = '',
+  buttonProps,
   onSelect,
   ...props
 }: Props) {
@@ -66,7 +67,8 @@ export function SelectableDropdown({
       onEnter={scrollToSelectedItem}
       buttonProps={{
         fullWidth: true,
-        classes: { root: 'seletable-dropdown-button' }
+        classes: { root: 'seletable-dropdown-button' },
+        ...buttonProps
       }}
       PaperProps={{
         style: {

@@ -43,11 +43,11 @@ export function Task({
         value={task.title}
         endAdornment={endAdornment}
         inputComponent={TaskInput}
+        {...inputBaseProps}
         inputProps={{
           task,
           ...(inputBaseProps && inputBaseProps.inputProps)
         }}
-        {...inputBaseProps}
       />
     </div>
   );

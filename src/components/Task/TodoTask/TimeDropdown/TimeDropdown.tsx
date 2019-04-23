@@ -74,6 +74,7 @@ export function TimeDropdown({ onSelect }: Props) {
         // onSelect();
         setScrollToIndex(index);
       }}
+      buttonProps={{ disabled: true }}
     />
   );
 }
