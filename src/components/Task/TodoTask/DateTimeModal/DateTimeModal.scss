@@ -1,17 +1,22 @@
 .date-time-modal-paper.date-time-modal-paper {
   @include margin-x(15px);
-  max-height: calc(100% - 80px);
-  padding: 0 10px 10px;
+  max-height: calc(100% - 65px);
+  max-width: 300px;
+  padding: 0 15px 10px;
 
   .row {
-    @include flex(center);
+    @include flex(center, stretch);
     @include padding-x(8px);
 
-    margin-top: 8px;
-    min-height: 40px;
+    margin-top: 6px;
+    min-height: 36px;
 
     > svg {
       margin-right: 8px;
+    }
+
+    .dropdown-button {
+      align-self: stretch;
     }
   }
 }

@@ -105,51 +105,45 @@ export function DatePicker() {
 }
 
 function getDisplayData(dateObj: DateHelper = new DateHelper()) {
-  const temp = dateObj;
-  const cDate = temp.getDate(); // current date
-  const one = temp.addDays(-1 * cDate + 1); // first day of current month
+  const curDate = dateObj.getDate(); // current date
+  const one = dateObj.addDays(-1 * curDate + 1); // first day of current month
   const index = one.getDay() - 1;
   const MonthDayCount = one.getMonthDayCount();
-  let dates = [];
-  const thisMonth = [];
+  const curMonth = [];
   const lastMonth = [];
   const nextMonth = [];
+  let dates = [];
 
   for (let a = 0; a < MonthDayCount; a++) {
-    thisMonth.push(one.addDays(a));
+    curMonth.push(one.addDays(a));
   }
 
   for (let b = 0; b < index; b++) {
     lastMonth.push(one.addDays((b + 1) * -1));
   }
 
-  dates = lastMonth.reverse().concat(thisMonth);
+  dates = lastMonth.reverse().concat(curMonth);
 
   const length = dates.length;
-  let max = 35;
 
-  if (length > 35) {
-    max = 42;
-  }
-
-  for (let c = length; c < max; c++) {
-    nextMonth.push(thisMonth[thisMonth.length - 1].addDays(c - length + 1));
+  for (let c = length; c < 42; c++) {
+    nextMonth.push(curMonth[curMonth.length - 1].addDays(c - length + 1));
   }
 
   dates = dates.concat(nextMonth);
 
-  const cIndex = lastMonth.length + cDate - 1;
-  const wIndex = cIndex - temp.getDay() + 1; // index of this week first day in days
+  const cIndex = lastMonth.length + curDate - 1;
+  const wIndex = cIndex - dateObj.getDay() + 1; // index of this week first day in days
 
   return {
     dates,
     week: dates.slice(wIndex, wIndex + 7),
     data: {
-      val: temp,
+      val: dateObj,
       index: cIndex,
-      date: cDate,
-      month: temp.getMonth(),
-      hour: temp.getHours()
+      date: curDate,
+      month: dateObj.getMonth(),
+      hour: dateObj.getHours()
     }
   };
 }

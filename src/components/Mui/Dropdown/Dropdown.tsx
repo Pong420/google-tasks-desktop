@@ -6,7 +6,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
 import mergeWith from 'lodash/mergeWith';
 
 export interface DropDownProps extends MenuProps {
-  label: string;
+  label?: string;
   onClick(evt: any): void;
   children: ReactNode;
   buttonProps?: ButtonProps;
