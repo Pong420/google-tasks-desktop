@@ -13,6 +13,7 @@ import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import CloseIcon from '@material-ui/icons/Close';
 
 interface Props extends FullScreenDialogProps {
   task: Schema$Task;
@@ -101,18 +102,35 @@ export function TaskDetailsView({
         onClick={() => notesInputRef.current!.focus()}
         onChange={evt => setTask({ ...task, notes: evt.currentTarget.value })}
       />
-      <div className="task-details-view-row row-task-list">
+      <div className="row row-task-list">
         <FormatListBulletedIcon />
         <TaskListDropdown
           currentTaskList={currentTaskList}
           taskLists={taskLists}
         />
       </div>
-      <div className="task-details-view-row row-date">
+      <div className="row row-date">
         <EventAvailableIcon />
-        <Button onClick={openDateTimeModal}>Add date/time</Button>
+        {task.due ? (
+          <div className="task-deatails-due-date-button">
+            <div
+              className="task-deatails-due-date-clickable"
+              onClick={openDateTimeModal}
+            />
+            <div>
+              <div className="date">{new Date(task.due).format('D, j M')}</div>
+            </div>
+            <IconButton
+              icon={CloseIcon}
+              tooltip="Remove date and time"
+              onClick={evt => evt.preventDefault()}
+            />
+          </div>
+        ) : (
+          <Button onClick={openDateTimeModal}>Add date/time</Button>
+        )}
       </div>
-      <div className="task-details-view-row row-subtask">
+      <div className="row row-subtask">
         <SubdirectoryIcon />
         <Button disabled>Add Subtasks</Button>
       </div>

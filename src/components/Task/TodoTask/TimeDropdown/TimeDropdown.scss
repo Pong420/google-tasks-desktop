@@ -1,9 +1,8 @@
 .time-dropdown-paper {
-  max-width: 226px !important;
-
   > ul {
     padding: 0;
   }
+
   .mui-menu-item {
     &:nth-child(1) {
       color: var(--day-color); // FIXME:

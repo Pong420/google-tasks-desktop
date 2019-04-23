@@ -78,6 +78,16 @@ function TodoTaskComponent({
     [task, updateTask]
   );
 
+  const onDueDateChangeCallback = useCallback(
+    (date: Date) => {
+      updateTask({
+        ...task,
+        due: date.toISOString()
+      });
+    },
+    [task, updateTask]
+  );
+
   // auto focus
   useEffect(() => {
     if (inputRef.current) {
@@ -171,10 +181,12 @@ function TodoTaskComponent({
         openDateTimeModal={dateTimeModal.on}
       />
       <DateTimeModal
+        task={task}
         confirmLabel="OK"
         open={dateTimeModalOpened}
         handleClose={dateTimeModal.off}
         handleConfirm={dateTimeModal.off}
+        onDueDateChange={onDueDateChangeCallback}
       />
     </>
   );

@@ -117,11 +117,32 @@ $min-task-height: 50px;
       margin-right: 6px;
     }
 
+    &:after {
+      content: attr(data-date);
+    }
+
+    &[data-date^='Today'] {
+      &:after {
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+    }
+
+    &[data-date^='Yesterday'],
+    &[data-date*='ago'] {
+      svg {
+        color: var(--error-color);
+      }
+    }
+
     &:hover {
       background-color: var(--main-color);
 
       [data-theme^='light'] & {
         box-shadow: 0px 5px 10px #ccc;
+      }
+      [data-theme^='dark'] & {
+        box-shadow: 0px 5px 10px #111;
       }
     }
   }

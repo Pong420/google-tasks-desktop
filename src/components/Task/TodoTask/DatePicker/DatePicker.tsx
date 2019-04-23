@@ -1,5 +1,10 @@
-import React, { useState, useRef, HTMLAttributes, useCallback } from 'react';
-import { DateHelper } from './date';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  HTMLAttributes
+} from 'react';
 import { IconButton } from '../../../Mui/IconButton';
 import { classes } from '../../../../utils/classes';
 import LeftArrowIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
@@ -15,58 +20,43 @@ interface DateProps extends GridProps {
   selected?: boolean;
 }
 
+interface Props {
+  value?: Date;
+  onChange?(date: Date): void;
+}
+
 const Grid = ({ children, className, ...props }: GridProps) => (
   <div className={`grid ${className}`.trim()} {...props}>
     <div className="grid-content">{children}</div>
   </div>
 );
 
-const Date = ({ selected, className, ...props }: DateProps) => (
+const DateGrid = ({ selected, className, ...props }: DateProps) => (
   <Grid
     className={classes('date', className, selected && 'selected')}
     {...props}
   />
 );
 
-export function DatePicker() {
-  const [{ dates, data }, setData] = useState(getDisplayData());
-  const today = useRef(data);
-  const [selected, setSelected] = useState<DateHelper | null>(
-    dates[today.current.index]
-  );
+export function DatePicker({ value, onChange }: Props) {
+  const [{ dates, date }, setData] = useState(getDisplayData(value));
+  const today = useRef(getDisplayData().date);
+  const [curValue, setCurValue] = useState<Date>(value ? value : date);
 
   const getClassName = useCallback(
-    (dateObj: DateHelper) => {
-      const date = dateObj.getDate();
-      const month = dateObj.getMonth();
-      const year = dateObj.getFullYear();
-      const sameYear = today.current.val.getFullYear() === year;
-      const sameMonth = today.current.month === month && sameYear;
-      // const sameWeek =
-      //   week[today.current.index] === week[data.index] && sameMonth;
-      const sameDate = today.current.date === date && sameMonth;
-      const cMonth = data.month;
-      const lastMonth = cMonth === 1 ? month === 12 : month < cMonth;
-      const nextMonth = cMonth === 12 ? month === 1 : month > cMonth;
-
-      return classes({
-        // sameYear,
-        // sameDate,
-        // sameWeek,
-        sameMonth,
-        lastMonth,
-        nextMonth,
-        today: !!sameDate
-      });
-    },
-    [data.month]
+    (dateObj: Date) =>
+      classes({
+        ...date.compare(dateObj),
+        today: today.current.compare(dateObj).sameDate
+      }),
+    [date]
   );
 
   const switchMonth = useCallback(
     (step: number) => {
-      setData(getDisplayData(data.val.addMonths(step)));
+      setData(getDisplayData(date.addMonths(step)));
     },
-    [data.val]
+    [date]
   );
 
   const prevMonth = useCallback(() => switchMonth(-1), [switchMonth]);
@@ -78,7 +68,7 @@ export function DatePicker() {
         <div className="calender-header">
           <IconButton icon={LeftArrowIcon} onClick={prevMonth} />
           <div className="month-year">
-            {data.val.getMonthName()} {data.val.getFullYear()}
+            {date.getMonthName()} {date.getFullYear()}
           </div>
           <IconButton icon={RightArrowIcon} onClick={nextMonth} />
         </div>
@@ -89,14 +79,17 @@ export function DatePicker() {
             </Grid>
           ))}
           {dates.map((date, index) => (
-            <Date
+            <DateGrid
               key={index}
               className={getClassName(date)}
-              selected={selected === date}
-              onClick={() => setSelected(date)}
+              selected={curValue.compare(date).sameDate}
+              onClick={() => {
+                setCurValue(date);
+                onChange && onChange(date);
+              }}
             >
               {date.getDate()}
-            </Date>
+            </DateGrid>
           ))}
         </div>
       </div>
@@ -104,7 +97,7 @@ export function DatePicker() {
   );
 }
 
-function getDisplayData(dateObj: DateHelper = new DateHelper()) {
+function getDisplayData(dateObj: Date = new Date()) {
   const curDate = dateObj.getDate(); // current date
   const one = dateObj.addDays(-1 * curDate + 1); // first day of current month
   const index = one.getDay() - 1;
@@ -138,12 +131,6 @@ function getDisplayData(dateObj: DateHelper = new DateHelper()) {
   return {
     dates,
     week: dates.slice(wIndex, wIndex + 7),
-    data: {
-      val: dateObj,
-      index: cIndex,
-      date: curDate,
-      month: dateObj.getMonth(),
-      hour: dateObj.getHours()
-    }
+    date: dateObj
   };
 }
