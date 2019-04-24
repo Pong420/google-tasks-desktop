@@ -1,35 +1,53 @@
 $border: 1px solid var(--border-color);
 $min-task-height: 50px;
 
+@mixin withVeritcalBorder($color: var(--border-color)) {
+  &:before {
+    @include absolute(0, null, 0);
+    @include dimen(100%, calc(100% + 1px));
+
+    border-top: 1px solid $color;
+    border-bottom: 1px solid $color;
+    content: '';
+  }
+}
+
 .task {
   @include dimen(100%);
   @include flex(center);
   @include padding-x(10px);
   @include relative();
+  @include withVeritcalBorder(transparent);
 
   background-color: var(--main-color);
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-  margin-top: -2px;
 
   .task-input-base {
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    @include relative();
+    @include withVeritcalBorder();
     min-height: $min-task-height;
+
+    //input endAdornment
+    .mui-icon-button {
+      visibility: hidden;
+      align-self: flex-start;
+      margin-top: 3px;
+    }
   }
 
   &:hover,
   &.focused,
   &.dragging {
     background-color: var(--task-focused-background-color);
-    border-color: var(--border-color);
+    &:before {
+      border-color: var(--border-color);
+    }
   }
 
   &:hover,
   &.focused {
     &,
     & + .task {
-      .task-input-base {
+      .task-input-base::before {
         border-color: transparent;
       }
     }
@@ -45,7 +63,7 @@ $min-task-height: 50px;
   }
 
   &:first-child {
-    .task-input-base {
+    .task-input-base:before {
       border-top-color: transparent;
     }
   }
@@ -53,15 +71,6 @@ $min-task-height: 50px;
   .toggle-completed {
     align-self: flex-start;
     margin-top: 4px;
-  }
-
-  .task-input-base {
-    //input endAdornment
-    .mui-icon-button {
-      visibility: hidden;
-      align-self: flex-start;
-      margin-top: 3px;
-    }
   }
 
   .task-input-content {
