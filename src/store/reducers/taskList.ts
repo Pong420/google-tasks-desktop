@@ -7,14 +7,21 @@ export interface TaskListState {
   currentTaskListId: string;
   currentTaskList: Schema$TaskList | null;
   creatingNewTaskList: boolean;
+  sortByDate: boolean;
 }
 
 const initialState: TaskListState = {
   taskLists: [],
   currentTaskList: null,
   currentTaskListId: '',
-  creatingNewTaskList: false
+  creatingNewTaskList: false,
+  sortByDate: false
 };
+
+const SORT_BY_DATE_IDS = 'SORT_BY_DATE_IDS';
+const sortByDateTasksListIds: string[] = JSON.parse(
+  localStorage.getItem(SORT_BY_DATE_IDS) || '[]'
+);
 
 export default function(
   state = initialState,
@@ -44,8 +51,9 @@ export default function(
     case TaskListActionTypes.SET_CURRENT_TASK_LIST:
       return {
         ...state,
+        currentTaskList: action.payload,
         currentTaskListId: action.payload.id!,
-        currentTaskList: action.payload
+        sortByDate: sortByDateTasksListIds.includes(action.payload.id!)
       };
 
     case TaskListActionTypes.NEW_TASK_LIST:
@@ -81,6 +89,26 @@ export default function(
             ? merge(taskList, action.payload.requestBody)
             : taskList
         )
+      };
+
+    case TaskListActionTypes.SORT_BY_DATE:
+      if (action.payload) {
+        sortByDateTasksListIds.push(state.currentTaskListId);
+      } else {
+        sortByDateTasksListIds.splice(
+          sortByDateTasksListIds.indexOf(state.currentTaskListId),
+          1
+        );
+      }
+
+      localStorage.setItem(
+        SORT_BY_DATE_IDS,
+        JSON.stringify(sortByDateTasksListIds)
+      );
+
+      return {
+        ...state,
+        sortByDate: action.payload
       };
 
     default:

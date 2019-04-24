@@ -1,33 +1,32 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { TodoTasksList } from './TodoTasksList';
+import { TodoTasksList, TodoTasksListSortByDate } from './TodoTasksList';
 import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from '../NewTask';
 import { ScrollContent } from '../ScrollContent';
-import { TaskState, TaskActionCreators, RootState } from '../../store';
-import { Schema$Task, Schema$TaskList } from '../../typings';
+import { TaskActionCreators, RootState } from '../../store';
+import { Schema$Task } from '../../typings';
 
-interface Props {
-  taskListId: string;
-  taskLists: Schema$TaskList[];
-  currentTaskList: Schema$TaskList;
-}
-
-const mapStateToProps = ({ task }: RootState) => ({ ...task });
+const mapStateToProps = ({ task, taskList }: RootState) => ({
+  ...task,
+  ...taskList
+});
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispatch);
 
 function TaskListContentComponent({
   todoTasks,
   completedTasks,
-  taskListId,
+  currentTaskListId,
   getAllTasks,
   moveTask,
   newTask,
   deleteTask,
-  updateTask
-}: TaskState & typeof TaskActionCreators & Props) {
+  updateTask,
+  sortByDate,
+  todoTasksSortByDate
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   const toggleCompletedCllaback = useCallback(
@@ -45,21 +44,30 @@ function TaskListContentComponent({
   );
 
   useEffect(() => {
-    taskListId && getAllTasks();
-  }, [getAllTasks, taskListId]);
+    currentTaskListId && getAllTasks();
+  }, [getAllTasks, currentTaskListId]);
 
   return (
     <>
       <div className="task-list-content">
+        <NewTask newTask={newTask} />
         <ScrollContent className="task-list-scroll-content">
-          <NewTask newTask={newTask} setFocusIndex={setFocusIndex} />
-          <TodoTasksList
-            onSortEnd={moveTask}
-            todoTasks={todoTasks}
-            toggleCompleted={toggleCompletedCllaback}
-            focusIndex={focusIndex}
-            setFocusIndex={setFocusIndex}
-          />
+          {sortByDate ? (
+            <TodoTasksListSortByDate
+              todoTasksSortByDate={todoTasksSortByDate}
+              toggleCompleted={toggleCompletedCllaback}
+              focusIndex={focusIndex}
+              setFocusIndex={setFocusIndex}
+            />
+          ) : (
+            <TodoTasksList
+              onSortEnd={moveTask}
+              todoTasks={todoTasks}
+              toggleCompleted={toggleCompletedCllaback}
+              focusIndex={focusIndex}
+              setFocusIndex={setFocusIndex}
+            />
+          )}
         </ScrollContent>
         <CompletedTasksList
           completedTasks={completedTasks}

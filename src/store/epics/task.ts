@@ -22,8 +22,8 @@ import {
   NewTaskSuccess,
   UpdateTask,
   UpdateTaskSuccess,
-  SortTasks,
-  SortTasksSuccess
+  MoveTasks,
+  MoveTasksSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
@@ -37,7 +37,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   { nprogress }
 ) => {
   return action$.pipe(
-    filter(action => !/Update|Sort/i.test(action.type)),
+    filter(action => !/Update|Move/i.test(action.type)),
     mergeMap(action => {
       if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
         return empty();
@@ -94,24 +94,30 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.NEW_TASK:
-          const previousTask =
-            typeof action.payload.insertAfter === 'number' &&
-            state$.value.task.todoTasks[action.payload.insertAfter];
+          const { previousTask } = action.payload;
           const previous = previousTask ? previousTask.id : undefined;
+          const requestBody: tasks_v1.Params$Resource$Tasks$Insert['requestBody'] = {};
+
+          if (previousTask && previousTask.due) {
+            requestBody['due'] = previousTask.due;
+          }
 
           if (previousTask && !previousTask.id) {
             return onNewTaskSuccess$(previousTask.uuid).pipe(
               delay(250), // short delay prevent request overlap by update
               mergeMap(success =>
                 newTaskRequest$(
-                  { tasklist, previous: success.payload.id },
+                  { tasklist, previous: success.payload.id, requestBody },
                   action.payload.uuid
                 )
               )
             );
           }
 
-          return newTaskRequest$({ tasklist, previous }, action.payload.uuid);
+          return newTaskRequest$(
+            { tasklist, previous, requestBody },
+            action.payload.uuid
+          );
 
         case TaskActionTypes.DELETE_TASK:
           if (!action.payload.id) {
@@ -224,13 +230,13 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
           })
         )
       ),
-      map<any, SortTasksSuccess>(() => ({
+      map<any, MoveTasksSuccess>(() => ({
         type: TaskActionTypes.MOVE_TASKS_SUCCESS
       }))
     );
 
   return action$.pipe(
-    ofType<TaskActions, SortTasks>(TaskActionTypes.MOVE_TASKS),
+    ofType<TaskActions, MoveTasks>(TaskActionTypes.MOVE_TASKS),
     groupBy(action => {
       // TODO: Make it better
       const todoTasks = state$.value.task.todoTasks;

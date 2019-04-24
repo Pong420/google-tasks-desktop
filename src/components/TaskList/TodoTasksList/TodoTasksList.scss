@@ -1,0 +1,29 @@
+.todo-tasks-list,
+.todo-tasks-list-sort-by-date {
+  &:not(:empty) {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.todo-tasks-list-sort-by-date {
+  .section-label {
+    @include dimen(100%, 40px);
+    @include flex(center);
+    @include padding-x(20px);
+
+    color: var(--text-color);
+
+    &:after {
+      @include typeface('Nunito Sans', 700);
+      content: attr(data-label);
+    }
+
+    &[data-label^='Past'] {
+      color: var(--error-color);
+    }
+
+    &[data-label^='Today'] {
+      color: var(--secondary-color);
+    }
+  }
+}
