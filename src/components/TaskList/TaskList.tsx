@@ -22,9 +22,11 @@ function TaskListComponent({
   loggedIn,
   taskLists,
   currentTaskList,
+  currentTaskListId,
   creatingNewTaskList,
   getAllTaskList,
-  newTaskList
+  newTaskList,
+  sortByDate
 }: AuthsState & TaskListState & typeof TaskListActionCreators) {
   useEffect(() => {
     loggedIn && getAllTaskList();
@@ -37,11 +39,7 @@ function TaskListComponent({
         currentTaskList={currentTaskList!}
         taskLists={taskLists}
       />
-      <TaskListContent
-        taskListId={currentTaskList ? currentTaskList.id! : ''}
-        taskLists={taskLists}
-        currentTaskList={currentTaskList!}
-      />
+      <TaskListContent />
     </div>
   );
 }

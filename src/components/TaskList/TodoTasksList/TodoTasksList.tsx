@@ -5,9 +5,9 @@ import {
   SortEnd,
   SortOver
 } from 'react-sortable-hoc';
-import { TodoTask, TodoTaskProps } from '../Task';
-import { useBoolean } from '../../utils';
-import { Schema$Task } from '../../typings';
+import { TodoTask, TodoTaskProps } from '../../Task';
+import { useBoolean } from '../../../utils';
+import { Schema$Task } from '../../../typings';
 
 interface Props {
   todoTasks: Schema$Task[];

@@ -36,24 +36,23 @@ export function TaskInput({
 
 function dateFormat(d: Date) {
   const now = new Date();
+  const dayDiff = Math.floor((+now - +d) / 1000 / 60 / 60 / 24);
 
-  if (d.compare(now).sameDate) {
+  if (dayDiff === 0) {
     return 'Today';
   }
 
-  if (d.compare(now.addDays(1)).sameDate) {
+  if (dayDiff === -1) {
     return 'Tomorrow';
   }
 
-  if (now < d) {
-    return new Date(d).format('D, j M');
+  if (dayDiff < -1) {
+    return d.format('D, j M');
   }
 
-  if (d.compare(now.addDays(-1)).sameDate) {
+  if (dayDiff === 1) {
     return 'Yesterday';
   }
-
-  const dayDiff = Math.floor((+now - +d) / 1000 / 60 / 60 / 24);
 
   if (dayDiff < 7) {
     return `${dayDiff} days ago`;

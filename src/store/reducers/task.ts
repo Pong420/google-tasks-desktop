@@ -3,16 +3,20 @@ import { Schema$Task } from '../../typings';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
 
+export type TodoTasksSortByDate = Array<[string, Schema$Task[]]>;
+
 export interface TaskState {
   tasks: Schema$Task[];
   todoTasks: Schema$Task[];
   completedTasks: Schema$Task[];
+  todoTasksSortByDate: TodoTasksSortByDate;
 }
 
 const initialState: TaskState = {
   tasks: [],
   todoTasks: [],
-  completedTasks: []
+  completedTasks: [],
+  todoTasksSortByDate: []
 };
 
 export default function(state = initialState, action: TaskActions): TaskState {
@@ -24,22 +28,11 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
-      const sortedTasks = action.payload.sort((a, b) => {
-        if (a.position && b.position) {
-          if (a.position > b.position) return 1;
-          if (a.position < b.position) return -1;
-        }
-
-        if (a.updated && b.updated) {
-          return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
-        }
-
-        return 0;
-      });
+      const sortedTasks = (action.payload as Schema$Task[]).sort(sortByOrder);
 
       return {
         ...state,
-        ...classify(sortedTasks as Schema$Task[], task => ({
+        ...classify(sortedTasks, task => ({
           ...task,
           uuid: uuid.v4()
         }))
@@ -86,6 +79,8 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.UPDATE_TASK:
+      // FIXME: seems this part cause delay on input
+
       return {
         ...state,
         ...classify(state.tasks, task =>
@@ -143,5 +138,68 @@ function classify(
     }
   });
 
-  return { tasks, todoTasks, completedTasks };
+  return {
+    tasks,
+    todoTasks,
+    completedTasks,
+    todoTasksSortByDate: classifyByDate(todoTasks)
+  };
+}
+
+function push<T>(arr: T[] = [], val: T) {
+  arr.push(val);
+  return arr;
+}
+
+function sortByOrder(a: Schema$Task, b: Schema$Task) {
+  if (a.position && b.position) {
+    if (a.position > b.position) return 1;
+    if (a.position < b.position) return -1;
+  }
+
+  if (a.updated && b.updated) {
+    return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
+  }
+
+  return 0;
+}
+
+function classifyByDate(data: Schema$Task[]): TodoTasksSortByDate {
+  const todoTasksSortByDate = new Map<string, Schema$Task[]>();
+
+  const sorted = data.slice().sort((a, b) => {
+    if (a.due && b.due) {
+      return new Date(a.due) > new Date(b.due) ? 1 : -1;
+    }
+
+    if (a.due) {
+      return -1;
+    }
+
+    return 1;
+  });
+
+  sorted.forEach(task => {
+    let key = 'No date';
+
+    if (task.due) {
+      const now = new Date();
+      const date = new Date(task.due);
+      const dayDiff = Math.floor((+now - +date) / 1000 / 60 / 60 / 24);
+
+      if (dayDiff > 0) {
+        key = 'Past';
+      } else if (dayDiff === 0) {
+        key = 'Today';
+      } else if (dayDiff === -1) {
+        key = 'Tomorrow';
+      } else if (dayDiff < -1) {
+        key = 'Due ' + date.format('D, j M');
+      }
+    }
+
+    todoTasksSortByDate.set(key, push(todoTasksSortByDate.get(key), task));
+  });
+
+  return [...todoTasksSortByDate];
 }

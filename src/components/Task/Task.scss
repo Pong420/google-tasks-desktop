@@ -24,6 +24,7 @@ $min-task-height: 50px;
     background-color: var(--task-focused-background-color);
     border-color: var(--border-color);
   }
+
   &:hover,
   &.focused {
     &,
@@ -46,13 +47,6 @@ $min-task-height: 50px;
   &:first-child {
     .task-input-base {
       border-top-color: transparent;
-    }
-  }
-
-  &:last-child {
-    border-bottom-color: var(--border-color);
-    .task-input-base {
-      border-bottom-color: transparent;
     }
   }
 

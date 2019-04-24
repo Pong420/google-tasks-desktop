@@ -55,9 +55,11 @@ function TaskListMenuComponent({
   taskLists,
   currentTaskList,
   currentTaskListId,
+  sortByDate,
   delteTaskList,
   deleteCompletedTasks,
   updateTaskList,
+  sortTasksByDate,
   logout
 }: Props &
   RouteComponentProps<MatchParams> &
@@ -114,8 +116,16 @@ function TaskListMenuComponent({
         onClose={onClose}
       >
         <div className="task-list-menu-title">Sort by</div>
-        <MenuItem text="My order" selected disabled />
-        <MenuItem text="Date" disabled />
+        <MenuItem
+          text="My order"
+          selected={!sortByDate}
+          onClick={() => sortTasksByDate(false)}
+        />
+        <MenuItem
+          text="Date"
+          selected={sortByDate}
+          onClick={() => sortTasksByDate(true)}
+        />
         <Divider />
         <MenuItem text="Rename list" onClick={renameTaskModal.on} />
         <MenuItem

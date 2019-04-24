@@ -28,6 +28,8 @@ export interface Payload$NewTask extends Payload$Optional$NewTask {
   uuid: string;
 }
 
+export type Payload$SortTasks = 'order' | 'date';
+
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
 }
@@ -83,12 +85,12 @@ export interface DeleteCompletedTasksSuccess {
   type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS;
 }
 
-export interface SortTasks {
+export interface MoveTasks {
   type: TaskActionTypes.MOVE_TASKS;
   payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>;
 }
 
-export interface SortTasksSuccess {
+export interface MoveTasksSuccess {
   type: TaskActionTypes.MOVE_TASKS_SUCCESS;
 }
 
@@ -105,8 +107,8 @@ export type TaskActions =
   | MoveTaskSuccess
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
-  | SortTasks
-  | SortTasksSuccess;
+  | MoveTasks
+  | MoveTasksSuccess;
 
 export const TaskActionCreators = {
   getAllTasks(): GetAllTasks {
