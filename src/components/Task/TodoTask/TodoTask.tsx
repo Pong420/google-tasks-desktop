@@ -161,8 +161,24 @@ function TodoTaskComponent({
   const moveDownCallback = useCallback(() => moveTaskCallback(1), [
     moveTaskCallback
   ]);
+
   const escKeyDownCallback = useCallback(() => () => setFocusIndex(null), [
     setFocusIndex
+  ]);
+
+  const focusPrevNextCallback = useCallback(
+    (step: number) => {
+      setFocusIndex(Math.min(todoTasks.length - 1, Math.max(0, index + step)));
+    },
+    [index, setFocusIndex, todoTasks.length]
+  );
+
+  const focusPrevCallback = useCallback(() => focusPrevNextCallback(-1), [
+    focusPrevNextCallback
+  ]);
+
+  const focusNextCallback = useCallback(() => focusPrevNextCallback(1), [
+    focusPrevNextCallback
   ]);
 
   useHotkeys('enter', newTaskCallback, focused);
@@ -171,6 +187,8 @@ function TodoTaskComponent({
   useHotkeys('option+up', moveUpCallback, focused);
   useHotkeys('option+down', moveDownCallback, focused);
   useHotkeys('esc', escKeyDownCallback, focused);
+  useHotkeys('up', focusPrevCallback, focused);
+  useHotkeys('down', focusNextCallback, focused);
 
   return (
     <>
