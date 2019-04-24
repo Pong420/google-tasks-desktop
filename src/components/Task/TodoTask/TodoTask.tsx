@@ -53,7 +53,8 @@ function TodoTaskComponent({
   updateTask,
   deleteTask,
   moveTask,
-  inputBaseProps
+  inputBaseProps,
+  sortByDate
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
@@ -103,9 +104,15 @@ function TodoTaskComponent({
   }, [focused]);
 
   const newTaskCallback = useCallback(() => {
-    newTask({ insertAfter: index });
-    setFocusIndex(index + 1);
-  }, [newTask, index, setFocusIndex]);
+    // TODO: check setTimeout
+    setTimeout(() => {
+      newTask({
+        previousTask: task,
+        due: sortByDate ? task.due : undefined
+      });
+      setFocusIndex(index + 1);
+    }, 0);
+  }, [newTask, task, sortByDate, setFocusIndex, index]);
 
   const backspaceCallback = useCallback(
     evt => {
@@ -124,6 +131,7 @@ function TodoTaskComponent({
       const newIndex = oldIndex + step;
       if (newIndex >= 0 && newIndex < todoTasks.length) {
         setFocusIndex(newIndex);
+        // TODO: check setTimeout
         // not sure the reason of setTimeout but required
         setTimeout(() => moveTask({ newIndex, oldIndex }), 0);
       }

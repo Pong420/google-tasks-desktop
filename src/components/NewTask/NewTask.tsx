@@ -3,10 +3,9 @@ import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
 import { useMuiMenu, IconButton } from '../Mui';
-import { Payload$Optional$NewTask } from '../../store';
 
 interface Props {
-  newTask(payload?: Payload$Optional$NewTask): void;
+  newTask(): void;
   setFocusIndex(index: number | null): void;
 }
 
@@ -15,6 +14,7 @@ export function NewTask({ newTask, setFocusIndex }: Props) {
 
   const newTaskCallback = useCallback(() => {
     newTask();
+    // TODO: check setTimeout
     setTimeout(() => setFocusIndex(0), 0);
   }, [newTask, setFocusIndex]);
 

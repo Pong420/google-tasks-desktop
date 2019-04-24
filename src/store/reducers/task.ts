@@ -39,17 +39,14 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.NEW_TASK:
-      const newTask = {
-        uuid: action.payload.uuid
-      };
-
       const tasks = state.tasks.slice();
-      const index =
-        typeof action.payload.insertAfter === 'number'
-          ? tasks.indexOf(state.todoTasks[action.payload.insertAfter]) + 1
-          : 0;
+      const index = state.todoTasks.findIndex(
+        ({ uuid }) =>
+          !!action.payload.previousTask &&
+          uuid === action.payload.previousTask.uuid
+      );
 
-      tasks.splice(index, 0, newTask);
+      tasks.splice(index + 1, 0, action.payload);
 
       return {
         ...state,
@@ -172,11 +169,11 @@ function classifyByDate(data: Schema$Task[]): TodoTasksSortByDate {
       return new Date(a.due) > new Date(b.due) ? 1 : -1;
     }
 
-    if (a.due) {
-      return -1;
+    if (b.due) {
+      return 1;
     }
 
-    return 1;
+    return sortByOrder(a, b);
   });
 
   sorted.forEach(task => {

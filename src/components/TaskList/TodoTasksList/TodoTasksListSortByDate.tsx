@@ -16,7 +16,7 @@ export function TodoTasksListSortByDate({
   focusIndex,
   ...props
 }: Props) {
-  let index = 0;
+  let index = -1;
 
   return (
     <div className="todo-tasks-list-sort-by-date">

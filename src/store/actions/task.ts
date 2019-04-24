@@ -20,12 +20,8 @@ export enum TaskActionTypes {
   MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS'
 }
 
-export interface Payload$Optional$NewTask {
-  insertAfter?: number;
-}
-
-export interface Payload$NewTask extends Payload$Optional$NewTask {
-  uuid: string;
+export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
+  previousTask?: Schema$Task;
 }
 
 export type Payload$SortTasks = 'order' | 'date';
@@ -41,7 +37,9 @@ export interface GetAllTasksSuccess {
 
 export interface NewTask {
   type: TaskActionTypes.NEW_TASK;
-  payload: Payload$NewTask;
+  payload: Payload$NewTask & {
+    uuid: string;
+  };
 }
 
 export interface NewTaskSuccess {
@@ -116,7 +114,7 @@ export const TaskActionCreators = {
       type: TaskActionTypes.GET_ALL_TASKS
     };
   },
-  newTask(payload?: Payload$Optional$NewTask): NewTask {
+  newTask(payload?: Payload$NewTask): NewTask {
     return {
       type: TaskActionTypes.NEW_TASK,
       payload: {

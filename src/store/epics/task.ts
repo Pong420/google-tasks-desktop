@@ -94,24 +94,30 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.NEW_TASK:
-          const previousTask =
-            typeof action.payload.insertAfter === 'number' &&
-            state$.value.task.todoTasks[action.payload.insertAfter];
+          const { previousTask } = action.payload;
           const previous = previousTask ? previousTask.id : undefined;
+          const requestBody: tasks_v1.Params$Resource$Tasks$Insert['requestBody'] = {};
+
+          if (previousTask && previousTask.due) {
+            requestBody['due'] = previousTask.due;
+          }
 
           if (previousTask && !previousTask.id) {
             return onNewTaskSuccess$(previousTask.uuid).pipe(
               delay(250), // short delay prevent request overlap by update
               mergeMap(success =>
                 newTaskRequest$(
-                  { tasklist, previous: success.payload.id },
+                  { tasklist, previous: success.payload.id, requestBody },
                   action.payload.uuid
                 )
               )
             );
           }
 
-          return newTaskRequest$({ tasklist, previous }, action.payload.uuid);
+          return newTaskRequest$(
+            { tasklist, previous, requestBody },
+            action.payload.uuid
+          );
 
         case TaskActionTypes.DELETE_TASK:
           if (!action.payload.id) {
