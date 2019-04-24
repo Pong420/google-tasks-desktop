@@ -75,5 +75,7 @@ interface Date {
     nextMonth: boolean;
   };
 
+  isToday(): boolean;
+
   format(dateFormat: string): string;
 }

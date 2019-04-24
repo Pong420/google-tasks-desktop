@@ -47,7 +47,7 @@ export function DatePicker({ value, onChange }: Props) {
     (dateObj: Date) =>
       classes({
         ...date.compare(dateObj),
-        today: today.current.compare(dateObj).sameDate
+        today: dateObj.isToday()
       }),
     [date]
   );

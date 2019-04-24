@@ -130,19 +130,37 @@ function TodoTaskComponent({
 
   const moveTaskCallback = useCallback(
     (step: number) => {
-      const oldIndex = index;
-      const newIndex = oldIndex + step;
-      if (newIndex >= 0 && newIndex < todoTasks.length) {
-        // TODO: check setTimeout
-        // not sure the reason of setTimeout but required
-
-        setTimeout(() => {
-          moveTask({ newIndex, oldIndex });
-          setFocusIndex(newIndex);
-        }, 0);
+      if (sortByDate) {
+        // if (task.due) {
+        //   const date = new Date(task.due);
+        //   if (!(date.isToday() && step < 0)) {
+        //     setTimeout(() => {
+        //       updateTask({ ...task, due: date.addDays(step).toISOString() });
+        //     }, 0);
+        //   }
+        // }
+      } else {
+        const oldIndex = index;
+        const newIndex = oldIndex + step;
+        if (newIndex >= 0 && newIndex < todoTasks.length) {
+          // TODO: check setTimeout
+          // not sure the reason of setTimeout but required
+          setTimeout(() => {
+            moveTask({ newIndex, oldIndex });
+            setFocusIndex(newIndex);
+          }, 0);
+        }
       }
     },
-    [index, moveTask, setFocusIndex, todoTasks.length]
+    [
+      index,
+      moveTask,
+      setFocusIndex,
+      sortByDate,
+      task,
+      todoTasks.length,
+      updateTask
+    ]
   );
 
   const moveUpCallback = useCallback(() => moveTaskCallback(-1), [

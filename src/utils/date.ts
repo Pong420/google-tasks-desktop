@@ -184,6 +184,13 @@ Date.prototype.compare = function(dateObj: Date) {
   };
 };
 
+Date.prototype.isToday = function() {
+  const dayDiff = Math.floor(
+    (Date.now() - this.getTime()) / 1000 / 60 / 60 / 24
+  );
+  return dayDiff === 0;
+};
+
 // format provided date into this.format format
 Date.prototype.format = function(dateFormat_: string) {
   // break apart format string into array of characters
