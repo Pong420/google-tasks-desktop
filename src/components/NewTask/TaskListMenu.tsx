@@ -154,7 +154,7 @@ function TaskListMenuComponent({
       </Modal>
       <FormModal
         title="Rename list"
-        defaultValue={currentTaskList ? currentTaskList.title : ''}
+        defaultValue={currentTaskList.title}
         open={renameTaskModalOpend}
         handleClose={renameTaskModal.off}
         handleConfirm={renameTaskListCallback}
