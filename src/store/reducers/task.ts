@@ -152,13 +152,14 @@ function sortByOrder(a: Schema$Task, b: Schema$Task) {
   if (a.position && b.position) {
     if (a.position > b.position) return 1;
     if (a.position < b.position) return -1;
+    return 0;
   }
 
   if (a.updated && b.updated) {
     return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
   }
 
-  return 0;
+  return -1;
 }
 
 function classifyByDate(data: Schema$Task[]): TodoTasksSortByDate {

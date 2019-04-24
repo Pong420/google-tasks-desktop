@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { TaskListMenu } from './TaskListMenu';
@@ -6,21 +6,14 @@ import { useMuiMenu, IconButton } from '../Mui';
 
 interface Props {
   newTask(): void;
-  setFocusIndex(index: number | null): void;
 }
 
-export function NewTask({ newTask, setFocusIndex }: Props) {
+export function NewTask({ newTask }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-
-  const newTaskCallback = useCallback(() => {
-    newTask();
-    // TODO: check setTimeout
-    setTimeout(() => setFocusIndex(0), 0);
-  }, [newTask, setFocusIndex]);
 
   return (
     <div className="new-task">
-      <div className="new-task-button" onClick={newTaskCallback}>
+      <div className="new-task-button" onClick={newTask}>
         <IconButton
           icon={AddIcon}
           iconProps={{ color: 'secondary' }}

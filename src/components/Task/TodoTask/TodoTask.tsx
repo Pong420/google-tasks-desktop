@@ -92,7 +92,11 @@ function TodoTaskComponent({
     [task, updateTask]
   );
 
-  // auto focus
+  // auto focus on mount
+  useEffect(() => {
+    !task.id && setFocusIndex(index);
+  }, [index, setFocusIndex, task.id]);
+
   useEffect(() => {
     if (inputRef.current) {
       if (focused) {
@@ -110,9 +114,8 @@ function TodoTaskComponent({
         previousTask: task,
         due: sortByDate ? task.due : undefined
       });
-      setFocusIndex(index + 1);
     }, 0);
-  }, [newTask, task, sortByDate, setFocusIndex, index]);
+  }, [newTask, task, sortByDate]);
 
   const backspaceCallback = useCallback(
     evt => {
@@ -130,10 +133,13 @@ function TodoTaskComponent({
       const oldIndex = index;
       const newIndex = oldIndex + step;
       if (newIndex >= 0 && newIndex < todoTasks.length) {
-        setFocusIndex(newIndex);
         // TODO: check setTimeout
         // not sure the reason of setTimeout but required
-        setTimeout(() => moveTask({ newIndex, oldIndex }), 0);
+
+        setTimeout(() => {
+          moveTask({ newIndex, oldIndex });
+          setFocusIndex(newIndex);
+        }, 0);
       }
     },
     [index, moveTask, setFocusIndex, todoTasks.length]

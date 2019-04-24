@@ -51,7 +51,7 @@ function TaskListContentComponent({
     <>
       <div className="task-list-content">
         <ScrollContent className="task-list-scroll-content">
-          <NewTask newTask={newTask} setFocusIndex={setFocusIndex} />
+          <NewTask newTask={newTask} />
           {sortByDate ? (
             <TodoTasksListSortByDate
               todoTasksSortByDate={todoTasksSortByDate}
