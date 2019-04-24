@@ -82,7 +82,7 @@ export function SelectableDropdown({
           <MenuItem
             {...itemProps}
             key={index}
-            rootRef={node => {
+            innerRef={node => {
               if (index === (scrollToIndex || selectedIndex)) {
                 selectedItemRef.current = node;
               }
