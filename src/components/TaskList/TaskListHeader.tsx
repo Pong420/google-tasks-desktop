@@ -26,7 +26,8 @@ export function TaskListHeader({
   const simplebarRef = useRef<SimplebarAPI | null>(null);
   const selectedItemRef = useRef<HTMLAnchorElement | null>(null);
   const scrollToSelectedItem = useCallback(() => {
-    // setTimeout is not a good solution but work ...
+    // Since MenuItem is not mounted as `createPortal` used in ScrollContent
+    // so we need setTimeout
     setTimeout(() => {
       if (simplebarRef.current && selectedItemRef.current) {
         simplebarRef.current.getScrollElement().scrollTop =
