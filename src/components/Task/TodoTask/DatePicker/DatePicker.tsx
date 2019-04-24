@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  HTMLAttributes
-} from 'react';
+import React, { useState, useCallback, HTMLAttributes } from 'react';
 import { IconButton } from '../../../Mui/IconButton';
 import { classes } from '../../../../utils/classes';
 import LeftArrowIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
@@ -40,7 +34,6 @@ const DateGrid = ({ selected, className, ...props }: DateProps) => (
 
 export function DatePicker({ value, onChange }: Props) {
   const [{ dates, date }, setData] = useState(getDisplayData(value));
-  const today = useRef(getDisplayData().date);
   const [curValue, setCurValue] = useState<Date>(value ? value : date);
 
   const getClassName = useCallback(

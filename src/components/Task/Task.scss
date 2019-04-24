@@ -78,6 +78,7 @@ $min-task-height: 50px;
     @include flex($flex-direction: column);
     @include margin-x(5px);
     @include padding-y(12px);
+    @include relative();
 
     .mui-input-base {
       $line-height: 20px;
