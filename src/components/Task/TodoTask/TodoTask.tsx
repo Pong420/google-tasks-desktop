@@ -7,12 +7,14 @@ import React, {
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Task } from '..';
+import { InputBaseProps } from '@material-ui/core/InputBase';
+import { Task } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
-import { TaskDetailsView, EditTaskButton } from '../../TaskDetailsView';
+import { DateTimeModal } from './DateTimeModal';
+import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
+import { TaskInputWithDate } from '../TaskInputWithDate';
 import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
-import { useBoolean, classes } from '../../../utils';
-import { useHotkeys } from '../../../utils/useHotkeys';
+import { useBoolean, classes, useHotkeys } from '../../../utils';
 import { RootState, TaskActionCreators } from '../../../store';
 import { Schema$Task } from '../../../typings';
 
@@ -23,6 +25,7 @@ export interface TodoTaskProps {
   toggleCompleted(task: Schema$Task): void;
   focused: boolean;
   setFocusIndex(indxe: number | null): void;
+  inputBaseProps?: InputBaseProps;
 }
 
 const mapStatetoProps = (
@@ -49,10 +52,13 @@ function TodoTaskComponent({
   newTask,
   updateTask,
   deleteTask,
-  moveTask
+  moveTask,
+  inputBaseProps,
+  sortByDate
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
+  const [dateTimeModalOpened, dateTimeModal] = useBoolean();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const clickToFocusCallback = useCallback(
@@ -76,7 +82,21 @@ function TodoTaskComponent({
     [task, updateTask]
   );
 
-  // auto focus
+  const onDueDateChangeCallback = useCallback(
+    (date: Date) => {
+      updateTask({
+        ...task,
+        due: date.toISOString()
+      });
+    },
+    [task, updateTask]
+  );
+
+  // auto focus on mount
+  useEffect(() => {
+    !task.id && setFocusIndex(index);
+  }, [index, setFocusIndex, task.id]);
+
   useEffect(() => {
     if (inputRef.current) {
       if (focused) {
@@ -88,9 +108,14 @@ function TodoTaskComponent({
   }, [focused]);
 
   const newTaskCallback = useCallback(() => {
-    newTask({ insertAfter: index });
-    setFocusIndex(index + 1);
-  }, [newTask, index, setFocusIndex]);
+    // TODO: check setTimeout
+    setTimeout(() => {
+      newTask({
+        previousTask: task,
+        due: sortByDate ? task.due : undefined
+      });
+    }, 0);
+  }, [newTask, task, sortByDate]);
 
   const backspaceCallback = useCallback(
     evt => {
@@ -105,15 +130,37 @@ function TodoTaskComponent({
 
   const moveTaskCallback = useCallback(
     (step: number) => {
-      const oldIndex = index;
-      const newIndex = oldIndex + step;
-      if (newIndex >= 0 && newIndex < todoTasks.length) {
-        setFocusIndex(newIndex);
-        // not sure the reason of setTimeout but required
-        setTimeout(() => moveTask({ newIndex, oldIndex }), 0);
+      if (sortByDate) {
+        // if (task.due) {
+        //   const date = new Date(task.due);
+        //   if (!(date.isToday() && step < 0)) {
+        //     setTimeout(() => {
+        //       updateTask({ ...task, due: date.addDays(step).toISOString() });
+        //     }, 0);
+        //   }
+        // }
+      } else {
+        const oldIndex = index;
+        const newIndex = oldIndex + step;
+        if (newIndex >= 0 && newIndex < todoTasks.length) {
+          // TODO: check setTimeout
+          // not sure the reason of setTimeout but required
+          setTimeout(() => {
+            moveTask({ newIndex, oldIndex });
+            setFocusIndex(newIndex);
+          }, 0);
+        }
       }
     },
-    [index, moveTask, setFocusIndex, todoTasks.length]
+    [
+      index,
+      moveTask,
+      setFocusIndex,
+      sortByDate,
+      task,
+      todoTasks.length,
+      updateTask
+    ]
   );
 
   const moveUpCallback = useCallback(() => moveTaskCallback(-1), [
@@ -143,7 +190,13 @@ function TodoTaskComponent({
           onFocus: () => setFocusIndex(index),
           onBlur: () => setFocusIndex(null),
           onClick: clickToFocusCallback,
-          onChange: onChangeCallback
+          onChange: onChangeCallback,
+          inputComponent: TaskInputWithDate,
+          inputProps: {
+            task,
+            onDueDateBtnClick: dateTimeModal.on
+          },
+          ...inputBaseProps
         }}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
         onContextMenu={setAnchorPosition}
@@ -153,6 +206,7 @@ function TodoTaskComponent({
         onClose={onClose}
         onDelete={deleteTaskCallback}
         anchorPosition={anchorPosition}
+        openDateTimeModal={dateTimeModal.on}
       />
       <TaskDetailsView
         open={detailsViewOpened}
@@ -162,6 +216,15 @@ function TodoTaskComponent({
         currentTaskList={currentTaskList}
         updateTask={updateTask}
         deleteTask={deleteTask}
+        openDateTimeModal={dateTimeModal.on}
+      />
+      <DateTimeModal
+        task={task}
+        confirmLabel="OK"
+        open={dateTimeModalOpened}
+        handleClose={dateTimeModal.off}
+        handleConfirm={dateTimeModal.off}
+        onDueDateChange={onDueDateChangeCallback}
       />
     </>
   );

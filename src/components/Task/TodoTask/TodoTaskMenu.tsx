@@ -6,9 +6,15 @@ interface Props {
   anchorPosition?: AnchorPosition;
   onClose(): void;
   onDelete(): void;
+  openDateTimeModal(): void;
 }
 
-export function TodoTaskMenu({ anchorPosition, onClose, onDelete }: Props) {
+export function TodoTaskMenu({
+  anchorPosition,
+  onClose,
+  onDelete,
+  openDateTimeModal
+}: Props) {
   const MenuItem = useMenuItem(onClose);
 
   return (
@@ -19,7 +25,7 @@ export function TodoTaskMenu({ anchorPosition, onClose, onDelete }: Props) {
       anchorReference="anchorPosition"
     >
       <MenuItem text="Delete" onClick={onDelete} />
-      <MenuItem text="Add date/time" disabled />
+      <MenuItem text="Add date/time" onClick={openDateTimeModal} />
       <MenuItem text="Add a subtask" disabled />
       <MenuItem text="Indent" disabled />
       <MenuItem text="Move to another list" disabled />

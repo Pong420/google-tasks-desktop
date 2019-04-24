@@ -26,17 +26,18 @@ $height: 36px;
     }
   }
 
-  .task-details-view-row {
-    @include flex(center);
+  .row {
+    @include flex(center, stretch);
+    min-height: 46px;
 
-    > :first-child {
+    > svg {
       margin-right: 10px;
     }
 
     .dropdown-button {
+      background: var(--task-focused-background-color);
       min-height: $height;
       line-height: $height;
-      background: var(--task-focused-background-color);
     }
 
     &.row-task-list {
@@ -55,6 +56,34 @@ $height: 36px;
     button {
       text-transform: initial;
       color: var(--text-secondary-color);
+    }
+
+    .task-deatails-due-date-button {
+      @include dimen(100%);
+      @include flex(center, space-between);
+      @include noSelect;
+      @include padding-x(15px);
+      @include relative();
+
+      align-self: stretch;
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+
+      .date {
+        color: var(--secondary-deep-color);
+        font-weight: 500;
+      }
+
+      button {
+        background: none;
+        padding: 0;
+      }
+
+      .task-deatails-due-date-clickable {
+        @include absolute(0, null, 0);
+        @include sq-dimen(100%);
+        cursor: pointer;
+      }
     }
   }
 }

@@ -18,7 +18,8 @@ export enum TaskListActionTypes {
   DELETE_TASK_LIST = 'DELETE_TASK_LIST',
   DELETE_TASK_LIST_SUCCESS = 'DELETE_TASK_LIST_SUCCESS',
   SYNC_TASK_LIST = 'SYNC_TASK_LIST',
-  SYNC_TASK_LIST_SUCCESS = 'SYNC_TASK_LIST_SUCCESS'
+  SYNC_TASK_LIST_SUCCESS = 'SYNC_TASK_LIST_SUCCESS',
+  SORT_BY_DATE = 'SORT_BY_DATE'
 }
 
 export interface GetAllTaskList {
@@ -82,6 +83,11 @@ export interface SyncTaskListSuccess {
   payload: tasks_v1.Schema$TaskList[];
 }
 
+export interface SortByDate {
+  type: TaskListActionTypes.SORT_BY_DATE;
+  payload: boolean;
+}
+
 export type TaskListActions =
   | GetAllTaskList
   | GetAllTaskListSuccess
@@ -95,7 +101,8 @@ export type TaskListActions =
   | DeleteTaskList
   | DeleteTaskListSuccess
   | SyncTaskList
-  | SyncTaskListSuccess;
+  | SyncTaskListSuccess
+  | SortByDate;
 
 export const TaskListActionCreators = {
   getAllTaskList(): GetAllTaskList {
@@ -136,6 +143,12 @@ export const TaskListActionCreators = {
   syncTaskList(): SyncTaskList {
     return {
       type: TaskListActionTypes.SYNC_TASK_LIST
+    };
+  },
+  sortTasksByDate(payload: boolean): SortByDate {
+    return {
+      type: TaskListActionTypes.SORT_BY_DATE,
+      payload
     };
   }
 };

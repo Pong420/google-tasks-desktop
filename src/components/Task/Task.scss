@@ -1,34 +1,53 @@
 $border: 1px solid var(--border-color);
 $min-task-height: 50px;
 
+@mixin withVeritcalBorder($color: var(--border-color)) {
+  &:before {
+    @include absolute(0, null, 0);
+    @include dimen(100%, calc(100% + 1px));
+
+    border-top: 1px solid $color;
+    border-bottom: 1px solid $color;
+    content: '';
+  }
+}
+
 .task {
   @include dimen(100%);
   @include flex(center);
   @include padding-x(10px);
   @include relative();
+  @include withVeritcalBorder(transparent);
 
   background-color: var(--main-color);
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-  margin-top: -2px;
 
   .task-input-base {
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    @include relative();
+    @include withVeritcalBorder();
     min-height: $min-task-height;
+
+    //input endAdornment
+    .mui-icon-button {
+      visibility: hidden;
+      align-self: flex-start;
+      margin-top: 3px;
+    }
   }
 
   &:hover,
   &.focused,
   &.dragging {
     background-color: var(--task-focused-background-color);
-    border-color: var(--border-color);
+    &:before {
+      border-color: var(--border-color);
+    }
   }
+
   &:hover,
   &.focused {
     &,
     & + .task {
-      .task-input-base {
+      .task-input-base::before {
         border-color: transparent;
       }
     }
@@ -44,15 +63,8 @@ $min-task-height: 50px;
   }
 
   &:first-child {
-    .task-input-base {
+    .task-input-base:before {
       border-top-color: transparent;
-    }
-  }
-
-  &:last-child {
-    border-bottom-color: var(--border-color);
-    .task-input-base {
-      border-bottom-color: transparent;
     }
   }
 
@@ -61,19 +73,12 @@ $min-task-height: 50px;
     margin-top: 4px;
   }
 
-  .task-input-base {
-    //input endAdornment
-    .mui-icon-button {
-      visibility: hidden;
-      align-self: flex-start;
-      margin-top: 3px;
-    }
-  }
-
   .task-input-content {
     @include dimen(100%);
+    @include flex($flex-direction: column);
     @include margin-x(5px);
     @include padding-y(12px);
+    @include relative();
 
     .mui-input-base {
       $line-height: 20px;
@@ -94,5 +99,55 @@ $min-task-height: 50px;
 
     color: var(--text-secondary-color);
     font-size: 12px;
+  }
+
+  .task-due-date-button {
+    @include flex(center, center);
+
+    align-self: flex-start;
+    background-color: var(--task-focused-background-color);
+    border: 1px solid var(--main-light-color);
+    border-radius: 3px;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 6px;
+    padding: 6px 7px 5px;
+
+    svg {
+      color: var(--secondary-color);
+      font-size: 16px;
+      margin-right: 6px;
+    }
+
+    &:after {
+      content: attr(data-date);
+    }
+
+    &[data-date^='Today'] {
+      &:after {
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+    }
+
+    &[data-date^='Yesterday'],
+    &[data-date*='ago'] {
+      svg {
+        color: var(--error-color);
+      }
+    }
+
+    &:hover {
+      background-color: var(--main-color);
+
+      [data-theme^='light'] & {
+        box-shadow: 0px 5px 10px #ccc;
+      }
+      [data-theme^='dark'] & {
+        box-shadow: 0px 5px 10px #111;
+      }
+    }
   }
 }
