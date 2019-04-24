@@ -7,13 +7,14 @@ import React, {
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Task } from '..';
+import { InputBaseProps } from '@material-ui/core/InputBase';
+import { Task } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
 import { DateTimeModal } from './DateTimeModal';
 import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
+import { TaskInputWithDate } from '../TaskInputWithDate';
 import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
-import { useBoolean, classes } from '../../../utils';
-import { useHotkeys } from '../../../utils/useHotkeys';
+import { useBoolean, classes, useHotkeys } from '../../../utils';
 import { RootState, TaskActionCreators } from '../../../store';
 import { Schema$Task } from '../../../typings';
 
@@ -24,6 +25,7 @@ export interface TodoTaskProps {
   toggleCompleted(task: Schema$Task): void;
   focused: boolean;
   setFocusIndex(indxe: number | null): void;
+  inputBaseProps?: InputBaseProps;
 }
 
 const mapStatetoProps = (
@@ -50,7 +52,8 @@ function TodoTaskComponent({
   newTask,
   updateTask,
   deleteTask,
-  moveTask
+  moveTask,
+  inputBaseProps
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
@@ -156,9 +159,12 @@ function TodoTaskComponent({
           onBlur: () => setFocusIndex(null),
           onClick: clickToFocusCallback,
           onChange: onChangeCallback,
+          inputComponent: TaskInputWithDate,
           inputProps: {
+            task,
             onDueDateBtnClick: dateTimeModal.on
-          }
+          },
+          ...inputBaseProps
         }}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
         onContextMenu={setAnchorPosition}

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { TodoTask } from '../../Task';
+import { TaskInput } from '../../Task/TaskInput';
 import { TodoTasksSortByDate } from '../../../store';
 import { Schema$Task } from '../../../typings';
 
@@ -32,6 +33,7 @@ export function TodoTasksListSortByDate({
                     index={index}
                     task={task}
                     focused={index === focusIndex}
+                    inputBaseProps={{ inputComponent: TaskInput }}
                     {...props}
                   />
                 );
