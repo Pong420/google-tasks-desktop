@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, RefObject } from 'react';
+import React, { useCallback, RefObject } from 'react';
 import MuiMenuItem, {
   MenuItemProps as DefaultMenuItemProps
 } from '@material-ui/core/MenuItem';
@@ -8,6 +8,7 @@ import RootRef from '@material-ui/core/RootRef';
 export interface MenuItemProps extends DefaultMenuItemProps {
   text?: string;
   rootRef?: (n: HTMLLIElement) => void | RefObject<HTMLLIElement>;
+  selected?: boolean;
 }
 
 export function useMenuItem(onClose: () => void) {
@@ -24,6 +25,7 @@ export function useMenuItem(onClose: () => void) {
       return (
         <RootRef rootRef={rootRef}>
           <MuiMenuItem
+            selected={selected}
             classes={{ root: 'mui-menu-item' }}
             onClick={evt => {
               onClose();
