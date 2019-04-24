@@ -50,8 +50,8 @@ function TaskListContentComponent({
   return (
     <>
       <div className="task-list-content">
+        <NewTask newTask={newTask} />
         <ScrollContent className="task-list-scroll-content">
-          <NewTask newTask={newTask} />
           {sortByDate ? (
             <TodoTasksListSortByDate
               todoTasksSortByDate={todoTasksSortByDate}

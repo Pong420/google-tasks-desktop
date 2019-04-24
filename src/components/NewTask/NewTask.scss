@@ -3,6 +3,7 @@
   @include flex(center);
 
   cursor: pointer;
+  flex: 0 0 auto;
   padding-right: 10px;
 
   .new-task-button {
