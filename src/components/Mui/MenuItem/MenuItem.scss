@@ -16,4 +16,10 @@
       padding-right: 50px;
     }
   }
+
+  &:hover {
+    [data-theme^='dark'] & {
+      background-color: var(--main-light-color);
+    }
+  }
 }
