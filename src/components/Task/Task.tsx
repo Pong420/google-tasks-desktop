@@ -23,19 +23,13 @@ export interface TaskProps {
 
 export function Task({
   className = '',
-  task: initialTask,
+  task,
   toggleCompleted,
   endAdornment,
   inputBaseProps,
   onContextMenu
 }: TaskProps) {
-  const [task, setTask] = useState(initialTask);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
-
-  // FIXME:
-  useEffect(() => {
-    setTask(initialTask);
-  }, [initialTask]);
 
   return (
     <div className={classes(`task`, className)} onContextMenu={onContextMenu}>

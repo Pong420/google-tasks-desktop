@@ -152,15 +152,7 @@ function TodoTaskComponent({
         }
       }
     },
-    [
-      index,
-      moveTask,
-      setFocusIndex,
-      sortByDate,
-      task,
-      todoTasks.length,
-      updateTask
-    ]
+    [index, moveTask, setFocusIndex, sortByDate, todoTasks.length]
   );
 
   const moveUpCallback = useCallback(() => moveTaskCallback(-1), [

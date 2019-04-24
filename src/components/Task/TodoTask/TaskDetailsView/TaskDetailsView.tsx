@@ -70,7 +70,6 @@ export function TaskDetailsView({
     handleClose();
   }, [handleClose]);
 
-  // FIXME:
   useEffect(() => {
     setTask(initialTask);
   }, [initialTask]);
