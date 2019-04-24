@@ -1,6 +1,7 @@
 import React from 'react';
 import { Omit } from 'react-redux';
-import { Task, TaskProps } from '..';
+import { Task, TaskProps } from '../Task';
+import { TaskInput } from '../TaskInput';
 import { DeleteIcon, IconButton } from '../../Mui';
 import { Schema$Task } from '../../../typings';
 
@@ -13,7 +14,13 @@ export function CompletedTask({ task, deleteTask, ...props }: Props) {
     <Task
       className="completed-task"
       task={task}
-      inputBaseProps={{ readOnly: true }}
+      inputBaseProps={{
+        readOnly: true,
+        inputComponent: TaskInput,
+        inputProps: {
+          task
+        }
+      }}
       endAdornment={
         <IconButton
           tooltip="Delete"

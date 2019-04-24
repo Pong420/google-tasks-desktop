@@ -36,7 +36,7 @@ export function useMuiMenu() {
       evt.preventDefault();
       setAnchorPosition({
         top: evt.pageY,
-        left: evt.pageY
+        left: evt.pageX
       });
     },
     onClose

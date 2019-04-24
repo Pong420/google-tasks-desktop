@@ -1,18 +1,18 @@
-import React, { forwardRef, useCallback } from 'react';
-import MuiMenuItem, { MenuItemProps } from '@material-ui/core/MenuItem';
+import React, { useCallback, RefObject, forwardRef } from 'react';
+import MuiMenuItem, {
+  MenuItemProps as DefaultMenuItemProps
+} from '@material-ui/core/MenuItem';
 import TickIcon from '@material-ui/icons/Check';
 
-interface Props extends MenuItemProps {
+export interface MenuItemProps extends DefaultMenuItemProps {
   text?: string;
+  selected?: boolean;
 }
 
 export function useMenuItem(onClose: () => void) {
   return useCallback(
-    forwardRef(
-      (
-        { text, selected, classes, children, onClick, ...props }: Props,
-        ref
-      ) => (
+    forwardRef<any, MenuItemProps>(
+      ({ text, selected, classes, children, onClick, ...props }, ref) => (
         <MuiMenuItem
           classes={{ root: 'mui-menu-item' }}
           onClick={evt => {

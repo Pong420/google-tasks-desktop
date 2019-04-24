@@ -1,4 +1,10 @@
-import React, { useState, useEffect, ReactNode, MouseEvent } from 'react';
+import React, {
+  useState,
+  useEffect,
+  ReactNode,
+  MouseEvent,
+  Component
+} from 'react';
 import InputBase, { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskInput } from './TaskInput';
@@ -17,19 +23,13 @@ export interface TaskProps {
 
 export function Task({
   className = '',
-  task: initialTask,
+  task,
   toggleCompleted,
   endAdornment,
   inputBaseProps,
   onContextMenu
 }: TaskProps) {
-  const [task, setTask] = useState(initialTask);
   const toggleCompletedCallback = useAdvancedCallback(toggleCompleted, [task]);
-
-  // FIXME:
-  useEffect(() => {
-    setTask(initialTask);
-  }, [initialTask]);
 
   return (
     <div className={classes(`task`, className)} onContextMenu={onContextMenu}>
@@ -42,11 +42,6 @@ export function Task({
         className="task-input-base"
         value={task.title}
         endAdornment={endAdornment}
-        inputComponent={TaskInput}
-        inputProps={{
-          task,
-          ...(inputBaseProps && inputBaseProps.inputProps)
-        }}
         {...inputBaseProps}
       />
     </div>

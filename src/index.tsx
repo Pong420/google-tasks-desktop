@@ -7,6 +7,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { theme } from './theme';
 import configureStore, { history } from './store';
 import App from './App';
+import './utils/date';
 import 'typeface-roboto';
 import 'typeface-nunito-sans';
 

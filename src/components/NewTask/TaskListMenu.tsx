@@ -1,11 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { KeyboardShortcuts } from '../KeyboardShortcuts';
 import { Preferences } from '../Preferences';
 import { useMenuItem, Menu, Modal, FormModal } from '../Mui';
-import { useBoolean, useAdvancedCallback } from '../../utils';
+import { useBoolean } from '../../utils/useBoolean';
 import {
   TaskListActionCreators,
   TaskActionCreators,
@@ -17,10 +16,6 @@ import Divider from '@material-ui/core/Divider';
 interface Props {
   anchorEl: HTMLElement | null;
   onClose(): void;
-}
-
-interface MatchParams {
-  taskListId?: string;
 }
 
 const mapStateToProps = ({ task, taskList }: RootState) => ({
@@ -49,22 +44,20 @@ function useNotZero(initialVal: number) {
 function TaskListMenuComponent({
   anchorEl,
   onClose,
-  match,
   tasks,
   completedTasks,
   taskLists,
   currentTaskList,
   currentTaskListId,
+  sortByDate,
   delteTaskList,
   deleteCompletedTasks,
   updateTaskList,
+  sortTasksByDate,
   logout
 }: Props &
-  RouteComponentProps<MatchParams> &
   ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>) {
-  const { taskListId } = match.params;
-
   const MenuItem = useMenuItem(onClose);
 
   const [
@@ -79,20 +72,19 @@ function TaskListMenuComponent({
   const totalTask = useNotZero(tasks.length);
   const numOfCompletedTask = useNotZero(completedTasks.length);
 
-  const delteTaskListCallback = useAdvancedCallback(
-    taskListId => taskListId && delteTaskList(taskListId),
-    [taskListId]
+  const delteTaskListCallback = useCallback(
+    () => currentTaskListId && delteTaskList(currentTaskListId),
+    [currentTaskListId, delteTaskList]
   );
 
-  const onDeleteTaskListCallback = useAdvancedCallback(
-    showModal =>
-      showModal ? deleteTaskListModal.on() : delteTaskListCallback(),
-    [!!tasks.length]
+  const onDeleteTaskListCallback = useCallback(
+    () => (!!tasks.length ? deleteTaskListModal.on() : delteTaskListCallback()),
+    [deleteTaskListModal, delteTaskListCallback, tasks.length]
   );
 
-  const deleteCompletedTasksCallback = useAdvancedCallback(
-    deleteCompletedTasks,
-    [completedTasks]
+  const deleteCompletedTasksCallback = useCallback(
+    () => deleteCompletedTasks(completedTasks),
+    [completedTasks, deleteCompletedTasks]
   );
 
   const renameTaskListCallback = useCallback(
@@ -112,15 +104,24 @@ function TaskListMenuComponent({
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={onClose}
+        MenuListProps={{}}
       >
         <div className="task-list-menu-title">Sort by</div>
-        <MenuItem text="My order" selected disabled />
-        <MenuItem text="Date" disabled />
+        <MenuItem
+          text="My order"
+          selected={!sortByDate}
+          onClick={() => sortTasksByDate(false)}
+        />
+        <MenuItem
+          text="Date"
+          selected={sortByDate}
+          onClick={() => sortTasksByDate(true)}
+        />
         <Divider />
         <MenuItem text="Rename list" onClick={renameTaskModal.on} />
         <MenuItem
           text="Delete list"
-          disabled={!taskLists[0] || taskLists[0].id === taskListId}
+          disabled={!taskLists.length || taskLists[0].id === currentTaskListId}
           onClick={onDeleteTaskListCallback}
         />
         <MenuItem
@@ -153,7 +154,7 @@ function TaskListMenuComponent({
       </Modal>
       <FormModal
         title="Rename list"
-        defaultValue={currentTaskList ? currentTaskList.title : ''}
+        defaultValue={currentTaskList.title}
         open={renameTaskModalOpend}
         handleClose={renameTaskModal.off}
         handleConfirm={renameTaskListCallback}
@@ -167,9 +168,7 @@ function TaskListMenuComponent({
   );
 }
 
-export const TaskListMenu = withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(TaskListMenuComponent)
-);
+export const TaskListMenu = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TaskListMenuComponent);
