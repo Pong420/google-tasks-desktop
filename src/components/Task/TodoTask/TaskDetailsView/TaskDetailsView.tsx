@@ -47,6 +47,7 @@ export function TaskDetailsView({
 }: Props) {
   const notesInputRef = useRef<HTMLTextAreaElement>(null);
   const shouldDeleteTask = useRef<boolean>(false);
+  const shouldRemoveDateTime = useRef<boolean>(false);
 
   const [task, setTask] = useState(initialTask);
 
@@ -54,11 +55,15 @@ export function TaskDetailsView({
     updateTask(task);
   }, [task, updateTask]);
 
-  const deleteTaskCallback = useCallback(() => {
+  const onExitedCallback = useCallback(() => {
     if (shouldDeleteTask.current) {
+      shouldDeleteTask.current = false;
       deleteTask(task);
     }
-  }, [deleteTask, task]);
+    if (shouldRemoveDateTime.current) {
+      updateTask({ ...task, due: undefined });
+    }
+  }, [deleteTask, updateTask, task]);
 
   const deleteBtnClickedCallback = useCallback(() => {
     shouldDeleteTask.current = true;
@@ -75,7 +80,7 @@ export function TaskDetailsView({
       className="task-details-view"
       handleClose={handleClose}
       onExit={onExitCallback}
-      onExited={deleteTaskCallback}
+      onExited={onExitedCallback}
       headerComponents={
         <IconButton
           tooltip="Delete"
@@ -123,7 +128,10 @@ export function TaskDetailsView({
             <IconButton
               icon={CloseIcon}
               tooltip="Remove date and time"
-              onClick={evt => evt.preventDefault()}
+              onClick={() => {
+                shouldRemoveDateTime.current = true;
+                handleClose();
+              }}
             />
           </div>
         ) : (
