@@ -24,8 +24,7 @@ function TaskListContentComponent({
   newTask,
   deleteTask,
   updateTask,
-  sortByDate,
-  todoTasksSortByDate
+  sortByDate
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
@@ -54,7 +53,7 @@ function TaskListContentComponent({
         <ScrollContent className="task-list-scroll-content">
           {sortByDate ? (
             <TodoTasksListSortByDate
-              todoTasksSortByDate={todoTasksSortByDate}
+              todoTasks={todoTasks}
               toggleCompleted={toggleCompletedCllaback}
               focusIndex={focusIndex}
               setFocusIndex={setFocusIndex}
