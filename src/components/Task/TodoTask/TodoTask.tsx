@@ -226,7 +226,6 @@ function TodoTaskComponent({
         currentTaskList={currentTaskList}
         updateTask={updateTask}
         deleteTask={deleteTask}
-        openDateTimeModal={dateTimeModal.on}
       />
       <DateTimeModal
         task={task}
