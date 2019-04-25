@@ -51,6 +51,7 @@
 }
 
 .dropdown-menu-paper.task-list-dropdown-paper {
+  @include dimen(auto);
   overflow: hidden;
 
   .mui-menu-item {
