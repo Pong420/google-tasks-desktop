@@ -203,7 +203,6 @@ function TodoTaskComponent({
           onChange: onChangeCallback,
           inputComponent: TaskInputWithDate,
           inputProps: {
-            task,
             onDueDateBtnClick: dateTimeModal.on
           },
           ...inputBaseProps

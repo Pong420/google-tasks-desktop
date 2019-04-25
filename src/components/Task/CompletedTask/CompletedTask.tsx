@@ -16,10 +16,7 @@ export function CompletedTask({ task, deleteTask, ...props }: Props) {
       task={task}
       inputBaseProps={{
         readOnly: true,
-        inputComponent: TaskInput,
-        inputProps: {
-          task
-        }
+        inputComponent: TaskInput
       }}
       endAdornment={
         <IconButton
