@@ -12,10 +12,9 @@ export function TaskInput({
   children,
   inputRef,
   task,
-  onDueDateBtnClick = () => {},
   ...inputProps
 }: TaskInputProps) {
-  const { notes, due, status } = task!;
+  const { notes } = task!;
 
   return (
     <div className="task-input-content">

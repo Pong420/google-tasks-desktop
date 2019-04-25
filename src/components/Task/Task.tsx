@@ -1,13 +1,6 @@
-import React, {
-  useState,
-  useEffect,
-  ReactNode,
-  MouseEvent,
-  Component
-} from 'react';
+import React, { ReactNode, MouseEvent } from 'react';
 import InputBase, { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
-import { TaskInput } from './TaskInput';
 import { useAdvancedCallback } from '../../utils/useAdvancedCallback';
 import { Schema$Task } from '../../typings';
 import { classes } from '../../utils/classes';
@@ -43,6 +36,10 @@ export function Task({
         value={task.title}
         endAdornment={endAdornment}
         {...inputBaseProps}
+        inputProps={{
+          task,
+          ...(inputBaseProps && inputBaseProps.inputProps)
+        }}
       />
     </div>
   );
