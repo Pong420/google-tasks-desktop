@@ -26,16 +26,15 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
       const sortedTasks = (action.payload as Schema$Task[]).sort((a, b) => {
         if (a.position && b.position) {
-          if (a.position > b.position) return 1;
-          if (a.position < b.position) return -1;
-          return 0;
+          if (Number(a.position) > Number(b.position)) return 1;
+          if (Number(a.position) < Number(b.position)) return -1;
         }
 
         if (a.updated && b.updated) {
           return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
         }
 
-        return -1;
+        return 0;
       });
 
       return {
@@ -48,13 +47,21 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.NEW_TASK:
       const tasks = state.tasks.slice();
-      const index = state.todoTasks.findIndex(
-        ({ uuid }) =>
-          !!action.payload.previousTask &&
-          uuid === action.payload.previousTask.uuid
+      const { previousTask } = action.payload;
+      const index = tasks.findIndex(
+        ({ uuid }) => !!previousTask && uuid === previousTask.uuid
       );
 
-      tasks.splice(index + 1, 0, action.payload);
+      tasks.splice(index + 1, 0, {
+        position: previousTask
+          ? String(Number(previousTask.position) + 1).padStart(
+              previousTask.position!.length,
+              '0'
+            )
+          : undefined,
+        due: action.payload.due,
+        uuid: action.payload.uuid
+      });
 
       return {
         ...state,
