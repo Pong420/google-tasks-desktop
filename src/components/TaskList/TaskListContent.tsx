@@ -69,8 +69,8 @@ function TaskListContentComponent({
           )}
         </ScrollContent>
         <CompletedTasksList
-          completedTasks={completedTasks}
           deleteTask={deleteTask}
+          completedTasks={completedTasks}
           toggleCompleted={toggleCompletedCllaback}
         />
       </div>

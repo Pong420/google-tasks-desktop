@@ -84,8 +84,6 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.UPDATE_TASK:
-      // FIXME: seems this part cause delay on input
-
       return {
         ...state,
         ...classify(state.tasks, task =>

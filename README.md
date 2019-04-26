@@ -43,14 +43,16 @@
 - [x] Dark Theme
 - [x] Add Note
 - [x] Add Date
-- [ ] Improve / check performace
+- [ ] ~~Improve / check performace~~
+- [ ] Error handling
 - [ ] Sync data periodically
 - [ ] Animation
 
 ### Know issue
 
 - Add time is not supported as API limitation
-- If the add date/time through the official platform (Web/App)
+- Once you add/edi the `date` through official platform (Web/App). The `date` shown in the official platform (Web/App) will not be update,
+  if you change the `date` in this application.
 - For tasks sort by date
   - Move task up/down shortcut is not supported currently.
   - Tasks sort by date or order is not synced to the official platform (Web/App)

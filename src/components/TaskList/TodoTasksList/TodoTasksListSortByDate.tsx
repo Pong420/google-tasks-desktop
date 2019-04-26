@@ -42,11 +42,16 @@ export function TodoTasksListSortByDate({
       }, []);
   }, [todoTasks]);
 
+  const inputBaseProps = useMemo(
+    () => ({ inputProps: { hideDateBtn: true } }),
+    []
+  );
+
   return (
     <div className="todo-tasks-list-sort-by-date">
       {sortedTodoTasks.map((data, i) => {
         if (typeof data === 'string') {
-          return <div className="section-label" data-label={data} key={data} />;
+          return <div className="date-label" data-label={data} key={data} />;
         }
 
         index += 1;
@@ -57,7 +62,7 @@ export function TodoTasksListSortByDate({
             index={index}
             task={data}
             focused={index === focusIndex}
-            inputBaseProps={{ inputComponent: TaskInput }}
+            inputBaseProps={inputBaseProps}
             {...props}
           />
         );

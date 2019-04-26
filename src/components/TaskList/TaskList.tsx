@@ -22,11 +22,9 @@ function TaskListComponent({
   loggedIn,
   taskLists,
   currentTaskList,
-  currentTaskListId,
   creatingNewTaskList,
   getAllTaskList,
-  newTaskList,
-  sortByDate
+  newTaskList
 }: AuthsState & TaskListState & typeof TaskListActionCreators) {
   useEffect(() => {
     loggedIn && getAllTaskList();
