@@ -6,7 +6,7 @@
 }
 
 .todo-tasks-list-sort-by-date {
-  .section-label {
+  .date-label {
     @include dimen(100%, 40px);
     @include flex(center);
     @include padding-x(20px);
