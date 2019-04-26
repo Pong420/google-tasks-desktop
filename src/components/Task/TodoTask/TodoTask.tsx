@@ -1,5 +1,6 @@
 import React, {
   useRef,
+  useMemo,
   useEffect,
   useCallback,
   MouseEvent,
@@ -12,7 +13,7 @@ import { Task } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
 import { DateTimeModal } from './DateTimeModal';
 import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
-import { TaskInputWithDate } from '../TaskInputWithDate';
+import { TaskInput } from '../TaskInput';
 import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
 import { useBoolean, classes, useHotkeys } from '../../../utils';
 import { RootState, TaskActionCreators } from '../../../store';
@@ -76,7 +77,7 @@ function TodoTaskComponent({
     (evt: ChangeEvent<HTMLTextAreaElement>) => {
       updateTask({
         ...task,
-        title: evt.currentTarget.value
+        title: evt.target.value
       });
     },
     [task, updateTask]
@@ -109,12 +110,10 @@ function TodoTaskComponent({
 
   const newTaskCallback = useCallback(() => {
     // TODO: check setTimeout
-    setTimeout(() => {
-      newTask({
-        previousTask: task,
-        due: sortByDate ? task.due : undefined
-      });
-    }, 0);
+    newTask({
+      previousTask: task,
+      due: sortByDate ? task.due : undefined
+    });
   }, [newTask, task, sortByDate]);
 
   const backspaceCallback = useCallback(
@@ -127,6 +126,10 @@ function TodoTaskComponent({
     },
     [deleteTask, index, setFocusIndex, task]
   );
+
+  const escKeyDownCallback = useCallback(() => () => setFocusIndex(null), [
+    setFocusIndex
+  ]);
 
   const moveTaskCallback = useCallback(
     (step: number) => {
@@ -155,17 +158,6 @@ function TodoTaskComponent({
     [index, moveTask, setFocusIndex, sortByDate, todoTasks.length]
   );
 
-  const moveUpCallback = useCallback(() => moveTaskCallback(-1), [
-    moveTaskCallback
-  ]);
-  const moveDownCallback = useCallback(() => moveTaskCallback(1), [
-    moveTaskCallback
-  ]);
-
-  const escKeyDownCallback = useCallback(() => () => setFocusIndex(null), [
-    setFocusIndex
-  ]);
-
   const focusPrevNextCallback = useCallback(
     (step: number) => {
       setFocusIndex(Math.min(todoTasks.length - 1, Math.max(0, index + step)));
@@ -173,44 +165,47 @@ function TodoTaskComponent({
     [index, setFocusIndex, todoTasks.length]
   );
 
-  const focusPrevCallback = useCallback(() => focusPrevNextCallback(-1), [
-    focusPrevNextCallback
-  ]);
-
-  const focusNextCallback = useCallback(() => focusPrevNextCallback(1), [
-    focusPrevNextCallback
-  ]);
-
   useHotkeys('enter', newTaskCallback, focused);
   useHotkeys('backspace', backspaceCallback, focused, false);
   useHotkeys('shift+enter', detailsView.on, focused);
-  useHotkeys('option+up', moveUpCallback, focused);
-  useHotkeys('option+down', moveDownCallback, focused);
   useHotkeys('esc', escKeyDownCallback, focused);
-  useHotkeys('up', focusPrevCallback, focused);
-  useHotkeys('down', focusNextCallback, focused);
+  useHotkeys('option+up', () => moveTaskCallback(-1), focused);
+  useHotkeys('option+down', () => moveTaskCallback(1), focused);
+  useHotkeys('up', () => focusPrevNextCallback(-1), focused);
+  useHotkeys('down', () => focusPrevNextCallback(1), focused);
+
+  const memoInputBaseProps = useMemo(
+    () => ({
+      inputRef,
+      onFocus: () => setFocusIndex(index),
+      onBlur: () => setFocusIndex(null),
+      onClick: clickToFocusCallback,
+      onChange: onChangeCallback,
+      inputComponent: TaskInput,
+      inputProps: {
+        onDueDateBtnClick: dateTimeModal.on
+      },
+      ...inputBaseProps
+    }),
+    [
+      index,
+      clickToFocusCallback,
+      dateTimeModal.on,
+      inputBaseProps,
+      onChangeCallback,
+      setFocusIndex
+    ]
+  );
 
   return (
     <>
       <Task
         className={classes(`todo-task`, className, focused && 'focused')}
         task={task}
-        inputBaseProps={{
-          inputRef,
-          onFocus: () => setFocusIndex(index),
-          onBlur: () => setFocusIndex(null),
-          onClick: clickToFocusCallback,
-          onChange: onChangeCallback,
-          inputComponent: TaskInputWithDate,
-          inputProps: {
-            task,
-            onDueDateBtnClick: dateTimeModal.on
-          },
-          ...inputBaseProps
-        }}
-        endAdornment={<EditTaskButton onClick={detailsView.on} />}
+        inputBaseProps={memoInputBaseProps}
         onContextMenu={setAnchorPosition}
         toggleCompleted={toggleCompleted}
+        endAdornment={<EditTaskButton onClick={detailsView.on} />}
       />
       <TodoTaskMenu
         onClose={onClose}
@@ -226,7 +221,6 @@ function TodoTaskComponent({
         currentTaskList={currentTaskList}
         updateTask={updateTask}
         deleteTask={deleteTask}
-        openDateTimeModal={dateTimeModal.on}
       />
       <DateTimeModal
         task={task}
