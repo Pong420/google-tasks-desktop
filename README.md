@@ -1,7 +1,5 @@
 ## Google Tasks Desktop (WIP)
 
-:warning: Project still working in prorgress. Don't use it if you have important data in google tasks
-
 <div>
   <img src="./screenshot/1.png" width="24%">
   <img src="./screenshot/2.png" width="24%">
@@ -36,6 +34,26 @@
 
 4. Finally rename the json file to `oauth2.keys.json` and put it into `src/constants`
 
+### Development
+
+```
+yarn dev
+```
+
+### Packaging
+
+To package apps for the local platform:
+
+```
+yarn package
+```
+
+First, refer to the [Multi Platform Build docs](https://www.electron.build/multi-platform-build) for dependencies. Then,
+
+```
+yarn package-all
+```
+
 ### TODO
 
 - [x] Support Window & Linux
@@ -51,30 +69,7 @@
 ### Know issue
 
 - Add time is not supported as API limitation
-- Once you add/edi the `date` through official platform (Web/App). The `date` shown in the official platform (Web/App) will not be update,
-  if you change the `date` in this application.
+- Once you add/edit the `date` through official platform (Web/App). Then you change the `date` in this application, the `date` shown in the official platform (Web/App) will not be update.
 - For tasks sort by date
   - Move task up/down shortcut is not supported currently.
   - Tasks sort by date or order is not synced to the official platform (Web/App)
-
-### Development
-
-```
-yarn dev
-```
-
-### Packaging
-
-Before packaging you may edit the build config in `package.json` which prefix with `REPLACE_`.
-
-To package apps for the local platform:
-
-```
-yarn package
-```
-
-First, refer to the [Multi Platform Build docs](https://www.electron.build/multi-platform-build) for dependencies. Then,
-
-```
-yarn package-all
-```
