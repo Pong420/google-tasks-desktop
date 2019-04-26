@@ -13,7 +13,6 @@ import { Task } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
 import { DateTimeModal } from './DateTimeModal';
 import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
-import { TaskInput } from '../TaskInput';
 import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
 import { useBoolean, classes, useHotkeys } from '../../../utils';
 import { RootState, TaskActionCreators } from '../../../store';
@@ -184,7 +183,6 @@ function TodoTaskComponent({
       onBlur: () => setFocusIndex(null),
       onClick: clickToFocusCallback,
       onChange: onChangeCallback,
-      inputComponent: TaskInput,
       inputProps: {
         onDueDateBtnClick: dateTimeModal.on
       },

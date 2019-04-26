@@ -12,7 +12,6 @@ interface Props {
 
 export function ToggleCompleted({ completed, onClick }: Props) {
   const [hover, { on, off }] = useBoolean(false);
-  const tick = completed || hover;
 
   return (
     <div
@@ -21,8 +20,10 @@ export function ToggleCompleted({ completed, onClick }: Props) {
       onMouseEnter={on}
       onMouseLeave={off}
     >
-      <IconButton tooltip={tick ? 'Mark complete' : 'Mark incomplete'}>
-        {tick ? <TickIcon color="secondary" /> : <CircleIcon />}
+      <IconButton
+        tooltip={hover && !completed ? 'Mark complete' : 'Mark incomplete'}
+      >
+        {completed || hover ? <TickIcon color="secondary" /> : <CircleIcon />}
       </IconButton>
     </div>
   );

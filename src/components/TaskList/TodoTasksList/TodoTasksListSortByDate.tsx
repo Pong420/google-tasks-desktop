@@ -28,7 +28,7 @@ export function TodoTasksListSortByDate({
         if (b.due) {
           return 1;
         }
-        return 0;
+        return -1;
       })
       .reduce<Array<string | Schema$Task>>((acc, task) => {
         const label = dateLabelHandler(task.due);
