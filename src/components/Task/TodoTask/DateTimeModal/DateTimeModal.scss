@@ -1,8 +1,12 @@
 .date-time-modal-paper.date-time-modal-paper {
+  @include sq-dimen(100%);
   @include margin-x(15px);
   max-height: calc(100% - 75px);
   max-width: 300px;
-  padding: 0 15px 10px;
+
+  .modal-scroll-content {
+    padding: 0 15px 10px;
+  }
 
   .calendar-content {
     @include padding-x(6px);

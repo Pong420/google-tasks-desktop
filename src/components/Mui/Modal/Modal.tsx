@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, ReactNode } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
+import { ScrollContent } from '../../ScrollContent';
 import mergeWith from 'lodash/mergeWith';
 
 export interface ModalProps extends DialogProps {
@@ -47,18 +48,20 @@ export function Modal({
       BackdropProps={{ classes: { root: 'mui-menu-backdrop' } }}
       {...props}
     >
-      <div className="modal-title">{title}</div>
-      <div className="modal-content">{children}</div>
-      <div className="modal-actions">
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          onClick={confirm}
-          color="secondary"
-          autoFocus={autoFocusConfirmButon}
-        >
-          {confirmLabel}
-        </Button>
-      </div>
+      <ScrollContent className="modal-scroll-content">
+        <div className="modal-title">{title}</div>
+        <div className="modal-content">{children}</div>
+        <div className="modal-actions">
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={confirm}
+            color="secondary"
+            autoFocus={autoFocusConfirmButon}
+          >
+            {confirmLabel}
+          </Button>
+        </div>
+      </ScrollContent>
     </Dialog>
   );
 }
