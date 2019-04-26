@@ -110,10 +110,13 @@ function TodoTaskComponent({
 
   const newTaskCallback = useCallback(() => {
     // TODO: check setTimeout
-    newTask({
-      previousTask: task,
-      due: sortByDate ? task.due : undefined
-    });
+    // setTimeout required when tasks are sorted by date
+    setTimeout(() => {
+      newTask({
+        previousTask: task,
+        due: sortByDate ? task.due : undefined
+      });
+    }, 0);
   }, [newTask, task, sortByDate]);
 
   const backspaceCallback = useCallback(
