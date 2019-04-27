@@ -19,7 +19,9 @@ export function DateTimeModal({
   onDueDateChange,
   ...props
 }: Props) {
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date>(
+    task.due ? new Date(task.due) : new Date()
+  );
   const handleConfirmCallback = useCallback(() => {
     date && onDueDateChange(date);
     handleConfirm();
@@ -31,10 +33,7 @@ export function DateTimeModal({
       handleConfirm={handleConfirmCallback}
       {...props}
     >
-      <DatePicker
-        value={task.due ? new Date(task.due) : undefined}
-        onChange={setDate}
-      />
+      <DatePicker value={date} onChange={setDate} />
       <div className="row">
         <TimeIcon />
         <TimeDropdown />
