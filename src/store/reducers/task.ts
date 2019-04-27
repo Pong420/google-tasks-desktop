@@ -1,5 +1,6 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
+import { compare } from '../../utils/compare';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
 
@@ -24,18 +25,10 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
-      const sortedTasks = (action.payload as Schema$Task[]).sort((a, b) => {
-        if (a.position && b.position) {
-          if (Number(a.position) > Number(b.position)) return 1;
-          if (Number(a.position) < Number(b.position)) return -1;
-        }
-
-        if (a.updated && b.updated) {
-          return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
-        }
-
-        return 0;
-      });
+      const sortedTasks = (action.payload as Schema$Task[]).sort(
+        (a, b) =>
+          compare(a.position, b.position) || compare(a.updated, b.updated)
+      );
 
       return {
         ...state,
@@ -47,21 +40,13 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.NEW_TASK:
       const tasks = state.tasks.slice();
-      const { previousTask } = action.payload;
-      const index = tasks.findIndex(
-        ({ uuid }) => !!previousTask && uuid === previousTask.uuid
-      );
+      const { previousTask, ...newTaskPlayload } = action.payload;
+      const index =
+        tasks.findIndex(
+          ({ uuid }) => !!previousTask && uuid === previousTask.uuid
+        ) + 1;
 
-      tasks.splice(index + 1, 0, {
-        position: previousTask
-          ? String(Number(previousTask.position) + 1).padStart(
-              previousTask.position!.length,
-              '0'
-            )
-          : undefined,
-        due: action.payload.due,
-        uuid: action.payload.uuid
-      });
+      tasks.splice(index, 0, newTaskPlayload);
 
       return {
         ...state,
