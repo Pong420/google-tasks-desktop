@@ -8,6 +8,7 @@
     color: var(--text-color);
     outline: none;
     padding: 0;
+    overflow: hidden;
 
     &:hover:not(:focus) {
       cursor: default;
