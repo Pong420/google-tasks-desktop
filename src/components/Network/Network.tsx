@@ -14,11 +14,11 @@ export function NetworkComponent({
   isOnline
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   useEffect(() => {
-    addEventListener('online', online);
-    addEventListener('offline', offline);
+    window.addEventListener('online', online);
+    window.addEventListener('offline', offline);
     return () => {
-      removeEventListener('online', online);
-      removeEventListener('offline', offline);
+      window.removeEventListener('online', online);
+      window.removeEventListener('offline', offline);
     };
   }, [offline, online]);
 

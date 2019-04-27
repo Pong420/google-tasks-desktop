@@ -1,4 +1,4 @@
-import React, { useCallback, RefObject, forwardRef } from 'react';
+import React, { useCallback, forwardRef } from 'react';
 import MuiMenuItem, {
   MenuItemProps as DefaultMenuItemProps
 } from '@material-ui/core/MenuItem';

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { TodoTask } from '../../Task';
-import { TaskInput } from '../../Task/TaskInput';
 import { Schema$Task } from '../../../typings';
 
 interface Props {

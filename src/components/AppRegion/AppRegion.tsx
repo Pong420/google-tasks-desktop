@@ -24,9 +24,9 @@ export function AppRegion() {
 
     onResize();
 
-    addEventListener('resize', onResize);
+    window.addEventListener('resize', onResize);
 
-    return () => removeEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   return (
