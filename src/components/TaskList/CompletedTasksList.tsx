@@ -18,13 +18,14 @@ export function CompletedTasksList({
   deleteTask,
   toggleCompleted
 }: Props) {
-  if (!completedTasks.length) {
-    return null;
-  }
   const [expanded, { toggle }] = useBoolean(false);
   const Icon = useMemo(() => (expanded ? CollapseIcon : ExpandIcon), [
     expanded
   ]);
+
+  if (!completedTasks.length) {
+    return null;
+  }
 
   return (
     <div className="completed-tasks-list">
