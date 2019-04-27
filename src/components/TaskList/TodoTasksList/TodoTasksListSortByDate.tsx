@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { TodoTask } from '../../Task';
 import { Schema$Task } from '../../../typings';
+import { compare } from '../../../utils/compare';
 
 interface Props {
   todoTasks: Schema$Task[];
@@ -20,15 +21,7 @@ export function TodoTasksListSortByDate({
     const dateLabelHandler = getDateLabelHandler();
     let prevLabel = '';
     return todoTasks
-      .sort((a, b) => {
-        if (a.due && b.due) {
-          return new Date(a.due) > new Date(b.due) ? 1 : -1;
-        }
-        if (b.due) {
-          return 1;
-        }
-        return -1;
-      })
+      .sort((a, b) => compare(a.due, b.due) || compare(a.updated, b.updated))
       .reduce<Array<string | Schema$Task>>((acc, task) => {
         const label = dateLabelHandler(task.due);
         if (prevLabel !== label) {
