@@ -95,57 +95,63 @@ export function TaskDetailsView({
         }
         {...props}
       >
-        <Input
-          multiline
-          className="filled task-details-view-title-field"
-          placeholder="Enter title"
-          value={task.title}
-          inputRef={titleInputRef}
-          onChange={evt => setTask({ ...task, title: evt.currentTarget.value })}
-          onKeyPress={evt => evt.which === 13 && evt.preventDefault()}
-        />
-        <Input
-          multiline
-          className="filled task-details-view-notes-field"
-          placeholder="Add details"
-          value={task.notes}
-          inputRef={notesInputRef}
-          onClick={() => notesInputRef.current!.focus()}
-          onChange={evt => setTask({ ...task, notes: evt.currentTarget.value })}
-        />
-        <div className="row row-task-list">
-          <FormatListBulletedIcon />
-          <TaskListDropdown
-            currentTaskList={currentTaskList}
-            taskLists={taskLists}
+        <div className="task-details-view-content">
+          <Input
+            multiline
+            className="filled task-details-view-title-field"
+            placeholder="Enter title"
+            value={task.title}
+            inputRef={titleInputRef}
+            onChange={evt =>
+              setTask({ ...task, title: evt.currentTarget.value })
+            }
+            onKeyPress={evt => evt.which === 13 && evt.preventDefault()}
           />
-        </div>
-        <div className="row row-date">
-          <EventAvailableIcon />
-          {task.due ? (
-            <div className="task-deatails-due-date-button">
-              <div
-                className="task-deatails-due-date-clickable"
-                onClick={dateTimeModal.on}
-              />
-              <div>
-                <div className="date">
-                  {new Date(task.due).format('D, j M')}
+          <Input
+            multiline
+            className="filled task-details-view-notes-field"
+            placeholder="Add details"
+            value={task.notes}
+            inputRef={notesInputRef}
+            onClick={() => notesInputRef.current!.focus()}
+            onChange={evt =>
+              setTask({ ...task, notes: evt.currentTarget.value })
+            }
+          />
+          <div className="row row-task-list">
+            <FormatListBulletedIcon />
+            <TaskListDropdown
+              currentTaskList={currentTaskList}
+              taskLists={taskLists}
+            />
+          </div>
+          <div className="row row-date">
+            <EventAvailableIcon />
+            {task.due ? (
+              <div className="task-deatails-due-date-button">
+                <div
+                  className="task-deatails-due-date-clickable"
+                  onClick={dateTimeModal.on}
+                />
+                <div>
+                  <div className="date">
+                    {new Date(task.due).format('D, j M')}
+                  </div>
                 </div>
+                <IconButton
+                  icon={CloseIcon}
+                  tooltip="Remove date and time"
+                  onClick={() => setTask({ ...task, due: undefined })}
+                />
               </div>
-              <IconButton
-                icon={CloseIcon}
-                tooltip="Remove date and time"
-                onClick={() => setTask({ ...task, due: undefined })}
-              />
-            </div>
-          ) : (
-            <Button onClick={dateTimeModal.on}>Add date/time</Button>
-          )}
-        </div>
-        <div className="row row-subtask">
-          <SubdirectoryIcon />
-          <Button disabled>Add Subtasks</Button>
+            ) : (
+              <Button onClick={dateTimeModal.on}>Add date/time</Button>
+            )}
+          </div>
+          <div className="row row-subtask">
+            <SubdirectoryIcon />
+            <Button disabled>Add Subtasks</Button>
+          </div>
         </div>
       </FullScreenDialog>
       <DateTimeModal
