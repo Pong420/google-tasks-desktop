@@ -121,9 +121,12 @@ function TodoTaskComponent({
   const backspaceCallback = useCallback(
     evt => {
       if (task.title === '') {
-        evt.preventDefault();
-        deleteTask(task);
-        setFocusIndex(index - 1);
+        // TODO: check setTimeout
+        setTimeout(() => {
+          evt.preventDefault();
+          deleteTask(task);
+          setFocusIndex(index - 1);
+        }, 0);
       }
     },
     [deleteTask, index, setFocusIndex, task]
