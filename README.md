@@ -7,11 +7,11 @@
   <img src="./screenshot/4.png" width="24%">
 </div>
 
+### [Download](https://github.com/Pong420/google-tasks-desktop/releases)
+
 ### Project Setup
 
-`yarn` is required, otherwise you should replace `yarn` in `package.json` and `scripts/electron-wait-react.js`
-
-1. Enable [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
+1. Enable your own [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
 
 2. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
@@ -31,8 +31,6 @@
   }
 }
 ```
-
-4. Finally rename the json file to `oauth2.keys.json` and put it into `src/constants`
 
 ### Development
 

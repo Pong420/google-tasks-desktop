@@ -10,7 +10,7 @@
   --task-focused-background-color: #f8f9fa;
   --day-color: #9e9e9e;
   --date-color: #000;
-  --error-color: rgba(218, 49, 37, 1);
+  --error-color: #da3125;
 }
 
 [data-theme^='dark'] {
@@ -23,7 +23,7 @@
   --task-focused-background-color: #232323; // #070605
   --day-color: #9e9e9e;
   --date-color: #fff;
-  --error-color: rgba(218, 49, 37, 0.9);
+  --error-color: #f44336;
 }
 
 *,

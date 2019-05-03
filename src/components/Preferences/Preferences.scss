@@ -2,7 +2,8 @@
   color: var(--text-color);
 
   .preferences-label {
-    white-space: nowrap;
+    flex: 0 0 auto;
+    max-width: 85px;
     padding-right: 10px;
   }
 
