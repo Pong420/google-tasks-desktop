@@ -15,7 +15,7 @@
   &.focused {
     &:after {
       @include dimen(100%);
-      border-color: #4285f4;
+      border-color: var(--secondary-color);
     }
   }
 }

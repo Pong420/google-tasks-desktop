@@ -53,11 +53,7 @@ export function Modal({
         <div className="modal-content">{children}</div>
         <div className="modal-actions">
           <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={confirm}
-            color="secondary"
-            autoFocus={autoFocusConfirmButon}
-          >
+          <Button onClick={confirm} autoFocus={autoFocusConfirmButon}>
             {confirmLabel}
           </Button>
         </div>

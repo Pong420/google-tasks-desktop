@@ -48,7 +48,10 @@ export function AuthComponent({
             />
             <div>
               <Button onClick={authenticate}>Get Code</Button>
-              <Button color="secondary" onClick={() => getToken(code.value)}>
+              <Button
+                className="auth-confirm-button"
+                onClick={() => getToken(code.value)}
+              >
                 Confirm
               </Button>
             </div>

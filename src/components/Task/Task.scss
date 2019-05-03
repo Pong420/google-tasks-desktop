@@ -71,6 +71,10 @@ $min-task-height: 50px;
   .toggle-completed {
     align-self: flex-start;
     margin-top: 4px;
+
+    .mui-tick-icon {
+      color: var(--secondary-color);
+    }
   }
 
   .task-input-content {

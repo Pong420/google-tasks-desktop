@@ -6,11 +6,6 @@ export const theme = createMuiTheme({
     fontFamily: 'Roboto',
     useNextVariants: true
   },
-  palette: {
-    secondary: {
-      main: '#4285f4'
-    }
-  },
   props: {
     MuiDivider: {
       light: true,
