@@ -1,19 +1,24 @@
 .auth {
-  @include flex(center, center, column);
+  @include flex(center, flex-start, column);
   @include fixed(0, null, 0);
   @include sq-dimen(100%);
 
   background-color: var(--main-color);
   color: var(--text-color);
   padding: $padding-x;
+  text-align: center;
   z-index: $app-region-z-index - 1;
 
-  .logo {
-    justify-self: flex-start;
+  .auth-header {
+    margin-top: 65px;
   }
 
-  h4 {
-    margin-bottom: 100px;
+  .auth-content {
+    @include dimen(100%);
+    @include flex(stretch, center);
+    @include relative();
+
+    flex: 1 1 auto;
   }
 
   form {
@@ -22,6 +27,66 @@
 
     .mui-input-base {
       margin: 5px 0 15px;
+    }
+  }
+
+  .file-upload {
+    @include dimen(100%);
+    @include flex(stretch, center, column);
+
+    margin-top: 50px;
+    font-weight: bold;
+
+    .file-upload-header {
+      a {
+        color: var(--secondary-color);
+        text-decoration: underline;
+      }
+    }
+
+    .file-upload-content {
+      @include relative();
+
+      border: 2px dashed;
+      border-radius: 5px;
+      color: var(--text-secondary-color);
+      cursor: pointer;
+      flex: 1 1 auto;
+      margin: 10px 0;
+
+      &.dragover {
+        label {
+          opacity: 0.5;
+        }
+      }
+
+      input[type='file'] {
+        @include absolute(0, null, 0);
+        @include sq-dimen(100%);
+
+        opacity: 0;
+        outline: none;
+      }
+
+      label {
+        @include absolute(0, null, 0);
+        @include flex(center, center);
+        @include sq-dimen(100%);
+
+        line-height: 1.5em;
+        padding: 15px;
+      }
+    }
+
+    .file-upload-footer {
+      @include flex(center);
+
+      color: var(--error-color);
+      min-height: 20px;
+
+      svg {
+        margin-right: 5px;
+      }
     }
   }
 }
