@@ -4,7 +4,7 @@ import {
   FullScreenDialogProps
 } from '../Mui/FullScreenDialog';
 import { Input } from '../Mui/Input';
-import { TOKEN_PATH } from '../../constants';
+import { TOKEN_PATH, OAUTH2_KEYS_PATH } from '../../constants';
 
 export function Preferences({ ...props }: FullScreenDialogProps) {
   const [theme, setTheme] = useState<THEME>(
@@ -40,6 +40,10 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       </FullScreenDialog.Section>
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="Storage ( Read-Only )" />
+        <FullScreenDialog.Row>
+          <div className="preferences-label">OAuth Keys Path:</div>
+          <Input value={OAUTH2_KEYS_PATH} readOnly className="filled" />
+        </FullScreenDialog.Row>
         <FullScreenDialog.Row>
           <div className="preferences-label">Token Path:</div>
           <Input value={TOKEN_PATH} readOnly className="filled" />

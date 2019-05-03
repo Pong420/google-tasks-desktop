@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { RootState, AuthActionCreators, AuthsState } from '../../store';
 import { Input } from '../Mui/Input';
+import { FileUpload } from './FileUpload';
 import { useInput } from '../../utils/useInput';
 import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
+import { OAuth2Keys } from '../../api';
 import Button from '@material-ui/core/Button';
 
 const mapStateToProps = ({ auth }: RootState) => ({ ...auth });
@@ -18,29 +20,43 @@ export function AuthComponent({
   getToken
 }: AuthsState & typeof AuthActionCreators) {
   const code = useInput('');
+  const [installed, setInstalled] = useState(!!OAuth2Keys);
 
   useEffect(() => {
-    autoLogin && authenticate();
-  }, [authenticate, autoLogin]);
+    installed && autoLogin && authenticate();
+  }, [authenticate, autoLogin, installed]);
 
-  if (autoLogin || loggedIn) {
+  if (installed && (autoLogin || loggedIn)) {
     return null;
   }
 
   return (
     <div className="auth">
-      <LogoSvg className="logo" />
-      <h4>Unoffical Google Task Clinet</h4>
-      <form action="">
-        Paste the code here:
-        <Input {...code} autoFocus fullWidth className="filled bottom-border" />
-        <div>
-          <Button onClick={authenticate}>Get Code</Button>
-          <Button color="secondary" onClick={() => getToken(code.value)}>
-            Confirm
-          </Button>
-        </div>
-      </form>
+      <div className="auth-header">
+        <LogoSvg className="logo" />
+        <h4>Unoffical Google Task Clinet</h4>
+      </div>
+      <div className="auth-content">
+        {installed ? (
+          <form action="">
+            Paste the code here:
+            <Input
+              {...code}
+              autoFocus
+              fullWidth
+              className="filled bottom-border"
+            />
+            <div>
+              <Button onClick={authenticate}>Get Code</Button>
+              <Button color="secondary" onClick={() => getToken(code.value)}>
+                Confirm
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <FileUpload onSuccess={setInstalled} />
+        )}
+      </div>
     </div>
   );
 }
