@@ -21,6 +21,10 @@
     flex: 1 1 auto;
   }
 
+  .auth-confirm-button {
+    color: var(--secondary-color);
+  }
+
   form {
     @include dimen(100%);
     @include flex(center, center, $wrap: wrap);

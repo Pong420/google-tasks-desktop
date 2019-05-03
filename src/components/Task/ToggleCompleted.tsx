@@ -23,7 +23,11 @@ export function ToggleCompleted({ completed, onClick }: Props) {
       <IconButton
         tooltip={hover && !completed ? 'Mark complete' : 'Mark incomplete'}
       >
-        {completed || hover ? <TickIcon color="secondary" /> : <CircleIcon />}
+        {completed || hover ? (
+          <TickIcon className="mui-tick-icon" color="inherit" />
+        ) : (
+          <CircleIcon />
+        )}
       </IconButton>
     </div>
   );
