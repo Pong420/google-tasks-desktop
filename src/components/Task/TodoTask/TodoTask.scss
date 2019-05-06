@@ -26,6 +26,14 @@
   }
 
   &.highlight-bottom-border {
-    border-bottom: 2px solid var(--secondary-color);
+    &:after {
+      @include dimen(100%);
+      border-color: var(--secondary-color);
+      transition: 0s;
+    }
+
+    .task-input-base {
+      border-color: transparent;
+    }
   }
 }
