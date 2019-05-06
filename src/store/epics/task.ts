@@ -15,7 +15,7 @@ import {
   delay,
   withLatestFrom
 } from 'rxjs/operators';
-import { ofType, Epic } from 'redux-observable';
+import { ofType, Epic, ActionsObservable } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
 import {
   TaskActions,
@@ -31,6 +31,15 @@ import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
 import isEqual from 'lodash/fp/isEqual';
+
+const onNewTaskSuccess$ = (
+  action$: ActionsObservable<TaskActions>,
+  uuid: string
+) =>
+  action$.pipe(
+    ofType<TaskActions, NewTaskSuccess>(TaskActionTypes.NEW_TASK_SUCCESS),
+    filter(success => success.payload.uuid === uuid)
+  );
 
 const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   action$,
@@ -51,12 +60,6 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           map<any, TaskActions>(() => ({
             type: TaskActionTypes.DELETE_TASK_SUCCESS
           }))
-        );
-
-      const onNewTaskSuccess$ = (uuid: string) =>
-        action$.pipe(
-          ofType<TaskActions, NewTaskSuccess>(TaskActionTypes.NEW_TASK_SUCCESS),
-          filter(success => success.payload.uuid === uuid)
         );
 
       const newTaskRequest$ = (
@@ -86,11 +89,13 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
             })
           ).pipe(
             tap(() => nprogress.done()),
-            map(({ data }) => data),
-            map<tasks_v1.Schema$Tasks, TaskActions>(({ items }) => ({
-              type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
-              payload: items || []
-            })),
+            map(({ data }) => data.items),
+            map<tasks_v1.Schema$Tasks['items'], TaskActions>(
+              (payload = []) => ({
+                type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
+                payload
+              })
+            ),
             takeUntil(action$.pipe(ofType(TaskActionTypes.GET_ALL_TASKS)))
           );
 
@@ -104,9 +109,9 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           }
 
           if (previousTask && !previousTask.id) {
-            return onNewTaskSuccess$(previousTask.uuid).pipe(
+            return onNewTaskSuccess$(action$, previousTask.uuid).pipe(
               delay(250), // short delay prevent request overlap by update
-              mergeMap(success =>
+              switchMap(success =>
                 newTaskRequest$(
                   { tasklist, previous: success.payload.id, requestBody },
                   action.payload.uuid
@@ -122,8 +127,8 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
 
         case TaskActionTypes.DELETE_TASK:
           if (!action.payload.id) {
-            return onNewTaskSuccess$(action.payload.uuid).pipe(
-              mergeMap(success => deleteTaskRequest$(success.payload.id!))
+            return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
+              switchMap(success => deleteTaskRequest$(success.payload.id!))
             );
           }
 
@@ -187,13 +192,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
             filter(task => task.uuid === action.payload.uuid),
             switchMap(() => {
               if (action.payload.id === undefined) {
-                return action$.pipe(
-                  ofType<TaskActions, NewTaskSuccess>(
-                    TaskActionTypes.NEW_TASK_SUCCESS
-                  ),
-                  filter(
-                    success => success.payload.uuid === action.payload.uuid
-                  ),
+                return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
                   switchMap(success =>
                     updateTaskRequest$({
                       ...success.payload,
@@ -250,11 +249,7 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
         switchMap(([action, todoTasks]) => {
           const task = todoTasks[action.payload.newIndex];
           if (!task.id) {
-            return action$.pipe(
-              ofType<TaskActions, NewTaskSuccess>(
-                TaskActionTypes.NEW_TASK_SUCCESS
-              ),
-              filter(success => success.payload.uuid === task.uuid),
+            return onNewTaskSuccess$(action$, task.uuid).pipe(
               switchMap(success => moveTaskRequest$(success.payload))
             );
           }
