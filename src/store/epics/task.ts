@@ -12,7 +12,8 @@ import {
   pairwise,
   take,
   distinctUntilChanged,
-  delay
+  delay,
+  withLatestFrom
 } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -211,58 +212,52 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   action$,
   state$
 ) => {
-  const todoTasks$ = state$.pipe(
-    map(({ task }) => task.todoTasks),
-    take(1)
-  );
+  const todoTasks$ = state$.pipe(map(({ task }) => task.todoTasks));
 
   const moveTaskRequest$ = (task: Schema$Task) =>
     todoTasks$.pipe(
-      switchMap(todoTasks => from([undefined, ...todoTasks])),
+      mergeMap(todoTasks => from([undefined, ...todoTasks])),
       pairwise(),
       filter(([_, b]) => !!b && b.uuid === task.uuid),
-      switchMap(([previous, target]) =>
+      mergeMap(([previous, target]) =>
         from(
           tasksAPI.move({
             tasklist: state$.value.taskList.currentTaskListId,
             task: target!.id,
             previous: previous && previous.id
           })
+        ).pipe(
+          map<any, MoveTasksSuccess>(() => ({
+            type: TaskActionTypes.MOVE_TASKS_SUCCESS
+          }))
         )
       ),
-      map<any, MoveTasksSuccess>(() => ({
-        type: TaskActionTypes.MOVE_TASKS_SUCCESS
-      }))
+      take(1)
     );
 
   return action$.pipe(
     ofType<TaskActions, MoveTasks>(TaskActionTypes.MOVE_TASKS),
-    groupBy(action => {
-      // TODO: Make it better
-      const todoTasks = state$.value.task.todoTasks;
-      return todoTasks[action.payload.newIndex].uuid;
-    }),
-    mergeMap(group$ => {
-      return group$.pipe(
+    withLatestFrom(todoTasks$),
+    groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
+    mergeMap(group$ =>
+      group$.pipe(
         debounce(() => timer(500)),
-        switchMap(action => {
-          const todoTasks = state$.value.task.todoTasks;
-          const target = todoTasks[action.payload.newIndex];
-
-          if (!target.id) {
+        switchMap(([action, todoTasks]) => {
+          const task = todoTasks[action.payload.newIndex];
+          if (!task.id) {
             return action$.pipe(
               ofType<TaskActions, NewTaskSuccess>(
                 TaskActionTypes.NEW_TASK_SUCCESS
               ),
-              filter(success => success.payload.uuid === target.uuid),
+              filter(success => success.payload.uuid === task.uuid),
               switchMap(success => moveTaskRequest$(success.payload))
             );
           }
 
-          return moveTaskRequest$(target);
+          return moveTaskRequest$(task);
         })
-      );
-    })
+      )
+    )
   );
 };
 
