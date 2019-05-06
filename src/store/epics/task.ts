@@ -100,20 +100,19 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           );
 
         case TaskActionTypes.NEW_TASK:
-          const { previousTask } = action.payload;
+          const { previousTask, ...newTask } = action.payload;
           const previous = previousTask ? previousTask.id : undefined;
-          const requestBody: tasks_v1.Params$Resource$Tasks$Insert['requestBody'] = {};
-
-          if (previousTask && previousTask.due) {
-            requestBody['due'] = previousTask.due;
-          }
 
           if (previousTask && !previousTask.id) {
             return onNewTaskSuccess$(action$, previousTask.uuid).pipe(
               delay(250), // short delay prevent request overlap by update
               switchMap(success =>
                 newTaskRequest$(
-                  { tasklist, previous: success.payload.id, requestBody },
+                  {
+                    tasklist,
+                    previous: success.payload.id,
+                    requestBody: newTask
+                  },
                   action.payload.uuid
                 )
               )
@@ -121,7 +120,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
           }
 
           return newTaskRequest$(
-            { tasklist, previous, requestBody },
+            { tasklist, previous, requestBody: newTask },
             action.payload.uuid
           );
 

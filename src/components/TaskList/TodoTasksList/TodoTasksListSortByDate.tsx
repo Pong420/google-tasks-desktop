@@ -21,7 +21,7 @@ export function TodoTasksListSortByDate({
     const dateLabelHandler = getDateLabelHandler();
     let prevLabel = '';
     return todoTasks
-      .sort((a, b) => compare(a.due, b.due) || compare(a.updated, b.updated))
+      .sort((a, b) => compare(a.due, b.due) || compare(a.position, b.position))
       .reduce<Array<string | Schema$Task>>((acc, task) => {
         const label = dateLabelHandler(task.due);
         if (prevLabel !== label) {

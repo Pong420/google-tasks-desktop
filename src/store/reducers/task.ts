@@ -39,19 +39,32 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.NEW_TASK:
-      const tasks = state.tasks.slice();
-      const { previousTask, ...newTaskPlayload } = action.payload;
-      const index =
-        tasks.findIndex(
-          ({ uuid }) => !!previousTask && uuid === previousTask.uuid
-        ) + 1;
+      return (() => {
+        const tasks = state.tasks.slice();
+        const { previousTask, ...newTaskPlayload } = action.payload;
+        const index =
+          state.todoTasks.findIndex(
+            ({ uuid }) => !!previousTask && uuid === previousTask.uuid
+          ) + 1;
 
-      tasks.splice(index, 0, newTaskPlayload);
+        tasks.splice(index, 0, {
+          // position is required when sorting by date
+          position: previousTask
+            ? (Number(previousTask.position) + 1)
+                .toString()
+                .padStart(
+                  previousTask.position ? previousTask.position.length : 20,
+                  '0'
+                )
+            : undefined,
+          ...newTaskPlayload
+        });
 
-      return {
-        ...state,
-        ...classify(tasks)
-      };
+        return {
+          ...state,
+          ...classify(tasks)
+        };
+      })();
 
     case TaskActionTypes.NEW_TASK_SUCCESS:
       return {
