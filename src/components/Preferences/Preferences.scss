@@ -89,6 +89,7 @@
 
       border-radius: 50%;
       cursor: pointer;
+      overflow: hidden;
 
       &:nth-child(n + 2) {
         margin-left: 10px;
@@ -98,11 +99,18 @@
     @each $name, $colors in $accent-colors {
       .#{$name} {
         background-color: map-get($colors, primary);
+        box-shadow: 2px 2px 10px -3px map-get($colors, dark);
+
+        &:after {
+          @include absolute();
+          @include sq-dimen(100%);
+          content: '';
+        }
 
         [data-accent-color^='#{$name}'] & {
           &:before {
-            @include absolute(-1px, 0, -1px, 0);
-            @include sq-dimen(7px);
+            @include absolute(0px, 0, 0px, 0);
+            @include sq-dimen(8px);
 
             content: '';
             border-radius: 50%;
