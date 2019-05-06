@@ -1,7 +1,5 @@
 /// <reference types="react-scripts" />
 
-type THEME = 'light' | 'dark';
-
 declare module 'react-desktop/macOs';
 declare module 'simplebar';
 
@@ -14,7 +12,6 @@ declare module '*.svg' {
 declare interface Window {
   __REDUX_DEVTOOLS_EXTENSION__: any;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
-  __setTheme(theme?: THEME): void;
 }
 
 // https://codesandbox.io/s/github/piotrwitek/typesafe-actions-todo-app

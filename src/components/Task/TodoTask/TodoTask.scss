@@ -28,7 +28,7 @@
   &.highlight-bottom-border {
     &:after {
       @include dimen(100%);
-      border-color: var(--secondary-color);
+      border-color: var(--accent-color);
       transition: 0s;
     }
 

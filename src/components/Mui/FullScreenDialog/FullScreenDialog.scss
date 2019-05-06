@@ -40,7 +40,7 @@
     }
 
     .fullscreen-dialog-row {
-      @include flex(center, space-between);
+      @include flex(center);
       @include padding-y(12px);
 
       border-bottom: 1px solid var(--border-color);
