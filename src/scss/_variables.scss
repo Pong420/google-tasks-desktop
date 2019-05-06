@@ -3,3 +3,36 @@ $padding-x: 20px;
 
 $mui-menu-z-index: 1300; // default
 $app-region-z-index: $mui-menu-z-index + 10;
+
+$accent-colors: (
+  red: (
+    primary: #ef5350,
+    light: #ef9a9a,
+    dark: #e53935
+  ),
+  blue: (
+    primary: #4285f4,
+    light: #d2e2fc,
+    dark: #1266f1
+  ),
+  amber: (
+    primary: #ffb300,
+    light: #ffca28,
+    dark: #ffa000
+  ),
+  green: (
+    primary: #66bb6a,
+    light: #a5d6a7,
+    dark: #43a047
+  ),
+  purple: (
+    primary: #ab47bc,
+    light: #ce93d8,
+    dark: #8e24aa
+  ),
+  grey: (
+    primary: #bdbdbd,
+    light: #eeeeee,
+    dark: #757575
+  )
+);

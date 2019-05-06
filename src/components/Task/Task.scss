@@ -73,7 +73,7 @@ $min-task-height: 50px;
     margin-top: 4px;
 
     .mui-tick-icon {
-      color: var(--secondary-color);
+      color: var(--accent-color);
     }
   }
 
@@ -120,7 +120,7 @@ $min-task-height: 50px;
     padding: 6px 7px 5px;
 
     svg {
-      color: var(--secondary-color);
+      color: var(--accent-color);
       font-size: 16px;
       margin-right: 6px;
     }
@@ -131,7 +131,7 @@ $min-task-height: 50px;
 
     &[data-date^='Today'] {
       &:after {
-        color: var(--secondary-color);
+        color: var(--accent-color);
         font-weight: 500;
       }
     }

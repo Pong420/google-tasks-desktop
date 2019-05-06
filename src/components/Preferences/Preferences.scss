@@ -3,13 +3,13 @@
 
   .preferences-label {
     flex: 0 0 auto;
-    max-width: 85px;
+    width: 85px;
     padding-right: 10px;
   }
 
   .preferences-theme-selector {
     @include dimen(100%);
-    @include flex(center, space-evenly);
+    @include flex(center);
   }
 
   .preferences-theme {
@@ -43,27 +43,73 @@
         border-radius: 3px;
         content: '';
       }
-
-      &.selected {
-        border-color: var(--secondary-color);
-      }
     }
 
     &.light {
       &:after {
         content: 'Light';
       }
-      > div:before {
-        background-color: #eee;
+
+      > div {
+        [data-theme^='light'] & {
+          border-color: var(--accent-color);
+        }
+
+        &:before {
+          background-color: #eee;
+        }
       }
     }
 
     &.dark {
+      margin-left: 20px;
+
       &:after {
         content: 'Dark';
       }
-      > div:before {
-        background-color: #232323;
+
+      > div {
+        [data-theme^='dark'] & {
+          border-color: var(--accent-color);
+        }
+
+        &:before {
+          background-color: #232323;
+        }
+      }
+    }
+  }
+
+  .preferences-accent-color-selector {
+    @include flex(center);
+
+    > div {
+      @include sq-dimen(22px);
+      @include relative();
+
+      border-radius: 50%;
+      cursor: pointer;
+
+      &:nth-child(n + 2) {
+        margin-left: 10px;
+      }
+    }
+
+    @each $name, $colors in $accent-colors {
+      .#{$name} {
+        background-color: map-get($colors, primary);
+
+        [data-accent-color^='#{$name}'] & {
+          &:before {
+            @include absolute(-1px, 0, -1px, 0);
+            @include sq-dimen(7px);
+
+            content: '';
+            border-radius: 50%;
+            background-color: #fff;
+            margin: auto;
+          }
+        }
       }
     }
   }
