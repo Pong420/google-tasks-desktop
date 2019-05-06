@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { RootState, AuthActionCreators, AuthsState } from '../../store';
@@ -20,7 +20,7 @@ export function AuthComponent({
   getToken
 }: AuthsState & typeof AuthActionCreators) {
   const code = useInput('');
-  const [installed, setInstalled] = useState(!!OAuth2Keys);
+  const installed = !!OAuth2Keys;
 
   useEffect(() => {
     installed && autoLogin && authenticate();
@@ -57,7 +57,7 @@ export function AuthComponent({
             </div>
           </form>
         ) : (
-          <FileUpload onSuccess={setInstalled} />
+          <FileUpload />
         )}
       </div>
     </div>
