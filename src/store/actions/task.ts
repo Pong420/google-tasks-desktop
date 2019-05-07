@@ -66,14 +66,6 @@ export interface DeleteTaskSuccess {
   type: TaskActionTypes.DELETE_TASK_SUCCESS;
 }
 
-export interface MoveTask {
-  type: TaskActionTypes.MOVE_TASK;
-}
-
-export interface MoveTaskSuccess {
-  type: TaskActionTypes.MOVE_TASK_SUCCESS;
-}
-
 export interface DeleteCompletedTasks {
   type: TaskActionTypes.DELETE_COMPLETED_TASKS;
   payload: Schema$Task[];
@@ -83,12 +75,12 @@ export interface DeleteCompletedTasksSuccess {
   type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS;
 }
 
-export interface MoveTasks {
+export interface MoveTask {
   type: TaskActionTypes.MOVE_TASKS;
   payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>;
 }
 
-export interface MoveTasksSuccess {
+export interface MoveTaskSuccess {
   type: TaskActionTypes.MOVE_TASKS_SUCCESS;
 }
 
@@ -101,12 +93,10 @@ export type TaskActions =
   | UpdateTaskSuccess
   | DeleteTask
   | DeleteTaskSuccess
-  | MoveTask
-  | MoveTaskSuccess
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
-  | MoveTasks
-  | MoveTasksSuccess;
+  | MoveTask
+  | MoveTaskSuccess;
 
 export const TaskActionCreators = {
   getAllTasks(): GetAllTasks {
