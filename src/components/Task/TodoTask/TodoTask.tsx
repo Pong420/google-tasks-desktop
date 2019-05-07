@@ -3,7 +3,6 @@ import React, {
   useMemo,
   useEffect,
   useCallback,
-  MouseEvent,
   ChangeEvent
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
@@ -22,9 +21,6 @@ export interface TodoTaskProps {
   className?: string;
   index: number;
   task: Schema$Task;
-  toggleCompleted(task: Schema$Task): void;
-  focused: boolean;
-  setFocusIndex(indxe: number | null): void;
   inputBaseProps?: InputBaseProps;
 }
 
@@ -42,9 +38,6 @@ const mapDispatchToProps = (dispath: Dispatch) =>
 function TodoTaskComponent({
   className = '',
   index,
-  focused,
-  setFocusIndex,
-  toggleCompleted,
   task,
   todoTasks,
   taskLists,
@@ -54,48 +47,15 @@ function TodoTaskComponent({
   deleteTask,
   moveTask,
   inputBaseProps,
-  sortByDate
+  sortByDate,
+  focusIndex,
+  setFocusIndex
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
   const [dateTimeModalOpened, dateTimeModal] = useBoolean();
-
+  const focused = focusIndex === index;
   const inputRef = useRef<HTMLInputElement>(null);
-  const clickToFocusCallback = useCallback(
-    (evt: MouseEvent<HTMLElement>) =>
-      evt.target !== inputRef.current && inputRef.current!.focus(),
-    []
-  );
-
-  const deleteTaskCallback = useCallback(() => deleteTask(task), [
-    deleteTask,
-    task
-  ]);
-
-  const onChangeCallback = useCallback(
-    (evt: ChangeEvent<HTMLTextAreaElement>) => {
-      updateTask({
-        ...task,
-        title: evt.target.value
-      });
-    },
-    [task, updateTask]
-  );
-
-  const onDueDateChangeCallback = useCallback(
-    (date: Date) => {
-      updateTask({
-        ...task,
-        due: date.toISOString()
-      });
-    },
-    [task, updateTask]
-  );
-
-  // auto focus on mount
-  useEffect(() => {
-    !task.id && setFocusIndex(index);
-  }, [index, setFocusIndex, task.id]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -107,37 +67,58 @@ function TodoTaskComponent({
     }
   }, [focused]);
 
-  const newTaskCallback = useCallback(() => {
-    // TODO: check setTimeout
-    // setTimeout required when tasks are sorted by date
-    setTimeout(() => {
-      newTask({
-        previousTask: task,
-        due: sortByDate ? task.due : undefined
-      });
-    }, 0);
-  }, [newTask, task, sortByDate]);
+  const { onFocus, onBlur } = useMemo(() => {
+    return {
+      onFocus: () => !focused && setFocusIndex(index),
+      onBlur: () => focused && setFocusIndex(null)
+    };
+  }, [focused, index, setFocusIndex]);
 
-  const backspaceCallback = useCallback(
-    evt => {
-      if (!task.title) {
-        // TODO: check setTimeout
-        setTimeout(() => {
-          evt.preventDefault();
-          deleteTask(task);
-          setFocusIndex(index - 1);
-        }, 0);
-      }
+  const onChangeCallback = useCallback(
+    (evt: ChangeEvent<HTMLTextAreaElement>) => {
+      updateTask({
+        ...task,
+        title: evt.target.value
+      });
     },
-    [deleteTask, index, setFocusIndex, task]
+    [task, updateTask]
   );
 
-  const escKeyDownCallback = useCallback(() => () => setFocusIndex(null), [
-    setFocusIndex
+  const deleteTaskCallback = useCallback(() => deleteTask(task), [
+    deleteTask,
+    task
   ]);
 
-  const moveTaskCallback = useCallback(
-    (step: number) => {
+  const onDueDateChangeCallback = useCallback(
+    (date: Date) => {
+      updateTask({
+        ...task,
+        due: date.toISOString()
+      });
+    },
+    [task, updateTask]
+  );
+
+  const newTaskCallback = useCallback(() => {
+    newTask({
+      previousTask: task,
+      due: sortByDate ? task.due : undefined
+    });
+    return false;
+  }, [newTask, task, sortByDate]);
+
+  const backspaceCallback = useCallback(() => {
+    if (!task.title) {
+      deleteTask(task);
+
+      return false;
+    }
+
+    return true;
+  }, [deleteTask, task]);
+
+  const { moveTaskUp, moveTaskDown } = useMemo(() => {
+    const handler = (step: number) => () => {
       if (sortByDate) {
         // if (task.due) {
         //   const date = new Date(task.due);
@@ -151,54 +132,57 @@ function TodoTaskComponent({
         const oldIndex = index;
         const newIndex = oldIndex + step;
         if (newIndex >= 0 && newIndex < todoTasks.length) {
-          // TODO: check setTimeout
-          // not sure the reason of setTimeout but required
-          setTimeout(() => {
-            moveTask({ newIndex, oldIndex });
-            setFocusIndex(newIndex);
-          }, 0);
+          moveTask({ newIndex, oldIndex });
         }
       }
-    },
-    [index, moveTask, setFocusIndex, sortByDate, todoTasks.length]
-  );
 
-  const focusPrevNextCallback = useCallback(
-    (step: number) => {
-      setFocusIndex(Math.min(todoTasks.length - 1, Math.max(0, index + step)));
-    },
-    [index, setFocusIndex, todoTasks.length]
-  );
+      return false;
+    };
+
+    return {
+      moveTaskUp: handler(-1),
+      moveTaskDown: handler(1)
+    };
+  }, [index, moveTask, sortByDate, todoTasks.length]);
+
+  const { focusPrevTask, focusNextTask } = useMemo(() => {
+    const handler = (step: number) => () => {
+      const newIndex = index + step;
+      if (newIndex < todoTasks.length && newIndex >= 0) {
+        setFocusIndex(newIndex);
+      }
+
+      return false;
+    };
+
+    return {
+      focusPrevTask: handler(-1),
+      focusNextTask: handler(1)
+    };
+  }, [index, setFocusIndex, todoTasks.length]);
 
   useHotkeys('enter', newTaskCallback, focused);
-  useHotkeys('backspace', backspaceCallback, focused, false);
+  useHotkeys('backspace', backspaceCallback, focused);
   useHotkeys('shift+enter', detailsView.on, focused);
-  useHotkeys('esc', escKeyDownCallback, focused);
-  useHotkeys('option+up', () => moveTaskCallback(-1), focused);
-  useHotkeys('option+down', () => moveTaskCallback(1), focused);
-  useHotkeys('up', () => focusPrevNextCallback(-1), focused);
-  useHotkeys('down', () => focusPrevNextCallback(1), focused);
+  useHotkeys('esc', onBlur, focused);
+  useHotkeys('option+up', moveTaskUp, focused);
+  useHotkeys('option+down', moveTaskDown, focused);
+  useHotkeys('up', focusPrevTask, focused);
+  useHotkeys('down', focusNextTask, focused);
 
   const memoInputBaseProps = useMemo(
     () => ({
       inputRef,
-      onFocus: () => setFocusIndex(index),
-      onBlur: () => setFocusIndex(null),
-      onClick: clickToFocusCallback,
+      onFocus,
+      onBlur,
+      onClick: onFocus,
       onChange: onChangeCallback,
       inputProps: {
         onDueDateBtnClick: dateTimeModal.on
       },
       ...inputBaseProps
     }),
-    [
-      index,
-      clickToFocusCallback,
-      dateTimeModal.on,
-      inputBaseProps,
-      onChangeCallback,
-      setFocusIndex
-    ]
+    [dateTimeModal.on, inputBaseProps, onBlur, onChangeCallback, onFocus]
   );
 
   return (
@@ -208,7 +192,6 @@ function TodoTaskComponent({
         task={task}
         inputBaseProps={memoInputBaseProps}
         onContextMenu={setAnchorPosition}
-        toggleCompleted={toggleCompleted}
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
       />
       <TodoTaskMenu

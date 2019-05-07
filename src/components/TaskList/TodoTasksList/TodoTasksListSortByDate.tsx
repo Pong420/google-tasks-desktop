@@ -5,16 +5,9 @@ import { compare } from '../../../utils/compare';
 
 interface Props {
   todoTasks: Schema$Task[];
-  toggleCompleted(task: Schema$Task): void;
-  focusIndex: number | null;
-  setFocusIndex(indxe: number | null): void;
 }
 
-export function TodoTasksListSortByDate({
-  todoTasks,
-  focusIndex,
-  ...props
-}: Props) {
+export function TodoTasksListSortByDate({ todoTasks, ...props }: Props) {
   let index = -1;
 
   const sortedTodoTasks = useMemo(() => {
@@ -54,7 +47,6 @@ export function TodoTasksListSortByDate({
             key={data.uuid}
             index={index}
             task={data}
-            focused={index === focusIndex}
             inputBaseProps={inputBaseProps}
             {...props}
           />
