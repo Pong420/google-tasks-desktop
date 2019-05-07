@@ -4,8 +4,8 @@ process.once('loaded', () => {
   handleOSTheme();
 });
 
-window.__setAccentColor = (newColor: ACCENT_COLOR = 'blue') => {
-  const color = newColor || localStorage.ACCENT_COLOR;
+window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
+  const color = newColor || localStorage.ACCENT_COLOR || 'blue';
 
   document.documentElement.setAttribute('data-accent-color', color);
 
