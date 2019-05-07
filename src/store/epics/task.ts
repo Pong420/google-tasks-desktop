@@ -23,8 +23,8 @@ import {
   NewTaskSuccess,
   UpdateTask,
   UpdateTaskSuccess,
-  MoveTasks,
-  MoveTasksSuccess
+  MoveTask,
+  MoveTaskSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
@@ -230,7 +230,7 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
             previous: previous && previous.id
           })
         ).pipe(
-          map<any, MoveTasksSuccess>(() => ({
+          map<any, MoveTaskSuccess>(() => ({
             type: TaskActionTypes.MOVE_TASKS_SUCCESS
           }))
         )
@@ -239,7 +239,7 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     );
 
   return action$.pipe(
-    ofType<TaskActions, MoveTasks>(TaskActionTypes.MOVE_TASKS),
+    ofType<TaskActions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     withLatestFrom(todoTasks$),
     groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
     mergeMap(group$ =>
