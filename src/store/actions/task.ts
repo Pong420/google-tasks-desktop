@@ -12,12 +12,11 @@ export enum TaskActionTypes {
   UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS',
   DELETE_TASK = 'DELETE_TASK',
   DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS',
-  MOVE_TASK = 'MOVE_TASK',
-  MOVE_TASK_SUCCESS = 'MOVE_TASK_SUCCESS',
   DELETE_COMPLETED_TASKS = 'DELETE_COMPLETED_TASKS',
   DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS',
   MOVE_TASKS = 'MOVE_TASKS',
-  MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS'
+  MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS',
+  SET_FOCUS_INDEX = 'SET_FOCUS_INDEX'
 }
 
 export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
@@ -84,6 +83,11 @@ export interface MoveTaskSuccess {
   type: TaskActionTypes.MOVE_TASKS_SUCCESS;
 }
 
+export interface SetFocusIndex {
+  type: TaskActionTypes.SET_FOCUS_INDEX;
+  payload: number | null;
+}
+
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
@@ -96,7 +100,8 @@ export type TaskActions =
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
   | MoveTask
-  | MoveTaskSuccess;
+  | MoveTaskSuccess
+  | SetFocusIndex;
 
 export const TaskActionCreators = {
   getAllTasks(): GetAllTasks {
@@ -131,9 +136,15 @@ export const TaskActionCreators = {
       payload
     };
   },
-  moveTask(payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>) {
+  moveTask(payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>): MoveTask {
     return {
       type: TaskActionTypes.MOVE_TASKS,
+      payload
+    };
+  },
+  setFocusIndex(payload: number | null): SetFocusIndex {
+    return {
+      type: TaskActionTypes.SET_FOCUS_INDEX,
       payload
     };
   }

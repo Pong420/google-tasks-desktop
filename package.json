@@ -163,7 +163,7 @@
     "electron-devtools-installer": "^2.2.4",
     "googleapis": "^39.2.0",
     "history": "^4.9.0",
-    "hotkeys-js": "^3.6.2",
+    "hotkeys-js": "https://github.com/Pong420/hotkeys.git#aa5f61873b764e2db17f10634bb97611d2bc05db",
     "lodash": "^4.17.11",
     "nprogress": "^0.2.0",
     "pong-react-scripts": "3.0.0",

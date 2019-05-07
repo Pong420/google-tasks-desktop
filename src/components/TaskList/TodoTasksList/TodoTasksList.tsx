@@ -11,9 +11,6 @@ import { Schema$Task } from '../../../typings';
 
 interface Props {
   todoTasks: Schema$Task[];
-  toggleCompleted(task: Schema$Task): void;
-  focusIndex: number | null;
-  setFocusIndex(indxe: number | null): void;
 }
 
 interface SortableListProps extends Props {
@@ -30,14 +27,7 @@ const SortableItem = SortableElement((props: TodoTaskProps) => (
 ));
 
 const SortableList = SortableContainer(
-  ({
-    dragging,
-    todoTasks,
-    insertAfter,
-    focusIndex,
-    setFocusIndex,
-    ...props
-  }: SortableListProps) => {
+  ({ dragging, todoTasks, insertAfter, ...props }: SortableListProps) => {
     return (
       <div
         className="todo-tasks-list"
@@ -49,8 +39,6 @@ const SortableList = SortableContainer(
             task={task}
             index={index}
             key={task.uuid + '@' + index}
-            focused={focusIndex === index}
-            setFocusIndex={setFocusIndex}
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''
             }

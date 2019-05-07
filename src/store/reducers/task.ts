@@ -5,12 +5,14 @@ import arrayMove from 'array-move';
 import uuid from 'uuid';
 
 export interface TaskState {
+  focusIndex: number | null;
   tasks: Schema$Task[];
   todoTasks: Schema$Task[];
   completedTasks: Schema$Task[];
 }
 
 const initialState: TaskState = {
+  focusIndex: null,
   tasks: [],
   todoTasks: [],
   completedTasks: []
@@ -47,7 +49,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
             ({ uuid }) => !!previousTask && uuid === previousTask.uuid
           ) + 1;
 
-        tasks.splice(index, 0, {
+        const newTask = {
           // position is required when sorting by date
           position: previousTask
             ? (Number(previousTask.position) + 1)
@@ -58,11 +60,16 @@ export default function(state = initialState, action: TaskActions): TaskState {
                 )
             : undefined,
           ...newTaskPlayload
-        });
+        };
+
+        tasks.splice(index, 0, newTask);
+
+        const newTasks = classify(tasks);
 
         return {
           ...state,
-          ...classify(tasks)
+          ...newTasks,
+          focusIndex: newTasks.todoTasks.indexOf(newTask)
         };
       })();
 
@@ -77,16 +84,24 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.DELETE_TASK:
-      return {
-        ...state,
-        ...classify(state.tasks, task => {
-          if (task.uuid === action.payload.uuid) {
-            return null;
-          }
+      return (() => {
+        let newFocusIndex = 0;
 
-          return task;
-        })
-      };
+        // For task deleted as backspace
+        const focused = state.focusIndex !== null;
+
+        return {
+          ...state,
+          ...classify(state.tasks, (task, index) => {
+            if (task.uuid === action.payload.uuid) {
+              newFocusIndex = index - 1;
+              return null;
+            }
+            return task;
+          }),
+          focusIndex: focused ? Math.max(0, newFocusIndex) : null
+        };
+      })();
 
     case TaskActionTypes.UPDATE_TASK:
       return {
@@ -108,7 +123,8 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
       return {
         ...state,
-        ...classify(arrayMove(state.tasks, oldIndex, newIndex))
+        ...classify(arrayMove(state.tasks, oldIndex, newIndex)),
+        focusIndex: newIndex
       };
 
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
@@ -119,6 +135,12 @@ export default function(state = initialState, action: TaskActions): TaskState {
         )
       };
 
+    case TaskActionTypes.SET_FOCUS_INDEX:
+      return {
+        ...state,
+        focusIndex: action.payload
+      };
+
     default:
       return state;
   }
@@ -126,14 +148,15 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
 function classify(
   data: Schema$Task[],
-  middleware: (task: Schema$Task) => Schema$Task | null = task => task
+  middleware: (task: Schema$Task, index: number) => Schema$Task | null = task =>
+    task
 ) {
   const tasks: Schema$Task[] = [];
   const todoTasks: Schema$Task[] = [];
   const completedTasks: Schema$Task[] = [];
 
-  data.slice().forEach(task_ => {
-    const task = middleware(task_);
+  data.slice().forEach((task_, index) => {
+    const task = middleware(task_, index);
 
     if (task !== null) {
       if (task.status === 'completed') {

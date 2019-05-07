@@ -1,28 +1,15 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import hotkeys, { KeyHandler } from 'hotkeys-js';
 
 hotkeys.filter = () => true;
 
-export function useHotkeys(
-  key: string,
-  method: KeyHandler,
-  focused: boolean,
-  preventDefault: boolean = true
-) {
-  const withPreventDefault = useCallback<KeyHandler>(
-    (evt, hotkeys) => {
-      method(evt, hotkeys);
-      preventDefault && evt.preventDefault();
-    },
-    [method, preventDefault]
-  );
-
+export function useHotkeys(key: string, method: KeyHandler, focused: boolean) {
   useEffect(() => {
     if (focused) {
-      hotkeys(key, withPreventDefault);
+      hotkeys(key, method);
       return () => {
-        hotkeys.unbind(key, withPreventDefault);
+        hotkeys.unbind(key, method);
       };
     }
-  }, [focused, key, withPreventDefault]);
+  }, [focused, key, method]);
 }
