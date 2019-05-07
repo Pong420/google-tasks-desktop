@@ -43,7 +43,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         const tasks = state.tasks.slice();
         const { previousTask, ...newTaskPlayload } = action.payload;
         const index =
-          state.todoTasks.findIndex(
+          tasks.findIndex(
             ({ uuid }) => !!previousTask && uuid === previousTask.uuid
           ) + 1;
 

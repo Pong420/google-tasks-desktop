@@ -120,7 +120,7 @@ function TodoTaskComponent({
 
   const backspaceCallback = useCallback(
     evt => {
-      if (task.title === '') {
+      if (!task.title) {
         // TODO: check setTimeout
         setTimeout(() => {
           evt.preventDefault();
