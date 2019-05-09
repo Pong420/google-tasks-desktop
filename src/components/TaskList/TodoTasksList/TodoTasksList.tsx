@@ -84,7 +84,7 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
       insertAfter={insertAfter}
       lockAxis="y"
       helperClass="dragging"
-      distance={5}
+      pressDelay={150}
       onSortMove={on}
       onSortOver={onSortOverCallback}
       onSortEnd={onSortEndCallack}
