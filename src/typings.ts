@@ -13,12 +13,10 @@ export interface OAuthKeys {
 
 export interface Schema$Task extends tasks_v1.Schema$Task {
   uuid: string;
-  sync?: string;
 }
 
-export interface Schema$TaskList extends tasks_v1.Schema$TaskList {
-  sync?: string;
-}
+// tslint:disable-next-line
+export interface Schema$TaskList extends tasks_v1.Schema$TaskList {}
 
 export type Schema$TaskLists = Array<[string, Schema$TaskList]>;
 
