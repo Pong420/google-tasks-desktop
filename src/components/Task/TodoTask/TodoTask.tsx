@@ -55,17 +55,22 @@ function TodoTaskComponent({
   const [detailsViewOpened, detailsView] = useBoolean();
   const [dateTimeModalOpened, dateTimeModal] = useBoolean();
   const focused = focusIndex === index || focusIndex === task.uuid;
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (inputRef.current) {
       if (focused) {
         inputRef.current.focus();
+        // place cursot at end of textarea
+        inputRef.current.setSelectionRange(
+          (task.title || '').length,
+          (task.title || '').length
+        );
       } else {
         inputRef.current.blur();
       }
     }
-  }, [focused]);
+  }, [focused, task.title]);
 
   const { onFocus, onBlur } = useMemo(() => {
     return {
@@ -110,11 +115,8 @@ function TodoTaskComponent({
   const backspaceCallback = useCallback(() => {
     if (!task.title) {
       deleteTask({ ...task, previousTaskIndex: Math.max(0, index - 1) });
-
       return false;
     }
-
-    return true;
   }, [deleteTask, index, task]);
 
   const { moveTaskUp, moveTaskDown } = useMemo(() => {
@@ -147,19 +149,26 @@ function TodoTaskComponent({
 
   const { focusPrevTask, focusNextTask } = useMemo(() => {
     const handler = (step: number) => () => {
+      const { selectionStart, selectionEnd } = inputRef.current!;
+      const notHightlighted = selectionStart === selectionEnd;
       const newIndex = index + step;
-      if (newIndex < todoTasks.length && newIndex >= 0) {
-        setFocusIndex(newIndex);
-      }
+      const focusPrev = step === -1 && newIndex >= 0 && selectionStart === 0;
+      const focusNext =
+        step === 1 &&
+        newIndex < todoTasks.length &&
+        selectionStart === (task.title || '').length;
 
-      return false;
+      if (notHightlighted && (focusPrev || focusNext)) {
+        setFocusIndex(newIndex);
+        return false;
+      }
     };
 
     return {
       focusPrevTask: handler(-1),
       focusNextTask: handler(1)
     };
-  }, [index, setFocusIndex, todoTasks.length]);
+  }, [index, setFocusIndex, task.title, todoTasks.length]);
 
   useHotkeys('enter', newTaskCallback, focused);
   useHotkeys('backspace', backspaceCallback, focused);

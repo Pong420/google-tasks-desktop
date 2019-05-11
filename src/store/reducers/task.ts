@@ -102,18 +102,19 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.MOVE_TASKS:
-      const newIndex = state.tasks.indexOf(
-        state.todoTasks[action.payload.newIndex]
-      );
-      const oldIndex = state.tasks.indexOf(
-        state.todoTasks[action.payload.oldIndex]
-      );
+      return (() => {
+        let { newIndex, oldIndex } = action.payload;
+        const { tasks, todoTasks } = state;
 
-      return {
-        ...state,
-        ...classify(arrayMove(state.tasks, oldIndex, newIndex)),
-        focusIndex: newIndex
-      };
+        newIndex = tasks.indexOf(todoTasks[newIndex]);
+        oldIndex = tasks.indexOf(todoTasks[oldIndex]);
+
+        return {
+          ...state,
+          ...classify(arrayMove(state.tasks, oldIndex, newIndex)),
+          focusIndex: newIndex
+        };
+      })();
 
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
       return {
