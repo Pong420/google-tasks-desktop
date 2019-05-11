@@ -197,8 +197,11 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
           );
 
           if (exsits) {
-            if (action.payload.id) {
-              return updateTaskRequest$(action.payload);
+            if (exsits.id) {
+              return updateTaskRequest$({
+                ...exsits,
+                ...action.payload
+              });
             }
 
             return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
