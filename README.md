@@ -67,7 +67,7 @@ yarn package-all
 ### Known issue
 
 - Add time is not supported as API limitation
-- Once you add/edit the `date` through official platform (Web/App). Then you change the `date` in this application, the `date` shown in the official platform (Web/App) will not be update.
+- Once you add/edit the `date` through an official platform (Web/App). Then you change the `date` in this application, the `date` shown in the official platform (Web/App) will not be updated.
 - For tasks sort by date
   - Move task up/down shortcut is not supported currently.
-  - Tasks sort by date or order is not synced to the official platform (Web/App)
+  - Tasks sorted by date or order is not synced to the official platform (Web/App)

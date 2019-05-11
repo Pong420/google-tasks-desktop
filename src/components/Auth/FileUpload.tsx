@@ -4,11 +4,7 @@ import { OAUTH2_KEYS_PATH } from '../../constants';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import fs from 'fs';
 
-interface Props {
-  onSuccess(val: true): void;
-}
-
-export function FileUpload({ onSuccess }: Props) {
+export function FileUpload() {
   const [dragover, { on, off }] = useBoolean();
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -39,6 +35,7 @@ export function FileUpload({ onSuccess }: Props) {
         <a
           href="https://github.com/Pong420/google-tasks-desktop#project-setup"
           target="_blank"
+          rel="noopener noreferrer"
         >
           How to get OAuth2 JSON file
         </a>

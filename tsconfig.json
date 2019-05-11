@@ -19,6 +19,6 @@
     "experimentalDecorators": true,
     "incremental": true
   },
-  "include": ["src"],
+  "include": ["src", "common.d.ts"],
   "exclude": ["node_modules", "**/node_modules/*"]
 }

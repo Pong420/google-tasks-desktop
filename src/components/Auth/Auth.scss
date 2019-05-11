@@ -21,6 +21,10 @@
     flex: 1 1 auto;
   }
 
+  .auth-confirm-button {
+    color: var(--accent-color);
+  }
+
   form {
     @include dimen(100%);
     @include flex(center, center, $wrap: wrap);
@@ -39,7 +43,7 @@
 
     .file-upload-header {
       a {
-        color: var(--secondary-color);
+        color: var(--accent-color);
         text-decoration: underline;
       }
     }

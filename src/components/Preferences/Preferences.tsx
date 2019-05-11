@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   FullScreenDialog,
   FullScreenDialogProps
@@ -6,38 +6,47 @@ import {
 import { Input } from '../Mui/Input';
 import { TOKEN_PATH, OAUTH2_KEYS_PATH } from '../../constants';
 
+const accentColors: ACCENT_COLOR[] = [
+  'blue',
+  'purple',
+  'red',
+  'amber',
+  'green',
+  'grey'
+];
+
 export function Preferences({ ...props }: FullScreenDialogProps) {
-  const [theme, setTheme] = useState<THEME>(
-    document.documentElement.getAttribute('data-theme') as THEME
-  );
-
-  useEffect(() => {
-    window.__setTheme(theme);
-  }, [theme]);
-
   return (
     <FullScreenDialog className="preferences" {...props}>
       <h4>Preferences</h4>
+
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="General" />
         <FullScreenDialog.Row>
           <div className="preferences-label">Appearance:</div>
           <div className="preferences-theme-selector">
             <div className="preferences-theme light">
-              <div
-                className={theme === 'light' ? 'selected' : ''}
-                onClick={() => setTheme('light')}
-              />
+              <div onClick={() => window.__setTheme('light')} />
             </div>
             <div className="preferences-theme dark">
-              <div
-                className={theme === 'dark' ? 'selected' : ''}
-                onClick={() => setTheme('dark')}
-              />
+              <div onClick={() => window.__setTheme('dark')} />
             </div>
           </div>
         </FullScreenDialog.Row>
+        <FullScreenDialog.Row>
+          <div className="preferences-label">Accent color:</div>
+          <div className="preferences-accent-color-selector">
+            {accentColors.map((color, index) => (
+              <div
+                key={index}
+                className={color}
+                onClick={() => window.__setAccentColor(color)}
+              />
+            ))}
+          </div>
+        </FullScreenDialog.Row>
       </FullScreenDialog.Section>
+
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="Storage ( Read-Only )" />
         <FullScreenDialog.Row>

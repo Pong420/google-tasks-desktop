@@ -2,8 +2,9 @@
   --main-color: #fff;
   --main-light-color: #f1f3f4; // new task button
   --main-lighter-color: #fff;
-  --secondary-color: #4285f4;
-  --secondary-deep-color: #1967d2;
+  --accent-color: #{getColor(blue)};
+  --accent-light-color: #{getColor(blue, light)};
+  --accent-dark-color: #{getColor(blue, dark)};
   --text-color: #202124;
   --text-secondary-color: #5f6368;
   --border-color: #e0e0e0;
@@ -24,6 +25,14 @@
   --day-color: #9e9e9e;
   --date-color: #fff;
   --error-color: #f44336;
+}
+
+@each $name, $colors in $accent-colors {
+  [data-accent-color^='#{$name}'] {
+    --accent-color: #{map-get($colors, primary)};
+    --accent-light-color: #{map-get($colors, light)};
+    --accent-dark-color: #{map-get($colors, dark)};
+  }
 }
 
 *,
@@ -65,16 +74,16 @@ a {
 
 #nprogress {
   .bar {
-    background: var(--secondary-color);
+    background: var(--accent-color);
     height: 3px;
   }
 
   .peg {
-    box-shadow: 0 0 10px var(--secondary-color), 0 0 5px var(--secondary-color);
+    box-shadow: 0 0 10px var(--accent-color), 0 0 5px var(--accent-color);
   }
 
   .spinner-icon {
-    border-top-color: var(--secondary-color);
-    border-left-color: var(--secondary-color);
+    border-top-color: var(--accent-color);
+    border-left-color: var(--accent-color);
   }
 }
