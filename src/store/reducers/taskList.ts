@@ -1,5 +1,6 @@
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { Schema$TaskList } from '../../typings';
+import { compare } from '../../utils/compare';
 import merge from 'lodash/merge';
 
 export interface TaskListState {
@@ -36,16 +37,7 @@ export default function(
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
       return {
         ...state,
-        taskLists: [
-          ...action.payload.slice(0, 1),
-          ...action.payload.slice(1).sort((a, b) => {
-            if (a.updated && b.updated) {
-              return +new Date(a.updated!) > +new Date(b.updated!) ? 1 : -1;
-            }
-
-            return 0;
-          })
-        ]
+        taskLists: action.payload
       };
 
     case TaskListActionTypes.SET_CURRENT_TASK_LIST:
