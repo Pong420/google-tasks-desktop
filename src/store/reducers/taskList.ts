@@ -1,6 +1,5 @@
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { Schema$TaskList } from '../../typings';
-import { compare } from '../../utils/compare';
 import merge from 'lodash/merge';
 
 export interface TaskListState {
