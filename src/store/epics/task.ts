@@ -163,6 +163,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   const updateTaskRequest$ = (requestBody: Schema$Task) => {
     delete requestBody.completed;
     delete requestBody.position;
+    delete requestBody.updated;
 
     if (!requestBody.id) {
       throw new Error('update task request failed, id is missing');

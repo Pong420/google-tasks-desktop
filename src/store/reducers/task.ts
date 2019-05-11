@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import uuid from 'uuid';
 
 export interface TaskState {
-  focusIndex: number | null;
+  focusIndex: string | number | null;
   tasks: Schema$Task[];
   todoTasks: Schema$Task[];
   completedTasks: Schema$Task[];
@@ -50,26 +50,18 @@ export default function(state = initialState, action: TaskActions): TaskState {
           ) + 1;
 
         const newTask = {
-          // position is required when sorting by date
-          position: previousTask
-            ? (Number(previousTask.position) + 1)
-                .toString()
-                .padStart(
-                  previousTask.position ? previousTask.position.length : 20,
-                  '0'
-                )
-            : undefined,
+          // position & updated is required when sorting by date
+          position: previousTask && previousTask.position,
+          updated: new Date().toISOString(),
           ...newTaskPlayload
         };
 
         tasks.splice(index, 0, newTask);
 
-        const newTasks = classify(tasks);
-
         return {
           ...state,
-          ...newTasks,
-          focusIndex: newTasks.todoTasks.indexOf(newTask)
+          ...classify(tasks),
+          focusIndex: newTask.uuid
         };
       })();
 
@@ -85,21 +77,17 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.DELETE_TASK:
       return (() => {
-        let newFocusIndex = 0;
-
-        // For task deleted as backspace
-        const focused = state.focusIndex !== null;
+        const { uuid, previousTaskIndex = null } = action.payload;
 
         return {
           ...state,
-          ...classify(state.tasks, (task, index) => {
-            if (task.uuid === action.payload.uuid) {
-              newFocusIndex = index - 1;
+          ...classify(state.tasks, task => {
+            if (task.uuid === uuid) {
               return null;
             }
             return task;
           }),
-          focusIndex: focused ? Math.max(0, newFocusIndex) : null
+          focusIndex: previousTaskIndex
         };
       })();
 

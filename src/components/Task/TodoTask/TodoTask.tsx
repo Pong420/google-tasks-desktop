@@ -54,7 +54,7 @@ function TodoTaskComponent({
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
   const [dateTimeModalOpened, dateTimeModal] = useBoolean();
-  const focused = focusIndex === index;
+  const focused = focusIndex === index || focusIndex === task.uuid;
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -109,13 +109,13 @@ function TodoTaskComponent({
 
   const backspaceCallback = useCallback(() => {
     if (!task.title) {
-      deleteTask(task);
+      deleteTask({ ...task, previousTaskIndex: Math.max(0, index - 1) });
 
       return false;
     }
 
     return true;
-  }, [deleteTask, task]);
+  }, [deleteTask, index, task]);
 
   const { moveTaskUp, moveTaskDown } = useMemo(() => {
     const handler = (step: number) => () => {
