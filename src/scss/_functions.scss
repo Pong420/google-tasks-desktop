@@ -40,3 +40,7 @@
 
   @return $number;
 }
+
+@function getColor($color, $tone: primary) {
+  @return map-get(map-get($accent-colors, $color), $tone);
+}

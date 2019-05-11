@@ -47,14 +47,14 @@
 
     &.today {
       .grid-content {
-        background-color: #d2e3fc;
-        color: #1967d2;
+        background-color: var(--accent-light-color);
+        color: #333;
       }
     }
 
     &.selected {
       .grid-content {
-        background-color: var(--secondary-deep-color);
+        background-color: var(--accent-dark-color);
         color: #fff;
       }
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { TodoTasksList, TodoTasksListSortByDate } from './TodoTasksList';
@@ -6,7 +6,6 @@ import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from '../NewTask';
 import { ScrollContent } from '../ScrollContent';
 import { TaskActionCreators, RootState } from '../../store';
-import { Schema$Task } from '../../typings';
 
 const mapStateToProps = ({ task, taskList }: RootState) => ({
   ...task,
@@ -21,27 +20,10 @@ function TaskListContentComponent({
   currentTaskListId,
   getAllTasks,
   moveTask,
-  newTask,
   deleteTask,
-  updateTask,
-  sortByDate
+  sortByDate,
+  newTask
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
-  const [focusIndex, setFocusIndex] = useState<number | null>(null);
-
-  const toggleCompletedCllaback = useCallback(
-    (task: Schema$Task) => {
-      if (!task.title || !task.title.trim()) {
-        return deleteTask(task);
-      }
-
-      return updateTask({
-        ...task,
-        status: task.status === 'completed' ? 'needsAction' : 'completed'
-      });
-    },
-    [deleteTask, updateTask]
-  );
-
   useEffect(() => {
     currentTaskListId && getAllTasks();
   }, [getAllTasks, currentTaskListId]);
@@ -52,26 +34,14 @@ function TaskListContentComponent({
         <NewTask newTask={newTask} />
         <ScrollContent className="task-list-scroll-content">
           {sortByDate ? (
-            <TodoTasksListSortByDate
-              todoTasks={todoTasks}
-              toggleCompleted={toggleCompletedCllaback}
-              focusIndex={focusIndex}
-              setFocusIndex={setFocusIndex}
-            />
+            <TodoTasksListSortByDate todoTasks={todoTasks} />
           ) : (
-            <TodoTasksList
-              onSortEnd={moveTask}
-              todoTasks={todoTasks}
-              toggleCompleted={toggleCompletedCllaback}
-              focusIndex={focusIndex}
-              setFocusIndex={setFocusIndex}
-            />
+            <TodoTasksList onSortEnd={moveTask} todoTasks={todoTasks} />
           )}
         </ScrollContent>
         <CompletedTasksList
           deleteTask={deleteTask}
           completedTasks={completedTasks}
-          toggleCompleted={toggleCompletedCllaback}
         />
       </div>
     </>

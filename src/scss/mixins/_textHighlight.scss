@@ -3,19 +3,27 @@
 
   &:after {
     @include absolute(null, -1px, 0, 0);
-    @include dimen(0px, 0px);
 
     border-bottom: 2px solid transparent;
     content: '';
     margin: auto;
-    transition: width 0.3s;
     z-index: 11;
   }
 
   &.focused {
     &:after {
-      @include dimen(100%);
-      border-color: #4285f4;
+      animation: expand 0.4s ease 1;
+      border-color: var(--accent-color);
+      will-change: width;
     }
+  }
+}
+
+@keyframes expand {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
   }
 }

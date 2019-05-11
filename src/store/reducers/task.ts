@@ -5,12 +5,14 @@ import arrayMove from 'array-move';
 import uuid from 'uuid';
 
 export interface TaskState {
+  focusIndex: string | number | null;
   tasks: Schema$Task[];
   todoTasks: Schema$Task[];
   completedTasks: Schema$Task[];
 }
 
 const initialState: TaskState = {
+  focusIndex: null,
   tasks: [],
   todoTasks: [],
   completedTasks: []
@@ -39,19 +41,29 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.NEW_TASK:
-      const tasks = state.tasks.slice();
-      const { previousTask, ...newTaskPlayload } = action.payload;
-      const index =
-        tasks.findIndex(
-          ({ uuid }) => !!previousTask && uuid === previousTask.uuid
-        ) + 1;
+      return (() => {
+        const tasks = state.tasks.slice();
+        const { previousTask, ...newTaskPlayload } = action.payload;
+        const index =
+          tasks.findIndex(
+            ({ uuid }) => !!previousTask && uuid === previousTask.uuid
+          ) + 1;
 
-      tasks.splice(index, 0, newTaskPlayload);
+        const newTask = {
+          // position & updated is required when sorting by date
+          position: previousTask && previousTask.position,
+          updated: new Date().toISOString(),
+          ...newTaskPlayload
+        };
 
-      return {
-        ...state,
-        ...classify(tasks)
-      };
+        tasks.splice(index, 0, newTask);
+
+        return {
+          ...state,
+          ...classify(tasks),
+          focusIndex: newTask.uuid
+        };
+      })();
 
     case TaskActionTypes.NEW_TASK_SUCCESS:
       return {
@@ -64,16 +76,20 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.DELETE_TASK:
-      return {
-        ...state,
-        ...classify(state.tasks, task => {
-          if (task.uuid === action.payload.uuid) {
-            return null;
-          }
+      return (() => {
+        const { uuid, previousTaskIndex = null } = action.payload;
 
-          return task;
-        })
-      };
+        return {
+          ...state,
+          ...classify(state.tasks, task => {
+            if (task.uuid === uuid) {
+              return null;
+            }
+            return task;
+          }),
+          focusIndex: previousTaskIndex
+        };
+      })();
 
     case TaskActionTypes.UPDATE_TASK:
       return {
@@ -86,17 +102,19 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.MOVE_TASKS:
-      const newIndex = state.tasks.indexOf(
-        state.todoTasks[action.payload.newIndex]
-      );
-      const oldIndex = state.tasks.indexOf(
-        state.todoTasks[action.payload.oldIndex]
-      );
+      return (() => {
+        let { newIndex, oldIndex } = action.payload;
+        const { tasks, todoTasks } = state;
 
-      return {
-        ...state,
-        ...classify(arrayMove(state.tasks, oldIndex, newIndex))
-      };
+        newIndex = tasks.indexOf(todoTasks[newIndex]);
+        oldIndex = tasks.indexOf(todoTasks[oldIndex]);
+
+        return {
+          ...state,
+          ...classify(arrayMove(state.tasks, oldIndex, newIndex)),
+          focusIndex: newIndex
+        };
+      })();
 
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
       return {
@@ -106,6 +124,12 @@ export default function(state = initialState, action: TaskActions): TaskState {
         )
       };
 
+    case TaskActionTypes.SET_FOCUS_INDEX:
+      return {
+        ...state,
+        focusIndex: action.payload
+      };
+
     default:
       return state;
   }
@@ -113,14 +137,15 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
 function classify(
   data: Schema$Task[],
-  middleware: (task: Schema$Task) => Schema$Task | null = task => task
+  middleware: (task: Schema$Task, index: number) => Schema$Task | null = task =>
+    task
 ) {
   const tasks: Schema$Task[] = [];
   const todoTasks: Schema$Task[] = [];
   const completedTasks: Schema$Task[] = [];
 
-  data.slice().forEach(task_ => {
-    const task = middleware(task_);
+  data.slice().forEach((task_, index) => {
+    const task = middleware(task_, index);
 
     if (task !== null) {
       if (task.status === 'completed') {

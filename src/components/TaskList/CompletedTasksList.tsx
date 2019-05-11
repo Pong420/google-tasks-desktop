@@ -10,14 +10,9 @@ import CollapseIcon from '@material-ui/icons/ExpandMore';
 interface Props {
   completedTasks: Schema$Task[];
   deleteTask(task: Schema$Task): void;
-  toggleCompleted(task: Schema$Task): void;
 }
 
-export function CompletedTasksList({
-  completedTasks,
-  deleteTask,
-  toggleCompleted
-}: Props) {
+export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
   const [expanded, { toggle }] = useBoolean(false);
   const Icon = useMemo(() => (expanded ? CollapseIcon : ExpandIcon), [
     expanded
@@ -46,7 +41,6 @@ export function CompletedTasksList({
                 key={task.uuid}
                 task={task}
                 deleteTask={deleteTask}
-                toggleCompleted={toggleCompleted}
               />
             );
           })}

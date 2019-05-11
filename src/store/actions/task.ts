@@ -12,16 +12,19 @@ export enum TaskActionTypes {
   UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS',
   DELETE_TASK = 'DELETE_TASK',
   DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS',
-  MOVE_TASK = 'MOVE_TASK',
-  MOVE_TASK_SUCCESS = 'MOVE_TASK_SUCCESS',
   DELETE_COMPLETED_TASKS = 'DELETE_COMPLETED_TASKS',
   DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS',
   MOVE_TASKS = 'MOVE_TASKS',
-  MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS'
+  MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS',
+  SET_FOCUS_INDEX = 'SET_FOCUS_INDEX'
 }
 
 export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
   previousTask?: Schema$Task;
+}
+
+export interface Payload$DeleteTask extends Schema$Task {
+  previousTaskIndex?: number;
 }
 
 export type Payload$SortTasks = 'order' | 'date';
@@ -59,19 +62,11 @@ export interface UpdateTaskSuccess {
 
 export interface DeleteTask {
   type: TaskActionTypes.DELETE_TASK;
-  payload: Schema$Task;
+  payload: Payload$DeleteTask;
 }
 
 export interface DeleteTaskSuccess {
   type: TaskActionTypes.DELETE_TASK_SUCCESS;
-}
-
-export interface MoveTask {
-  type: TaskActionTypes.MOVE_TASK;
-}
-
-export interface MoveTaskSuccess {
-  type: TaskActionTypes.MOVE_TASK_SUCCESS;
 }
 
 export interface DeleteCompletedTasks {
@@ -83,13 +78,18 @@ export interface DeleteCompletedTasksSuccess {
   type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS;
 }
 
-export interface MoveTasks {
+export interface MoveTask {
   type: TaskActionTypes.MOVE_TASKS;
   payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>;
 }
 
-export interface MoveTasksSuccess {
+export interface MoveTaskSuccess {
   type: TaskActionTypes.MOVE_TASKS_SUCCESS;
+}
+
+export interface SetFocusIndex {
+  type: TaskActionTypes.SET_FOCUS_INDEX;
+  payload: string | number | null;
 }
 
 export type TaskActions =
@@ -101,12 +101,11 @@ export type TaskActions =
   | UpdateTaskSuccess
   | DeleteTask
   | DeleteTaskSuccess
-  | MoveTask
-  | MoveTaskSuccess
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
-  | MoveTasks
-  | MoveTasksSuccess;
+  | MoveTask
+  | MoveTaskSuccess
+  | SetFocusIndex;
 
 export const TaskActionCreators = {
   getAllTasks(): GetAllTasks {
@@ -123,7 +122,7 @@ export const TaskActionCreators = {
       }
     };
   },
-  deleteTask(payload: Schema$Task): DeleteTask {
+  deleteTask(payload: Payload$DeleteTask): DeleteTask {
     return {
       type: TaskActionTypes.DELETE_TASK,
       payload
@@ -141,9 +140,15 @@ export const TaskActionCreators = {
       payload
     };
   },
-  moveTask(payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>) {
+  moveTask(payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>): MoveTask {
     return {
       type: TaskActionTypes.MOVE_TASKS,
+      payload
+    };
+  },
+  setFocusIndex(payload: string | number | null): SetFocusIndex {
+    return {
+      type: TaskActionTypes.SET_FOCUS_INDEX,
       payload
     };
   }
