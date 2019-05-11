@@ -23,6 +23,10 @@ export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
   previousTask?: Schema$Task;
 }
 
+export interface Payload$DeleteTask extends Schema$Task {
+  previousTaskIndex?: number;
+}
+
 export type Payload$SortTasks = 'order' | 'date';
 
 export interface GetAllTasks {
@@ -58,7 +62,7 @@ export interface UpdateTaskSuccess {
 
 export interface DeleteTask {
   type: TaskActionTypes.DELETE_TASK;
-  payload: Schema$Task;
+  payload: Payload$DeleteTask;
 }
 
 export interface DeleteTaskSuccess {
@@ -85,7 +89,7 @@ export interface MoveTaskSuccess {
 
 export interface SetFocusIndex {
   type: TaskActionTypes.SET_FOCUS_INDEX;
-  payload: number | null;
+  payload: string | number | null;
 }
 
 export type TaskActions =
@@ -118,7 +122,7 @@ export const TaskActionCreators = {
       }
     };
   },
-  deleteTask(payload: Schema$Task): DeleteTask {
+  deleteTask(payload: Payload$DeleteTask): DeleteTask {
     return {
       type: TaskActionTypes.DELETE_TASK,
       payload
@@ -142,7 +146,7 @@ export const TaskActionCreators = {
       payload
     };
   },
-  setFocusIndex(payload: number | null): SetFocusIndex {
+  setFocusIndex(payload: string | number | null): SetFocusIndex {
     return {
       type: TaskActionTypes.SET_FOCUS_INDEX,
       payload

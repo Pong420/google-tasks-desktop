@@ -7,7 +7,13 @@ interface Props {
   todoTasks: Schema$Task[];
 }
 
-export function TodoTasksListSortByDate({ todoTasks, ...props }: Props) {
+const inputBaseProps = {
+  inputProps: {
+    hideDateBtn: true
+  }
+};
+
+export function TodoTasksListSortByDate({ todoTasks }: Props) {
   let index = -1;
 
   const sortedTodoTasks = useMemo(() => {
@@ -15,7 +21,12 @@ export function TodoTasksListSortByDate({ todoTasks, ...props }: Props) {
     let prevLabel = '';
     return todoTasks
       .slice()
-      .sort((a, b) => compare(a.due, b.due) || compare(a.position, b.position))
+      .sort(
+        (a, b) =>
+          compare(a.due, b.due) ||
+          compare(a.position, b.position) ||
+          compare(a.updated, b.updated)
+      )
       .reduce<Array<string | Schema$Task>>((acc, task) => {
         const label = dateLabelHandler(task.due);
         if (prevLabel !== label) {
@@ -28,14 +39,9 @@ export function TodoTasksListSortByDate({ todoTasks, ...props }: Props) {
       }, []);
   }, [todoTasks]);
 
-  const inputBaseProps = useMemo(
-    () => ({ inputProps: { hideDateBtn: true } }),
-    []
-  );
-
   return (
     <div className="todo-tasks-list-sort-by-date">
-      {sortedTodoTasks.map((data, i) => {
+      {sortedTodoTasks.map(data => {
         if (typeof data === 'string') {
           return <div className="date-label" data-label={data} key={data} />;
         }
@@ -48,7 +54,6 @@ export function TodoTasksListSortByDate({ todoTasks, ...props }: Props) {
             index={index}
             task={data}
             inputBaseProps={inputBaseProps}
-            {...props}
           />
         );
       })}
