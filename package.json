@@ -1,6 +1,6 @@
 {
   "name": "google-task-desktop",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "dev": "nf start",
     "build": "yarn app:build && yarn electron:compile",
