@@ -60,12 +60,14 @@ function TodoTaskComponent({
   useEffect(() => {
     if (inputRef.current) {
       if (focused) {
-        inputRef.current.focus();
-        // place cursot at end of textarea
-        inputRef.current.setSelectionRange(
-          (task.title || '').length,
-          (task.title || '').length
-        );
+        if (document.activeElement !== inputRef.current) {
+          inputRef.current.focus();
+          // place cursot at end of textarea
+          inputRef.current.setSelectionRange(
+            (task.title || '').length,
+            (task.title || '').length
+          );
+        }
       } else {
         inputRef.current.blur();
       }
