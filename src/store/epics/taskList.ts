@@ -19,6 +19,12 @@ import { taskListAPI } from '../../api';
 import { PATHS } from '../../constants';
 
 type CominbinedActions = TaskListActions | RouterAction;
+type TaskListEpic = Epic<
+  CominbinedActions,
+  CominbinedActions,
+  RootState,
+  EpicDependencies
+>;
 
 interface MatchParams {
   taskListId?: string;
@@ -26,18 +32,13 @@ interface MatchParams {
 
 const match = createMatchSelector(PATHS.TASKLIST);
 
-const apiEpic: Epic<
-  CominbinedActions,
-  CominbinedActions,
-  RootState,
-  EpicDependencies
-> = (action$, state$, { push, nprogress }) =>
+const apiEpic: TaskListEpic = (action$, state$, { push, nprogress }) =>
   action$.pipe(
     ofType<CominbinedActions, TaskListActions>(
       ...Object.values(TaskListActionTypes)
     ),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
+      if (!state$.value.auth.loggedIn) {
         return empty();
       }
 
@@ -98,11 +99,7 @@ const apiEpic: Epic<
     })
   );
 
-const currentTaskListEpic: Epic<
-  CominbinedActions,
-  CominbinedActions,
-  RootState
-> = (action$, state$) =>
+const currentTaskListEpic: TaskListEpic = (action$, state$) =>
   action$.pipe(
     ofType<CominbinedActions, CominbinedActions>(
       LOCATION_CHANGE,
@@ -113,7 +110,7 @@ const currentTaskListEpic: Epic<
       const matches = match(state$.value);
 
       if (matches) {
-        const { taskListId } = matches.params as MatchParams;
+        const { taskListId }: MatchParams = matches.params;
         const { taskLists } = state$.value.taskList;
 
         if (taskLists.length) {

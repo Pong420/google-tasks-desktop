@@ -10,8 +10,7 @@ import {
   takeUntil,
   tap,
   pairwise,
-  withLatestFrom,
-  takeWhile
+  withLatestFrom
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -31,6 +30,8 @@ import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
 import isEqual from 'lodash/fp/isEqual';
 
+type TaskEpic = Epic<TaskActions, TaskActions, RootState, EpicDependencies>;
+
 const onNewTaskSuccess$ = (
   action$: ActionsObservable<TaskActions>,
   uuid: string
@@ -40,20 +41,18 @@ const onNewTaskSuccess$ = (
     filter(success => success.payload.uuid === uuid)
   );
 
-const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
+const apiEpic: TaskEpic = (
   action$,
   state$,
-  { nprogress }
+  { nprogress, withNetworkHelper }
 ) => {
   return action$.pipe(
+    withNetworkHelper(state$),
     filter(action => !/Update|Move|New/i.test(action.type)),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
+      if (!state$.value.auth.loggedIn) {
         return empty();
       }
-
-      // TODO:
-      // handle reconnet
 
       const tasklist = state$.value.taskList.currentTaskListId;
 
@@ -111,10 +110,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   );
 };
 
-const newTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
-  action$,
-  state$
-) => {
+const newTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   const newTaskRequest$ = (
     params: tasks_v1.Params$Resource$Tasks$Insert,
     uuid: string
@@ -131,6 +127,7 @@ const newTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     );
 
   return action$.pipe(
+    withNetworkHelper(state$),
     ofType<TaskActions, NewTask>(TaskActionTypes.NEW_TASK),
     mergeMap(action => {
       const tasklist = state$.value.taskList.currentTaskListId;
@@ -160,10 +157,7 @@ const newTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
-  action$,
-  state$
-) => {
+const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   const updateTaskRequest$ = (requestBody: Schema$Task) => {
     delete requestBody.completed;
     delete requestBody.position;
@@ -189,6 +183,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   };
 
   return action$.pipe(
+    withNetworkHelper(state$),
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     groupBy(action => action.payload.uuid),
     mergeMap(group$ => {
@@ -225,10 +220,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
-  action$,
-  state$
-) => {
+const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   const todoTasks$ = state$.pipe(map(({ task }) => task.todoTasks));
 
   const moveTaskRequest$ = (task: Schema$Task) =>
@@ -252,6 +244,7 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
     );
 
   return action$.pipe(
+    withNetworkHelper(state$),
     ofType<TaskActions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     withLatestFrom(todoTasks$),
     groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
