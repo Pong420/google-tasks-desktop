@@ -10,7 +10,8 @@ import {
   takeUntil,
   tap,
   pairwise,
-  withLatestFrom
+  withLatestFrom,
+  takeWhile
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -50,6 +51,9 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
       if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
         return empty();
       }
+
+      // TODO:
+      // handle reconnet
 
       const tasklist = state$.value.taskList.currentTaskListId;
 
