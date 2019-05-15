@@ -16,51 +16,6 @@
   }
 }
 
-.task-list-header {
-  @include dimen(100%, $header-height);
-  @include flex(center, flex-end);
-  @include fake-border($borderWidth: 1px, $color: var(--main-light-color));
-  @include padding-x($padding-x);
-  @include relative();
-
-  .task-list-menu {
-    @include app-region-no-drag;
-
-    .task-list-menu-label {
-      color: #80868b;
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      margin-bottom: 2px;
-      text-transform: uppercase;
-      text-align: right;
-      padding-right: 6px;
-    }
-
-    button {
-      @include typeface('Nunito Sans', 600);
-
-      font-size: 15px;
-      margin-right: 0;
-      margin-left: auto;
-    }
-  }
-}
-
-.dropdown-button.task-list-dropdown-button {
-  color: var(--text-color);
-}
-
-.dropdown-menu-paper.task-list-dropdown-paper {
-  @include dimen(auto);
-  overflow: hidden;
-
-  .mui-menu-item {
-    @include typeface('Nunito Sans', 500);
-    letter-spacing: 0.2px;
-    min-width: 150px;
-  }
-}
-
 .task-list-content {
   @include dimen(100%, 100%);
   @include flex($flex-direction: column);

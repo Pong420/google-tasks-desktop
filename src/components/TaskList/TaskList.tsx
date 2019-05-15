@@ -20,11 +20,8 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 
 function TaskListComponent({
   loggedIn,
-  taskLists,
-  currentTaskList,
-  creatingNewTaskList,
   getAllTaskList,
-  newTaskList
+  creatingNewTaskList
 }: AuthsState & TaskListState & typeof TaskListActionCreators) {
   useEffect(() => {
     loggedIn && getAllTaskList();
@@ -32,11 +29,7 @@ function TaskListComponent({
 
   return (
     <div className={classes('task-list', creatingNewTaskList && 'disabled')}>
-      <TaskListHeader
-        newTaskList={newTaskList}
-        currentTaskList={currentTaskList!}
-        taskLists={taskLists}
-      />
+      <TaskListHeader />
       <TaskListContent />
     </div>
   );
