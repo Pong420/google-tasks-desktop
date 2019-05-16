@@ -10,7 +10,8 @@ import {
   takeUntil,
   tap,
   pairwise,
-  withLatestFrom
+  withLatestFrom,
+  take
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -240,7 +241,8 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
             type: TaskActionTypes.MOVE_TASKS_SUCCESS
           }))
         )
-      )
+      ),
+      take(1)
     );
 
   return action$.pipe(
