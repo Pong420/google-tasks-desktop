@@ -18,9 +18,10 @@ interface Props {
   onClose(): void;
 }
 
-const mapStateToProps = ({ task, taskList }: RootState) => ({
+const mapStateToProps = ({ task, taskList }: RootState, ownProps: Props) => ({
   ...taskList,
-  ...task
+  ...task,
+  ...ownProps
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
@@ -53,11 +54,9 @@ function TaskListMenuComponent({
   delteTaskList,
   deleteCompletedTasks,
   updateTaskList,
-  sortTasksByDate,
+  toggleSortByDate,
   logout
-}: Props &
-  ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>) {
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   const MenuItem = useMenuItem(onClose);
 
   const [
@@ -72,14 +71,9 @@ function TaskListMenuComponent({
   const totalTask = useNotZero(tasks.length);
   const numOfCompletedTask = useNotZero(completedTasks.length);
 
-  const delteTaskListCallback = useCallback(
-    () => currentTaskListId && delteTaskList(currentTaskListId),
-    [currentTaskListId, delteTaskList]
-  );
-
   const onDeleteTaskListCallback = useCallback(
-    () => (!!tasks.length ? deleteTaskListModal.on() : delteTaskListCallback()),
-    [deleteTaskListModal, delteTaskListCallback, tasks.length]
+    () => (!!tasks.length ? deleteTaskListModal.on() : delteTaskList()),
+    [deleteTaskListModal, delteTaskList, tasks.length]
   );
 
   const renameTaskListCallback = useCallback(
@@ -99,18 +93,17 @@ function TaskListMenuComponent({
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={onClose}
-        MenuListProps={{}}
       >
         <div className="task-list-menu-title">Sort by</div>
         <MenuItem
           text="My order"
           selected={!sortByDate}
-          onClick={() => sortTasksByDate(false)}
+          onClick={() => toggleSortByDate(false)}
         />
         <MenuItem
           text="Date"
           selected={sortByDate}
-          onClick={() => sortTasksByDate(true)}
+          onClick={() => toggleSortByDate(true)}
         />
         <Divider />
         <MenuItem text="Rename list" onClick={renameTaskModal.on} />
@@ -134,7 +127,7 @@ function TaskListMenuComponent({
         confirmLabel="Delete"
         open={deleteTaskListModalOpend}
         handleClose={deleteTaskListModal.off}
-        handleConfirm={delteTaskListCallback}
+        handleConfirm={delteTaskList}
       >
         Deleting this list will also delete {totalTask} task.
       </Modal>

@@ -51,10 +51,6 @@ const apiEpic: TaskEpic = (
     filter(action => !/Update|Move|New/i.test(action.type)),
     withNetworkHelper(state$),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn) {
-        return empty();
-      }
-
       const tasklist = state$.value.taskList.currentTaskListId;
 
       const deleteTaskRequest$ = (task?: string) =>

@@ -1,47 +1,28 @@
-import { empty, from, of, concat } from 'rxjs';
-import { mergeMap, switchMap, map, mapTo } from 'rxjs/operators';
-import { ofType, Epic } from 'redux-observable';
+import { empty, from } from 'rxjs';
+import { mergeMap, map, mapTo } from 'rxjs/operators';
+import { Epic } from 'redux-observable';
+import { Action } from 'redux';
 import { tasks_v1 } from 'googleapis';
-import {
-  RouterAction,
-  LOCATION_CHANGE,
-  createMatchSelector
-} from 'connected-react-router';
+import { RouterAction } from 'connected-react-router';
 import {
   TaskListActions,
   TaskListActionTypes,
-  NewTaskListSuccess,
-  SetCurrentTaskList
+  NewTaskListSuccess
 } from '../actions/taskList';
 import { RootState } from '../reducers';
 import { EpicDependencies } from '../epicDependencies';
 import { taskListAPI } from '../../api';
 import { PATHS } from '../../constants';
 
-type CominbinedActions = TaskListActions | RouterAction;
-type TaskListEpic = Epic<
-  CominbinedActions,
-  CominbinedActions,
-  RootState,
-  EpicDependencies
->;
+type TaskListEpic<T extends Action> = Epic<T, T, RootState, EpicDependencies>;
 
-interface MatchParams {
-  taskListId?: string;
-}
-
-const match = createMatchSelector(PATHS.TASKLIST);
-
-const apiEpic: TaskListEpic = (action$, state$, { push, nprogress }) =>
+const apiEpic: TaskListEpic<TaskListActions> = (
+  action$,
+  state$,
+  { nprogress }
+) =>
   action$.pipe(
-    ofType<CominbinedActions, TaskListActions>(
-      ...Object.values(TaskListActionTypes)
-    ),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn) {
-        return empty();
-      }
-
       switch (action.type) {
         case TaskListActionTypes.GET_ALL_TASK_LIST:
           nprogress.start();
@@ -59,30 +40,22 @@ const apiEpic: TaskListEpic = (action$, state$, { push, nprogress }) =>
 
           return from(taskListAPI.insert(action.payload)).pipe(
             map(({ data }) => data),
-            mergeMap(payload =>
-              concat(
-                of<NewTaskListSuccess>({
-                  type: TaskListActionTypes.NEW_TASK_LIST_SUCCESS,
-                  payload
-                }),
-                push(PATHS.TASKLIST, {
-                  taskListId: payload.id
-                })
-              )
-            )
+            map<tasks_v1.Schema$TaskList, NewTaskListSuccess>(payload => ({
+              type: TaskListActionTypes.NEW_TASK_LIST_SUCCESS,
+              payload
+            }))
           );
 
         case TaskListActionTypes.DELETE_TASK_LIST:
-          return concat(
-            push(PATHS.TASKLIST, {
-              taskListId: state$.value.taskList.taskLists[0].id
-            }),
-            from(taskListAPI.delete({ tasklist: action.payload })).pipe(
+          return (() => {
+            const { currentTaskListId } = state$.value.taskList;
+            const tasklist = action.payload || currentTaskListId;
+            return from(taskListAPI.delete({ tasklist })).pipe(
               mapTo<any, TaskListActions>({
                 type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS
               })
-            )
-          );
+            );
+          })();
 
         case TaskListActionTypes.UPDATE_TASK_LIST:
           return from(taskListAPI.patch(action.payload)).pipe(
@@ -99,36 +72,42 @@ const apiEpic: TaskListEpic = (action$, state$, { push, nprogress }) =>
     })
   );
 
-const currentTaskListEpic: TaskListEpic = (action$, state$) =>
+const redirectEpic: TaskListEpic<TaskListActions | RouterAction> = (
+  action$,
+  state$,
+  { push }
+) =>
   action$.pipe(
-    ofType<CominbinedActions, CominbinedActions>(
-      LOCATION_CHANGE,
-      TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
-      TaskListActionTypes.UPDATE_TASK_LIST
-    ),
-    switchMap(() => {
-      const matches = match(state$.value);
+    mergeMap(action => {
+      let taskListId = '';
+      const { currentTaskListId } = state$.value.taskList;
 
-      if (matches) {
-        const { taskListId }: MatchParams = matches.params;
-        const { taskLists } = state$.value.taskList;
-
-        if (taskLists.length) {
-          let currentTaskList = taskLists[0];
-          if (taskListId) {
-            currentTaskList =
-              taskLists.find(({ id }) => id === taskListId) || currentTaskList;
+      switch (action.type) {
+        case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
+          if (!currentTaskListId) {
+            taskListId = action.payload[0].id!;
           }
+          break;
 
-          return of<SetCurrentTaskList>({
-            type: TaskListActionTypes.SET_CURRENT_TASK_LIST,
-            payload: currentTaskList
-          });
-        }
+        case TaskListActionTypes.NEW_TASK_LIST_SUCCESS:
+          taskListId = action.payload.id!;
+          break;
+
+        case TaskListActionTypes.DELETE_TASK_LIST:
+          taskListId = action.payload || currentTaskListId;
+          break;
+
+        default:
+      }
+
+      if (taskListId) {
+        return push(PATHS.TASKLIST, {
+          taskListId
+        });
       }
 
       return empty();
     })
   );
 
-export default [apiEpic, currentTaskListEpic];
+export default [apiEpic, redirectEpic];
