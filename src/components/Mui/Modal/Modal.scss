@@ -40,8 +40,9 @@
 }
 
 .form-modal-error-message {
-  @include typeface('Nunito Sans', 400);
-
+  @include typeface('Nunito Sans', 600);
   color: var(--error-color);
-  margin-top: 5px;
+  font-size: 13px;
+  margin-top: 3px;
+  padding-left: 3px;
 }

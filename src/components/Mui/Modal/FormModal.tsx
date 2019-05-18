@@ -1,4 +1,4 @@
-import React, { useCallback, SyntheticEvent, useState } from 'react';
+import React, { useCallback, useState, useEffect, FormEvent } from 'react';
 import { Omit } from 'react-redux';
 import { InputBaseProps } from '@material-ui/core/InputBase';
 import { Modal, ModalProps } from './Modal';
@@ -24,7 +24,6 @@ export function FormModal({
 
   const handleConfirmCallback = useCallback(() => {
     const realVal = value.trim();
-
     if (!realVal) {
       setError(true);
       return false;
@@ -34,17 +33,21 @@ export function FormModal({
   }, [defaultValue, handleConfirm, value]);
 
   const submitCallback = useCallback(
-    (evt?: SyntheticEvent<any>) => {
+    (evt?: FormEvent<HTMLFormElement>) => {
       evt && evt.preventDefault();
-      handleConfirmCallback();
-      handleClose();
+      if (handleConfirmCallback() !== false) {
+        handleClose();
+      }
     },
     [handleClose, handleConfirmCallback]
   );
 
   const onExitedCallback = useCallback(() => {
-    setValue(defaultValue);
     setError(false);
+  }, []);
+
+  useEffect(() => {
+    setValue(defaultValue);
   }, [defaultValue]);
 
   return (
@@ -60,7 +63,7 @@ export function FormModal({
         <Input
           autoFocus
           className="filled bottom-border"
-          value={value}
+          defaultValue={defaultValue}
           onChange={evt => setValue(evt.currentTarget.value)}
           placeholder="Enter name"
           error={error}
