@@ -13,6 +13,8 @@ interface Props extends Omit<ModalProps, 'onChange'> {
   onDueDateChange(date: Date): void;
 }
 
+const modalClasses = { paper: 'date-time-modal-paper' };
+
 export function DateTimeModal({
   task,
   handleConfirm,
@@ -29,7 +31,7 @@ export function DateTimeModal({
 
   return (
     <Modal
-      classes={{ paper: 'date-time-modal-paper' }}
+      classes={modalClasses}
       handleConfirm={handleConfirmCallback}
       {...props}
     >

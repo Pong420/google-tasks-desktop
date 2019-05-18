@@ -42,6 +42,8 @@ function useNotZero(initialVal: number) {
   return value;
 }
 
+const menuClasses = { paper: 'task-list-menu-paper' };
+
 function TaskListMenuComponent({
   anchorEl,
   onClose,
@@ -89,7 +91,7 @@ function TaskListMenuComponent({
   return (
     <>
       <Menu
-        classes={{ paper: 'task-list-menu-paper' }}
+        classes={menuClasses}
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={onClose}
