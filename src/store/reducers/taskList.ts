@@ -2,7 +2,7 @@ import { RouterAction, LOCATION_CHANGE } from 'connected-react-router';
 import { matchPath } from 'react-router-dom';
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { Schema$TaskList } from '../../typings';
-import { PATHS } from '../../constants';
+import { PATHS, LAST_VISITED_TASKS_LIST_ID } from '../../constants';
 
 export interface TaskListState {
   taskLists: Schema$TaskList[];
@@ -20,9 +20,9 @@ const initialState: TaskListState = {
   sortByDate: false
 };
 
-const SORT_BY_DATE_IDS = 'SORT_BY_DATE_IDS';
+const SORT_BY_DATE_TASKS_LIST_IDS = 'SORT_BY_DATE_TASKS_LIST_IDS';
 const sortByDateTasksListIds: string[] = JSON.parse(
-  localStorage.getItem(SORT_BY_DATE_IDS) || '[]'
+  localStorage.getItem(SORT_BY_DATE_TASKS_LIST_IDS) || '[]'
 );
 
 function getCurrentTaskList(taskLists: Schema$TaskList[], taskListId?: string) {
@@ -57,11 +57,14 @@ export default function(
         let { currentTaskListId, currentTaskList } = state;
 
         if (matches) {
-          currentTaskListId = matches.params.taskListId || '';
+          const { taskListId } = matches.params;
+          currentTaskListId = taskListId || currentTaskListId;
           currentTaskList = getCurrentTaskList(
             state.taskLists,
             currentTaskListId
           );
+
+          localStorage.setItem(LAST_VISITED_TASKS_LIST_ID, currentTaskListId);
 
           return {
             ...state,
@@ -152,7 +155,7 @@ export default function(
         }
 
         localStorage.setItem(
-          SORT_BY_DATE_IDS,
+          SORT_BY_DATE_TASKS_LIST_IDS,
           JSON.stringify(sortByDateTasksListIds)
         );
 
