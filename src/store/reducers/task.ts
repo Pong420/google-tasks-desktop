@@ -103,15 +103,15 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.MOVE_TASKS:
       return (() => {
-        let { newIndex, oldIndex } = action.payload;
+        const { newIndex, oldIndex } = action.payload;
         const { tasks, todoTasks } = state;
 
-        newIndex = tasks.indexOf(todoTasks[newIndex]);
-        oldIndex = tasks.indexOf(todoTasks[oldIndex]);
+        const realNewIndex = tasks.indexOf(todoTasks[newIndex]);
+        const realoldIndex = tasks.indexOf(todoTasks[oldIndex]);
 
         return {
           ...state,
-          ...classify(arrayMove(state.tasks, oldIndex, newIndex)),
+          ...classify(arrayMove(state.tasks, realoldIndex, realNewIndex)),
           focusIndex: newIndex
         };
       })();

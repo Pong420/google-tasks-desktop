@@ -8,9 +8,9 @@ import { PATHS } from './constants';
 
 const App = () => (
   <>
+    <Network />
     <AppRegion />
     <Auth />
-    <Network />
     <Switch>
       <Route exact path={PATHS.TASKLIST} component={TaskList} />
       <Redirect to={PATHS.TASKLIST} />

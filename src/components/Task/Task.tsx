@@ -1,4 +1,4 @@
-import React, { ReactNode, MouseEvent } from 'react';
+import React, { ReactNode, MouseEvent, useMemo } from 'react';
 import InputBase, { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskInput } from './TaskInput';
@@ -20,6 +20,14 @@ export function Task({
   inputBaseProps,
   onContextMenu
 }: TaskProps) {
+  const mergedInputProps = useMemo(
+    () => ({
+      task,
+      ...(inputBaseProps && inputBaseProps.inputProps)
+    }),
+    [inputBaseProps, task]
+  );
+
   return (
     <div className={classes(`task`, className)} onContextMenu={onContextMenu}>
       <ToggleCompleted task={task} completed={task.status === 'completed'} />
@@ -30,10 +38,7 @@ export function Task({
         endAdornment={endAdornment}
         {...inputBaseProps}
         inputComponent={TaskInput}
-        inputProps={{
-          task,
-          ...(inputBaseProps && inputBaseProps.inputProps)
-        }}
+        inputProps={mergedInputProps}
       />
     </div>
   );

@@ -9,12 +9,14 @@ export interface MenuItemProps extends DefaultMenuItemProps {
   selected?: boolean;
 }
 
+const menuItemClasses = { root: 'mui-menu-item' };
+
 export function useMenuItem(onClose: () => void) {
   return useCallback(
     forwardRef<any, MenuItemProps>(
       ({ text, selected, classes, children, onClick, ...props }, ref) => (
         <MuiMenuItem
-          classes={{ root: 'mui-menu-item' }}
+          classes={menuItemClasses}
           onClick={evt => {
             onClose();
             onClick && onClick(evt);

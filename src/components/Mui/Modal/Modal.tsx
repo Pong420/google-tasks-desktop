@@ -10,9 +10,11 @@ export interface ModalProps extends DialogProps {
   open: boolean;
   children?: ReactNode;
   handleClose(): void;
-  handleConfirm(): void;
+  handleConfirm(): any;
   autoFocusConfirmButon?: boolean;
 }
+
+const backdropProps = { classes: { root: 'mui-menu-backdrop' } };
 
 export function Modal({
   title,
@@ -26,8 +28,9 @@ export function Modal({
   ...props
 }: ModalProps) {
   const confirm = useCallback(() => {
-    handleConfirm();
-    handleClose();
+    if (handleConfirm() !== false) {
+      handleClose();
+    }
   }, [handleClose, handleConfirm]);
 
   const mergedClasses = useMemo(
@@ -45,7 +48,7 @@ export function Modal({
       open={open}
       onClose={handleClose}
       classes={mergedClasses}
-      BackdropProps={{ classes: { root: 'mui-menu-backdrop' } }}
+      BackdropProps={backdropProps}
       {...props}
     >
       <ScrollContent className="modal-scroll-content">

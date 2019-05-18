@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, CSSProperties } from 'react';
 import {
   SortableContainer,
   SortableElement,
@@ -28,11 +28,13 @@ const SortableItem = SortableElement((props: TodoTaskProps) => (
 
 const SortableList = SortableContainer(
   ({ dragging, todoTasks, insertAfter, ...props }: SortableListProps) => {
+    const style = useMemo<CSSProperties>(
+      () => ({ pointerEvents: dragging ? 'none' : 'auto' }),
+      [dragging]
+    );
+
     return (
-      <div
-        className="todo-tasks-list"
-        style={{ pointerEvents: dragging ? 'none' : 'auto' }}
-      >
+      <div className="todo-tasks-list" style={style}>
         {todoTasks.map((task, index) => (
           <SortableItem
             {...props}
