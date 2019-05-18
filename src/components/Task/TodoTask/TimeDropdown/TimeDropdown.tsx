@@ -57,11 +57,9 @@ const mappedItems = items.map(text => ({
   text
 }));
 
-interface Props {
-  onSelect?(time: string): void;
-}
+const buttonProps = { disabled: true };
 
-export function TimeDropdown({ onSelect }: Props) {
+export function TimeDropdown() {
   const [scrollToIndex, setScrollToIndex] = useState(19);
 
   return (
@@ -71,10 +69,9 @@ export function TimeDropdown({ onSelect }: Props) {
       calcMenuWidth={anchorEl => anchorEl && anchorEl.offsetWidth}
       scrollToIndex={scrollToIndex} // '09:00'
       onSelect={index => {
-        // onSelect();
         setScrollToIndex(index);
       }}
-      buttonProps={{ disabled: true }}
+      buttonProps={buttonProps}
     />
   );
 }

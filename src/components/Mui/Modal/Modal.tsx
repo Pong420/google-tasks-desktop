@@ -14,6 +14,8 @@ export interface ModalProps extends DialogProps {
   autoFocusConfirmButon?: boolean;
 }
 
+const backdropProps = { classes: { root: 'mui-menu-backdrop' } };
+
 export function Modal({
   title,
   confirmLabel,
@@ -46,7 +48,7 @@ export function Modal({
       open={open}
       onClose={handleClose}
       classes={mergedClasses}
-      BackdropProps={{ classes: { root: 'mui-menu-backdrop' } }}
+      BackdropProps={backdropProps}
       {...props}
     >
       <ScrollContent className="modal-scroll-content">

@@ -22,6 +22,12 @@ function Transition(props: TransitionProps) {
   return <Slide {...props} direction="left" />;
 }
 
+const backdropProps = {
+  open: false
+};
+
+const paperClasses = { paper: 'fullscreen-dialog-paper' };
+
 export function FullScreenDialog({
   className = '',
   children,
@@ -37,11 +43,9 @@ export function FullScreenDialog({
       onClose={handleClose}
       TransitionComponent={Transition}
       className={className}
-      classes={{ paper: 'fullscreen-dialog-paper' }}
+      classes={paperClasses}
       transitionDuration={300}
-      BackdropProps={{
-        open: false
-      }}
+      BackdropProps={backdropProps}
       {...props}
     >
       <div className="fullscreen-diaglog-header">

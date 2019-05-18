@@ -3,7 +3,8 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  CSSProperties
+  CSSProperties,
+  useMemo
 } from 'react';
 import { Omit } from 'react-redux';
 import { Dropdown, DropDownProps } from './Dropdown';
@@ -56,25 +57,38 @@ export function SelectableDropdown({
     }
   }, [anchorEl, calcMenuWidth]);
 
+  const mergedClasses = useMemo(
+    () => ({ paper: classes('selectable-dropdown-paper', paperClassName) }),
+    [paperClassName]
+  );
+
+  const mergedButtonProps = useMemo(
+    () => ({
+      fullWidth: true,
+      classes: { root: 'seletable-dropdown-button' },
+      ...buttonProps
+    }),
+    [buttonProps]
+  );
+
+  const mergedPaperProps = useMemo(
+    () => ({
+      style: { width: menuWidth }
+    }),
+    [menuWidth]
+  );
+
   return (
     <Dropdown
       label={items[selectedIndex].text}
-      classes={{ paper: classes('selectable-dropdown-paper', paperClassName) }}
+      classes={mergedClasses}
       anchorEl={anchorEl}
       onClick={setAnchorEl}
       onClose={onClose}
       open={Boolean(anchorEl)}
       onEnter={scrollToSelectedItem}
-      buttonProps={{
-        fullWidth: true,
-        classes: { root: 'seletable-dropdown-button' },
-        ...buttonProps
-      }}
-      PaperProps={{
-        style: {
-          width: menuWidth
-        }
-      }}
+      buttonProps={mergedButtonProps}
+      PaperProps={mergedPaperProps}
       {...props}
     >
       <div className="selectable-dropdown-scroll-content" ref={scrollRef}>

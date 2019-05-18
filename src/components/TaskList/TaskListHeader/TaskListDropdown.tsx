@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { useMuiMenu, useMenuItem, Dropdown } from '../../Mui';
 import { ScrollContent, SimplebarAPI } from '../../ScrollContent';
@@ -13,6 +13,9 @@ interface Props {
   taskLists: TaskListState['taskLists'];
   currentTaskList: Schema$TaskList | null;
 }
+
+const dropdownClasses = { paper: 'task-list-dropdown-paper' };
+const buttonProps = { classes: { root: 'task-list-dropdown-button' } };
 
 export function TaskListDropdown({
   taskLists,
@@ -37,10 +40,18 @@ export function TaskListDropdown({
     }, 0);
   }, []);
 
+  const anchorPosition = useMemo(
+    () => ({
+      top: anchorEl ? anchorEl.offsetTop + anchorEl.offsetHeight + 3 : 0,
+      left: window.innerWidth
+    }),
+    [anchorEl]
+  );
+
   return (
     <Dropdown
-      buttonProps={{ classes: { root: 'task-list-dropdown-button' } }}
-      classes={{ paper: 'task-list-dropdown-paper' }}
+      buttonProps={buttonProps}
+      classes={dropdownClasses}
       label={currentTaskList ? currentTaskList.title! : ''}
       onClick={setAnchorEl}
       onClose={onClose}
@@ -48,10 +59,7 @@ export function TaskListDropdown({
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       anchorReference="anchorPosition"
-      anchorPosition={{
-        top: anchorEl ? anchorEl.offsetTop + anchorEl.offsetHeight + 3 : 0,
-        left: window.innerWidth
-      }}
+      anchorPosition={anchorPosition}
     >
       <div className="dropdown-list-container">
         <ScrollContent simplebarRef={simplebarRef}>
