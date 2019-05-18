@@ -42,9 +42,7 @@ function ToggleCompletedComponent({
       onMouseEnter={on}
       onMouseLeave={off}
     >
-      <IconButton
-        tooltip={hover && !completed ? 'Mark complete' : 'Mark incomplete'}
-      >
+      <IconButton tooltip={!completed ? 'Mark complete' : 'Mark incomplete'}>
         {completed || hover ? (
           <TickIcon className="mui-tick-icon" color="inherit" />
         ) : (
