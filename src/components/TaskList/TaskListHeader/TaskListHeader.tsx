@@ -38,6 +38,7 @@ export function TaskListHeaderComponent({
       </div>
       <FormModal
         title="Create new list"
+        errorMsg="Task list name cannot be empty"
         open={modalOpened}
         handleClose={modal.off}
         handleConfirm={newTaskList}

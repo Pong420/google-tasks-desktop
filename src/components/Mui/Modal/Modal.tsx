@@ -10,7 +10,7 @@ export interface ModalProps extends DialogProps {
   open: boolean;
   children?: ReactNode;
   handleClose(): void;
-  handleConfirm(): void;
+  handleConfirm(): any;
   autoFocusConfirmButon?: boolean;
 }
 
@@ -26,8 +26,9 @@ export function Modal({
   ...props
 }: ModalProps) {
   const confirm = useCallback(() => {
-    handleConfirm();
-    handleClose();
+    if (handleConfirm() !== false) {
+      handleClose();
+    }
   }, [handleClose, handleConfirm]);
 
   const mergedClasses = useMemo(

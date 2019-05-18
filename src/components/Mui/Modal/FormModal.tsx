@@ -8,6 +8,7 @@ interface Props extends Omit<ModalProps, 'handleConfirm' | 'confirmLabel'> {
   defaultValue?: string;
   inputProps?: InputBaseProps;
   handleConfirm(val: string): void;
+  errorMsg?: string;
 }
 
 export function FormModal({
@@ -15,15 +16,18 @@ export function FormModal({
   handleClose,
   handleConfirm,
   inputProps,
+  errorMsg,
   ...props
 }: Props) {
   const [value, setValue] = useState(defaultValue);
+  const [error, setError] = useState(false);
 
   const handleConfirmCallback = useCallback(() => {
     const realVal = value.trim();
 
     if (!realVal) {
-      // TODO: show warning
+      setError(true);
+      return false;
     } else if (realVal !== defaultValue) {
       handleConfirm(value);
     }
@@ -38,12 +42,17 @@ export function FormModal({
     [handleClose, handleConfirmCallback]
   );
 
+  const onExitedCallback = useCallback(() => {
+    setValue(defaultValue);
+    setError(false);
+  }, [defaultValue]);
+
   return (
     <Modal
       confirmLabel="Done"
       handleConfirm={handleConfirmCallback}
       handleClose={handleClose}
-      onExited={() => setValue(defaultValue)}
+      onExited={onExitedCallback}
       autoFocusConfirmButon={false}
       {...props}
     >
@@ -54,8 +63,10 @@ export function FormModal({
           value={value}
           onChange={evt => setValue(evt.currentTarget.value)}
           placeholder="Enter name"
+          error={error}
           {...inputProps}
         />
+        <div className="form-modal-error-message">{error && errorMsg}</div>
       </form>
     </Modal>
   );
