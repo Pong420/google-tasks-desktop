@@ -149,6 +149,7 @@ function TaskListMenuComponent({
       </Modal>
       <FormModal
         title="Rename list"
+        errorMsg="Task list name cannot be empty"
         defaultValue={currentTaskList.title}
         open={renameTaskModalOpend}
         handleClose={renameTaskModal.off}

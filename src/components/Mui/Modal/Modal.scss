@@ -16,6 +16,7 @@
 
   .modal-title {
     @include typeface('Nunito Sans', 700);
+    color: var(--text-color);
     margin-bottom: 10px;
   }
 
@@ -36,4 +37,11 @@
       }
     }
   }
+}
+
+.form-modal-error-message {
+  @include typeface('Nunito Sans', 400);
+
+  color: var(--error-color);
+  margin-top: 5px;
 }

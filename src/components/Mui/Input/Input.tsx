@@ -9,7 +9,8 @@ export function Input({ className, ...props }: InputBaseProps) {
       classes={{
         root: classes('mui-input-base', className),
         focused: 'focused',
-        multiline: 'multiline'
+        multiline: 'multiline',
+        error: 'error'
       }}
       {...props}
     />
