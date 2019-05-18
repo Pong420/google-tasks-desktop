@@ -3,19 +3,29 @@ import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { ConnectedRouter } from 'connected-react-router';
+import { ConnectedRouter, replace, RouterAction } from 'connected-react-router';
+import { generatePath } from 'react-router-dom';
 import { theme } from './theme';
+import { PATHS, LAST_VISITED_TASKS_LIST_ID } from './constants';
 import configureStore, { history } from './store';
 import App from './App';
-import './utils/date';
 import 'typeface-roboto';
 import 'typeface-nunito-sans';
-
+import './utils/date';
 import './index.scss';
 
 const store = configureStore();
 
 const render = (Component: React.ComponentType<any>) => {
+  store.dispatch<RouterAction>(
+    replace(
+      generatePath(PATHS.TASKLIST, {
+        taskListId:
+          localStorage.getItem(LAST_VISITED_TASKS_LIST_ID) || undefined
+      })
+    )
+  );
+
   return ReactDOM.render(
     <MuiThemeProvider theme={theme}>
       <Provider store={store}>

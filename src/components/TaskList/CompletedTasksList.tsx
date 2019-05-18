@@ -18,6 +18,8 @@ export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
     expanded
   ]);
 
+  const style = useMemo(() => ({ height: expanded ? 'auto' : 0 }), [expanded]);
+
   if (!completedTasks.length) {
     return null;
   }
@@ -30,10 +32,7 @@ export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
           <Icon fontSize="default" />
         </IconButton>
       </div>
-      <div
-        className="completed-tasks-list-content"
-        style={{ height: expanded ? 'auto' : 0 }}
-      >
+      <div className="completed-tasks-list-content" style={style}>
         <ScrollContent>
           {completedTasks.map(task => {
             return (

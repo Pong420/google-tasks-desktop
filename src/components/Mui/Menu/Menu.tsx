@@ -2,6 +2,11 @@ import React, { useMemo } from 'react';
 import MuiMenu, { MenuProps } from '@material-ui/core/Menu';
 import mergeWith from 'lodash/mergeWith';
 
+const backdropProps = {
+  classes: { root: 'mui-menu-backdrop' },
+  invisible: true
+};
+
 export function Menu({ classes, children, PaperProps, ...props }: MenuProps) {
   const mergedClasses = useMemo(
     () =>
@@ -28,12 +33,7 @@ export function Menu({ classes, children, PaperProps, ...props }: MenuProps) {
       disableAutoFocusItem
       classes={mergedClasses}
       PaperProps={mergedPaperProps}
-      BackdropProps={{
-        classes: {
-          root: 'mui-menu-backdrop'
-        },
-        invisible: true
-      }}
+      BackdropProps={backdropProps}
       {...props}
     >
       {children}

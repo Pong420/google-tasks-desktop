@@ -10,6 +10,19 @@ interface Props extends Partial<IconButtonProps> {
   children?: ReactElement;
 }
 
+const popperProps = {
+  popperOptions: {
+    modifiers: {
+      offset: {
+        fn: (data: any) => {
+          data.offsets.reference.top = data.offsets.reference.top + 75;
+          return data;
+        }
+      }
+    }
+  }
+};
+
 export function IconButton({
   tooltip = '',
   icon: Icon,
@@ -20,21 +33,7 @@ export function IconButton({
 }: Props) {
   return (
     <MuiIconButton className={`mui-icon-button ${className}`.trim()} {...props}>
-      <Tooltip
-        title={tooltip}
-        PopperProps={{
-          popperOptions: {
-            modifiers: {
-              offset: {
-                fn: (data: any) => {
-                  data.offsets.reference.top = data.offsets.reference.top + 75;
-                  return data;
-                }
-              }
-            }
-          }
-        }}
-      >
+      <Tooltip title={tooltip} PopperProps={popperProps}>
         {Icon ? <Icon {...iconProps} /> : children ? children : <div />}
       </Tooltip>
     </MuiIconButton>

@@ -1,18 +1,15 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { RootState, NextWorkActionCreator } from '../../store';
-import WifiOffIcon from '@material-ui/icons/WifiOff';
+import { NextWorkActionCreator } from '../store';
 
-const mapStateToProps = ({ network }: RootState) => ({ ...network });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(NextWorkActionCreator, dispatch);
 
 export function NetworkComponent({
   online,
-  offline,
-  isOnline
-}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+  offline
+}: ReturnType<typeof mapDispatchToProps>) {
   useEffect(() => {
     window.addEventListener('online', online);
     window.addEventListener('offline', offline);
@@ -22,19 +19,10 @@ export function NetworkComponent({
     };
   }, [offline, online]);
 
-  if (isOnline) {
-    return null;
-  }
-
-  return (
-    <div className="network">
-      <WifiOffIcon classes={{ root: 'wifi-off-icon' }} />
-      <div>Waiting for network connection</div>
-    </div>
-  );
+  return null;
 }
 
 export const Network = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(NetworkComponent);

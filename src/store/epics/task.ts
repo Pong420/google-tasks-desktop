@@ -1,4 +1,4 @@
-import { empty, from, forkJoin } from 'rxjs';
+import { empty, from } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -10,7 +10,8 @@ import {
   takeUntil,
   tap,
   pairwise,
-  withLatestFrom
+  withLatestFrom,
+  take
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
 import { tasks_v1 } from 'googleapis';
@@ -30,6 +31,8 @@ import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
 import isEqual from 'lodash/fp/isEqual';
 
+type TaskEpic = Epic<TaskActions, TaskActions, RootState, EpicDependencies>;
+
 const onNewTaskSuccess$ = (
   action$: ActionsObservable<TaskActions>,
   uuid: string
@@ -39,18 +42,15 @@ const onNewTaskSuccess$ = (
     filter(success => success.payload.uuid === uuid)
   );
 
-const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
+const apiEpic: TaskEpic = (
   action$,
   state$,
-  { nprogress }
+  { nprogress, withNetworkHelper }
 ) => {
   return action$.pipe(
     filter(action => !/Update|Move|New/i.test(action.type)),
+    withNetworkHelper(state$),
     mergeMap(action => {
-      if (!state$.value.auth.loggedIn || !state$.value.network.isOnline) {
-        return empty();
-      }
-
       const tasklist = state$.value.taskList.currentTaskListId;
 
       const deleteTaskRequest$ = (task?: string) =>
@@ -68,7 +68,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
             tasksAPI.list({
               tasklist,
               showCompleted: true,
-              showHidden: true
+              showHidden: false
             })
           ).pipe(
             tap(() => nprogress.done()),
@@ -85,15 +85,17 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
         case TaskActionTypes.DELETE_TASK:
           if (!action.payload.id) {
             return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
-              switchMap(success => deleteTaskRequest$(success.payload.id!))
+              switchMap(success => deleteTaskRequest$(success.payload.id))
             );
           }
 
           return deleteTaskRequest$(action.payload.id);
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
-          return forkJoin(
-            ...action.payload.map(task => deleteTaskRequest$(task.id))
+          return from(
+            tasksAPI.clear({
+              tasklist
+            })
           ).pipe(
             map<any, TaskActions>(() => ({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
@@ -107,10 +109,7 @@ const apiEpic: Epic<TaskActions, TaskActions, RootState, EpicDependencies> = (
   );
 };
 
-const newTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
-  action$,
-  state$
-) => {
+const newTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   const newTaskRequest$ = (
     params: tasks_v1.Params$Resource$Tasks$Insert,
     uuid: string
@@ -128,6 +127,7 @@ const newTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
 
   return action$.pipe(
     ofType<TaskActions, NewTask>(TaskActionTypes.NEW_TASK),
+    withNetworkHelper(state$),
     mergeMap(action => {
       const tasklist = state$.value.taskList.currentTaskListId;
       const { previousTask, ...newTask } = action.payload;
@@ -156,10 +156,7 @@ const newTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
-  action$,
-  state$
-) => {
+const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   const updateTaskRequest$ = (requestBody: Schema$Task) => {
     delete requestBody.completed;
     delete requestBody.position;
@@ -186,6 +183,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
 
   return action$.pipe(
     ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
+    withNetworkHelper(state$),
     groupBy(action => action.payload.uuid),
     mergeMap(group$ => {
       return group$.pipe(
@@ -221,10 +219,7 @@ const updateEpic: Epic<TaskActions, TaskActions, RootState> = (
   );
 };
 
-const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
-  action$,
-  state$
-) => {
+const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   const todoTasks$ = state$.pipe(map(({ task }) => task.todoTasks));
 
   const moveTaskRequest$ = (task: Schema$Task) =>
@@ -244,11 +239,13 @@ const moveTaskEpic: Epic<TaskActions, TaskActions, RootState> = (
             type: TaskActionTypes.MOVE_TASKS_SUCCESS
           }))
         )
-      )
+      ),
+      take(1)
     );
 
   return action$.pipe(
     ofType<TaskActions, MoveTask>(TaskActionTypes.MOVE_TASKS),
+    withNetworkHelper(state$),
     withLatestFrom(todoTasks$),
     groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
     mergeMap(group$ =>
