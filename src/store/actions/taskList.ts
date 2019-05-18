@@ -10,16 +10,13 @@ export enum TaskListActionTypes {
   GET_ALL_TASK_LIST_SUCCESS = 'GET_ALL_TASK_LIST_SUCCESS',
   GET_TASK_LIST = 'GET_TASK_LIST',
   GET_TASK_LIST_SUCCESS = 'GET_TASK_LIST_SUCCESS',
-  SET_CURRENT_TASK_LIST = 'SET_CURRENT_TASK_LIST',
   NEW_TASK_LIST = 'NEW_TASK_LIST',
   NEW_TASK_LIST_SUCCESS = 'NEW_TASK_LIST_SUCCESS',
   UPDATE_TASK_LIST = 'UPDATE_TASK_LIST',
   UPDATE_TASK_LIST_SUCCESS = 'UPDATE_TASK_LIST_SUCCESS',
   DELETE_TASK_LIST = 'DELETE_TASK_LIST',
   DELETE_TASK_LIST_SUCCESS = 'DELETE_TASK_LIST_SUCCESS',
-  SYNC_TASK_LIST = 'SYNC_TASK_LIST',
-  SYNC_TASK_LIST_SUCCESS = 'SYNC_TASK_LIST_SUCCESS',
-  SORT_BY_DATE = 'SORT_BY_DATE'
+  TOGGLE_SORT_BY_DATE = 'TOGGLE_SORT_BY_DATE'
 }
 
 export interface GetAllTaskList {
@@ -38,11 +35,6 @@ export interface GetTaskList {
 
 export interface GetTaskListSuccess {
   type: TaskListActionTypes.GET_TASK_LIST_SUCCESS;
-}
-
-export interface SetCurrentTaskList {
-  type: TaskListActionTypes.SET_CURRENT_TASK_LIST;
-  payload: Schema$TaskList;
 }
 
 export interface NewTaskList {
@@ -67,25 +59,16 @@ export interface UpdateTaskListSuccess {
 
 export interface DeleteTaskList {
   type: TaskListActionTypes.DELETE_TASK_LIST;
-  payload: string;
+  payload?: string;
 }
 
 export interface DeleteTaskListSuccess {
   type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS;
 }
 
-export interface SyncTaskList {
-  type: TaskListActionTypes.SYNC_TASK_LIST;
-}
-
-export interface SyncTaskListSuccess {
-  type: TaskListActionTypes.SYNC_TASK_LIST_SUCCESS;
-  payload: tasks_v1.Schema$TaskList[];
-}
-
-export interface SortByDate {
-  type: TaskListActionTypes.SORT_BY_DATE;
-  payload: boolean;
+export interface ToggleSortByDate {
+  type: TaskListActionTypes.TOGGLE_SORT_BY_DATE;
+  payload?: boolean;
 }
 
 export type TaskListActions =
@@ -93,16 +76,13 @@ export type TaskListActions =
   | GetAllTaskListSuccess
   | GetTaskList
   | GetTaskListSuccess
-  | SetCurrentTaskList
   | NewTaskList
   | NewTaskListSuccess
   | UpdateTaskList
   | UpdateTaskListSuccess
   | DeleteTaskList
   | DeleteTaskListSuccess
-  | SyncTaskList
-  | SyncTaskListSuccess
-  | SortByDate;
+  | ToggleSortByDate;
 
 export const TaskListActionCreators = {
   getAllTaskList(): GetAllTaskList {
@@ -134,20 +114,15 @@ export const TaskListActionCreators = {
       payload
     };
   },
-  delteTaskList(payload: string): DeleteTaskList {
+  delteTaskList(payload?: string): DeleteTaskList {
     return {
       type: TaskListActionTypes.DELETE_TASK_LIST,
       payload
     };
   },
-  syncTaskList(): SyncTaskList {
+  toggleSortByDate(payload?: boolean): ToggleSortByDate {
     return {
-      type: TaskListActionTypes.SYNC_TASK_LIST
-    };
-  },
-  sortTasksByDate(payload: boolean): SortByDate {
-    return {
-      type: TaskListActionTypes.SORT_BY_DATE,
+      type: TaskListActionTypes.TOGGLE_SORT_BY_DATE,
       payload
     };
   }

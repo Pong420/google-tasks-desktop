@@ -1,6 +1,8 @@
+import { RouterAction, LOCATION_CHANGE } from 'connected-react-router';
+import { matchPath } from 'react-router-dom';
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { Schema$TaskList } from '../../typings';
-import merge from 'lodash/merge';
+import { PATHS } from '../../constants';
 
 export interface TaskListState {
   taskLists: Schema$TaskList[];
@@ -23,29 +25,72 @@ const sortByDateTasksListIds: string[] = JSON.parse(
   localStorage.getItem(SORT_BY_DATE_IDS) || '[]'
 );
 
+function getCurrentTaskList(taskLists: Schema$TaskList[], taskListId?: string) {
+  let currentTaskList = taskLists[0] || null;
+  if (taskListId) {
+    for (const taskList of taskLists) {
+      if (taskList.id === taskListId) {
+        currentTaskList = taskList;
+        break;
+      }
+    }
+  }
+
+  return currentTaskList;
+}
+
 export default function(
   state = initialState,
-  action: TaskListActions
+  action: TaskListActions | RouterAction
 ): TaskListState {
   switch (action.type) {
+    case LOCATION_CHANGE:
+      return (() => {
+        const matches = matchPath<{ taskListId?: string }>(
+          action.payload.location.pathname,
+          {
+            path: PATHS.TASKLIST,
+            strict: true
+          }
+        );
+
+        if (matches && state.taskLists.length) {
+          const currentTaskList = getCurrentTaskList(
+            state.taskLists,
+            matches.params.taskListId
+          );
+          const currentTaskListId = currentTaskList.id!;
+
+          return {
+            ...state,
+            currentTaskListId,
+            currentTaskList,
+            sortByDate: sortByDateTasksListIds.includes(currentTaskListId)
+          };
+        }
+
+        return state;
+      })();
+
     case TaskListActionTypes.GET_ALL_TASK_LIST:
       return {
         ...initialState
       };
 
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
-      return {
-        ...state,
-        taskLists: action.payload
-      };
+      return (() => {
+        const currentTaskList = getCurrentTaskList(
+          action.payload,
+          state.currentTaskListId
+        );
 
-    case TaskListActionTypes.SET_CURRENT_TASK_LIST:
-      return {
-        ...state,
-        currentTaskList: action.payload,
-        currentTaskListId: action.payload.id!,
-        sortByDate: sortByDateTasksListIds.includes(action.payload.id!)
-      };
+        return {
+          ...state,
+          taskLists: action.payload,
+          currentTaskList,
+          currentTaskListId: currentTaskList.id!
+        };
+      })();
 
     case TaskListActionTypes.NEW_TASK_LIST:
       return {
@@ -61,46 +106,58 @@ export default function(
       };
 
     case TaskListActionTypes.DELETE_TASK_LIST:
-      return {
-        ...state,
-        taskLists: state.taskLists.filter(({ id }) => id !== action.payload)
-      };
+      return (() => {
+        const target = action.payload || state.currentTaskListId;
+        return {
+          ...state,
+          taskLists: state.taskLists.filter(({ id }) => id !== target)
+        };
+      })();
 
     case TaskListActionTypes.UPDATE_TASK_LIST:
-      let current = state.currentTaskList;
-      if (current === action.payload.tasklist) {
-        current = merge(current, action.payload.requestBody);
-      }
+      return (() => {
+        let currentTaskList = state.currentTaskList;
+        const taskLists = state.taskLists.map(taskList => {
+          if (taskList.id === action.payload.tasklist) {
+            currentTaskList = { ...taskList, ...action.payload.requestBody };
+            return currentTaskList;
+          }
+          return taskList;
+        });
 
-      return {
-        ...state,
-        currentTaskList: current,
-        taskLists: state.taskLists.map(taskList =>
-          taskList.id === action.payload.tasklist
-            ? merge(taskList, action.payload.requestBody)
-            : taskList
-        )
-      };
+        return {
+          ...state,
+          currentTaskList,
+          taskLists
+        };
+      })();
 
-    case TaskListActionTypes.SORT_BY_DATE:
-      if (action.payload) {
-        sortByDateTasksListIds.push(state.currentTaskListId);
-      } else {
-        sortByDateTasksListIds.splice(
-          sortByDateTasksListIds.indexOf(state.currentTaskListId),
-          1
+    case TaskListActionTypes.TOGGLE_SORT_BY_DATE:
+      return (() => {
+        const sortByDate =
+          typeof action.payload === 'boolean'
+            ? action.payload
+            : !state.sortByDate;
+
+        if (sortByDate) {
+          sortByDateTasksListIds.push(state.currentTaskListId);
+        } else {
+          sortByDateTasksListIds.splice(
+            sortByDateTasksListIds.indexOf(state.currentTaskListId),
+            1
+          );
+        }
+
+        localStorage.setItem(
+          SORT_BY_DATE_IDS,
+          JSON.stringify(sortByDateTasksListIds)
         );
-      }
 
-      localStorage.setItem(
-        SORT_BY_DATE_IDS,
-        JSON.stringify(sortByDateTasksListIds)
-      );
-
-      return {
-        ...state,
-        sortByDate: action.payload
-      };
+        return {
+          ...state,
+          sortByDate
+        };
+      })();
 
     default:
       return state;

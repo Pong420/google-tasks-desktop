@@ -4,7 +4,7 @@ import { of, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Action } from 'redux';
 import { ofType, StateObservable } from 'redux-observable';
-import { NetworkActionTypes } from './actions/network';
+import { NetworkActionTypes } from './actions';
 import { RootState } from './reducers';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
@@ -25,7 +25,6 @@ function withNetworkHelper<T extends Action>(
         if (state$.value.network.isOnline) {
           return of(action);
         }
-
         return action$.pipe(
           ofType(NetworkActionTypes.ONLINE),
           mergeMap(() => of(action))
