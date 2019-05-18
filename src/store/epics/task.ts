@@ -72,7 +72,7 @@ const apiEpic: TaskEpic = (
             tasksAPI.list({
               tasklist,
               showCompleted: true,
-              showHidden: true
+              showHidden: false
             })
           ).pipe(
             tap(() => nprogress.done()),
@@ -96,8 +96,10 @@ const apiEpic: TaskEpic = (
           return deleteTaskRequest$(action.payload.id);
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
-          return forkJoin(
-            ...action.payload.map(task => deleteTaskRequest$(task.id))
+          return from(
+            tasksAPI.clear({
+              tasklist
+            })
           ).pipe(
             map<any, TaskActions>(() => ({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS

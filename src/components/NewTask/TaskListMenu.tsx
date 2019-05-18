@@ -82,11 +82,6 @@ function TaskListMenuComponent({
     [deleteTaskListModal, delteTaskListCallback, tasks.length]
   );
 
-  const deleteCompletedTasksCallback = useCallback(
-    () => deleteCompletedTasks(completedTasks),
-    [completedTasks, deleteCompletedTasks]
-  );
-
   const renameTaskListCallback = useCallback(
     (title: string) =>
       updateTaskList({ tasklist: currentTaskListId, requestBody: { title } }),
@@ -148,7 +143,7 @@ function TaskListMenuComponent({
         confirmLabel="Delete"
         open={deleteCompletedTaskModalOpend}
         handleClose={deleteCompletedTaskModal.off}
-        handleConfirm={deleteCompletedTasksCallback}
+        handleConfirm={deleteCompletedTasks}
       >
         {numOfCompletedTask} completed task will be permanently removed.
       </Modal>
