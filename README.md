@@ -59,10 +59,10 @@ yarn package-all
 - [x] Dark Theme
 - [x] Add Note
 - [x] Add Date
-- [ ] ~~Improve / check performace~~
+- [ ] Animation
 - [ ] Error handling
 - [ ] Sync data periodically
-- [ ] Animation
+- [ ] Improve / check performace
 
 ### Known issue
 
