@@ -54,12 +54,14 @@ export default function(
           }
         );
 
-        if (matches && state.taskLists.length) {
-          const currentTaskList = getCurrentTaskList(
+        let { currentTaskListId, currentTaskList } = state;
+
+        if (matches) {
+          currentTaskListId = matches.params.taskListId || '';
+          currentTaskList = getCurrentTaskList(
             state.taskLists,
-            matches.params.taskListId
+            currentTaskListId
           );
-          const currentTaskListId = currentTaskList.id!;
 
           return {
             ...state,
@@ -74,7 +76,8 @@ export default function(
 
     case TaskListActionTypes.GET_ALL_TASK_LIST:
       return {
-        ...initialState
+        ...initialState,
+        currentTaskListId: state.currentTaskListId
       };
 
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
