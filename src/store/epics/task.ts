@@ -85,7 +85,7 @@ const apiEpic: TaskEpic = (
         case TaskActionTypes.DELETE_TASK:
           if (!action.payload.id) {
             return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
-              switchMap(success => deleteTaskRequest$(success.payload.id!))
+              switchMap(success => deleteTaskRequest$(success.payload.id))
             );
           }
 

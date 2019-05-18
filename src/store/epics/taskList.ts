@@ -80,7 +80,7 @@ const redirectEpic: TaskListEpic<TaskListActions | RouterAction> = (
   action$.pipe(
     mergeMap(action => {
       let taskListId = '';
-      const { currentTaskListId } = state$.value.taskList;
+      const { currentTaskListId, taskLists } = state$.value.taskList;
 
       switch (action.type) {
         case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
@@ -94,7 +94,7 @@ const redirectEpic: TaskListEpic<TaskListActions | RouterAction> = (
           break;
 
         case TaskListActionTypes.DELETE_TASK_LIST:
-          taskListId = action.payload || currentTaskListId;
+          taskListId = taskLists[0].id!;
           break;
 
         default:
