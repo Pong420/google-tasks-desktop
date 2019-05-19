@@ -48,8 +48,8 @@ const apiEpic: TaskEpic = (
   { nprogress, withNetworkHelper }
 ) => {
   return action$.pipe(
-    filter(action => !/Update|Move|New/i.test(action.type)),
     withNetworkHelper(state$),
+    filter(action => !/Update|Move|New/i.test(action.type)),
     mergeMap(action => {
       const tasklist = state$.value.taskList.currentTaskListId;
 
@@ -126,8 +126,8 @@ const newTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
     );
 
   return action$.pipe(
-    ofType<TaskActions, NewTask>(TaskActionTypes.NEW_TASK),
     withNetworkHelper(state$),
+    ofType<TaskActions, NewTask>(TaskActionTypes.NEW_TASK),
     mergeMap(action => {
       const tasklist = state$.value.taskList.currentTaskListId;
       const { previousTask, ...newTask } = action.payload;
@@ -182,8 +182,8 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   };
 
   return action$.pipe(
-    ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     withNetworkHelper(state$),
+    ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     groupBy(action => action.payload.uuid),
     mergeMap(group$ => {
       return group$.pipe(
@@ -244,8 +244,8 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
     );
 
   return action$.pipe(
-    ofType<TaskActions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     withNetworkHelper(state$),
+    ofType<TaskActions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     withLatestFrom(todoTasks$),
     groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
     mergeMap(group$ =>
