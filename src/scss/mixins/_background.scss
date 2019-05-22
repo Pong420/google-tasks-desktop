@@ -1,0 +1,22 @@
+@mixin bg-image(
+  $image: null,
+  $size: 100%,
+  $position: center center,
+  $repeat: no-repeat
+) {
+  @if ($image) {
+    background-image: $image;
+  }
+
+  @if ($position) {
+    background-position: $position;
+  }
+
+  @if ($repeat) {
+    background-repeat: $repeat;
+  }
+
+  @if ($size) {
+    background-size: $size;
+  }
+}
