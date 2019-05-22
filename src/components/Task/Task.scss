@@ -25,6 +25,7 @@ $min-task-height: 50px;
     @include relative();
     @include withVeritcalBorder();
     min-height: $min-task-height;
+    min-width: 0;
 
     //input endAdornment
     .mui-icon-button {
@@ -83,6 +84,8 @@ $min-task-height: 50px;
     @include margin-x(5px);
     @include padding-y(12px);
     @include relative();
+
+    overflow: hidden;
 
     .mui-input-base {
       $line-height: 20px;
