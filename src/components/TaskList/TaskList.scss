@@ -38,14 +38,16 @@
 }
 
 .completed-tasks-list {
+  @include animate(transform);
+  @include absolute(null, 0, 0);
   @include dimen(100%);
   @include flex($flex-direction: column);
 
   background-color: var(--main-color);
   flex: 0 0 auto;
-  // margin-top: -2px;
   max-height: calc(100vh - #{$header-height});
   padding-bottom: 2px;
+  transform: translateY(calc(100% - 54px));
 }
 
 .completed-tasks-list-header {
