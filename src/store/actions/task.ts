@@ -5,6 +5,7 @@ import uuid from 'uuid';
 
 export enum TaskActionTypes {
   GET_ALL_TASKS = 'GET_ALL_TASKS',
+  GET_ALL_TASKS_SILENT = 'GET_ALL_TASKS_SILENT',
   GET_ALL_TASKS_SUCCESS = 'GET_ALL_TASKS_SUCCESS',
   NEW_TASK = 'NEW_TASK',
   NEW_TASK_SUCCESS = 'NEW_TASK_SUCCESS',
@@ -31,6 +32,10 @@ export type Payload$SortTasks = 'order' | 'date';
 
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
+}
+
+export interface GetAllTasksSilent {
+  type: TaskActionTypes.GET_ALL_TASKS_SILENT;
 }
 
 export interface GetAllTasksSuccess {
@@ -93,6 +98,7 @@ export interface SetFocusIndex {
 
 export type TaskActions =
   | GetAllTasks
+  | GetAllTasksSilent
   | GetAllTasksSuccess
   | NewTask
   | NewTaskSuccess
