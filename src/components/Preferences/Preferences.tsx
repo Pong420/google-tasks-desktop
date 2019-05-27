@@ -4,7 +4,7 @@ import {
   FullScreenDialogProps
 } from '../Mui/FullScreenDialog';
 import { Input } from '../Mui/Input';
-import { TOKEN_PATH, OAUTH2_KEYS_PATH } from '../../constants';
+import { STORAGE_DIRECTORY } from '../../constants';
 
 const accentColors: ACCENT_COLOR[] = [
   'blue',
@@ -48,14 +48,9 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       </FullScreenDialog.Section>
 
       <FullScreenDialog.Section>
-        <FullScreenDialog.Title children="Storage ( Read-Only )" />
+        <FullScreenDialog.Title children="Storage Directory ( Read-Only )" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">OAuth Keys Path:</div>
-          <Input value={OAUTH2_KEYS_PATH} readOnly className="filled" />
-        </FullScreenDialog.Row>
-        <FullScreenDialog.Row>
-          <div className="preferences-label">Token Path:</div>
-          <Input value={TOKEN_PATH} readOnly className="filled" />
+          <Input value={STORAGE_DIRECTORY} readOnly className="filled" />
         </FullScreenDialog.Row>
       </FullScreenDialog.Section>
     </FullScreenDialog>
