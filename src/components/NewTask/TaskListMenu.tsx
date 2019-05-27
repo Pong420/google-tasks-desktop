@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { KeyboardShortcuts } from '../KeyboardShortcuts';
 import { Preferences } from '../Preferences';
-import { useMenuItem, Menu, Modal, FormModal } from '../Mui';
+import { useMuiMenuItem, Menu, Modal, FormModal } from '../Mui';
 import { useBoolean } from '../../utils/useBoolean';
 import {
   TaskListActionCreators,
@@ -59,7 +59,7 @@ function TaskListMenuComponent({
   toggleSortByDate,
   logout
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
-  const MenuItem = useMenuItem(onClose);
+  const MenuItem = useMuiMenuItem({ onClose });
 
   const [
     deleteCompletedTaskModalOpend,

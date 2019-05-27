@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnchorPosition } from '../../Mui/Menu/useMuiMenu';
-import { useMenuItem, Menu } from '../../Mui';
+import { useMuiMenuItem, Menu } from '../../Mui';
 
 interface Props {
   anchorPosition?: AnchorPosition;
@@ -15,7 +15,7 @@ export function TodoTaskMenu({
   onDelete,
   openDateTimeModal
 }: Props) {
-  const MenuItem = useMenuItem(onClose);
+  const MenuItem = useMuiMenuItem({ onClose });
 
   return (
     <Menu
