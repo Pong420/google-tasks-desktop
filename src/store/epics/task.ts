@@ -1,4 +1,4 @@
-import { empty, from } from 'rxjs';
+import { empty, from, interval, merge, timer } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -25,20 +25,34 @@ import {
   MoveTaskSuccess,
   NewTask
 } from '../actions/task';
+import { NetworkActions, NetworkActionTypes } from '../actions/network';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
 import isEqual from 'lodash/fp/isEqual';
 
-type TaskEpic = Epic<TaskActions, TaskActions, RootState, EpicDependencies>;
+type Actions = TaskActions | NetworkActions;
+type TaskEpic = Epic<Actions, Actions, RootState, EpicDependencies>;
 
-const onNewTaskSuccess$ = (
-  action$: ActionsObservable<TaskActions>,
-  uuid: string
-) =>
+const getAllTasks$ = (tasklist: string) =>
+  from(
+    tasksAPI.list({
+      tasklist,
+      showCompleted: true,
+      showHidden: false
+    })
+  ).pipe(
+    map(({ data }) => data.items),
+    map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
+      type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
+      payload
+    }))
+  );
+
+const onNewTaskSuccess$ = (action$: ActionsObservable<Actions>, uuid: string) =>
   action$.pipe(
-    ofType<TaskActions, NewTaskSuccess>(TaskActionTypes.NEW_TASK_SUCCESS),
+    ofType<Actions, NewTaskSuccess>(TaskActionTypes.NEW_TASK_SUCCESS),
     filter(success => success.payload.uuid === uuid)
   );
 
@@ -64,21 +78,8 @@ const apiEpic: TaskEpic = (
         case TaskActionTypes.GET_ALL_TASKS:
           nprogress.inc(0.4);
 
-          return from(
-            tasksAPI.list({
-              tasklist,
-              showCompleted: true,
-              showHidden: false
-            })
-          ).pipe(
+          return getAllTasks$(tasklist).pipe(
             tap(() => nprogress.done()),
-            map(({ data }) => data.items),
-            map<tasks_v1.Schema$Tasks['items'], TaskActions>(
-              (payload = []) => ({
-                type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
-                payload
-              })
-            ),
             takeUntil(action$.pipe(ofType(TaskActionTypes.GET_ALL_TASKS)))
           );
 
@@ -116,7 +117,7 @@ const newTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   ) =>
     from(tasksAPI.insert(params)).pipe(
       map(({ data }) => data),
-      map<tasks_v1.Schema$Task, TaskActions>(task => ({
+      map<tasks_v1.Schema$Task, Actions>(task => ({
         type: TaskActionTypes.NEW_TASK_SUCCESS,
         payload: {
           ...task,
@@ -127,7 +128,7 @@ const newTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
 
   return action$.pipe(
     withNetworkHelper(state$),
-    ofType<TaskActions, NewTask>(TaskActionTypes.NEW_TASK),
+    ofType<Actions, NewTask>(TaskActionTypes.NEW_TASK),
     mergeMap(action => {
       const tasklist = state$.value.taskList.currentTaskListId;
       const { previousTask, ...newTask } = action.payload;
@@ -183,7 +184,7 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
 
   return action$.pipe(
     withNetworkHelper(state$),
-    ofType<TaskActions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
+    ofType<Actions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     groupBy(action => action.payload.uuid),
     mergeMap(group$ => {
       return group$.pipe(
@@ -245,7 +246,7 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
 
   return action$.pipe(
     withNetworkHelper(state$),
-    ofType<TaskActions, MoveTask>(TaskActionTypes.MOVE_TASKS),
+    ofType<Actions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     withLatestFrom(todoTasks$),
     groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
     mergeMap(group$ =>
@@ -266,4 +267,31 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   );
 };
 
-export default [apiEpic, newTaskEpic, updateEpic, moveTaskEpic];
+const syncTasksEpic: TaskEpic = (action$, state$) => {
+  const getAllTasksSilent$ = () => {
+    const taskListId = state$.value.taskList.currentTaskListId;
+    return getAllTasks$(taskListId).pipe(takeUntil(action$));
+  };
+
+  const reconnection = action$.pipe(
+    ofType(NetworkActionTypes.OFFLINE),
+    switchMap(() => {
+      return action$.pipe(
+        ofType(NetworkActionTypes.ONLINE),
+        switchMap(() =>
+          timer(2000).pipe(
+            mergeMap(() => getAllTasksSilent$()),
+            takeUntil(action$)
+          )
+        )
+      );
+    })
+  );
+
+  return merge(
+    reconnection,
+    interval(43200).pipe(switchMap(() => getAllTasksSilent$()))
+  );
+};
+
+export default [apiEpic, newTaskEpic, updateEpic, moveTaskEpic, syncTasksEpic];
