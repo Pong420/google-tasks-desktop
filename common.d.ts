@@ -1,3 +1,5 @@
+declare module 'electron-store'; // its typing is strange, so just override it
+
 type THEME = 'light' | 'dark';
 type ACCENT_COLOR = 'red' | 'blue' | 'amber' | 'green' | 'purple' | 'grey';
 

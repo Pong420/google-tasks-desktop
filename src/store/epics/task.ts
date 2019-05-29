@@ -276,16 +276,20 @@ const syncTasksEpic: TaskEpic = (action$, state$) => {
     return empty();
   };
 
-  const hour = 12;
-  const ms = hour * 60 * 60 * 1000;
-
   return action$.pipe(
-    switchMap(() =>
-      timer(ms).pipe(
+    withLatestFrom(state$.pipe(map(({ preferences }) => preferences))),
+    switchMap(([_, { sync, inactiveHours }]) => {
+      const ms = inactiveHours * 60 * 60 * 1000;
+
+      if (!sync || ms < 60 * 1000) {
+        return empty();
+      }
+
+      return timer(ms).pipe(
         switchMap(() => getAllTasksSilent$()),
         takeUntil(action$)
-      )
-    )
+      );
+    })
   );
 };
 
