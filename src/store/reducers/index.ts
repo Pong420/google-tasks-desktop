@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import auth from './auth';
 import network from './network';
+import preferences from './preferences';
 import task from './task';
 import taskList from './taskList';
 
@@ -10,12 +11,14 @@ const rootReducer = (history: Parameters<typeof connectRouter>[0]) =>
     router: connectRouter(history),
     auth,
     network,
+    preferences,
     task,
     taskList
   });
 
 export * from './auth';
 export * from './network';
+export * from './preferences';
 export * from './task';
 export * from './taskList';
 

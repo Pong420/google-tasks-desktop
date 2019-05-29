@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, ChangeEvent } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import {
   FullScreenDialog,
   FullScreenDialogProps
@@ -6,6 +8,7 @@ import {
 import { Input } from '../Mui/Input';
 import { Switch } from '../Switch';
 import { STORAGE_DIRECTORY } from '../../constants';
+import { RootState, PreferencesActionCreators } from '../../store';
 
 const accentColors: ACCENT_COLOR[] = [
   'blue',
@@ -16,8 +19,30 @@ const accentColors: ACCENT_COLOR[] = [
   'grey'
 ];
 
-export function Preferences({ ...props }: FullScreenDialogProps) {
-  const [sync, setSync] = useState(true);
+const mapStateToProps = (
+  { preferences }: RootState,
+  ownProps: FullScreenDialogProps
+) => ({ ...ownProps, ...preferences });
+
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(PreferencesActionCreators, dispatch);
+
+function PreferencesComponent({
+  sync,
+  inactiveHours,
+  toggleSync,
+  setInactiveHour,
+  ...props
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+  const setInactiveHourCallback = useCallback(
+    (evt: ChangeEvent<HTMLInputElement>) => {
+      const value = Number(evt.target.value);
+      if (!isNaN(value)) {
+        setInactiveHour(value);
+      }
+    },
+    [setInactiveHour]
+  );
 
   return (
     <FullScreenDialog className="preferences" {...props}>
@@ -36,6 +61,7 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
             </div>
           </div>
         </FullScreenDialog.Row>
+
         <FullScreenDialog.Row>
           <div className="preferences-label">Accent color</div>
           <div className="preferences-accent-color-selector">
@@ -55,7 +81,7 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
         <FullScreenDialog.Row>
           <div className="preferences-label">Enable synchronization</div>
           <div className="preferences-switch">
-            <Switch checked={sync} onChange={setSync} />
+            <Switch checked={sync} onChange={toggleSync} />
           </div>
         </FullScreenDialog.Row>
         {sync && (
@@ -63,7 +89,11 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
             <FullScreenDialog.Row>
               <div className="preferences-label">Sync after inactive</div>
               <div className="preferences-hours">
-                <Input className="filled" defaultValue={12} />
+                <Input
+                  className="filled"
+                  value={inactiveHours}
+                  onChange={setInactiveHourCallback}
+                />
                 Hours
               </div>
             </FullScreenDialog.Row>
@@ -81,3 +111,8 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
     </FullScreenDialog>
   );
 }
+
+export const Preferences = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PreferencesComponent);
