@@ -1,4 +1,4 @@
-import { empty, from, interval, merge, timer } from 'rxjs';
+import { empty, from, timer } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -25,7 +25,7 @@ import {
   MoveTaskSuccess,
   NewTask
 } from '../actions/task';
-import { NetworkActions, NetworkActionTypes } from '../actions/network';
+import { NetworkActions } from '../actions/network';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';

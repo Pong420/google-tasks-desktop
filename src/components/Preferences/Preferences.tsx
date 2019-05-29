@@ -4,6 +4,7 @@ import {
   FullScreenDialogProps
 } from '../Mui/FullScreenDialog';
 import { Input } from '../Mui/Input';
+import { Switch } from '../Switch';
 import { STORAGE_DIRECTORY } from '../../constants';
 
 const accentColors: ACCENT_COLOR[] = [
@@ -16,6 +17,8 @@ const accentColors: ACCENT_COLOR[] = [
 ];
 
 export function Preferences({ ...props }: FullScreenDialogProps) {
+  const sync = true;
+
   return (
     <FullScreenDialog className="preferences" {...props}>
       <h4>Preferences</h4>
@@ -48,8 +51,26 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       </FullScreenDialog.Section>
 
       <FullScreenDialog.Section>
-        <FullScreenDialog.Title children="Storage Directory ( Read-Only )" />
+        <FullScreenDialog.Title children="Synchronization" />
         <FullScreenDialog.Row>
+          <div className="preferences-label">Enable synchronization:</div>
+          <div className="preferences-switch">
+            <Switch checked={sync} />
+          </div>
+        </FullScreenDialog.Row>
+        <FullScreenDialog.Row>
+          <div className="preferences-label">Sync after inactive:</div>
+          <div className="preferences-hours">
+            <Input className="filled" defaultValue={12} />
+            Hours
+          </div>
+        </FullScreenDialog.Row>
+      </FullScreenDialog.Section>
+
+      <FullScreenDialog.Section>
+        <FullScreenDialog.Title children="Data ( Read-Only )" />
+        <FullScreenDialog.Row>
+          <div className="preferences-label">Storage Directory:</div>
           <Input value={STORAGE_DIRECTORY} readOnly className="filled" />
         </FullScreenDialog.Row>
       </FullScreenDialog.Section>

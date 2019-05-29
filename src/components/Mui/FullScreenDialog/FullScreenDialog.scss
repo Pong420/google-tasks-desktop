@@ -14,36 +14,44 @@
 }
 
 .fullscreen-dialog-content {
+  $padding-x: 15px;
+
   @include flex();
   @include sq-dimen(100%);
 
   overflow: hidden;
 
   .scroll-content {
-    padding: 15px;
+    padding: $padding-x;
   }
 
   h4 {
+    @include margin-y(0 15px);
     color: var(--text-color);
-    margin-top: 0;
     font-size: 18px;
     font-weight: 500;
   }
 
   .fullscreen-dialog-section {
-    margin-top: 20px;
-
     .fullscreen-dialog-section-title {
+      @include margin-x(-$padding-x);
+      @include padding-x($padding-x);
+      @include padding-y(12px);
+      background-color: var(--main-light-color);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
       font-weight: 500;
       font-size: 15px;
-      margin-bottom: 5px;
     }
 
     .fullscreen-dialog-row {
       @include flex(center);
       @include padding-y(12px);
+      min-height: 50px;
 
-      border-bottom: 1px solid var(--border-color);
+      + .fullscreen-dialog-row {
+        border-top: 1px solid var(--border-color);
+      }
     }
   }
 }
