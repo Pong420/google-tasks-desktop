@@ -5,7 +5,7 @@
 .fullscreen-diaglog-header {
   @include dimen(100%, $header-height);
   @include flex(center, flex-end);
-  @include fake-border($borderWidth: 1px, $color: var(--main-light-color));
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
   @include padding-x(10px);
 
   .mui-icon-button {
@@ -37,7 +37,7 @@
       @include margin-x(-$padding-x);
       @include padding-x($padding-x);
       @include padding-y(12px);
-      background-color: var(--main-light-color);
+      background-color: var(--main-color-diff);
       border-top: 1px solid var(--border-color);
       border-bottom: 1px solid var(--border-color);
       font-weight: 500;

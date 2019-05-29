@@ -54,7 +54,7 @@
 .completed-tasks-list-header {
   @include dimen(100%, 54px);
   @include flex(center, space-between);
-  @include fake-border($borderWidth: 1px, $color: var(--main-light-color));
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
   @include typeface('Nunito Sans', 600);
   @include padding-x(($padding-x, 10px));
 
