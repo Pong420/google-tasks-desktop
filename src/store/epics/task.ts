@@ -270,27 +270,22 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
 const syncTasksEpic: TaskEpic = (action$, state$) => {
   const getAllTasksSilent$ = () => {
     const taskListId = state$.value.taskList.currentTaskListId;
-    return getAllTasks$(taskListId).pipe(takeUntil(action$));
+    if (taskListId && state$.value.network.isOnline) {
+      return getAllTasks$(taskListId);
+    }
+    return empty();
   };
 
-  const reconnection = action$.pipe(
-    ofType(NetworkActionTypes.OFFLINE),
-    switchMap(() => {
-      return action$.pipe(
-        ofType(NetworkActionTypes.ONLINE),
-        switchMap(() =>
-          timer(2000).pipe(
-            mergeMap(() => getAllTasksSilent$()),
-            takeUntil(action$)
-          )
-        )
-      );
-    })
-  );
+  const hour = 12;
+  const ms = hour * 60 * 60 * 1000;
 
-  return merge(
-    reconnection,
-    interval(43200).pipe(switchMap(() => getAllTasksSilent$()))
+  return action$.pipe(
+    switchMap(() =>
+      timer(ms).pipe(
+        switchMap(() => getAllTasksSilent$()),
+        takeUntil(action$)
+      )
+    )
   );
 };
 

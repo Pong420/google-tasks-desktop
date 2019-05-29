@@ -1,7 +1,7 @@
 import { push, RouterAction } from 'connected-react-router';
 import { generatePath } from 'react-router-dom';
 import { of, Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, take } from 'rxjs/operators';
 import { Action } from 'redux';
 import { ofType, StateObservable } from 'redux-observable';
 import { NetworkActionTypes } from './actions';
@@ -19,18 +19,20 @@ NProgress.configure({
 function withNetworkHelper<T extends Action>(
   state$: StateObservable<RootState>
 ) {
-  return (action$: Observable<T>) =>
-    action$.pipe(
+  return (action$: Observable<T>) => {
+    return action$.pipe(
       mergeMap(action => {
         if (state$.value.network.isOnline) {
           return of(action);
         }
         return action$.pipe(
           ofType(NetworkActionTypes.ONLINE),
-          mergeMap(() => of(action))
+          mergeMap(() => of(action)),
+          take(1)
         );
       })
     );
+  };
 }
 
 const epicDependencies = {
