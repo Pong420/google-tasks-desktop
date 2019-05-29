@@ -11,13 +11,9 @@ type Props = [
 
 export function useBoolean(initialState: boolean = false): Props {
   const [flag, setFlag] = useState(initialState);
+  const on = useCallback(() => setFlag(true), [setFlag]);
+  const off = useCallback(() => setFlag(false), [setFlag]);
+  const toggle = useCallback(() => setFlag(!flag), [setFlag, flag]);
 
-  return [
-    flag,
-    {
-      on: () => setFlag(true),
-      off: () => setFlag(false),
-      toggle: useCallback(() => setFlag(!flag), [flag])
-    }
-  ];
+  return [flag, { on, off, toggle }];
 }
