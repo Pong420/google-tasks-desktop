@@ -11,7 +11,7 @@ $defaultWidth: 47.5px;
     @include animate(background-color);
     @include dimen(100%, 0);
     @include relative();
-    background-color: #e3e3e3;
+    background-color: var(--task-focused-background-color);
     border-radius: 50px;
     padding-bottom: 50%;
   }

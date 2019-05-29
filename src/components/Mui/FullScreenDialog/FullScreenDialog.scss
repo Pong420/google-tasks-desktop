@@ -45,7 +45,7 @@
     }
 
     .fullscreen-dialog-row {
-      @include flex(center);
+      @include flex(center, space-between);
       @include padding-y(12px);
       min-height: 50px;
 
