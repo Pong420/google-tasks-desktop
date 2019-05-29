@@ -3,6 +3,7 @@
 
   .preferences-label {
     flex: 0 0 auto;
+    font-weight: 500;
     padding-right: 10px;
   }
 
@@ -117,6 +118,28 @@
             margin: auto;
           }
         }
+      }
+    }
+  }
+
+  .preferences-switch {
+    @include dimen(100%);
+    .switch {
+      @include margin-x(auto 0);
+    }
+  }
+
+  .preferences-hours {
+    @include dimen(100%);
+    @include flex(center, flex-end);
+    font-weight: 500;
+    .mui-input-base {
+      @include padding-y(0);
+      margin-right: 5px;
+      max-width: 4em;
+      min-height: 30px;
+      input {
+        text-align: center;
       }
     }
   }
