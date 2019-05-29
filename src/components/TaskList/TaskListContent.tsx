@@ -39,10 +39,12 @@ function TaskListContentComponent({
             <TodoTasksList onSortEnd={moveTask} todoTasks={todoTasks} />
           )}
         </ScrollContent>
-        <CompletedTasksList
-          deleteTask={deleteTask}
-          completedTasks={completedTasks}
-        />
+        {!!completedTasks.length && (
+          <CompletedTasksList
+            deleteTask={deleteTask}
+            completedTasks={completedTasks}
+          />
+        )}
       </div>
     </>
   );
