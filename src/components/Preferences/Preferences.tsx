@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FullScreenDialog,
   FullScreenDialogProps
@@ -17,7 +17,7 @@ const accentColors: ACCENT_COLOR[] = [
 ];
 
 export function Preferences({ ...props }: FullScreenDialogProps) {
-  const sync = true;
+  const [sync, setSync] = useState(true);
 
   return (
     <FullScreenDialog className="preferences" {...props}>
@@ -26,7 +26,7 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="General" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">Appearance:</div>
+          <div className="preferences-label">Appearance</div>
           <div className="preferences-theme-selector">
             <div className="preferences-theme light">
               <div onClick={() => window.__setTheme('light')} />
@@ -37,7 +37,7 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
           </div>
         </FullScreenDialog.Row>
         <FullScreenDialog.Row>
-          <div className="preferences-label">Accent color:</div>
+          <div className="preferences-label">Accent color</div>
           <div className="preferences-accent-color-selector">
             {accentColors.map((color, index) => (
               <div
@@ -53,24 +53,28 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="Synchronization" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">Enable synchronization:</div>
+          <div className="preferences-label">Enable synchronization</div>
           <div className="preferences-switch">
-            <Switch checked={sync} />
+            <Switch checked={sync} onChange={setSync} />
           </div>
         </FullScreenDialog.Row>
-        <FullScreenDialog.Row>
-          <div className="preferences-label">Sync after inactive:</div>
-          <div className="preferences-hours">
-            <Input className="filled" defaultValue={12} />
-            Hours
-          </div>
-        </FullScreenDialog.Row>
+        {sync && (
+          <>
+            <FullScreenDialog.Row>
+              <div className="preferences-label">Sync after inactive</div>
+              <div className="preferences-hours">
+                <Input className="filled" defaultValue={12} />
+                Hours
+              </div>
+            </FullScreenDialog.Row>
+          </>
+        )}
       </FullScreenDialog.Section>
 
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="Data ( Read-Only )" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">Storage Directory:</div>
+          <div className="preferences-label">Storage Directory</div>
           <Input value={STORAGE_DIRECTORY} readOnly className="filled" />
         </FullScreenDialog.Row>
       </FullScreenDialog.Section>

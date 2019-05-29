@@ -2,13 +2,12 @@
   color: var(--text-color);
 
   .preferences-label {
+    @include typeface('Nunito Sans', 600);
     flex: 0 0 auto;
-    font-weight: 500;
     padding-right: 10px;
   }
 
   .preferences-theme-selector {
-    @include dimen(100%);
     @include flex(center);
   }
 
@@ -122,16 +121,7 @@
     }
   }
 
-  .preferences-switch {
-    @include dimen(100%);
-    .switch {
-      @include margin-x(auto 0);
-    }
-  }
-
   .preferences-hours {
-    @include dimen(100%);
-    @include flex(center, flex-end);
     font-weight: 500;
     .mui-input-base {
       @include padding-y(0);
