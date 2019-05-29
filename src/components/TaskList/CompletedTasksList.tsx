@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
-  const [expanded, { toggle }] = useBoolean(false);
+  const [expanded, { toggle }] = useBoolean();
   const Icon = useMemo(() => (expanded ? CollapseIcon : ExpandIcon), [
     expanded
   ]);
@@ -27,10 +27,6 @@ export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
         : {},
     [expanded]
   );
-
-  if (!completedTasks.length) {
-    return null;
-  }
 
   return (
     <div className="completed-tasks-list" style={style}>
