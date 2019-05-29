@@ -26,13 +26,14 @@
 
   .task-list-scroll-content {
     flex: 1 1 auto;
+    height: 100%;
     overflow: auto;
   }
 }
 
 .dropdown-list-container {
   &,
-  [data-platform='darwin'] & .scroll-content {
+  .scroll-content {
     max-height: 200px;
   }
 }

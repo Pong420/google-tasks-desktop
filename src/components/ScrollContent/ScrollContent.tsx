@@ -23,12 +23,10 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 interface ContainerProps {
   children: ReactNode;
-  container: () => HTMLDivElement | null;
+  container: HTMLDivElement | null;
 }
 
-function Container({ children, container: getContainer }: ContainerProps) {
-  const container = getContainer();
-
+function Container({ children, container }: ContainerProps) {
   if (!container) {
     return null;
   }
@@ -68,8 +66,8 @@ export function ScrollContent({
 
   return (
     <div className={`scroll-content ${className}`.trim()} ref={el} {...props}>
-      {useSimplebar ? (
-        <Container container={getContainer}>{children}</Container>
+      {useSimplebar && getContainer() ? (
+        <Container container={getContainer()}>{children}</Container>
       ) : (
         children
       )}
