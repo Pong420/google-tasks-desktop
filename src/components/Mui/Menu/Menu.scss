@@ -1,5 +1,5 @@
 .mui-menu-paper.mui-menu-paper {
-  background-color: var(--main-lighter-color);
+  background-color: var(--main-color-diff2);
 }
 
 .mui-menu-item.mui-menu-item {
@@ -23,7 +23,7 @@
 
   &:hover {
     [data-theme^='dark'] & {
-      background-color: var(--main-light-color);
+      background-color: var(--main-color-diff);
     }
   }
 }
