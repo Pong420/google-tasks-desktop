@@ -4,7 +4,7 @@ process.once('loaded', () => {
   handleOSTheme();
 });
 
-window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
+window.__setAccentColor = newColor => {
   const color = newColor || localStorage.ACCENT_COLOR || 'blue';
 
   document.documentElement.setAttribute('data-accent-color', color);
