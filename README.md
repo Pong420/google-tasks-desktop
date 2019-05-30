@@ -59,15 +59,16 @@ yarn package-all
 - [x] Dark Theme
 - [x] Add Note
 - [x] Add Date
-- [ ] Animation
+- [x] Animation
+- [x] Sync data periodically
 - [ ] Error handling
-- [ ] Sync data periodically
 - [ ] Improve / check performace
 
 ### Known issue
 
+- The tasks that marked as completed through the official platform (Web/App) will not show in this application
 - Add time is not supported as API limitation
 - Once you add/edit the `date` through an official platform (Web/App). Then you change the `date` in this application, the `date` shown in the official platform (Web/App) will not be updated.
 - For tasks sort by date
   - Move task up/down shortcut is not supported currently.
-  - Tasks sorted by date or order is not synced to the official platform (Web/App)
+  - Tasks sorting order is not synced to the official platform (Web/App)
