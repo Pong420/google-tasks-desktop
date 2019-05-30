@@ -42,13 +42,7 @@ const getAllTasks$ = (tasklist: string) =>
       showCompleted: true,
       showHidden: false
     })
-  ).pipe(
-    map(({ data }) => data.items),
-    map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
-      type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
-      payload
-    }))
-  );
+  ).pipe(map(({ data }) => data.items));
 
 const onNewTaskSuccess$ = (action$: ActionsObservable<Actions>, uuid: string) =>
   action$.pipe(
@@ -74,12 +68,24 @@ const apiEpic: TaskEpic = (
           }))
         );
 
+      const getAllTasksActions$ = () =>
+        action$.pipe(
+          ofType(
+            TaskActionTypes.GET_ALL_TASKS,
+            TaskActionTypes.GET_ALL_TASKS_SILENT
+          )
+        );
+
       switch (action.type) {
         case TaskActionTypes.GET_ALL_TASKS:
           nprogress.inc(0.4);
 
           return getAllTasks$(tasklist).pipe(
             tap(() => nprogress.done()),
+            map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
+              type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
+              payload
+            })),
             takeUntil(action$.pipe(ofType(TaskActionTypes.GET_ALL_TASKS)))
           );
 
@@ -271,7 +277,12 @@ const syncTasksEpic: TaskEpic = (action$, state$) => {
   const getAllTasksSilent$ = () => {
     const taskListId = state$.value.taskList.currentTaskListId;
     if (taskListId && state$.value.network.isOnline) {
-      return getAllTasks$(taskListId);
+      return getAllTasks$(taskListId).pipe(
+        map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
+          type: TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS,
+          payload
+        }))
+      );
     }
     return empty();
   };

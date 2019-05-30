@@ -3,6 +3,7 @@ import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
+import merge from 'lodash/merge';
 
 export interface TaskState {
   focusIndex: string | number | null;
@@ -18,6 +19,10 @@ const initialState: TaskState = {
   completedTasks: []
 };
 
+interface KeyedTasks {
+  [id: string]: Schema$Task;
+}
+
 export default function(state = initialState, action: TaskActions): TaskState {
   switch (action.type) {
     case TaskActionTypes.GET_ALL_TASKS:
@@ -27,18 +32,41 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
-      const sortedTasks = (action.payload as Schema$Task[]).sort(
-        (a, b) =>
-          compare(a.position, b.position) || compare(a.updated, b.updated)
-      );
+    case TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS:
+      return (() => {
+        let newTasks = action.payload as Schema$Task[];
 
-      return {
-        ...state,
-        ...classify(sortedTasks, task => ({
-          ...task,
-          uuid: uuid.v4()
-        }))
-      };
+        if (action.type === TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS) {
+          const keyedTasksFromApi = newTasks.reduce<KeyedTasks>((acc, task) => {
+            acc[task.id!] = task;
+            return acc;
+          }, {});
+          const keyedCurrentTasks = state.tasks.reduce<KeyedTasks>(
+            (acc, task) => {
+              if (keyedTasksFromApi[task.id!]) {
+                acc[task.id!] = task;
+              }
+              return acc;
+            },
+            {}
+          );
+
+          newTasks = Object.values(merge(keyedCurrentTasks, keyedTasksFromApi));
+        }
+
+        const sortedTasks = newTasks.sort(
+          (a, b) =>
+            compare(a.position, b.position) || compare(a.updated, b.updated)
+        );
+
+        return {
+          ...state,
+          ...classify(sortedTasks, task => ({
+            ...task,
+            uuid: task.uuid || uuid.v4()
+          }))
+        };
+      })();
 
     case TaskActionTypes.NEW_TASK:
       return (() => {
