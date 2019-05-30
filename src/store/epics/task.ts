@@ -1,7 +1,7 @@
-import { empty, from, timer } from 'rxjs';
+import { empty, from, timer, merge } from 'rxjs';
 import {
   debounceTime,
-  distinctUntilChanged,
+  // distinctUntilChanged,
   filter,
   groupBy,
   map,
@@ -25,12 +25,12 @@ import {
   MoveTaskSuccess,
   NewTask
 } from '../actions/task';
-import { NetworkActions } from '../actions/network';
+import { NetworkActions, NetworkActionTypes } from '../actions/network';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
-import isEqual from 'lodash/fp/isEqual';
+// import isEqual from 'lodash/fp/isEqual';
 
 type Actions = TaskActions | NetworkActions;
 type TaskEpic = Epic<Actions, Actions, RootState, EpicDependencies>;
@@ -66,14 +66,6 @@ const apiEpic: TaskEpic = (
           map<any, TaskActions>(() => ({
             type: TaskActionTypes.DELETE_TASK_SUCCESS
           }))
-        );
-
-      const getAllTasksActions$ = () =>
-        action$.pipe(
-          ofType(
-            TaskActionTypes.GET_ALL_TASKS,
-            TaskActionTypes.GET_ALL_TASKS_SILENT
-          )
         );
 
       switch (action.type) {
@@ -183,7 +175,10 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
       map(({ data }) => data),
       map<tasks_v1.Schema$Task, UpdateTaskSuccess>(payload => ({
         type: TaskActionTypes.UPDATE_TASK_SUCCESS,
-        payload
+        payload: {
+          ...payload,
+          uuid: requestBody.uuid
+        }
       }))
     );
   };
@@ -195,7 +190,7 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
     mergeMap(group$ => {
       return group$.pipe(
         debounceTime(1000),
-        distinctUntilChanged(isEqual),
+        // distinctUntilChanged(isEqual),
         switchMap(action => {
           const exsits = state$.value.task.tasks.find(
             task => task.uuid === action.payload.uuid
@@ -287,20 +282,40 @@ const syncTasksEpic: TaskEpic = (action$, state$) => {
     return empty();
   };
 
-  return action$.pipe(
-    withLatestFrom(state$.pipe(map(({ preferences }) => preferences))),
-    switchMap(([_, { sync, inactiveHours }]) => {
-      const ms = inactiveHours * 60 * 60 * 1000;
+  const withSyncPreferences = withLatestFrom(
+    state$.pipe(map(({ preferences }) => preferences.sync))
+  );
 
-      if (!sync || ms < 60 * 1000) {
-        return empty();
-      }
+  const reconnection = action$.pipe(
+    ofType(NetworkActionTypes.OFFLINE),
+    switchMap(() =>
+      action$.pipe(
+        ofType(NetworkActionTypes.ONLINE),
+        withSyncPreferences,
+        switchMap(([_, { reconnection }]) =>
+          reconnection ? getAllTasksSilent$() : empty()
+        )
+      )
+    )
+  );
 
-      return timer(ms).pipe(
-        switchMap(() => getAllTasksSilent$()),
-        takeUntil(action$)
-      );
-    })
+  return merge(
+    reconnection,
+    action$.pipe(
+      withSyncPreferences,
+      switchMap(([_, { enabled, inactiveHours }]) => {
+        const ms = inactiveHours * 60 * 60 * 1000;
+
+        if (!enabled || ms < 60 * 1000) {
+          return empty();
+        }
+
+        return timer(ms).pipe(
+          switchMap(() => getAllTasksSilent$()),
+          takeUntil(action$.pipe(ofType(...Object.keys(TaskActionTypes))))
+        );
+      })
+    )
   );
 };
 

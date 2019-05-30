@@ -1,31 +1,39 @@
+import { SyncPreferences } from '../../typings';
+
 export enum PreferencesActionTypes {
-  TOGGLE_SYNC = 'TOGGLE_SYNC',
-  INACTIVE_HOURS = 'INACTIVE_HOURS'
+  UPDATE_SYNC_PREFERENCES = 'UPDATE_SYNC_PREFERENCES'
 }
 
-export interface ToggleSync {
-  type: PreferencesActionTypes.TOGGLE_SYNC;
-  payload?: boolean;
+export interface UpdateSyncPreferences {
+  type: PreferencesActionTypes.UPDATE_SYNC_PREFERENCES;
+  payload: Partial<SyncPreferences>;
 }
 
-export interface SetInactiveHours {
-  type: PreferencesActionTypes.INACTIVE_HOURS;
-  payload: number;
-}
-
-export type PreferencesActions = ToggleSync | SetInactiveHours;
+export type PreferencesActions = UpdateSyncPreferences;
 
 export const PreferencesActionCreators = {
-  toggleSync(payload?: boolean): ToggleSync {
+  toggleSync(enabled: boolean): UpdateSyncPreferences {
     return {
-      type: PreferencesActionTypes.TOGGLE_SYNC,
-      payload
+      type: PreferencesActionTypes.UPDATE_SYNC_PREFERENCES,
+      payload: {
+        enabled
+      }
     };
   },
-  setInactiveHour(payload: number): SetInactiveHours {
+  setInactiveHour(inactiveHours: number): UpdateSyncPreferences {
     return {
-      type: PreferencesActionTypes.INACTIVE_HOURS,
-      payload
+      type: PreferencesActionTypes.UPDATE_SYNC_PREFERENCES,
+      payload: {
+        inactiveHours
+      }
+    };
+  },
+  toggleSyncOnReconnection(enabled: boolean): UpdateSyncPreferences {
+    return {
+      type: PreferencesActionTypes.UPDATE_SYNC_PREFERENCES,
+      payload: {
+        reconnection: enabled
+      }
     };
   }
 };

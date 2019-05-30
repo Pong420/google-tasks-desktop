@@ -29,3 +29,9 @@ export interface OAuth2Keys {
   client_secret: string;
   redirect_uris: string[];
 }
+
+export interface SyncPreferences {
+  enabled: boolean;
+  reconnection: boolean;
+  inactiveHours: number;
+}

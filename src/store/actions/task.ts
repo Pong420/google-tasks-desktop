@@ -68,7 +68,7 @@ export interface UpdateTask {
 
 export interface UpdateTaskSuccess {
   type: TaskActionTypes.UPDATE_TASK_SUCCESS;
-  payload: tasks_v1.Schema$Task;
+  payload: Schema$Task;
 }
 
 export interface DeleteTask {
