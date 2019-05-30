@@ -22,15 +22,17 @@ const accentColors: ACCENT_COLOR[] = [
 const mapStateToProps = (
   { preferences }: RootState,
   ownProps: FullScreenDialogProps
-) => ({ ...ownProps, ...preferences });
+) => {
+  return { ...ownProps, ...preferences };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(PreferencesActionCreators, dispatch);
 
 function PreferencesComponent({
   sync,
-  inactiveHours,
   toggleSync,
+  toggleSyncOnReconnection,
   setInactiveHour,
   ...props
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
@@ -81,17 +83,26 @@ function PreferencesComponent({
         <FullScreenDialog.Row>
           <div className="preferences-label">Enable synchronization</div>
           <div className="preferences-switch">
-            <Switch checked={sync} onChange={toggleSync} />
+            <Switch checked={sync.enabled} onChange={toggleSync} />
           </div>
         </FullScreenDialog.Row>
         {sync && (
           <>
             <FullScreenDialog.Row>
+              <div className="preferences-label">Sync on reconnection</div>
+              <div className="preferences-hours">
+                <Switch
+                  checked={sync.reconnection}
+                  onChange={toggleSyncOnReconnection}
+                />
+              </div>
+            </FullScreenDialog.Row>
+            <FullScreenDialog.Row>
               <div className="preferences-label">Sync after inactive</div>
               <div className="preferences-hours">
                 <Input
                   className="filled"
-                  value={inactiveHours}
+                  value={sync.inactiveHours}
                   onChange={setInactiveHourCallback}
                 />
                 Hours

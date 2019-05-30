@@ -120,6 +120,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       })();
 
     case TaskActionTypes.UPDATE_TASK:
+    case TaskActionTypes.UPDATE_TASK_SUCCESS:
       return {
         ...state,
         ...classify(state.tasks, task =>

@@ -1,19 +1,26 @@
+import Store from 'electron-store';
 import {
   PreferencesActions,
   PreferencesActionTypes
 } from '../actions/preferences';
-import Store from 'electron-store';
+import { SyncPreferences } from '../../typings';
 
 const store = new Store();
 
 export interface PreferencesState {
-  sync: boolean;
-  inactiveHours: number;
+  sync: SyncPreferences;
+}
+
+enum KEYS {
+  SYNC = 'STORAGE_SYNC'
 }
 
 const initialState: PreferencesState = {
-  sync: store.get(PreferencesActionTypes.TOGGLE_SYNC) !== false ? true : false,
-  inactiveHours: store.get(PreferencesActionTypes.INACTIVE_HOURS) || 12
+  sync: store.get(KEYS.SYNC) || {
+    enabled: true,
+    reconnection: true,
+    inactiveHours: 12
+  }
 };
 
 export default function(
@@ -21,25 +28,17 @@ export default function(
   action: PreferencesActions
 ): PreferencesState {
   switch (action.type) {
-    case PreferencesActionTypes.TOGGLE_SYNC:
-      const sync =
-        typeof action.payload === 'undefined' ? !state.sync : action.payload;
+    case PreferencesActionTypes.UPDATE_SYNC_PREFERENCES:
+      const sync = {
+        ...state.sync,
+        ...action.payload
+      };
 
-      store.set(action.type, sync);
+      store.set(KEYS.SYNC, sync);
 
       return {
         ...state,
         sync
-      };
-
-    case PreferencesActionTypes.INACTIVE_HOURS:
-      const inactiveHours = action.payload;
-
-      store.set(action.type, inactiveHours);
-
-      return {
-        ...state,
-        inactiveHours
       };
 
     default:
