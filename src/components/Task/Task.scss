@@ -1,7 +1,7 @@
 $border: 1px solid var(--border-color);
 $min-task-height: 50px;
 
-@mixin withVeritcalBorder($color: var(--border-color)) {
+@mixin withTopBottomBorder($color: var(--border-color)) {
   &:before {
     @include absolute(0, null, 0);
     @include dimen(100%, calc(100% + 1px));
@@ -17,14 +17,15 @@ $min-task-height: 50px;
   @include flex(center);
   @include padding-x(10px);
   @include relative();
-  @include withVeritcalBorder(transparent);
+  @include withTopBottomBorder(transparent);
 
   background-color: var(--main-color);
 
   .task-input-base {
     @include relative();
-    @include withVeritcalBorder();
+    @include withTopBottomBorder();
     min-height: $min-task-height;
+    min-width: 0;
 
     //input endAdornment
     .mui-icon-button {
@@ -84,6 +85,8 @@ $min-task-height: 50px;
     @include padding-y(12px);
     @include relative();
 
+    overflow: hidden;
+
     .mui-input-base {
       $line-height: 20px;
       font-size: 14px;
@@ -110,7 +113,7 @@ $min-task-height: 50px;
 
     align-self: flex-start;
     background-color: var(--task-focused-background-color);
-    border: 1px solid var(--main-light-color);
+    border: 1px solid var(--main-color-diff);
     border-radius: 3px;
     color: var(--text-secondary-color);
     cursor: pointer;

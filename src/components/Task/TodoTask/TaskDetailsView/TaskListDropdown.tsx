@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Dropdown, useMuiMenu, useMenuItem } from '../../../Mui';
+import { Dropdown, useMuiMenu, useMuiMenuItem } from '../../../Mui';
 import { Schema$TaskList } from '../../../../typings';
 
 interface Props {
@@ -20,7 +20,7 @@ const menuListProps = {
 
 export function TaskListDropdown({ currentTaskList, taskLists }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-  const MenuItem = useMenuItem(onClose);
+  const MenuItem = useMuiMenuItem({ onClose });
 
   const { anchorPosition, paperProps } = useMemo(() => {
     const { offsetTop = 0, offsetLeft = 0 } = anchorEl || {};

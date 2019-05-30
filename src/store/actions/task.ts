@@ -6,6 +6,8 @@ import uuid from 'uuid';
 export enum TaskActionTypes {
   GET_ALL_TASKS = 'GET_ALL_TASKS',
   GET_ALL_TASKS_SUCCESS = 'GET_ALL_TASKS_SUCCESS',
+  GET_ALL_TASKS_SILENT = 'GET_ALL_TASKS_SILENT',
+  GET_ALL_TASKS_SILENT_SUCCESS = 'GET_ALL_TASKS_SILENT_SUCCESS',
   NEW_TASK = 'NEW_TASK',
   NEW_TASK_SUCCESS = 'NEW_TASK_SUCCESS',
   UPDATE_TASK = 'UPDATE_TASK',
@@ -38,6 +40,15 @@ export interface GetAllTasksSuccess {
   payload: tasks_v1.Schema$Task[];
 }
 
+export interface GetAllTasksSilent {
+  type: TaskActionTypes.GET_ALL_TASKS_SILENT;
+}
+
+export interface GetAllTasksSilentSuccess {
+  type: TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS;
+  payload: tasks_v1.Schema$Task[];
+}
+
 export interface NewTask {
   type: TaskActionTypes.NEW_TASK;
   payload: Payload$NewTask & {
@@ -57,7 +68,7 @@ export interface UpdateTask {
 
 export interface UpdateTaskSuccess {
   type: TaskActionTypes.UPDATE_TASK_SUCCESS;
-  payload: tasks_v1.Schema$Task;
+  payload: Schema$Task;
 }
 
 export interface DeleteTask {
@@ -94,6 +105,8 @@ export interface SetFocusIndex {
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
+  | GetAllTasksSilent
+  | GetAllTasksSilentSuccess
   | NewTask
   | NewTaskSuccess
   | UpdateTask

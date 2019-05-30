@@ -8,8 +8,7 @@ import React, {
 } from 'react';
 import { Omit } from 'react-redux';
 import { Dropdown, DropDownProps } from './Dropdown';
-import { useMuiMenu } from '../Menu';
-import { useMenuItem, MenuItemProps } from '../MenuItem';
+import { useMuiMenu, useMuiMenuItem, MenuItemProps } from '../Menu';
 import { classes } from '../../../utils/classes';
 
 type OmittedDropDownProps = Omit<
@@ -37,7 +36,7 @@ export function SelectableDropdown({
   ...props
 }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-  const MenuItem = useMenuItem(onClose);
+  const MenuItem = useMuiMenuItem({ onClose });
   const [menuWidth, setMenuWidth] = useState<CSSProperties['width']>(0);
   const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
   const scrollRef = useRef<HTMLDivElement>(null);
