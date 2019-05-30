@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useCallback, ChangeEvent } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import {
   FullScreenDialog,
   FullScreenDialogProps
 } from '../Mui/FullScreenDialog';
 import { Input } from '../Mui/Input';
-import { TOKEN_PATH, OAUTH2_KEYS_PATH } from '../../constants';
+import { Switch } from '../Switch';
+import { STORAGE_DIRECTORY } from '../../constants';
+import { RootState, PreferencesActionCreators } from '../../store';
 
 const accentColors: ACCENT_COLOR[] = [
   'blue',
@@ -15,7 +19,33 @@ const accentColors: ACCENT_COLOR[] = [
   'grey'
 ];
 
-export function Preferences({ ...props }: FullScreenDialogProps) {
+const mapStateToProps = (
+  { preferences }: RootState,
+  ownProps: FullScreenDialogProps
+) => {
+  return { ...ownProps, ...preferences };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(PreferencesActionCreators, dispatch);
+
+function PreferencesComponent({
+  sync,
+  toggleSync,
+  toggleSyncOnReconnection,
+  setInactiveHour,
+  ...props
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+  const setInactiveHourCallback = useCallback(
+    (evt: ChangeEvent<HTMLInputElement>) => {
+      const value = Number(evt.target.value);
+      if (!isNaN(value)) {
+        setInactiveHour(value);
+      }
+    },
+    [setInactiveHour]
+  );
+
   return (
     <FullScreenDialog className="preferences" {...props}>
       <h4>Preferences</h4>
@@ -23,7 +53,7 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="General" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">Appearance:</div>
+          <div className="preferences-label">Appearance</div>
           <div className="preferences-theme-selector">
             <div className="preferences-theme light">
               <div onClick={() => window.__setTheme('light')} />
@@ -33,8 +63,9 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
             </div>
           </div>
         </FullScreenDialog.Row>
+
         <FullScreenDialog.Row>
-          <div className="preferences-label">Accent color:</div>
+          <div className="preferences-label">Accent color</div>
           <div className="preferences-accent-color-selector">
             {accentColors.map((color, index) => (
               <div
@@ -48,16 +79,51 @@ export function Preferences({ ...props }: FullScreenDialogProps) {
       </FullScreenDialog.Section>
 
       <FullScreenDialog.Section>
-        <FullScreenDialog.Title children="Storage ( Read-Only )" />
+        <FullScreenDialog.Title children="Synchronization" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">OAuth Keys Path:</div>
-          <Input value={OAUTH2_KEYS_PATH} readOnly className="filled" />
+          <div className="preferences-label">Enable synchronization</div>
+          <div className="preferences-switch">
+            <Switch checked={sync.enabled} onChange={toggleSync} />
+          </div>
         </FullScreenDialog.Row>
+        {sync && (
+          <>
+            <FullScreenDialog.Row>
+              <div className="preferences-label">Sync on reconnection</div>
+              <div className="preferences-hours">
+                <Switch
+                  checked={sync.reconnection}
+                  onChange={toggleSyncOnReconnection}
+                />
+              </div>
+            </FullScreenDialog.Row>
+            <FullScreenDialog.Row>
+              <div className="preferences-label">Sync after inactive</div>
+              <div className="preferences-hours">
+                <Input
+                  className="filled"
+                  value={sync.inactiveHours}
+                  onChange={setInactiveHourCallback}
+                />
+                Hours
+              </div>
+            </FullScreenDialog.Row>
+          </>
+        )}
+      </FullScreenDialog.Section>
+
+      <FullScreenDialog.Section>
+        <FullScreenDialog.Title children="Data ( Read-Only )" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">Token Path:</div>
-          <Input value={TOKEN_PATH} readOnly className="filled" />
+          <div className="preferences-label">Storage Directory</div>
+          <Input value={STORAGE_DIRECTORY} readOnly className="filled" />
         </FullScreenDialog.Row>
       </FullScreenDialog.Section>
     </FullScreenDialog>
   );
 }
+
+export const Preferences = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PreferencesComponent);

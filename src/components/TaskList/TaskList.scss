@@ -26,32 +26,36 @@
 
   .task-list-scroll-content {
     flex: 1 1 auto;
+    height: 100%;
     overflow: auto;
   }
 }
 
 .dropdown-list-container {
   &,
-  [data-platform='darwin'] & .scroll-content {
+  .scroll-content {
     max-height: 200px;
   }
 }
 
 .completed-tasks-list {
+  @include animate(transform);
+  @include absolute(null, 0, 0);
   @include dimen(100%);
   @include flex($flex-direction: column);
 
   background-color: var(--main-color);
   flex: 0 0 auto;
-  // margin-top: -2px;
   max-height: calc(100vh - #{$header-height});
   padding-bottom: 2px;
+  transform: translateY(calc(100% - 54px));
+  z-index: 10;
 }
 
 .completed-tasks-list-header {
   @include dimen(100%, 54px);
   @include flex(center, space-between);
-  @include fake-border($borderWidth: 1px, $color: var(--main-light-color));
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
   @include typeface('Nunito Sans', 600);
   @include padding-x(($padding-x, 10px));
 

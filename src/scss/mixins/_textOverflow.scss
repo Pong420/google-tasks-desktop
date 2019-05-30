@@ -6,7 +6,6 @@
 
 @mixin multi-line-ellipsis($line-height: 1.2em, $line-clamp: 2) {
   line-height: $line-height;
-  // - 0.1em for firefox
   max-height: calc(#{$line-height * $line-clamp} - 0.1em);
   display: -webkit-box;
   overflow: hidden;

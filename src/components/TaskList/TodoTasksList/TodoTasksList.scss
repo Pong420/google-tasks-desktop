@@ -1,10 +1,3 @@
-.todo-tasks-list,
-.todo-tasks-list-sort-by-date {
-  &:not(:empty) {
-    border-bottom: 1px solid var(--border-color);
-  }
-}
-
 .todo-tasks-list-sort-by-date {
   .date-label {
     @include dimen(100%, 40px);

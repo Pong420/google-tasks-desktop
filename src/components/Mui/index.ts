@@ -8,4 +8,3 @@ export * from './Input';
 export * from './IconButton';
 export * from './Modal';
 export * from './Menu';
-export * from './MenuItem';

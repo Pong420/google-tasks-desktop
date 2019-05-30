@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useCallback } from 'react';
 import { Link, generatePath } from 'react-router-dom';
-import { useMuiMenu, useMenuItem, Dropdown } from '../../Mui';
+import { useMuiMenu, useMuiMenuItem, Dropdown } from '../../Mui';
 import { ScrollContent, SimplebarAPI } from '../../ScrollContent';
 import { TaskListState } from '../../../store';
 import { PATHS } from '../../../constants';
@@ -23,7 +23,7 @@ export function TaskListDropdown({
   onCreateNewTaskList
 }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-  const MenuItem = useMenuItem(onClose);
+  const MenuItem = useMuiMenuItem({ onClose });
 
   const simplebarRef = useRef<SimplebarAPI | null>(null);
   const selectedItemRef = useRef<HTMLAnchorElement | null>(null);

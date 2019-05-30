@@ -2,18 +2,18 @@
   color: var(--text-color);
 
   .preferences-label {
+    @include typeface('Nunito Sans', 600);
     flex: 0 0 auto;
-    width: 85px;
     padding-right: 10px;
   }
 
   .preferences-theme-selector {
-    @include dimen(100%);
     @include flex(center);
   }
 
   .preferences-theme {
     text-align: center;
+    font-size: 12px;
     line-height: 1.5em;
 
     > div {
@@ -39,7 +39,6 @@
       &:before {
         @include absolute(0, null, 0);
         @include sq-dimen(100%);
-
         border-radius: 3px;
         content: '';
       }
@@ -84,7 +83,7 @@
     @include flex(center);
 
     > div {
-      @include sq-dimen(22px);
+      @include sq-dimen(20px);
       @include relative();
 
       border-radius: 50%;
@@ -118,6 +117,19 @@
             margin: auto;
           }
         }
+      }
+    }
+  }
+
+  .preferences-hours {
+    font-weight: 500;
+    .mui-input-base {
+      @include padding-y(0);
+      margin-right: 5px;
+      max-width: 4em;
+      min-height: 30px;
+      input {
+        text-align: center;
       }
     }
   }

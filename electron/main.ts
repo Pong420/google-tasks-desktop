@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as url from 'url';
 import { app, BrowserWindow, WebPreferences, shell } from 'electron';
 import { MenuBuilder } from './menu';
+import { store } from './store';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -22,13 +23,16 @@ async function createWindow() {
     await installExtension(REDUX_DEVTOOLS);
   }
 
+  const offset = store.get('offset');
+
   mainWindow = new BrowserWindow({
     frame: false,
     height: 500,
     width: 300,
     show: false,
     titleBarStyle: 'hiddenInset',
-    webPreferences
+    webPreferences,
+    ...offset
   });
 
   const startUrl =
@@ -70,5 +74,12 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
+  }
+});
+
+app.on('before-quit', () => {
+  if (mainWindow) {
+    const { x, y } = mainWindow.getBounds();
+    store.set('offset', { x, y });
   }
 });
