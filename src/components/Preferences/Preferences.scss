@@ -96,7 +96,7 @@
     }
 
     @each $name, $colors in $accent-colors {
-      .#{$name} {
+      .#{'' + $name} {
         background-color: map-get($colors, primary);
         box-shadow: 2px 2px 10px -3px map-get($colors, dark);
 
@@ -106,7 +106,7 @@
           content: '';
         }
 
-        [data-accent-color^='#{$name}'] & {
+        [data-accent-color^='#{"" + $name}'] & {
           &:before {
             @include absolute(0px, 0, 0px, 0);
             @include sq-dimen(8px);
