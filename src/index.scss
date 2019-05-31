@@ -28,7 +28,7 @@
 }
 
 @each $name, $colors in $accent-colors {
-  [data-accent-color^='#{$name}'] {
+  [data-accent-color^='#{"" + $name}'] {
     --accent-color: #{map-get($colors, primary)};
     --accent-light-color: #{map-get($colors, light)};
     --accent-dark-color: #{map-get($colors, dark)};
