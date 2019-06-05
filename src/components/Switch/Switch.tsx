@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { classes } from '../../utils/classes';
 
 interface Props {
   checked?: boolean;
@@ -8,6 +9,7 @@ interface Props {
 
 export function Switch({ checked = false, width, onChange }: Props) {
   const [isChecked, setChecked] = useState(checked);
+  const style = useMemo(() => ({ width }), [width]);
 
   useEffect(() => {
     onChange && onChange(isChecked);
@@ -15,9 +17,9 @@ export function Switch({ checked = false, width, onChange }: Props) {
 
   return (
     <div
-      className={`switch ${isChecked ? 'checked' : ''}`.trim()}
+      className={classes('switch', isChecked && 'checked')}
       onClick={() => setChecked(!isChecked)}
-      style={{ width }}
+      style={style}
     >
       <div className="switch-bar" />
       <div className="switch-icon" />

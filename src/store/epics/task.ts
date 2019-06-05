@@ -179,7 +179,8 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
           ...payload,
           uuid: requestBody.uuid
         }
-      }))
+      })),
+      takeUntil(action$.pipe(ofType(TaskActionTypes.UPDATE_TASK)))
     );
   };
 
@@ -237,8 +238,10 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
             previous: previous && previous.id
           })
         ).pipe(
-          map<any, MoveTaskSuccess>(() => ({
-            type: TaskActionTypes.MOVE_TASKS_SUCCESS
+          map(({ data }) => data),
+          map<tasks_v1.Schema$Task, MoveTaskSuccess>(payload => ({
+            type: TaskActionTypes.MOVE_TASKS_SUCCESS,
+            payload
           }))
         )
       ),
@@ -248,13 +251,12 @@ const moveTaskEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
   return action$.pipe(
     withNetworkHelper(state$),
     ofType<Actions, MoveTask>(TaskActionTypes.MOVE_TASKS),
-    withLatestFrom(todoTasks$),
-    groupBy(([action, todoTasks]) => todoTasks[action.payload.newIndex].uuid),
+    groupBy(action => action.payload.uuid),
     mergeMap(group$ =>
       group$.pipe(
         debounceTime(500),
-        switchMap(([action, todoTasks]) => {
-          const task = todoTasks[action.payload.newIndex];
+        switchMap(action => {
+          const task = state$.value.task.todoTasks[action.payload.newIndex];
           if (!task.id) {
             return onNewTaskSuccess$(action$, task.uuid).pipe(
               switchMap(success => moveTaskRequest$(success.payload))

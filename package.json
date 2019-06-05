@@ -1,6 +1,6 @@
 {
   "name": "google-task-desktop",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "scripts": {
     "dev": "nf start",
     "build": "yarn app:build && yarn electron:compile",
@@ -141,7 +141,6 @@
     "@types/react-router-dom": "^4.3.3",
     "@types/uuid": "^3.4.4",
     "cross-env": "^5.2.0",
-    "dart-sass": "^1.20.1",
     "electron": "^4.1.4",
     "electron-builder": "^20.41.0",
     "eslint-plugin-react-hooks": "^1.6.0",
