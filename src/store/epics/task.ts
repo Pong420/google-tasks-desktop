@@ -179,7 +179,8 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
           ...payload,
           uuid: requestBody.uuid
         }
-      }))
+      })),
+      takeUntil(action$.pipe(ofType(TaskActionTypes.UPDATE_TASK)))
     );
   };
 
