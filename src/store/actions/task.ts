@@ -29,6 +29,11 @@ export interface Payload$DeleteTask extends Schema$Task {
   previousTaskIndex?: number;
 }
 
+export interface Payload$MoveTask
+  extends Pick<SortEnd, 'newIndex' | 'oldIndex'> {
+  uuid: string;
+}
+
 export type Payload$SortTasks = 'order' | 'date';
 
 export interface GetAllTasks {
@@ -90,11 +95,12 @@ export interface DeleteCompletedTasksSuccess {
 
 export interface MoveTask {
   type: TaskActionTypes.MOVE_TASKS;
-  payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>;
+  payload: Payload$MoveTask;
 }
 
 export interface MoveTaskSuccess {
   type: TaskActionTypes.MOVE_TASKS_SUCCESS;
+  payload: tasks_v1.Schema$Task;
 }
 
 export interface SetFocusIndex {
@@ -151,7 +157,7 @@ export const TaskActionCreators = {
       type: TaskActionTypes.DELETE_COMPLETED_TASKS
     };
   },
-  moveTask(payload: Pick<SortEnd, 'newIndex' | 'oldIndex'>): MoveTask {
+  moveTask(payload: Payload$MoveTask): MoveTask {
     return {
       type: TaskActionTypes.MOVE_TASKS,
       payload
