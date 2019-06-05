@@ -1,5 +1,5 @@
-.dropdown-button {
-  &.dropdown-button {
+.mui-dropdown-button {
+  &.mui-dropdown-button {
     @include flex(center, space-between);
     font-size: inherit;
     text-transform: initial;
@@ -12,7 +12,7 @@
     }
   }
 
-  &.seletable-dropdown-button {
+  &.seletable-mui-dropdown-button {
     background: var(--task-focused-background-color);
   }
 }

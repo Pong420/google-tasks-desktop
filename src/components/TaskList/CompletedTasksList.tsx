@@ -29,25 +29,27 @@ export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
   );
 
   return (
-    <div className="completed-tasks-list" style={style}>
-      <div className="completed-tasks-list-header" onClick={toggle}>
-        Completed ({completedTasks.length})
-        <IconButton>
-          <Icon fontSize="default" />
-        </IconButton>
-      </div>
-      <div className="completed-tasks-list-content">
-        <ScrollContent>
-          {completedTasks.map(task => {
-            return (
-              <CompletedTask
-                key={task.uuid}
-                task={task}
-                deleteTask={deleteTask}
-              />
-            );
-          })}
-        </ScrollContent>
+    <div className="completed-tasks-list">
+      <div className="completed-tasks-list-inner" style={style}>
+        <div className="completed-tasks-list-header" onClick={toggle}>
+          Completed ({completedTasks.length})
+          <IconButton>
+            <Icon fontSize="default" />
+          </IconButton>
+        </div>
+        <div className="completed-tasks-list-content">
+          <ScrollContent>
+            {completedTasks.map(task => {
+              return (
+                <CompletedTask
+                  key={task.uuid}
+                  task={task}
+                  deleteTask={deleteTask}
+                />
+              );
+            })}
+          </ScrollContent>
+        </div>
       </div>
     </div>
   );

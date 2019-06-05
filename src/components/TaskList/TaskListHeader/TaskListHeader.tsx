@@ -25,8 +25,8 @@ export function TaskListHeaderComponent({
   return (
     <div className="task-list-header">
       <div className="status">{!isOnline && <WifiOffIcon />}</div>
-      <div className="task-list-menu">
-        <div className="task-list-menu-label">
+      <div className="task-list-dropdown-container">
+        <div className="task-list-dropdown-label">
           <span>TASKS</span>
         </div>
         <TaskListDropdown

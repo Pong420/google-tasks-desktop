@@ -64,7 +64,7 @@ export function SelectableDropdown({
   const mergedButtonProps = useMemo(
     () => ({
       fullWidth: true,
-      classes: { root: 'seletable-dropdown-button' },
+      classes: { root: 'seletable-mui-dropdown-button' },
       ...buttonProps
     }),
     [buttonProps]
