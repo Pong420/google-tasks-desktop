@@ -3,7 +3,6 @@ import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
 import arrayMove from 'array-move';
 import uuid from 'uuid';
-import merge from 'lodash/merge';
 
 export interface TaskState {
   focusIndex: string | number | null;
@@ -41,23 +40,44 @@ export default function(state = initialState, action: TaskActions): TaskState {
             acc[task.id!] = task;
             return acc;
           }, {});
+
+          const tasksNotSubmitted: Schema$Task[] = [];
+
           const keyedCurrentTasks = state.tasks.reduce<KeyedTasks>(
             (acc, task) => {
-              if (keyedTasksFromApi[task.id!]) {
-                acc[task.id!] = task;
+              if (task.id) {
+                // check if task exisit in tasks return from api
+                if (keyedTasksFromApi[task.id]) {
+                  acc[task.id] = task;
+                }
+              } else {
+                tasksNotSubmitted.push(task);
               }
+
               return acc;
             },
             {}
           );
 
-          newTasks = Object.values(merge(keyedCurrentTasks, keyedTasksFromApi));
+          newTasks = [
+            ...tasksNotSubmitted,
+            ...Object.values({ ...keyedTasksFromApi, ...keyedCurrentTasks })
+          ];
         }
 
-        const sortedTasks = newTasks.sort(
-          (a, b) =>
+        const sortedTasks = newTasks.sort((a, b) => {
+          // check position is undefined for task created from `Add a tasl button`
+          if (
+            (a.position === undefined || b.position === undefined) &&
+            a.position !== b.position
+          ) {
+            return -1;
+          }
+
+          return (
             compare(a.position, b.position) || compare(a.updated, b.updated)
-        );
+          );
+        });
 
         return {
           ...state,
@@ -135,15 +155,38 @@ export default function(state = initialState, action: TaskActions): TaskState {
         const { newIndex, oldIndex } = action.payload;
         const { tasks, todoTasks } = state;
 
-        const realNewIndex = tasks.indexOf(todoTasks[newIndex]);
-        const realoldIndex = tasks.indexOf(todoTasks[oldIndex]);
+        const newTask = todoTasks[newIndex];
+        const oldTask = todoTasks[oldIndex];
+        const realNewIndex = tasks.indexOf(newTask);
+        const realoldIndex = tasks.indexOf(oldTask);
 
         return {
           ...state,
-          ...classify(arrayMove(state.tasks, realoldIndex, realNewIndex)),
+          ...classify(
+            arrayMove(state.tasks, realoldIndex, realNewIndex),
+            task => {
+              if (task.uuid === newTask.uuid) {
+                return { ...task, position: oldTask.position };
+              }
+
+              if (task.uuid === oldTask.uuid) {
+                return { ...task, position: newTask.position };
+              }
+
+              return task;
+            }
+          ),
           focusIndex: newIndex
         };
       })();
+
+    case TaskActionTypes.MOVE_TASKS_SUCCESS:
+      return {
+        ...state,
+        ...classify(state.tasks, task =>
+          task.id === action.payload.id ? { ...action.payload, ...task } : task
+        )
+      };
 
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
       return {

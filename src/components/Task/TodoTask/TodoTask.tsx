@@ -136,7 +136,7 @@ function TodoTaskComponent({
         const oldIndex = index;
         const newIndex = oldIndex + step;
         if (newIndex >= 0 && newIndex < todoTasks.length) {
-          moveTask({ newIndex, oldIndex });
+          moveTask({ newIndex, oldIndex, uuid: task.uuid });
         }
       }
 
@@ -147,7 +147,7 @@ function TodoTaskComponent({
       moveTaskUp: handler(-1),
       moveTaskDown: handler(1)
     };
-  }, [index, moveTask, sortByDate, todoTasks.length]);
+  }, [index, moveTask, sortByDate, todoTasks.length, task.uuid]);
 
   const { focusPrevTask, focusNextTask } = useMemo(() => {
     const handler = (step: number) => () => {
