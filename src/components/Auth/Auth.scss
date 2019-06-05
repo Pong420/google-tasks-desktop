@@ -15,7 +15,7 @@
 
   .auth-content {
     @include dimen(100%);
-    @include flex(stretch, center);
+    @include flex(flex-start, center, column);
     @include relative();
 
     flex: 1 1 auto;
@@ -27,8 +27,6 @@
 
   form {
     @include dimen(100%);
-    @include flex(center, center, $wrap: wrap);
-
     .mui-input-base {
       margin: 5px 0 15px;
     }
