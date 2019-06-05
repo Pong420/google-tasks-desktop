@@ -86,7 +86,7 @@ function PreferencesComponent({
             <Switch checked={sync.enabled} onChange={toggleSync} />
           </div>
         </FullScreenDialog.Row>
-        {sync && (
+        {sync.enabled && (
           <>
             <FullScreenDialog.Row>
               <div className="preferences-label">Sync on reconnection</div>
@@ -113,9 +113,9 @@ function PreferencesComponent({
       </FullScreenDialog.Section>
 
       <FullScreenDialog.Section>
-        <FullScreenDialog.Title children="Data ( Read-Only )" />
+        <FullScreenDialog.Title children="Storage ( Read-Only )" />
         <FullScreenDialog.Row>
-          <div className="preferences-label">Storage Directory</div>
+          <div className="preferences-label">Path</div>
           <Input value={STORAGE_DIRECTORY} readOnly className="filled" />
         </FullScreenDialog.Row>
       </FullScreenDialog.Section>
