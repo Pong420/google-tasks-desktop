@@ -17,7 +17,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 function TaskListContentComponent({
   todoTasks,
   completedTasks,
-  currentTaskList,
+  currentTaskListId,
   getAllTasks,
   moveTask,
   deleteTask,
@@ -25,8 +25,8 @@ function TaskListContentComponent({
   newTask
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   useEffect(() => {
-    currentTaskList && getAllTasks();
-  }, [currentTaskList, getAllTasks]);
+    currentTaskListId && getAllTasks();
+  }, [currentTaskListId, getAllTasks]);
 
   return (
     <>
