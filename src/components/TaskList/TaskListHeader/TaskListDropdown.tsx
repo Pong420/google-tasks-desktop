@@ -15,7 +15,7 @@ interface Props {
 }
 
 const dropdownClasses = { paper: 'task-list-dropdown-paper' };
-const buttonProps = { classes: { root: 'task-list-dropdown-button' } };
+const buttonProps = { classes: { root: 'task-list-mui-dropdown-button' } };
 
 export function TaskListDropdown({
   taskLists,

@@ -37,7 +37,7 @@ export function Dropdown({
   const mergedButtonClasses = useMemo(
     () =>
       mergeWith(
-        { root: 'dropdown-button' },
+        { root: 'mui-dropdown-button' },
         buttonClasses,
         (a, b) => a + ' ' + b
       ),

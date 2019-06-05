@@ -7,10 +7,11 @@
 
   padding-bottom: 8px;
 
-  .task-list-menu {
+  .task-list-dropdown-container {
     @include app-region-no-drag;
+    overflow: hidden;
 
-    .task-list-menu-label {
+    .task-list-dropdown-label {
       color: #80868b;
       font-size: 10px;
       letter-spacing: 1.5px;
@@ -20,12 +21,10 @@
       padding-right: 6px;
     }
 
-    button {
+    .mui-dropdown-button {
+      @include dimen(100%);
       @include typeface('Nunito Sans', 600);
-
       font-size: 15px;
-      margin-right: 0;
-      margin-left: auto;
     }
   }
 
@@ -36,7 +35,7 @@
   }
 }
 
-.dropdown-button.task-list-dropdown-button {
+.mui-dropdown-button.task-list-mui-dropdown-button {
   color: var(--text-color);
   min-height: 26px;
 }
