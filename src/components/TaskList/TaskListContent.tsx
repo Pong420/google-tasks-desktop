@@ -5,11 +5,16 @@ import { TodoTasksList, TodoTasksListSortByDate } from './TodoTasksList';
 import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from '../NewTask';
 import { ScrollContent } from '../ScrollContent';
-import { TaskActionCreators, RootState } from '../../store';
+import { RootState, TaskActionCreators } from '../../store';
 
-const mapStateToProps = ({ task, taskList }: RootState) => ({
-  ...task,
-  ...taskList
+const mapStateToProps = ({
+  task: { todoTasks, completedTasks },
+  taskList: { currentTaskList, sortByDate }
+}: RootState) => ({
+  todoTasks,
+  completedTasks,
+  currentTaskList,
+  sortByDate
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispatch);
@@ -24,9 +29,11 @@ function TaskListContentComponent({
   sortByDate,
   newTask
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+  const fetch = currentTaskList && currentTaskList.id;
+
   useEffect(() => {
-    currentTaskList && getAllTasks();
-  }, [currentTaskList && currentTaskList.id, getAllTasks]);
+    fetch && getAllTasks();
+  }, [fetch, getAllTasks]);
 
   return (
     <>
