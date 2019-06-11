@@ -1,4 +1,4 @@
-## Google Tasks Desktop (WIP)
+## Google Tasks Desktop
 
 <div>
   <img src="./screenshot/1.png" width="24%">
@@ -8,6 +8,8 @@
 </div>
 
 ### [Download](https://github.com/Pong420/google-tasks-desktop/releases)
+
+### [Video Demo](https://github.com/Pong420/google-tasks-desktop/demo.mp4)
 
 ### Project Setup
 
@@ -61,6 +63,8 @@ yarn package-all
 - [x] Add Date
 - [x] Animation
 - [x] Sync data periodically
+- [ ] Subtask
+- [ ] Move task to another list
 - [ ] Error handling
 - [ ] Improve / check performace
 
