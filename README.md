@@ -9,7 +9,7 @@
 
 ### [Download](https://github.com/Pong420/google-tasks-desktop/releases)
 
-### [Video Demo](https://github.com/Pong420/google-tasks-desktop/demo.mp4)
+### [Video Demo](https://pong420.github.io/google-tasks-desktop/demo.mp4)
 
 ### Project Setup
 
