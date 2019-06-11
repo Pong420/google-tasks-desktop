@@ -26,19 +26,29 @@ export function useMuiMenu() {
     setAnchorPosition(anchorPosition);
   }, [anchorPosition]);
 
-  return {
-    anchorEl,
-    anchorPosition,
-    setAnchorEl(evt: SyntheticEvent<HTMLElement>) {
+  const setAnchorElCallback = useCallback(
+    (evt: SyntheticEvent<HTMLElement>) => {
       setAnchorEl(evt.currentTarget);
     },
-    setAnchorPosition(evt: MouseEvent<HTMLElement>) {
+    []
+  );
+
+  const setAnchorPositionCallback = useCallback(
+    (evt: MouseEvent<HTMLElement>) => {
       evt.preventDefault();
       setAnchorPosition({
         top: evt.pageY,
         left: evt.pageX
       });
     },
+    []
+  );
+
+  return {
+    anchorEl,
+    anchorPosition,
+    setAnchorEl: setAnchorElCallback,
+    setAnchorPosition: setAnchorPositionCallback,
     onClose
   };
 }
