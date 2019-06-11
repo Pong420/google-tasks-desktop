@@ -65,17 +65,20 @@ function TaskListMenuComponent({
     deleteCompletedTaskModalOpend,
     deleteCompletedTaskModal
   ] = useBoolean();
-  const [deleteTaskListModalOpend, deleteTaskListModal] = useBoolean();
   const [renameTaskModalOpend, renameTaskModal] = useBoolean();
   const [keyboardShortcutsOpened, keyboardShortcuts] = useBoolean();
   const [preferencesOpened, preferences] = useBoolean();
+  const [
+    deleteTaskListModalOpend,
+    { on: openDeleteTaskListModal, off: closeDeleteTaskListModal }
+  ] = useBoolean();
 
   const totalTask = useNotZero(tasks.length);
   const numOfCompletedTask = useNotZero(completedTasks.length);
 
   const onDeleteTaskListCallback = useCallback(
-    () => (!!tasks.length ? deleteTaskListModal.on() : delteTaskList()),
-    [deleteTaskListModal, delteTaskList, tasks.length]
+    () => (!!tasks.length ? openDeleteTaskListModal : delteTaskList()),
+    [openDeleteTaskListModal, delteTaskList, tasks.length]
   );
 
   const renameTaskListCallback = useCallback(
@@ -128,7 +131,7 @@ function TaskListMenuComponent({
         title="Delete this list?"
         confirmLabel="Delete"
         open={deleteTaskListModalOpend}
-        handleClose={deleteTaskListModal.off}
+        handleClose={closeDeleteTaskListModal}
         handleConfirm={delteTaskList}
       >
         Deleting this list will also delete {totalTask} task.
