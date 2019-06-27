@@ -3,7 +3,7 @@ import Button, { ButtonProps } from '@material-ui/core/Button';
 import { Menu } from '../Menu';
 import { MenuProps } from '@material-ui/core/Menu';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
-import mergeWith from 'lodash/mergeWith';
+import mergeWith from 'lodash.mergewith';
 
 export interface DropDownProps extends MenuProps {
   label?: string;

@@ -5,12 +5,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 interface Props extends Partial<IconButtonProps> {
   tooltip?: string;
-  icon?: ComponentType<SvgIconProps>;
+  icon?: ComponentType<any>;
   iconProps?: SvgIconProps;
-  children?: ReactElement;
+  children?: ReactElement<any>;
 }
 
-const popperProps = {
+const PopperProps = {
   popperOptions: {
     modifiers: {
       offset: {
@@ -24,16 +24,16 @@ const popperProps = {
 };
 
 export function IconButton({
+  className = '',
   tooltip = '',
   icon: Icon,
   iconProps,
   children,
-  className = '',
   ...props
 }: Props) {
   return (
     <MuiIconButton className={`mui-icon-button ${className}`.trim()} {...props}>
-      <Tooltip title={tooltip} PopperProps={popperProps}>
+      <Tooltip title={tooltip} PopperProps={PopperProps}>
         {Icon ? <Icon {...iconProps} /> : children ? children : <div />}
       </Tooltip>
     </MuiIconButton>

@@ -18,9 +18,9 @@ interface ContainerProps {
   children?: ReactNode;
 }
 
-function Transition(props: TransitionProps) {
-  return <Slide {...props} direction="left" />;
-}
+const Transition = React.forwardRef<any, TransitionProps>((props, ref) => {
+  return <Slide direction="left" ref={ref} {...props} />;
+});
 
 const backdropProps = {
   open: false
