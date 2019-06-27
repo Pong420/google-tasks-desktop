@@ -2,7 +2,7 @@ import React, { useMemo, useCallback, ReactNode } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import { ScrollContent } from '../../ScrollContent';
-import mergeWith from 'lodash/mergeWith';
+import mergeWith from 'lodash.mergewith';
 
 export interface ModalProps extends DialogProps {
   title?: string;
@@ -51,16 +51,18 @@ export function Modal({
       BackdropProps={backdropProps}
       {...props}
     >
-      <ScrollContent className="modal-scroll-content">
-        <div className="modal-title">{title}</div>
-        <div className="modal-content">{children}</div>
-        <div className="modal-actions">
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={confirm} autoFocus={autoFocusConfirmButon}>
-            {confirmLabel}
-          </Button>
-        </div>
-      </ScrollContent>
+      <div>
+        <ScrollContent className="modal-scroll-content">
+          <div className="modal-title">{title}</div>
+          <div className="modal-content">{children}</div>
+          <div className="modal-actions">
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={confirm} autoFocus={autoFocusConfirmButon}>
+              {confirmLabel}
+            </Button>
+          </div>
+        </ScrollContent>
+      </div>
     </Dialog>
   );
 }

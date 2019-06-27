@@ -1,52 +1,50 @@
-import React, { useCallback, forwardRef } from 'react';
-import MuiMenuItem, {
-  MenuItemProps as DefaultMenuItemProps
-} from '@material-ui/core/MenuItem';
+import React, { forwardRef, useCallback, MouseEvent } from 'react';
+import MuiMenuItem from '@material-ui/core/MenuItem';
 import TickIcon from '@material-ui/icons/Check';
 
-interface UseMuiMenuItemProps {
-  onClose(): void;
-}
+type DefaultMenuItemProps = Parameters<typeof MuiMenuItem>[0];
 
 export interface MenuItemProps extends DefaultMenuItemProps {
   text?: string;
-  selected?: boolean;
+}
+
+interface Props {
+  onClose(): void;
 }
 
 const menuItemClasses = { root: 'mui-menu-item' };
 
-export function MenuItem({
-  children,
-  text,
-  onClick,
-  onClose,
-  selected,
-  ...props
-}: MenuItemProps & UseMuiMenuItemProps) {
-  const onClickCallback = useCallback(
-    evt => {
-      onClose();
-      onClick && onClick(evt);
-    },
-    [onClose, onClick]
-  );
+export const MenuItem = forwardRef<HTMLLIElement, Props & MenuItemProps>(
+  ({ children, text, onClick, onClose, selected, ...props }, ref) => {
+    const onClickCallback = useCallback(
+      (evt: MouseEvent<HTMLLIElement>) => {
+        onClose();
+        onClick && onClick(evt);
+      },
+      [onClose, onClick]
+    );
 
-  return (
-    <MuiMenuItem classes={menuItemClasses} onClick={onClickCallback} {...props}>
-      <div>
-        <div className="text">{text}</div>
-        {selected && <TickIcon />}
-      </div>
-      {children}
-    </MuiMenuItem>
-  );
-}
+    return (
+      <MuiMenuItem
+        classes={menuItemClasses}
+        onClick={onClickCallback}
+        ref={ref}
+        {...props}
+      >
+        <div>
+          <div className="text">{text}</div>
+          {selected && <TickIcon />}
+        </div>
+        {children}
+      </MuiMenuItem>
+    );
+  }
+);
 
-export function useMuiMenuItem({ onClose }: UseMuiMenuItemProps) {
-  // Not sure reason, but forwardRef is required
+export function useMuiMenuItem({ onClose }: Props) {
   return useCallback(
-    forwardRef<any, MenuItemProps>((props, ref) => (
-      <MenuItem onClose={onClose} {...props} />
+    forwardRef<HTMLLIElement, MenuItemProps>((props, ref) => (
+      <MenuItem onClose={onClose} {...props} ref={ref} />
     )),
     [onClose]
   );

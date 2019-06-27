@@ -13,7 +13,7 @@ interface Props {
 const iconProps: SvgIconProps = { color: 'secondary' };
 
 export function NewTask({ newTask }: Props) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
+  const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 
   const newTaskCallback = useCallback(() => {
     newTask();
@@ -25,8 +25,8 @@ export function NewTask({ newTask }: Props) {
         <IconButton icon={AddIcon} iconProps={iconProps} disableTouchRipple />
         <div>Add a task</div>
       </div>
-      <IconButton icon={MoreIcon} onClick={setAnchorEl} />
-      <TaskListMenu anchorEl={anchorEl} onClose={onClose} />
+      <IconButton icon={MoreIcon} onClick={setAnchorPosition} />
+      <TaskListMenu anchorPosition={anchorPosition} onClose={onClose} />
     </div>
   );
 }

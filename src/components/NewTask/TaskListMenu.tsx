@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { KeyboardShortcuts } from '../KeyboardShortcuts';
 import { Preferences } from '../Preferences';
-import { useMuiMenuItem, Menu, Modal, FormModal } from '../Mui';
+import { useMuiMenuItem, Menu, MenuProps, Modal, FormModal } from '../Mui';
 import { useBoolean } from '../../utils/useBoolean';
 import {
   TaskListActionCreators,
@@ -14,7 +14,7 @@ import {
 import Divider from '@material-ui/core/Divider';
 
 interface Props {
-  anchorEl: HTMLElement | null;
+  anchorPosition: MenuProps['anchorPosition'];
   onClose(): void;
 }
 
@@ -45,7 +45,7 @@ function useNotZero(initialVal: number) {
 const menuClasses = { paper: 'task-list-menu-paper' };
 
 function TaskListMenuComponent({
-  anchorEl,
+  anchorPosition,
   onClose,
   tasks,
   completedTasks,
@@ -95,8 +95,9 @@ function TaskListMenuComponent({
     <>
       <Menu
         classes={menuClasses}
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
+        open={!!anchorPosition}
+        anchorPosition={anchorPosition}
+        anchorReference="anchorPosition"
         onClose={onClose}
       >
         <div className="task-list-menu-title">Sort by</div>

@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import MuiMenu, { MenuProps } from '@material-ui/core/Menu';
-import mergeWith from 'lodash/mergeWith';
+import mergeWith from 'lodash.mergewith';
+
+export type MenuProps = MenuProps;
 
 const backdropProps = {
   classes: { root: 'mui-menu-backdrop' },
