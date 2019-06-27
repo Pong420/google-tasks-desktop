@@ -1,6 +1,7 @@
 .date-time-modal-paper.date-time-modal-paper {
   @include sq-dimen(100%);
   @include margin-x(15px);
+  color: var(--text-secondary-color);
   max-height: 425px;
   max-width: 300px;
 

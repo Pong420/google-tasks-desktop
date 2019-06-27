@@ -18,7 +18,6 @@ $min-task-height: 50px;
   @include padding-x(10px);
   @include relative();
   @include withTopBottomBorder(transparent);
-
   background-color: var(--main-color);
 
   .task-input-base {
@@ -38,14 +37,18 @@ $min-task-height: 50px;
   &:hover,
   &.focused,
   &.dragging {
-    background-color: var(--task-focused-background-color);
-    &:before {
-      border-color: var(--border-color);
+    background-color: var(--task-highlight-background-color);
+
+    .task-input-base::before {
+      border-color: transparent;
     }
   }
 
   &:hover,
   &.focused {
+    &:before {
+      border-color: var(--border-color);
+    }
     &,
     & + .task {
       .task-input-base::before {
@@ -71,7 +74,7 @@ $min-task-height: 50px;
 
   .toggle-completed {
     align-self: flex-start;
-    margin-top: 4px;
+    margin-top: 0.2em;
 
     .mui-tick-icon {
       color: var(--accent-color);
@@ -112,7 +115,7 @@ $min-task-height: 50px;
     @include flex(center, center);
 
     align-self: flex-start;
-    background-color: var(--task-focused-background-color);
+    background-color: var(--task-highlight-background-color);
     border: 1px solid var(--main-color-diff);
     border-radius: 3px;
     color: var(--text-secondary-color);
@@ -148,13 +151,7 @@ $min-task-height: 50px;
 
     &:hover {
       background-color: var(--main-color);
-
-      [data-theme^='light'] & {
-        box-shadow: 0px 5px 10px #ccc;
-      }
-      [data-theme^='dark'] & {
-        box-shadow: 0px 5px 10px #111;
-      }
+      box-shadow: 0px 5px 10px var(--shadow-color);
     }
   }
 }
