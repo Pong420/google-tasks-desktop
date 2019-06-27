@@ -46,7 +46,6 @@ $defaultWidth: 47.5px;
       transform: translateX(100%);
       &:before {
         @include shadow(-1px);
-        box-shadow: -1px 0.5px 3px 0px darken(#000, 50%);
       }
     }
   }

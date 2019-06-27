@@ -28,14 +28,11 @@ $height: 36px;
 
   .row {
     @include flex(center, stretch);
+    color: var(--text-secondary-color);
     min-height: 46px;
 
-    > svg {
-      margin-right: 10px;
-    }
-
     .mui-dropdown-button {
-      background: var(--task-focused-background-color);
+      background: var(--task-highlight-background-color);
       min-height: $height;
       line-height: $height;
     }
@@ -53,9 +50,13 @@ $height: 36px;
       }
     }
 
+    > svg + button {
+      margin-left: 10px;
+    }
+
     button {
       text-transform: initial;
-      color: var(--text-secondary-color);
+      color: inherit;
     }
 
     .task-deatails-due-date-button {

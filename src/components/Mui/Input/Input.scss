@@ -17,7 +17,7 @@
 
   &.filled {
     @include textHighlight();
-    background-color: var(--task-focused-background-color);
+    background-color: var(--task-highlight-background-color);
   }
 
   &.bottom-border {
