@@ -2,11 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { Omit } from 'react-redux';
 import { Modal, ModalProps } from '../../../Mui/Modal';
 import { DatePicker } from '../DatePicker';
-import { TimeDropdown } from '../TimeDropdown';
+import { TimeDropdown } from './TimeDropdown';
+import { Schema$Task } from '../../../../typings';
 import Button from '@material-ui/core/Button';
 import TimeIcon from '@material-ui/icons/AccessTime';
 import RepeatIcon from '@material-ui/icons/Repeat';
-import { Schema$Task } from '../../../../typings';
 
 interface Props extends Omit<ModalProps, 'onChange'> {
   task: Schema$Task;

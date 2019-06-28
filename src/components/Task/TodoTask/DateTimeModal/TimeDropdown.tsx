@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { useMuiMenu } from '../../../Mui/Menu';
 import { SelectableDropdown } from '../../../Mui/Dropdown/SelectableDropdown';
 
-const items = [
-  'Set time',
+const options = [
   '00:00',
   '00:30',
   '01:00',
@@ -53,25 +53,28 @@ const items = [
   '23:30'
 ];
 
-const mappedItems = items.map(text => ({
-  text
-}));
-
 const buttonProps = { disabled: true };
+const calcMenuWidth = (el: HTMLElement) => el.offsetWidth;
 
 export function TimeDropdown() {
-  const [scrollToIndex, setScrollToIndex] = useState(19);
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
+  const [selectedIndex, setIndex] = useState<number | undefined>(undefined);
 
   return (
     <SelectableDropdown
-      paperClassName="time-dropdown-paper"
-      items={mappedItems}
-      calcMenuWidth={anchorEl => anchorEl && anchorEl.offsetWidth}
-      scrollToIndex={scrollToIndex} // '09:00'
-      onSelect={index => {
-        setScrollToIndex(index);
-      }}
+      anchorEl={anchorEl}
       buttonProps={buttonProps}
+      anchorReference="anchorEl"
+      calcMenuWidth={calcMenuWidth}
+      options={options}
+      open={Boolean(anchorEl)}
+      onClick={setAnchorEl}
+      onClose={onClose}
+      onSelect={setIndex}
+      placeholder="Set time"
+      paperClassName="time-dropdown-paper"
+      scrollToIndex={18}
+      selectedIndex={selectedIndex}
     />
   );
 }

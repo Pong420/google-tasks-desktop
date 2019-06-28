@@ -1,62 +1,79 @@
-import React, { useMemo } from 'react';
-import { Dropdown, useMuiMenu, useMuiMenuItem } from '../../../Mui';
-import { Schema$TaskList } from '../../../../typings';
+import React, { useState, useCallback, MouseEvent } from 'react';
+import { connect } from 'react-redux';
+import { SelectableDropdown, useMuiMenu } from '../../../Mui';
+import { RootState } from '../../../../store';
 
 interface Props {
-  currentTaskList: Schema$TaskList | null;
-  taskLists: Schema$TaskList[];
+  onMoveToAnotherList(id: string): void;
 }
+
+const mapStateToProps = ({ taskList }: RootState) => {
+  let currIndex;
+
+  const options = taskList.taskLists.map(({ id, title }, index) => {
+    if (taskList.currentTaskList && taskList.currentTaskList.id === id) {
+      currIndex = index;
+    }
+    return title!;
+  });
+
+  return {
+    options,
+    currIndex,
+    taskList: taskList.taskLists
+  };
+};
 
 const dropdownClasses = { paper: 'task-details-view-dropdown-paper' };
-const buttonProps = {
-  fullWidth: true,
-  disabled: true
-};
-const menuListProps = {
-  style: {
-    padding: 0
-  }
-};
+const calcMenuWidth = (el: HTMLElement) => el.offsetWidth;
 
-export function TaskListDropdown({ currentTaskList, taskLists }: Props) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-  const MenuItem = useMuiMenuItem({ onClose });
+function TaskListDropdownComponent({
+  options,
+  currIndex,
+  taskList,
+  onMoveToAnotherList
+}: Props & ReturnType<typeof mapStateToProps>) {
+  const {
+    anchorEl,
+    setAnchorEl,
+    anchorPosition,
+    setAnchorPosition,
+    onClose
+  } = useMuiMenu();
+  const [selectedIndex, setIndex] = useState<number | undefined>(currIndex);
 
-  const { anchorPosition, paperProps } = useMemo(() => {
-    const { offsetTop = 0, offsetLeft = 0 } = anchorEl || {};
+  const onClickCallback = useCallback(
+    (evt: MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(evt);
+      setAnchorPosition(evt, evt.currentTarget.getBoundingClientRect());
+    },
+    [setAnchorEl, setAnchorPosition]
+  );
 
-    return {
-      anchorPosition: {
-        top: offsetTop,
-        left: offsetLeft
-      },
-      paperProps: {
-        style: { width: `calc(100% - ${offsetLeft + 15}px)` }
-      }
-    };
-  }, [anchorEl]);
+  const onExitedCallback = useCallback(() => {
+    if (currIndex !== selectedIndex) {
+      onMoveToAnotherList(taskList[selectedIndex].id!);
+    }
+  }, [taskList, selectedIndex, currIndex, onMoveToAnotherList]);
 
   return (
-    <Dropdown
-      label={currentTaskList ? currentTaskList.title! : ''}
-      classes={dropdownClasses}
+    <SelectableDropdown
       anchorEl={anchorEl}
-      onClick={setAnchorEl}
-      onClose={onClose}
-      open={Boolean(anchorEl)}
       anchorPosition={anchorPosition}
       anchorReference="anchorPosition"
-      buttonProps={buttonProps}
-      PaperProps={paperProps}
-      MenuListProps={menuListProps}
-    >
-      {taskLists.map(({ id, title }) => (
-        <MenuItem
-          key={id}
-          text={title}
-          selected={currentTaskList !== null && currentTaskList.id === id}
-        />
-      ))}
-    </Dropdown>
+      classes={dropdownClasses}
+      calcMenuWidth={calcMenuWidth}
+      onClick={onClickCallback}
+      onClose={onClose}
+      open={!!anchorPosition}
+      onSelect={setIndex}
+      options={options}
+      onExited={onExitedCallback}
+      selectedIndex={selectedIndex}
+    />
   );
 }
+
+export const TaskListDropdown = connect(mapStateToProps)(
+  TaskListDropdownComponent
+);
