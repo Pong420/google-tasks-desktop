@@ -9,20 +9,12 @@ $height: 36px;
     &.task-details-view-title-field {
       @include typeface('Nunito Sans', 600);
       font-size: 16px;
-
-      textarea::placeholder {
-        font-size: 14px;
-      }
     }
 
+    &.task-details-view-title-field textarea::placeholder,
     &.task-details-view-notes-field {
-      $line-height: 20px;
       font-size: 14px;
       line-height: 20px;
-
-      > div {
-        min-height: $line-height * 3;
-      }
     }
   }
 

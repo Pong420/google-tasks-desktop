@@ -30,6 +30,7 @@ interface Props extends FullScreenDialogProps {
   currentTaskList: Schema$TaskList | null;
   deleteTask(task: Schema$Task): void;
   updateTask(task: Schema$Task): void;
+  moveToAnotherList(id: string): void;
 }
 
 export function EditTaskButton({ onClick }: { onClick(): void }) {
@@ -47,11 +48,12 @@ const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
   evt.which === 13 && evt.preventDefault();
 
 export function TaskDetailsView({
+  task: initialTask,
   taskLists,
   currentTaskList,
   updateTask,
   deleteTask,
-  task: initialTask,
+  moveToAnotherList,
   handleClose,
   ...props
 }: Props) {
@@ -60,7 +62,9 @@ export function TaskDetailsView({
   const notesInputRef = useRef<HTMLTextAreaElement>(null);
   const shouldDeleteTask = useRef<boolean>(false);
   const [task, setTask] = useState(initialTask);
+  const [currTaskListId, setNewTaskListId] = useState<string | null>(null);
 
+  // Aims to delay focus so that the focus animation
   const onEnteredCallback = useCallback(
     () => titleInputRef.current!.focus(),
     []
@@ -75,8 +79,10 @@ export function TaskDetailsView({
     if (shouldDeleteTask.current) {
       shouldDeleteTask.current = false;
       deleteTask(task);
+    } else if (currTaskListId) {
+      moveToAnotherList(currTaskListId);
     }
-  }, [deleteTask, task]);
+  }, [deleteTask, task, currTaskListId, moveToAnotherList]);
 
   const focusNotesInputField = useCallback(
     () => notesInputRef.current!.focus(),
@@ -101,8 +107,11 @@ export function TaskDetailsView({
   );
 
   const updateDueCallback = useCallback(
-    (date?: Date) => () =>
-      setTask({ ...task, due: date && date.toISOString() }),
+    (date?: any) =>
+      setTask({
+        ...task,
+        due: date instanceof Date ? date.toISOString() : undefined
+      }),
     [setTask, task]
   );
 
@@ -140,6 +149,8 @@ export function TaskDetailsView({
 
           <Input
             multiline
+            rows={3}
+            rowsMax={Infinity}
             className="filled task-details-view-notes-field"
             placeholder="Add details"
             value={task.notes}
@@ -150,7 +161,7 @@ export function TaskDetailsView({
 
           <div className="row row-task-list">
             <FormatListBulletedIcon />
-            <TaskListDropdown onMoveToAnotherList={() => {}} />
+            <TaskListDropdown onTaskListChange={setNewTaskListId} />
           </div>
 
           <div className="row row-date">

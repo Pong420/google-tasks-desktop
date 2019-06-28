@@ -29,6 +29,8 @@ interface Props extends OmittedDropDownProps {
   calcMenuWidth?(el: HTMLElement): CSSProperties['width'];
 }
 
+export type SelectableDropdownProps = Props;
+
 export function SelectableDropdown({
   anchorEl,
   buttonProps,
