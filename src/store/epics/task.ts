@@ -1,4 +1,4 @@
-import { empty, from, timer, merge } from 'rxjs';
+import { empty, from, timer, merge, zip } from 'rxjs';
 import {
   debounceTime,
   // distinctUntilChanged,
@@ -23,7 +23,9 @@ import {
   UpdateTaskSuccess,
   MoveTask,
   MoveTaskSuccess,
-  NewTask
+  NewTask,
+  MoveToAnotherList,
+  MoveToAnotherListSuccess
 } from '../actions/task';
 import { NetworkActions, NetworkActionTypes } from '../actions/network';
 import { RootState } from '../reducers';
@@ -321,4 +323,47 @@ const syncTasksEpic: TaskEpic = (action$, state$) => {
   );
 };
 
-export default [apiEpic, newTaskEpic, updateEpic, moveTaskEpic, syncTasksEpic];
+const moveAnotherListEpic: TaskEpic = (
+  action$,
+  state$,
+  { withNetworkHelper }
+) => {
+  return action$.pipe(
+    withNetworkHelper(state$),
+    ofType<Actions, MoveToAnotherList>(TaskActionTypes.MOVE_TO_ANOHTER_LIST),
+    groupBy(({ payload }) => payload.task),
+    mergeMap(group$ =>
+      group$.pipe(
+        switchMap(({ payload: { task, tasklist } }) => {
+          const newTask = from(
+            tasksAPI.insert({
+              tasklist,
+              requestBody: task
+            })
+          );
+          const deleteTask = from(
+            tasksAPI.delete({
+              task: task.id,
+              tasklist
+            })
+          );
+
+          return zip(newTask, deleteTask).pipe(
+            map<any, MoveToAnotherListSuccess>(() => ({
+              type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS
+            }))
+          );
+        })
+      )
+    )
+  );
+};
+
+export default [
+  apiEpic,
+  newTaskEpic,
+  updateEpic,
+  moveTaskEpic,
+  syncTasksEpic,
+  moveAnotherListEpic
+];

@@ -4,7 +4,7 @@ import { SelectableDropdown, useMuiMenu } from '../../../Mui';
 import { RootState } from '../../../../store';
 
 interface Props {
-  onMoveToAnotherList(id: string): void;
+  onTaskListChange(id: string | null): void;
 }
 
 const mapStateToProps = ({ taskList }: RootState) => {
@@ -31,7 +31,7 @@ function TaskListDropdownComponent({
   options,
   currIndex,
   taskList,
-  onMoveToAnotherList
+  onTaskListChange
 }: Props & ReturnType<typeof mapStateToProps>) {
   const {
     anchorEl,
@@ -51,10 +51,10 @@ function TaskListDropdownComponent({
   );
 
   const onExitedCallback = useCallback(() => {
-    if (currIndex !== selectedIndex) {
-      onMoveToAnotherList(taskList[selectedIndex].id!);
-    }
-  }, [taskList, selectedIndex, currIndex, onMoveToAnotherList]);
+    onTaskListChange(
+      currIndex !== selectedIndex ? taskList[selectedIndex].id! : null
+    );
+  }, [taskList, currIndex, selectedIndex, onTaskListChange]);
 
   return (
     <SelectableDropdown

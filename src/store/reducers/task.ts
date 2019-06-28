@@ -188,6 +188,20 @@ export default function(state = initialState, action: TaskActions): TaskState {
         )
       };
 
+    case TaskActionTypes.MOVE_TO_ANOHTER_LIST:
+      return (() => {
+        return {
+          ...state,
+          ...classify(state.tasks, task => {
+            if (task.uuid === action.payload.task.uuid) {
+              return null;
+            }
+            return task;
+          }),
+          focusIndex: null
+        };
+      })();
+
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
       return {
         ...state,

@@ -49,6 +49,7 @@ function TodoTaskComponent({
   inputBaseProps,
   sortByDate,
   focusIndex,
+  moveToAnotherList,
   setFocusIndex
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
@@ -104,6 +105,13 @@ function TodoTaskComponent({
       });
     },
     [task, updateTask]
+  );
+
+  const moveToAnotherListCallback = useCallback(
+    (tasklist: string) => {
+      moveToAnotherList({ task, tasklist });
+    },
+    [task, moveToAnotherList]
   );
 
   const newTaskCallback = useCallback(() => {
@@ -219,6 +227,7 @@ function TodoTaskComponent({
         currentTaskList={currentTaskList}
         updateTask={updateTask}
         deleteTask={deleteTask}
+        moveToAnotherList={moveToAnotherListCallback}
       />
       <DateTimeModal
         task={task}
