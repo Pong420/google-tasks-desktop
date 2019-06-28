@@ -55,6 +55,7 @@ function TodoTaskComponent({
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
   const [dateTimeModalOpened, dateTimeModal] = useBoolean();
+  const [taskListDropdownOpened, taskListDropdown] = useBoolean();
   const focused = focusIndex === index || focusIndex === task.uuid;
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -107,12 +108,17 @@ function TodoTaskComponent({
     [task, updateTask]
   );
 
-  const moveToAnotherListCallback = useCallback(
+  const taskListChangeCallback = useCallback(
     (tasklist: string) => {
       moveToAnotherList({ task, tasklist });
     },
     [task, moveToAnotherList]
   );
+
+  const handleDetailsClose = useCallback(() => {
+    detailsView.off();
+    taskListDropdown.off();
+  }, [detailsView, taskListDropdown]);
 
   const newTaskCallback = useCallback(() => {
     newTask({
@@ -218,16 +224,18 @@ function TodoTaskComponent({
         onDelete={deleteTaskCallback}
         anchorPosition={anchorPosition}
         openDateTimeModal={dateTimeModal.on}
+        openTaskListDropdown={taskListDropdown.on}
       />
       <TaskDetailsView
-        open={detailsViewOpened}
-        handleClose={detailsView.off}
+        currentTaskList={currentTaskList}
+        deleteTask={deleteTask}
+        handleClose={handleDetailsClose}
+        open={taskListDropdownOpened || detailsViewOpened}
         task={task}
         taskLists={taskLists}
-        currentTaskList={currentTaskList}
+        taskListChange={taskListChangeCallback}
+        taskListDropdownOpened={taskListDropdownOpened}
         updateTask={updateTask}
-        deleteTask={deleteTask}
-        moveToAnotherList={moveToAnotherListCallback}
       />
       <DateTimeModal
         task={task}

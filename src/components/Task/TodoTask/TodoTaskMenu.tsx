@@ -7,13 +7,15 @@ interface Props {
   onClose(): void;
   onDelete(): void;
   openDateTimeModal(): void;
+  openTaskListDropdown(): void;
 }
 
 export function TodoTaskMenu({
   anchorPosition,
   onClose,
   onDelete,
-  openDateTimeModal
+  openDateTimeModal,
+  openTaskListDropdown
 }: Props) {
   const MenuItem = useMuiMenuItem({ onClose });
 
@@ -27,8 +29,8 @@ export function TodoTaskMenu({
       <MenuItem text="Delete" onClick={onDelete} />
       <MenuItem text="Add date/time" onClick={openDateTimeModal} />
       <MenuItem text="Add a subtask" disabled />
-      <MenuItem text="Indent" disabled />
-      <MenuItem text="Move to another list" disabled />
+      <MenuItem text="Indent" disabled /> {/* TODO: not should on first task */}
+      <MenuItem text="Move to another list" onClick={openTaskListDropdown} />
     </Menu>
   );
 }
