@@ -4,7 +4,8 @@ import React, {
   useCallback,
   CSSProperties,
   useEffect,
-  useMemo
+  useMemo,
+  forwardRef
 } from 'react';
 import { Omit } from 'react-redux';
 import { Dropdown, DropDownProps } from './Dropdown';
@@ -31,108 +32,114 @@ interface Props extends OmittedDropDownProps {
 
 export type SelectableDropdownProps = Props;
 
-export function SelectableDropdown({
-  anchorEl,
-  buttonProps,
-  options,
-  onSelect,
-  onClose,
-  selectedIndex,
-  scrollToIndex,
-  placeholder = '',
-  paperClassName = '',
-  calcMenuWidth,
-  MenuListProps,
-  PaperProps,
-  ...props
-}: Props) {
-  const [menuWidth, setMenuWidth] = useState<CSSProperties['width'] | null>(
-    null
-  );
-  const MenuItem = useMuiMenuItem({ onClose });
-  const scrollRef = useRef<HTMLUListElement>(null);
-  const focusItemRef = useRef<HTMLLIElement | null>(null);
-  const scrollToSelectedItem = useCallback(() => {
-    if (scrollRef.current && focusItemRef.current) {
-      scrollRef.current.scrollTop =
-        focusItemRef.current.offsetTop -
-        focusItemRef.current.offsetHeight -
-        scrollRef.current.offsetHeight / 2;
-    }
-  }, []);
-  const label = useMemo(
-    () =>
-      typeof selectedIndex !== 'undefined'
-        ? options[selectedIndex]
-        : placeholder,
-    [options, selectedIndex, placeholder]
-  );
-
-  const mergedClasses = useMemo(
-    () => ({ paper: classes('selectable-dropdown-paper', paperClassName) }),
-    [paperClassName]
-  );
-
-  const mergedButtonProps = useMemo(
-    () => ({
-      fullWidth: true,
-      classes: { root: 'seletable-mui-dropdown-button' },
-      ...buttonProps
-    }),
-    [buttonProps]
-  );
-
-  const mergedPaperProps = useMemo(
-    () => ({
-      style: menuWidth ? { width: menuWidth } : {},
-      ...PaperProps
-    }),
-    [menuWidth, PaperProps]
-  );
-
-  const mergedMenuListProps = useMemo<DropDownProps['MenuListProps']>(
-    () => ({
-      ...MenuListProps,
-      ref: scrollRef,
-      style: {
-        padding: 0
+export const SelectableDropdown = forwardRef<any, Props>(
+  (
+    {
+      anchorEl,
+      buttonProps,
+      options,
+      onSelect,
+      onClose,
+      selectedIndex,
+      scrollToIndex,
+      placeholder = '',
+      paperClassName = '',
+      calcMenuWidth,
+      MenuListProps,
+      PaperProps,
+      ...props
+    },
+    ref
+  ) => {
+    const [menuWidth, setMenuWidth] = useState<CSSProperties['width'] | null>(
+      null
+    );
+    const MenuItem = useMuiMenuItem({ onClose });
+    const scrollRef = useRef<HTMLUListElement>(null);
+    const focusItemRef = useRef<HTMLLIElement | null>(null);
+    const scrollToSelectedItem = useCallback(() => {
+      if (scrollRef.current && focusItemRef.current) {
+        scrollRef.current.scrollTop =
+          focusItemRef.current.offsetTop -
+          focusItemRef.current.offsetHeight -
+          scrollRef.current.offsetHeight / 2;
       }
-    }),
-    [MenuListProps]
-  );
+    }, []);
+    const label = useMemo(
+      () =>
+        typeof selectedIndex !== 'undefined'
+          ? options[selectedIndex]
+          : placeholder,
+      [options, selectedIndex, placeholder]
+    );
 
-  useEffect(() => {
-    if (anchorEl instanceof HTMLElement && calcMenuWidth) {
-      const width = calcMenuWidth(anchorEl);
-      width && setMenuWidth(width);
-    }
-  }, [anchorEl, calcMenuWidth]);
+    const mergedClasses = useMemo(
+      () => ({ paper: classes('selectable-dropdown-paper', paperClassName) }),
+      [paperClassName]
+    );
 
-  return (
-    <Dropdown
-      {...props}
-      label={label}
-      anchorEl={anchorEl}
-      classes={mergedClasses}
-      onClose={onClose}
-      onEnter={scrollToSelectedItem}
-      buttonProps={mergedButtonProps}
-      PaperProps={mergedPaperProps}
-      MenuListProps={mergedMenuListProps}
-    >
-      {options.map((label, index) => (
-        <MenuItem
-          key={index}
-          text={label}
-          innerRef={node => {
-            if (index === (selectedIndex || scrollToIndex)) {
-              focusItemRef.current = node;
-            }
-          }}
-          onClick={() => onSelect(index)}
-          selected={index === selectedIndex}
-        />
-      ))}
-    </Dropdown>
-  );
-}
+    const mergedButtonProps = useMemo(
+      () => ({
+        fullWidth: true,
+        classes: { root: 'seletable-mui-dropdown-button' },
+        ...buttonProps
+      }),
+      [buttonProps]
+    );
+
+    const mergedPaperProps = useMemo(
+      () => ({
+        style: menuWidth ? { width: menuWidth } : {},
+        ...PaperProps
+      }),
+      [menuWidth, PaperProps]
+    );
+
+    const mergedMenuListProps = useMemo<DropDownProps['MenuListProps']>(
+      () => ({
+        ...MenuListProps,
+        ref: scrollRef,
+        style: {
+          padding: 0
+        }
+      }),
+      [MenuListProps]
+    );
+
+    useEffect(() => {
+      if (anchorEl instanceof HTMLElement && calcMenuWidth) {
+        const width = calcMenuWidth(anchorEl);
+        width && setMenuWidth(width);
+      }
+    }, [anchorEl, calcMenuWidth]);
+
+    return (
+      <Dropdown
+        {...props}
+        anchorEl={anchorEl}
+        buttonProps={mergedButtonProps}
+        classes={mergedClasses}
+        label={label}
+        MenuListProps={mergedMenuListProps}
+        onClose={onClose}
+        onEnter={scrollToSelectedItem}
+        PaperProps={mergedPaperProps}
+        ref={ref}
+      >
+        {options.map((label, index) => (
+          <MenuItem
+            key={index}
+            text={label}
+            innerRef={node => {
+              if (index === (selectedIndex || scrollToIndex)) {
+                focusItemRef.current = node;
+              }
+            }}
+            onClick={() => onSelect(index)}
+            selected={index === selectedIndex}
+          />
+        ))}
+      </Dropdown>
+    );
+  }
+);

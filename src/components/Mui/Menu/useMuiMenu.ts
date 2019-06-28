@@ -10,6 +10,14 @@ import { MenuProps } from '@material-ui/core/Menu';
 export type AnchorEl = HTMLElement | null;
 export type AnchorPosition = MenuProps['anchorPosition'];
 
+function instanceOfAnchorEl(object: any): object is AnchorEl {
+  return object === null || object instanceof HTMLElement;
+}
+
+function instanceOfAnchorPosition(object: any): object is AnchorPosition {
+  return typeof object === 'undefined' || (object.top && object.left);
+}
+
 export function useMuiMenu() {
   const [anchorEl, setAnchorEl] = useState<AnchorEl>(null);
   const [anchorPosition, setAnchorPosition] = useState<AnchorPosition>();
@@ -27,23 +35,28 @@ export function useMuiMenu() {
   }, [anchorPosition]);
 
   const setAnchorElCallback = useCallback(
-    (evt: SyntheticEvent<HTMLElement>) => {
-      setAnchorEl(evt.currentTarget);
+    (props: SyntheticEvent<HTMLElement> | AnchorEl) => {
+      if (instanceOfAnchorEl(props)) {
+        setAnchorEl(props);
+      } else {
+        setAnchorEl(props.currentTarget);
+      }
     },
     []
   );
 
   const setAnchorPositionCallback = useCallback(
-    (evt: MouseEvent<HTMLElement>, pos?: AnchorPosition) => {
-      evt && evt.preventDefault();
-      setAnchorPosition(
-        pos
-          ? pos
-          : {
-              top: evt.pageY,
-              left: evt.pageX
-            }
-      );
+    (props: MouseEvent<HTMLElement> | AnchorPosition) => {
+      if (instanceOfAnchorPosition(props)) {
+        setAnchorPosition(props);
+      } else {
+        const evt = props;
+        evt && evt.preventDefault();
+        setAnchorPosition({
+          top: evt.pageY,
+          left: evt.pageX
+        });
+      }
     },
     []
   );

@@ -117,6 +117,7 @@ export interface MoveToAnotherList {
 
 export interface MoveToAnotherListSuccess {
   type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS;
+  payload?: Schema$Task;
 }
 
 export interface SetFocusIndex {

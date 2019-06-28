@@ -1,4 +1,4 @@
-import { empty, from, timer, merge, zip } from 'rxjs';
+import { empty, from, timer, merge, forkJoin } from 'rxjs';
 import {
   debounceTime,
   // distinctUntilChanged,
@@ -335,24 +335,40 @@ const moveAnotherListEpic: TaskEpic = (
     mergeMap(group$ =>
       group$.pipe(
         switchMap(({ payload: { task, tasklist } }) => {
-          const newTask = from(
-            tasksAPI.insert({
-              tasklist,
-              requestBody: task
-            })
-          );
-          const deleteTask = from(
-            tasksAPI.delete({
-              task: task.id,
-              tasklist
-            })
-          );
+          const request$ = (task: Schema$Task) => {
+            const newTask$ = from(
+              tasksAPI.insert({
+                tasklist,
+                requestBody: task
+              })
+            );
 
-          return zip(newTask, deleteTask).pipe(
-            map<any, MoveToAnotherListSuccess>(() => ({
-              type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS
-            }))
-          );
+            const deleteTask$ = from(
+              tasksAPI.delete({
+                task: task.id,
+                tasklist
+              })
+            );
+
+            return forkJoin(newTask$, deleteTask$).pipe(
+              map<unknown, MoveToAnotherListSuccess>(() => ({
+                type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS,
+                payload:
+                  state$.value.taskList.currentTaskListId === tasklist
+                    ? task
+                    : undefined
+              }))
+            );
+          };
+
+          if (!task.id) {
+            return onNewTaskSuccess$(action$, task.uuid).pipe(
+              switchMap(success => request$({ ...success.payload, ...task })),
+              take(1)
+            );
+          }
+
+          return request$(task);
         })
       )
     )

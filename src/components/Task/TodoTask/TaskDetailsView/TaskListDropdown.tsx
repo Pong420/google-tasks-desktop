@@ -1,9 +1,20 @@
-import React, { useState, useCallback, MouseEvent } from 'react';
+import React, {
+  useState,
+  useCallback,
+  MouseEvent,
+  useEffect,
+  useRef
+} from 'react';
 import { connect } from 'react-redux';
-import { SelectableDropdown, useMuiMenu } from '../../../Mui';
+import {
+  SelectableDropdown,
+  useMuiMenu,
+  FULLSCREEN_DIALOG_TRANSITION
+} from '../../../Mui';
 import { RootState } from '../../../../store';
 
 interface Props {
+  defaultOpen?: boolean;
   onTaskListChange(id: string | null): void;
 }
 
@@ -28,10 +39,11 @@ const dropdownClasses = { paper: 'task-details-view-dropdown-paper' };
 const calcMenuWidth = (el: HTMLElement) => el.offsetWidth;
 
 function TaskListDropdownComponent({
-  options,
   currIndex,
-  taskList,
-  onTaskListChange
+  defaultOpen,
+  options,
+  onTaskListChange,
+  taskList
 }: Props & ReturnType<typeof mapStateToProps>) {
   const {
     anchorEl,
@@ -41,11 +53,12 @@ function TaskListDropdownComponent({
     onClose
   } = useMuiMenu();
   const [selectedIndex, setIndex] = useState<number | undefined>(currIndex);
+  const dropdownRef = useRef<HTMLButtonElement>(null);
 
   const onClickCallback = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(evt);
-      setAnchorPosition(evt, evt.currentTarget.getBoundingClientRect());
+      setAnchorPosition(evt.currentTarget.getBoundingClientRect());
     },
     [setAnchorEl, setAnchorPosition]
   );
@@ -55,6 +68,16 @@ function TaskListDropdownComponent({
       currIndex !== selectedIndex ? taskList[selectedIndex].id! : null
     );
   }, [taskList, currIndex, selectedIndex, onTaskListChange]);
+
+  useEffect(() => {
+    const el = dropdownRef.current;
+    if (defaultOpen && el) {
+      setTimeout(
+        () => setAnchorPosition(el.getBoundingClientRect()),
+        FULLSCREEN_DIALOG_TRANSITION / 2
+      );
+    }
+  }, [setAnchorPosition, defaultOpen]);
 
   return (
     <SelectableDropdown
@@ -69,6 +92,7 @@ function TaskListDropdownComponent({
       onSelect={setIndex}
       options={options}
       onExited={onExitedCallback}
+      ref={dropdownRef}
       selectedIndex={selectedIndex}
     />
   );

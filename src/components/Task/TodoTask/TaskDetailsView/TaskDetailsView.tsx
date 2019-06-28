@@ -25,12 +25,13 @@ import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 
 interface Props extends FullScreenDialogProps {
+  taskListDropdownOpened?: boolean;
   task: Schema$Task;
   taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList | null;
   deleteTask(task: Schema$Task): void;
   updateTask(task: Schema$Task): void;
-  moveToAnotherList(id: string): void;
+  taskListChange(id: string): void;
 }
 
 export function EditTaskButton({ onClick }: { onClick(): void }) {
@@ -48,12 +49,13 @@ const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
   evt.which === 13 && evt.preventDefault();
 
 export function TaskDetailsView({
+  taskListDropdownOpened,
   task: initialTask,
   taskLists,
   currentTaskList,
   updateTask,
   deleteTask,
-  moveToAnotherList,
+  taskListChange,
   handleClose,
   ...props
 }: Props) {
@@ -64,6 +66,7 @@ export function TaskDetailsView({
   const [task, setTask] = useState(initialTask);
   const [currTaskListId, setNewTaskListId] = useState<string | null>(null);
 
+  // Instead of autoFocus attr.
   // Aims to delay focus so that the focus animation
   const onEnteredCallback = useCallback(
     () => titleInputRef.current!.focus(),
@@ -80,9 +83,9 @@ export function TaskDetailsView({
       shouldDeleteTask.current = false;
       deleteTask(task);
     } else if (currTaskListId) {
-      moveToAnotherList(currTaskListId);
+      taskListChange(currTaskListId);
     }
-  }, [deleteTask, task, currTaskListId, moveToAnotherList]);
+  }, [deleteTask, task, currTaskListId, taskListChange]);
 
   const focusNotesInputField = useCallback(
     () => notesInputRef.current!.focus(),
@@ -161,7 +164,10 @@ export function TaskDetailsView({
 
           <div className="row row-task-list">
             <FormatListBulletedIcon />
-            <TaskListDropdown onTaskListChange={setNewTaskListId} />
+            <TaskListDropdown
+              defaultOpen={taskListDropdownOpened}
+              onTaskListChange={setNewTaskListId}
+            />
           </div>
 
           <div className="row row-date">
