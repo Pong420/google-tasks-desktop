@@ -1,13 +1,13 @@
-import React, { useMemo, ReactNode } from 'react';
+import React, { useMemo, ReactNode, MouseEvent } from 'react';
+import { Omit } from 'react-redux';
+import { Menu, MenuProps } from '../Menu';
 import Button, { ButtonProps } from '@material-ui/core/Button';
-import { Menu } from '../Menu';
-import { MenuProps } from '@material-ui/core/Menu';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
 import mergeWith from 'lodash.mergewith';
 
-export interface DropDownProps extends MenuProps {
+export interface DropDownProps extends Omit<MenuProps, 'onClick'> {
   label?: string;
-  onClick(evt: any): void;
+  onClick(evt: MouseEvent<HTMLButtonElement>): void;
   children: ReactNode;
   buttonProps?: ButtonProps;
 }

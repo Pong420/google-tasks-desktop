@@ -1,60 +1,70 @@
 import React, {
   useRef,
   useState,
-  useEffect,
   useCallback,
   CSSProperties,
+  useEffect,
   useMemo
 } from 'react';
 import { Omit } from 'react-redux';
 import { Dropdown, DropDownProps } from './Dropdown';
-import { useMuiMenu, useMuiMenuItem, MenuItemProps } from '../Menu';
+import { useMuiMenuItem } from '../Menu/MenuItem';
 import { classes } from '../../../utils/classes';
 
 type OmittedDropDownProps = Omit<
   DropDownProps,
-  'label' | 'anchorEl' | 'onClick' | 'open' | 'children' | 'onSelect'
+  'label' | 'children' | 'onSelect'
 >;
 
+type Option = string;
+
 interface Props extends OmittedDropDownProps {
-  items: MenuItemProps[];
+  options: Option[];
+  onSelect(index: number): void;
+  onClose(): void;
   selectedIndex?: number;
   scrollToIndex?: number;
+  placeholder?: string;
   paperClassName?: string;
   calcMenuWidth?(el: HTMLElement): CSSProperties['width'];
-  onSelect(index: number): void;
 }
 
 export function SelectableDropdown({
-  items,
-  selectedIndex: initialSelectedIndex = 0,
-  scrollToIndex,
-  calcMenuWidth,
-  paperClassName = '',
+  anchorEl,
   buttonProps,
+  options,
   onSelect,
+  onClose,
+  selectedIndex,
+  scrollToIndex,
+  placeholder = '',
+  paperClassName = '',
+  calcMenuWidth,
+  MenuListProps,
+  PaperProps,
   ...props
 }: Props) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
+  const [menuWidth, setMenuWidth] = useState<CSSProperties['width'] | null>(
+    null
+  );
   const MenuItem = useMuiMenuItem({ onClose });
-  const [menuWidth, setMenuWidth] = useState<CSSProperties['width']>(0);
-  const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const selectedItemRef = useRef<HTMLLIElement | null>(null);
+  const scrollRef = useRef<HTMLUListElement>(null);
+  const focusItemRef = useRef<HTMLLIElement | null>(null);
   const scrollToSelectedItem = useCallback(() => {
-    // setTimeout is not a good solution but work ...
-    if (scrollRef.current && selectedItemRef.current) {
+    if (scrollRef.current && focusItemRef.current) {
       scrollRef.current.scrollTop =
-        selectedItemRef.current.offsetTop - scrollRef.current.offsetHeight / 2;
+        focusItemRef.current.offsetTop -
+        focusItemRef.current.offsetHeight -
+        scrollRef.current.offsetHeight / 2;
     }
   }, []);
-
-  useEffect(() => {
-    if (anchorEl && calcMenuWidth) {
-      const width = calcMenuWidth(anchorEl);
-      width && setMenuWidth(width);
-    }
-  }, [anchorEl, calcMenuWidth]);
+  const label = useMemo(
+    () =>
+      typeof selectedIndex !== 'undefined'
+        ? options[selectedIndex]
+        : placeholder,
+    [options, selectedIndex, placeholder]
+  );
 
   const mergedClasses = useMemo(
     () => ({ paper: classes('selectable-dropdown-paper', paperClassName) }),
@@ -72,43 +82,55 @@ export function SelectableDropdown({
 
   const mergedPaperProps = useMemo(
     () => ({
-      style: { width: menuWidth }
+      style: menuWidth ? { width: menuWidth } : {},
+      ...PaperProps
     }),
-    [menuWidth]
+    [menuWidth, PaperProps]
   );
+
+  const mergedMenuListProps = useMemo<DropDownProps['MenuListProps']>(
+    () => ({
+      ...MenuListProps,
+      ref: scrollRef,
+      style: {
+        padding: 0
+      }
+    }),
+    [MenuListProps]
+  );
+
+  useEffect(() => {
+    if (anchorEl instanceof HTMLElement && calcMenuWidth) {
+      const width = calcMenuWidth(anchorEl);
+      width && setMenuWidth(width);
+    }
+  }, [anchorEl, calcMenuWidth]);
 
   return (
     <Dropdown
-      label={items[selectedIndex].text}
-      classes={mergedClasses}
+      {...props}
+      label={label}
       anchorEl={anchorEl}
-      onClick={setAnchorEl}
+      classes={mergedClasses}
       onClose={onClose}
-      open={Boolean(anchorEl)}
       onEnter={scrollToSelectedItem}
       buttonProps={mergedButtonProps}
       PaperProps={mergedPaperProps}
-      {...props}
+      MenuListProps={mergedMenuListProps}
     >
-      <div className="selectable-dropdown-scroll-content" ref={scrollRef}>
-        {items.map((itemProps, index) => (
-          <MenuItem
-            {...itemProps}
-            key={index}
-            innerRef={node => {
-              if (index === (scrollToIndex || selectedIndex)) {
-                selectedItemRef.current = node;
-              }
-            }}
-            onClick={evt => {
-              onSelect(index);
-              setSelectedIndex(index);
-              itemProps.onClick && itemProps.onClick(evt);
-            }}
-            selected={index === selectedIndex}
-          />
-        ))}
-      </div>
+      {options.map((label, index) => (
+        <MenuItem
+          key={index}
+          text={label}
+          innerRef={node => {
+            if (index === (selectedIndex || scrollToIndex)) {
+              focusItemRef.current = node;
+            }
+          }}
+          onClick={() => onSelect(index)}
+          selected={index === selectedIndex}
+        />
+      ))}
     </Dropdown>
   );
 }

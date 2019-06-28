@@ -19,6 +19,7 @@
 
 .dropdown-menu-paper {
   @include dimen(100%);
+  overflow: hidden;
 
   a {
     display: block;
@@ -31,7 +32,23 @@
     @include flex(stretch, stretch, column);
   }
 
-  .selectable-dropdown-scroll-content {
+  > ul {
     overflow: auto;
+  }
+
+  .mui-menu-item {
+    flex: 1 0 auto;
+
+    > div {
+      @include relative();
+
+      .text {
+        @include padding-x(36px 0);
+      }
+
+      svg {
+        @include absolute($left: 0);
+      }
+    }
   }
 }

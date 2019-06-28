@@ -34,12 +34,16 @@ export function useMuiMenu() {
   );
 
   const setAnchorPositionCallback = useCallback(
-    (evt: MouseEvent<HTMLElement>) => {
-      evt.preventDefault();
-      setAnchorPosition({
-        top: evt.pageY,
-        left: evt.pageX
-      });
+    (evt: MouseEvent<HTMLElement>, pos?: AnchorPosition) => {
+      evt && evt.preventDefault();
+      setAnchorPosition(
+        pos
+          ? pos
+          : {
+              top: evt.pageY,
+              left: evt.pageX
+            }
+      );
     },
     []
   );
