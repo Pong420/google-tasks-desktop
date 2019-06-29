@@ -1,3 +1,4 @@
+import { Ref } from 'react';
 import { tasks_v1 } from 'googleapis';
 
 export interface OAuthKeys {
@@ -18,8 +19,6 @@ export interface Schema$Task extends tasks_v1.Schema$Task {
 // tslint:disable-next-line
 export interface Schema$TaskList extends tasks_v1.Schema$TaskList {}
 
-export type Schema$TaskLists = Array<[string, Schema$TaskList]>;
-
 export interface OAuth2Keys {
   client_id: string;
   project_id: string;
@@ -34,4 +33,12 @@ export interface SyncPreferences {
   enabled: boolean;
   reconnection: boolean;
   inactiveHours: number;
+}
+
+export interface SimplebarAPI {
+  getScrollElement(): HTMLDivElement;
+}
+
+export interface WithSimplebar {
+  simplebarRef?: Ref<SimplebarAPI>;
 }

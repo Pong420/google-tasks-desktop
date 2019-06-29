@@ -47,7 +47,9 @@
 
     @mixin backgorundWidthShadow($color) {
       background-color: $color;
-      box-shadow: 0px 2px 10px -2px #{$color};
+      [data-theme^='light'] & {
+        box-shadow: 0px 2px 10px -2px #{$color};
+      }
     }
 
     &.today {

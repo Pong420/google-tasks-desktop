@@ -2,23 +2,17 @@ import React, {
   useRef,
   useState,
   useLayoutEffect,
-  useCallback,
   useImperativeHandle,
   ReactNode,
-  RefObject,
   HTMLAttributes
 } from 'react';
 import { createPortal } from 'react-dom';
+import { SimplebarAPI, WithSimplebar } from '../../typings';
 import Simplebar from 'simplebar';
 import 'simplebar/dist/simplebar.css';
 
-export interface SimplebarAPI {
-  getScrollElement(): HTMLDivElement;
-}
-
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface Props extends HTMLAttributes<HTMLDivElement>, WithSimplebar {
   children: ReactNode;
-  simplebarRef?: RefObject<SimplebarAPI | null>;
 }
 
 interface ContainerProps {
@@ -34,40 +28,39 @@ function Container({ children, container }: ContainerProps) {
   return createPortal(children, container);
 }
 
-export const ScrollContent = React.forwardRef<HTMLDivElement, Props>(
-  ({ children, className = '', simplebarRef, ...props }, ref) => {
-    const useSimplebar = process.platform !== 'darwin';
-    const el = useRef<HTMLDivElement>(null);
-    const getContainer = useCallback(
-      () => el.current && el.current.querySelector('.simplebar-resize-wrapper'),
-      []
-    );
-    const [simplebar, setSimplebar] = useState<any>(null);
+const useSimplebar = process.platform !== 'darwin';
 
-    useLayoutEffect(() => {
+export const ScrollContent = ({
+  children,
+  className = '',
+  simplebarRef,
+  ...props
+}: Props) => {
+  const el = useRef<HTMLDivElement>(null);
+  const [simplebar, setSimplebar] = useState<any>(null);
+
+  useLayoutEffect(() => {
+    if (useSimplebar) {
+      setSimplebar(new Simplebar(el.current));
+    }
+  }, [children]);
+
+  useImperativeHandle<SimplebarAPI, SimplebarAPI>(simplebarRef, () => ({
+    getScrollElement() {
       if (useSimplebar) {
-        setSimplebar(new Simplebar(el.current));
+        return simplebar.getScrollElement();
       }
-    }, [children, useSimplebar]);
+      return el.current;
+    }
+  }));
 
-    useImperativeHandle(simplebarRef, () => ({
-      getScrollElement() {
-        if (useSimplebar) {
-          return simplebar.getScrollElement();
-        }
-
-        return el.current;
-      }
-    }));
-
-    return (
-      <div className={`scroll-content ${className}`.trim()} ref={el} {...props}>
-        {useSimplebar && getContainer() ? (
-          <Container container={getContainer()}>{children}</Container>
-        ) : (
-          children
-        )}
-      </div>
-    );
-  }
-);
+  return (
+    <div {...props} className={`scroll-content ${className}`.trim()} ref={el}>
+      {useSimplebar && el.current ? (
+        <Container container={el.current}>{children}</Container>
+      ) : (
+        children
+      )}
+    </div>
+  );
+};

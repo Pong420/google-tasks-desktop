@@ -10,17 +10,10 @@ import React, {
 import { Omit } from 'react-redux';
 import { Dropdown, DropDownProps } from './Dropdown';
 import { useMuiMenuItem } from '../Menu/MenuItem';
-import { classes } from '../../../utils/classes';
+import { SimplebarAPI } from '../../../typings';
 
-type OmittedDropDownProps = Omit<
-  DropDownProps,
-  'label' | 'children' | 'onSelect'
->;
-
-type Option = string;
-
-interface Props extends OmittedDropDownProps {
-  options: Option[];
+interface Props extends Omit<DropDownProps, 'label' | 'onSelect'> {
+  options: string[];
   onSelect(index: number): void;
   onClose(): void;
   selectedIndex?: number;
@@ -36,35 +29,34 @@ export const SelectableDropdown = forwardRef<any, Props>(
   (
     {
       anchorEl,
-      buttonProps,
+      calcMenuWidth,
       options,
       onSelect,
       onClose,
-      selectedIndex,
-      scrollToIndex,
       placeholder = '',
       paperClassName = '',
-      calcMenuWidth,
-      MenuListProps,
       PaperProps,
+      selectedIndex,
+      scrollToIndex,
       ...props
     },
     ref
   ) => {
-    const [menuWidth, setMenuWidth] = useState<CSSProperties['width'] | null>(
-      null
+    const [menuWidth, setMenuWidth] = useState<CSSProperties['width']>(
+      undefined
     );
     const MenuItem = useMuiMenuItem({ onClose });
-    const scrollRef = useRef<HTMLUListElement>(null);
+    const simplebarRef = useRef<SimplebarAPI>(null);
     const focusItemRef = useRef<HTMLLIElement | null>(null);
     const scrollToSelectedItem = useCallback(() => {
-      if (scrollRef.current && focusItemRef.current) {
-        scrollRef.current.scrollTop =
+      if (simplebarRef.current && focusItemRef.current) {
+        const scrollEl = simplebarRef.current.getScrollElement();
+        scrollEl.scrollTop =
           focusItemRef.current.offsetTop -
-          focusItemRef.current.offsetHeight -
-          scrollRef.current.offsetHeight / 2;
+          focusItemRef.current.offsetHeight * 2;
       }
     }, []);
+
     const label = useMemo(
       () =>
         typeof selectedIndex !== 'undefined'
@@ -73,37 +65,13 @@ export const SelectableDropdown = forwardRef<any, Props>(
       [options, selectedIndex, placeholder]
     );
 
-    const mergedClasses = useMemo(
-      () => ({ paper: classes('selectable-dropdown-paper', paperClassName) }),
-      [paperClassName]
-    );
-
-    const mergedButtonProps = useMemo(
-      () => ({
-        fullWidth: true,
-        classes: { root: 'seletable-mui-dropdown-button' },
-        ...buttonProps
-      }),
-      [buttonProps]
-    );
-
     const mergedPaperProps = useMemo(
       () => ({
-        style: menuWidth ? { width: menuWidth } : {},
+        style: { width: menuWidth },
+        classes: { root: paperClassName },
         ...PaperProps
       }),
-      [menuWidth, PaperProps]
-    );
-
-    const mergedMenuListProps = useMemo<DropDownProps['MenuListProps']>(
-      () => ({
-        ...MenuListProps,
-        ref: scrollRef,
-        style: {
-          padding: 0
-        }
-      }),
-      [MenuListProps]
+      [menuWidth, paperClassName, PaperProps]
     );
 
     useEffect(() => {
@@ -117,13 +85,11 @@ export const SelectableDropdown = forwardRef<any, Props>(
       <Dropdown
         {...props}
         anchorEl={anchorEl}
-        buttonProps={mergedButtonProps}
-        classes={mergedClasses}
         label={label}
-        MenuListProps={mergedMenuListProps}
         onClose={onClose}
         onEnter={scrollToSelectedItem}
         PaperProps={mergedPaperProps}
+        simplebarRef={simplebarRef}
         ref={ref}
       >
         {options.map((label, index) => (

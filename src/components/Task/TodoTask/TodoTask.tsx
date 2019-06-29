@@ -54,7 +54,10 @@ function TodoTaskComponent({
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
-  const [dateTimeModalOpened, dateTimeModal] = useBoolean();
+  const [
+    dateTimeModalOpened,
+    { on: openDateTimeModal, off: closeDateTimeModal }
+  ] = useBoolean();
   const [taskListDropdownOpened, taskListDropdown] = useBoolean();
   const focused = focusIndex === index || focusIndex === task.uuid;
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -203,11 +206,11 @@ function TodoTaskComponent({
       onClick: onFocus,
       onChange: onChangeCallback,
       inputProps: {
-        onDueDateBtnClick: dateTimeModal.on
+        onDueDateBtnClick: openDateTimeModal
       },
       ...inputBaseProps
     }),
-    [dateTimeModal.on, inputBaseProps, onBlur, onChangeCallback, onFocus]
+    [openDateTimeModal, inputBaseProps, onBlur, onChangeCallback, onFocus]
   );
 
   return (
@@ -223,7 +226,7 @@ function TodoTaskComponent({
         onClose={onClose}
         onDelete={deleteTaskCallback}
         anchorPosition={anchorPosition}
-        openDateTimeModal={dateTimeModal.on}
+        openDateTimeModal={openDateTimeModal}
         openTaskListDropdown={taskListDropdown.on}
       />
       <TaskDetailsView
@@ -238,12 +241,11 @@ function TodoTaskComponent({
         updateTask={updateTask}
       />
       <DateTimeModal
-        task={task}
         confirmLabel="OK"
+        due={task.due}
         open={dateTimeModalOpened}
-        handleClose={dateTimeModal.off}
-        handleConfirm={dateTimeModal.off}
-        onDueDateChange={onDueDateChangeCallback}
+        handleClose={closeDateTimeModal}
+        handleConfirm={onDueDateChangeCallback}
       />
     </>
   );

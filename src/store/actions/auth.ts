@@ -40,21 +40,27 @@ export type AuthActions =
   | GetTokenFailure
   | Logout;
 
+export function authenticate(): Authenticate {
+  return {
+    type: AuthActionTypes.AUTHENTICATE
+  };
+}
+
+export function getToken(payload: string): GetToken {
+  return {
+    type: AuthActionTypes.GET_TOKEN,
+    payload
+  };
+}
+
+export function logout(): Logout {
+  return {
+    type: AuthActionTypes.LOGOUT
+  };
+}
+
 export const AuthActionCreators = {
-  authenticate(): Authenticate {
-    return {
-      type: AuthActionTypes.AUTHENTICATE
-    };
-  },
-  getToken(payload: string): GetToken {
-    return {
-      type: AuthActionTypes.GET_TOKEN,
-      payload
-    };
-  },
-  logout(): Logout {
-    return {
-      type: AuthActionTypes.LOGOUT
-    };
-  }
+  authenticate,
+  getToken,
+  logout
 };

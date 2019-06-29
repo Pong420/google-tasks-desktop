@@ -53,7 +53,7 @@ const options = [
   '23:30'
 ];
 
-const buttonProps = { disabled: true };
+const buttonProps = { disabled: true, fullWidth: true };
 const calcMenuWidth = (el: HTMLElement) => el.offsetWidth;
 
 export function TimeDropdown() {

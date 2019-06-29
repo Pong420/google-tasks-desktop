@@ -11,44 +11,4 @@
       }
     }
   }
-
-  &.seletable-mui-dropdown-button {
-    background: var(--task-highlight-background-color);
-  }
-}
-
-.dropdown-menu-paper {
-  @include dimen(100%);
-  overflow: hidden;
-
-  a {
-    display: block;
-  }
-}
-
-.selectable-dropdown-paper {
-  &,
-  > ul {
-    @include flex(stretch, stretch, column);
-  }
-
-  > ul {
-    overflow: auto;
-  }
-
-  .mui-menu-item {
-    flex: 1 0 auto;
-
-    > div {
-      @include relative();
-
-      .text {
-        @include padding-x(36px 0);
-      }
-
-      svg {
-        @include absolute($left: 0);
-      }
-    }
-  }
 }
