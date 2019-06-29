@@ -1,7 +1,7 @@
 $defaultWidth: 47.5px;
 
 @mixin shadow($x) {
-  box-shadow: $x 0.5px 3px 0px darken(#000, 50%);
+  box-shadow: $x 0.5px 3px 0px lighten(#000, 50%);
 }
 
 .switch {

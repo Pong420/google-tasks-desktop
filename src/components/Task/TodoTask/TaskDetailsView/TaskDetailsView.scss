@@ -81,24 +81,29 @@ $height: 36px;
   }
 }
 
-.task-details-view-dropdown-paper {
-  &.task-details-view-dropdown-paper {
+.details-task-list-dropdown-paper {
+  .menu-content {
+    @include padding-y(0);
+  }
+
+  .scroll-content {
     max-height: $height * 5;
   }
 
   .mui-menu-item {
-    height: $height;
-    padding: 0px 10px;
+    &.mui-menu-item {
+      height: $height;
 
-    > div {
-      flex-direction: row-reverse;
+      > div {
+        @include relative();
+        flex-direction: row-reverse;
 
-      .text {
-        padding-right: 0;
-        padding-left: 40px;
+        .text {
+          @include padding-x(36px 0);
 
-        + svg {
-          @include absolute(null, null, 15px);
+          + svg {
+            @include absolute(null, null, 0);
+          }
         }
       }
     }

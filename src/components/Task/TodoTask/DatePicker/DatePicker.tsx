@@ -6,9 +6,7 @@ import RightArrowIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 
 const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-interface GridProps extends HTMLAttributes<HTMLDivElement> {
-  className?: string;
-}
+type GridProps = HTMLAttributes<HTMLDivElement>;
 
 interface DateProps extends GridProps {
   selected?: boolean;

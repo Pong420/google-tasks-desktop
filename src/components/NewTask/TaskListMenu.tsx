@@ -6,32 +6,41 @@ import { Preferences } from '../Preferences';
 import { useMuiMenuItem, Menu, MenuProps, Modal, FormModal } from '../Mui';
 import { useBoolean } from '../../utils/useBoolean';
 import {
-  TaskListActionCreators,
-  TaskActionCreators,
-  AuthActionCreators,
+  deleteCompletedTasks,
+  delteTaskList,
+  logout,
+  updateTaskList,
+  toggleSortByDate,
   RootState
 } from '../../store';
 import Divider from '@material-ui/core/Divider';
 
-interface Props {
-  anchorPosition: MenuProps['anchorPosition'];
-  onClose(): void;
-}
-
-const mapStateToProps = ({ task, taskList }: RootState, ownProps: Props) => ({
-  ...taskList,
-  ...task,
-  ...ownProps
+const mapStateToProps = ({
+  task: { tasks, completedTasks },
+  taskList: { taskLists, currentTaskList, currentTaskListId, sortByDate }
+}: RootState) => ({
+  tasks,
+  completedTasks,
+  taskLists,
+  currentTaskList,
+  currentTaskListId,
+  sortByDate
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
-      ...TaskListActionCreators,
-      ...TaskActionCreators,
-      ...AuthActionCreators
+      deleteCompletedTasks,
+      delteTaskList,
+      logout,
+      updateTaskList,
+      toggleSortByDate
     },
     dispatch
   );
+
+type Props = Pick<MenuProps, 'anchorEl' | 'onClose'> &
+  ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
 function useNotZero(initialVal: number) {
   const [value, setValue] = useState(initialVal);
@@ -45,7 +54,7 @@ function useNotZero(initialVal: number) {
 const menuClasses = { paper: 'task-list-menu-paper' };
 
 function TaskListMenuComponent({
-  anchorPosition,
+  anchorEl,
   onClose,
   tasks,
   completedTasks,
@@ -58,7 +67,7 @@ function TaskListMenuComponent({
   updateTaskList,
   toggleSortByDate,
   logout
-}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+}: Props) {
   const MenuItem = useMuiMenuItem({ onClose });
 
   const [
@@ -77,8 +86,8 @@ function TaskListMenuComponent({
   const numOfCompletedTask = useNotZero(completedTasks.length);
 
   const onDeleteTaskListCallback = useCallback(
-    () => (!!tasks.length ? openDeleteTaskListModal : delteTaskList()),
-    [openDeleteTaskListModal, delteTaskList, tasks.length]
+    () => (!!totalTask ? openDeleteTaskListModal() : delteTaskList()),
+    [openDeleteTaskListModal, delteTaskList, totalTask]
   );
 
   const renameTaskListCallback = useCallback(
@@ -95,9 +104,8 @@ function TaskListMenuComponent({
     <>
       <Menu
         classes={menuClasses}
-        open={!!anchorPosition}
-        anchorPosition={anchorPosition}
-        anchorReference="anchorPosition"
+        open={!!anchorEl}
+        anchorEl={anchorEl}
         onClose={onClose}
       >
         <div className="task-list-menu-title">Sort by</div>

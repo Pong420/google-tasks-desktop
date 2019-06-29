@@ -12,7 +12,7 @@
   --day-color: #9e9e9e;
   --date-color: #000;
   --error-color: #da3125;
-  --shadow-color: #ccc;
+  --shadow-color: #e6e6e6;
   --paper-background-color: #fff;
   --menu-item-hover-color: #{darken(#fff, 6%)};
 }
@@ -30,9 +30,9 @@ $darkMain: #222;
   --day-color: #9e9e9e;
   --date-color: #fff;
   --error-color: #f44336;
-  --shadow-color: #111;
+  --shadow-color: #161616;
   --paper-background-color: var(--main-color-diff);
-  --menu-item-hover-color: #393939;
+  --menu-item-hover-color: #444;
 }
 
 @each $name, $colors in $accent-colors {

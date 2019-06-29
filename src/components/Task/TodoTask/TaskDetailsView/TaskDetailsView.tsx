@@ -14,7 +14,7 @@ import {
   Input,
   IconButton
 } from '../../../Mui';
-import { TaskListDropdown } from './TaskListDropdown';
+import { TaskListDropdown } from '../../../TaskListDropdown';
 import { DateTimeModal } from '../DateTimeModal';
 import { DateTimeButton } from './DateTimeButton';
 import { Schema$Task, Schema$TaskList } from '../../../../typings';
@@ -48,6 +48,12 @@ export function EditTaskButton({ onClick }: { onClick(): void }) {
 const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
   evt.which === 13 && evt.preventDefault();
 
+const calcMenuWidth = (el: HTMLElement) => el.offsetWidth;
+
+const dropdownButtonProps = {
+  fullWidth: true
+};
+
 export function TaskDetailsView({
   taskListDropdownOpened,
   task: initialTask,
@@ -64,11 +70,11 @@ export function TaskDetailsView({
   const notesInputRef = useRef<HTMLTextAreaElement>(null);
   const shouldDeleteTask = useRef<boolean>(false);
   const [task, setTask] = useState(initialTask);
-  const [currTaskListId, setNewTaskListId] = useState<string | null>(null);
+  const [newTaskList, setNewTaskListId] = useState(currentTaskList);
 
   // Instead of autoFocus attr.
   // Aims to delay focus so that the focus animation
-  const onEnteredCallback = useCallback(
+  const focustTitleInputField = useCallback(
     () => titleInputRef.current!.focus(),
     []
   );
@@ -82,10 +88,14 @@ export function TaskDetailsView({
     if (shouldDeleteTask.current) {
       shouldDeleteTask.current = false;
       deleteTask(task);
-    } else if (currTaskListId) {
-      taskListChange(currTaskListId);
+    } else if (
+      newTaskList &&
+      currentTaskList &&
+      currentTaskList.id !== newTaskList.id
+    ) {
+      taskListChange(newTaskList.id!);
     }
-  }, [deleteTask, task, currTaskListId, taskListChange]);
+  }, [currentTaskList, deleteTask, newTaskList, task, taskListChange]);
 
   const focusNotesInputField = useCallback(
     () => notesInputRef.current!.focus(),
@@ -127,7 +137,7 @@ export function TaskDetailsView({
       <FullScreenDialog
         className="task-details-view"
         handleClose={handleClose}
-        onEntered={onEnteredCallback}
+        onEntered={focustTitleInputField}
         onExit={onExitCallback}
         onExited={onExitedCallback}
         headerComponents={
@@ -165,8 +175,11 @@ export function TaskDetailsView({
           <div className="row row-task-list">
             <FormatListBulletedIcon />
             <TaskListDropdown
+              buttonProps={dropdownButtonProps}
+              calcMenuWidth={calcMenuWidth}
               defaultOpen={taskListDropdownOpened}
-              onTaskListChange={setNewTaskListId}
+              onSelect={setNewTaskListId}
+              paperClassName="details-task-list-dropdown-paper"
             />
           </div>
 
@@ -187,12 +200,11 @@ export function TaskDetailsView({
       </FullScreenDialog>
 
       <DateTimeModal
-        task={task}
         confirmLabel="OK"
+        due={task.due}
         open={dateTimeModalOpened}
         handleClose={dateTimeModal.off}
-        handleConfirm={dateTimeModal.off}
-        onDueDateChange={updateDueCallback}
+        handleConfirm={updateDueCallback}
       />
     </>
   );

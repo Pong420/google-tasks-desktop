@@ -5,10 +5,10 @@ import Button, { ButtonProps } from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
 import mergeWith from 'lodash.mergewith';
 
-export interface DropDownProps extends Omit<MenuProps, 'onClick'> {
+export interface DropDownProps extends Omit<MenuProps, 'onClick' | 'ref'> {
   label?: string;
   onClick(evt: MouseEvent<HTMLButtonElement>): void;
-  children: ReactNode;
+  children?: ReactNode;
   buttonProps?: ButtonProps;
 }
 
