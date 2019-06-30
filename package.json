@@ -1,6 +1,6 @@
 {
   "name": "google-task-desktop",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "scripts": {
     "dev": "nf start",
     "build": "yarn app:build && yarn electron:compile",
@@ -132,6 +132,7 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.15",
+    "@types/lodash.isequal": "^4.5.5",
     "@types/lodash.mergewith": "^4.6.6",
     "@types/node": "12.0.10",
     "@types/nprogress": "^0.2.0",
@@ -145,7 +146,7 @@
     "electron-builder": "^20.44.4",
     "eslint-plugin-react-hooks": "^1.6.1",
     "foreman": "^3.0.1",
-    "husky": "^2.4.1",
+    "husky": "^2.7.0",
     "lint-staged": "^8.2.1",
     "node-sass": "npm:sass",
     "prettier": "^1.18.2",
@@ -165,6 +166,7 @@
     "googleapis": "^40.0.0",
     "history": "^4.9.0",
     "hotkeys-js": "Pong420/hotkeys#aa5f618",
+    "lodash.isequal": "^4.5.0",
     "lodash.mergewith": "^4.6.1",
     "nprogress": "^0.2.0",
     "pong-react-scripts": "3.0.1-1",

@@ -63,8 +63,8 @@ yarn package-all
 - [x] Add Date
 - [x] Animation
 - [x] Sync data periodically
+- [x] Move task to another list
 - [ ] Subtask
-- [ ] Move task to another list
 - [ ] Error handling
 - [ ] Improve / check performace
 

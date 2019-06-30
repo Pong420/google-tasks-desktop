@@ -23,6 +23,7 @@ import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import isEqual from 'lodash.isequal';
 
 interface Props extends FullScreenDialogProps {
   taskListDropdownOpened?: boolean;
@@ -79,10 +80,10 @@ export function TaskDetailsView({
     []
   );
 
-  const onExitCallback = useCallback(() => updateTask(task), [
-    task,
-    updateTask
-  ]);
+  const onExitCallback = useCallback(
+    () => !isEqual(initialTask, task) && updateTask(task),
+    [initialTask, task, updateTask]
+  );
 
   const onExitedCallback = useCallback(() => {
     if (shouldDeleteTask.current) {
