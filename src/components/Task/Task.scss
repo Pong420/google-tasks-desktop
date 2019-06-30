@@ -26,11 +26,8 @@ $min-task-height: 50px;
     min-height: $min-task-height;
     min-width: 0;
 
-    //input endAdornment
-    .mui-icon-button {
+    .task-input-base-end-adornment {
       visibility: hidden;
-      align-self: flex-start;
-      margin-top: 3px;
     }
   }
 
@@ -73,12 +70,17 @@ $min-task-height: 50px;
   }
 
   .toggle-completed {
-    align-self: flex-start;
-    margin-top: 0.2em;
-
     .mui-tick-icon {
       color: var(--accent-color);
     }
+  }
+
+  .toggle-completed,
+  .task-input-base-end-adornment {
+    @include flex(center);
+    align-self: stretch;
+    max-height: 68px;
+    margin-top: 1px;
   }
 
   .task-input-content {
