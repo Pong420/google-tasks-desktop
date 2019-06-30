@@ -65,7 +65,7 @@ const apiEpic: TaskEpic = (
 
       const deleteTaskRequest$ = (task?: string) =>
         from(tasksAPI.delete({ tasklist, task })).pipe(
-          map<any, TaskActions>(() => ({
+          map<unknown, TaskActions>(() => ({
             type: TaskActionTypes.DELETE_TASK_SUCCESS
           }))
         );
@@ -98,7 +98,7 @@ const apiEpic: TaskEpic = (
               tasklist
             })
           ).pipe(
-            map<any, TaskActions>(() => ({
+            map<unknown, TaskActions>(() => ({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
             }))
           );

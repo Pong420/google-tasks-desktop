@@ -10,7 +10,7 @@ export interface TaskProps {
   task: Schema$Task;
   endAdornment: ReactNode;
   inputBaseProps?: InputBaseProps;
-  onContextMenu?(evt: MouseEvent<HTMLDivElement>): any;
+  onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
 }
 
 export function Task({

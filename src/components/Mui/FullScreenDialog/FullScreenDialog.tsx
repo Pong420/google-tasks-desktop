@@ -20,7 +20,7 @@ interface ContainerProps {
 
 export const FULLSCREEN_DIALOG_TRANSITION = 300;
 
-const Transition = React.forwardRef<any, TransitionProps>((props, ref) => {
+const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
