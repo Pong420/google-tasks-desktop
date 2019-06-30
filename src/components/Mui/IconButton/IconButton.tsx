@@ -1,13 +1,14 @@
 import React, { ComponentType, ReactElement } from 'react';
+import { Omit } from 'react-redux';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import MuiIconButton, { IconButtonProps } from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
 interface Props extends Partial<IconButtonProps> {
   tooltip?: string;
-  icon?: ComponentType<any>;
+  icon?: ComponentType<Omit<SvgIconProps, 'ref'>>;
   iconProps?: SvgIconProps;
-  children?: ReactElement<any>;
+  children?: ReactElement<{}>;
 }
 
 const PopperProps = {

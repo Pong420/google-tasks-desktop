@@ -16,7 +16,7 @@ import './index.scss';
 
 const store = configureStore();
 
-const render = (Component: React.ComponentType<any>) => {
+const render = (Component: React.ComponentType<{}>) => {
   store.dispatch<RouterAction>(
     replace(
       generatePath(PATHS.TASKLIST, {

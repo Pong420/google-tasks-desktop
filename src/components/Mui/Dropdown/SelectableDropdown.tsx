@@ -25,7 +25,7 @@ interface Props extends Omit<DropDownProps, 'label' | 'onSelect'> {
 
 export type SelectableDropdownProps = Props;
 
-export const SelectableDropdown = forwardRef<any, Props>(
+export const SelectableDropdown = forwardRef<HTMLButtonElement, Props>(
   (
     {
       anchorEl,
@@ -42,9 +42,7 @@ export const SelectableDropdown = forwardRef<any, Props>(
     },
     ref
   ) => {
-    const [menuWidth, setMenuWidth] = useState<CSSProperties['width']>(
-      undefined
-    );
+    const [menuWidth, setMenuWidth] = useState<CSSProperties['width']>();
     const MenuItem = useMuiMenuItem({ onClose });
     const simplebarRef = useRef<SimplebarAPI>(null);
     const focusItemRef = useRef<HTMLLIElement | null>(null);

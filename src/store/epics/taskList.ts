@@ -52,7 +52,7 @@ const apiEpic: TaskListEpic<TaskListActions> = (
             const { currentTaskListId } = state$.value.taskList;
             const tasklist = action.payload || currentTaskListId;
             return from(taskListAPI.delete({ tasklist })).pipe(
-              mapTo<any, TaskListActions>({
+              mapTo<unknown, TaskListActions>({
                 type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS
               })
             );

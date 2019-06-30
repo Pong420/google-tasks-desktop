@@ -37,7 +37,7 @@ export const ScrollContent = ({
   ...props
 }: Props) => {
   const el = useRef<HTMLDivElement>(null);
-  const [simplebar, setSimplebar] = useState<any>(null);
+  const [simplebar, setSimplebar] = useState<SimplebarAPI>();
 
   useLayoutEffect(() => {
     if (useSimplebar) {
@@ -48,9 +48,9 @@ export const ScrollContent = ({
   useImperativeHandle<SimplebarAPI, SimplebarAPI>(simplebarRef, () => ({
     getScrollElement() {
       if (useSimplebar) {
-        return simplebar.getScrollElement();
+        return simplebar!.getScrollElement();
       }
-      return el.current;
+      return el.current!;
     }
   }));
 
