@@ -15,7 +15,7 @@
 
   .auth-content {
     @include dimen(100%);
-    @include flex($flex-direction: column);
+    @include flex(stretch, center, $flex-direction: column);
     @include relative();
     flex: 1 0 auto;
   }

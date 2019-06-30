@@ -1,6 +1,7 @@
 .mui-modal-paper.mui-modal-paper {
   @include dimen(100%);
   @include margin-x(25px);
+  color: var(--text--color);
   background-color: var(--main-color-diff2);
   border-radius: 8px;
   max-width: 280px;
