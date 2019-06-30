@@ -11,27 +11,4 @@
       }
     }
   }
-
-  &.seletable-mui-dropdown-button {
-    background: var(--task-focused-background-color);
-  }
-}
-
-.dropdown-menu-paper {
-  @include dimen(100%);
-
-  a {
-    display: block;
-  }
-}
-
-.selectable-dropdown-paper {
-  &,
-  > ul {
-    @include flex(stretch, stretch, column);
-  }
-
-  .selectable-dropdown-scroll-content {
-    overflow: auto;
-  }
 }

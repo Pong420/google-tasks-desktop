@@ -11,7 +11,7 @@ import dependencies from './epicDependencies';
 export const history = createHashHistory();
 
 const epic$ = new BehaviorSubject(rootEpic);
-const hotReloadingEpic: Epic<any> = (...args: any) =>
+const hotReloadingEpic: Epic<any> = (...args: any[]) =>
   epic$.pipe(switchMap(epic => epic(...args)));
 
 export default function configureStore() {

@@ -1,10 +1,16 @@
 $defaultWidth: 47.5px;
 
+@mixin shadow($x) {
+  box-shadow: $x 0.5px 3px 0px lighten(#000, 50%);
+}
+
 .switch {
+  @include dimen($defaultWidth);
   @include relative();
 
   cursor: pointer;
-  width: $defaultWidth;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 
   .switch-bar {
     @include animate(background-color);
@@ -19,15 +25,15 @@ $defaultWidth: 47.5px;
     @include animate(transform);
     @include absolute(0);
     @include dimen(50%, 100%);
-    padding: percentage(2.5 / 50);
+    padding: round(percentage(2.5 / strip-unit($defaultWidth)));
     transform: translateX(0);
 
     &:before {
-      @include dimen(100%, 100%);
+      @include sq-dimen(100%);
+      @include shadow(1px);
       content: '';
       background-color: #fff;
       border-radius: 50%;
-      box-shadow: 0px 0px 6px darken(#fff, 50%);
       display: block;
     }
   }
@@ -38,6 +44,9 @@ $defaultWidth: 47.5px;
     }
     .switch-icon {
       transform: translateX(100%);
+      &:before {
+        @include shadow(-1px);
+      }
     }
   }
 }

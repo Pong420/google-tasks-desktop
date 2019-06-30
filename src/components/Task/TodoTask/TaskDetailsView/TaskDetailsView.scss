@@ -9,33 +9,22 @@ $height: 36px;
     &.task-details-view-title-field {
       @include typeface('Nunito Sans', 600);
       font-size: 16px;
-
-      textarea::placeholder {
-        font-size: 14px;
-      }
     }
 
+    &.task-details-view-title-field textarea::placeholder,
     &.task-details-view-notes-field {
-      $line-height: 20px;
       font-size: 14px;
       line-height: 20px;
-
-      > div {
-        min-height: $line-height * 3;
-      }
     }
   }
 
   .row {
     @include flex(center, stretch);
+    color: var(--text-secondary-color);
     min-height: 46px;
 
-    > svg {
-      margin-right: 10px;
-    }
-
     .mui-dropdown-button {
-      background: var(--task-focused-background-color);
+      background: var(--task-highlight-background-color);
       min-height: $height;
       line-height: $height;
     }
@@ -53,9 +42,13 @@ $height: 36px;
       }
     }
 
+    > svg {
+      margin-right: 10px;
+    }
+
     button {
       text-transform: initial;
-      color: var(--text-secondary-color);
+      color: inherit;
     }
 
     .task-deatails-due-date-button {
@@ -88,24 +81,29 @@ $height: 36px;
   }
 }
 
-.task-details-view-dropdown-paper {
-  &.task-details-view-dropdown-paper {
+.details-task-list-dropdown-paper {
+  .menu-content {
+    @include padding-y(0);
+  }
+
+  .scroll-content {
     max-height: $height * 5;
   }
 
   .mui-menu-item {
-    height: $height;
-    padding: 0px 10px;
+    &.mui-menu-item {
+      height: $height;
 
-    > div {
-      flex-direction: row-reverse;
+      > div {
+        @include relative();
+        flex-direction: row-reverse;
 
-      .text {
-        padding-right: 0;
-        padding-left: 40px;
+        .text {
+          @include padding-x(36px 0);
 
-        + svg {
-          @include absolute(null, null, 15px);
+          + svg {
+            @include absolute(null, null, 0);
+          }
         }
       }
     }

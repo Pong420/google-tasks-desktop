@@ -18,9 +18,11 @@ interface ContainerProps {
   children?: ReactNode;
 }
 
-function Transition(props: TransitionProps) {
-  return <Slide {...props} direction="left" />;
-}
+export const FULLSCREEN_DIALOG_TRANSITION = 300;
+
+const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
+  return <Slide direction="left" ref={ref} {...props} />;
+});
 
 const backdropProps = {
   open: false
@@ -44,7 +46,7 @@ export function FullScreenDialog({
       TransitionComponent={Transition}
       className={className}
       classes={paperClasses}
-      transitionDuration={300}
+      transitionDuration={FULLSCREEN_DIALOG_TRANSITION}
       BackdropProps={backdropProps}
       {...props}
     >

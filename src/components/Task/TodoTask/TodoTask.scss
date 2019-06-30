@@ -7,16 +7,13 @@
 
     border-radius: 12.5px;
     border: 1px solid var(--border-color);
+    box-shadow: 0px 7px 10px -5px var(--shadow-color);
     left: auto !important;
     right: 5px !important;
     width: calc(100% - 60px) !important;
     z-index: 1000;
 
-    [data-theme^='light'] & {
-      box-shadow: 0px 5px 10px #ccc;
-    }
-
-    .edit-task-button {
+    .task-input-base-end-adornment {
       display: none;
     }
 
@@ -39,5 +36,11 @@
 
   &:last-child {
     border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.todo-task-menu-paper {
+  .scroll-content {
+    min-width: 185px;
   }
 }

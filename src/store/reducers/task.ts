@@ -188,6 +188,32 @@ export default function(state = initialState, action: TaskActions): TaskState {
         )
       };
 
+    case TaskActionTypes.MOVE_TO_ANOHTER_LIST:
+      return (() => {
+        return {
+          ...state,
+          ...classify(state.tasks, task => {
+            if (task.uuid === action.payload.task.uuid) {
+              return null;
+            }
+            return task;
+          }),
+          focusIndex: null
+        };
+      })();
+
+    case TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS:
+      return (() => {
+        const newTask = action.payload;
+        return {
+          ...state,
+          ...(newTask && {
+            tasks: [newTask, ...state.tasks],
+            todoTasks: [newTask, ...state.todoTasks]
+          })
+        };
+      })();
+
     case TaskActionTypes.DELETE_COMPLETED_TASKS:
       return {
         ...state,

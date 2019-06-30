@@ -1,4 +1,4 @@
-import { empty, from, timer, merge } from 'rxjs';
+import { empty, from, timer, merge, forkJoin } from 'rxjs';
 import {
   debounceTime,
   // distinctUntilChanged,
@@ -23,7 +23,9 @@ import {
   UpdateTaskSuccess,
   MoveTask,
   MoveTaskSuccess,
-  NewTask
+  NewTask,
+  MoveToAnotherList,
+  MoveToAnotherListSuccess
 } from '../actions/task';
 import { NetworkActions, NetworkActionTypes } from '../actions/network';
 import { RootState } from '../reducers';
@@ -63,7 +65,7 @@ const apiEpic: TaskEpic = (
 
       const deleteTaskRequest$ = (task?: string) =>
         from(tasksAPI.delete({ tasklist, task })).pipe(
-          map<any, TaskActions>(() => ({
+          map<unknown, TaskActions>(() => ({
             type: TaskActionTypes.DELETE_TASK_SUCCESS
           }))
         );
@@ -96,7 +98,7 @@ const apiEpic: TaskEpic = (
               tasklist
             })
           ).pipe(
-            map<any, TaskActions>(() => ({
+            map<unknown, TaskActions>(() => ({
               type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS
             }))
           );
@@ -321,4 +323,63 @@ const syncTasksEpic: TaskEpic = (action$, state$) => {
   );
 };
 
-export default [apiEpic, newTaskEpic, updateEpic, moveTaskEpic, syncTasksEpic];
+const moveAnotherListEpic: TaskEpic = (
+  action$,
+  state$,
+  { withNetworkHelper }
+) => {
+  return action$.pipe(
+    withNetworkHelper(state$),
+    ofType<Actions, MoveToAnotherList>(TaskActionTypes.MOVE_TO_ANOHTER_LIST),
+    groupBy(({ payload }) => payload.task),
+    mergeMap(group$ =>
+      group$.pipe(
+        switchMap(({ payload: { task, tasklist } }) => {
+          const request$ = (task: Schema$Task) => {
+            const newTask$ = from(
+              tasksAPI.insert({
+                tasklist,
+                requestBody: task
+              })
+            );
+
+            const deleteTask$ = from(
+              tasksAPI.delete({
+                task: task.id,
+                tasklist
+              })
+            );
+
+            return forkJoin(newTask$, deleteTask$).pipe(
+              map<unknown, MoveToAnotherListSuccess>(() => ({
+                type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS,
+                payload:
+                  state$.value.taskList.currentTaskListId === tasklist
+                    ? task
+                    : undefined
+              }))
+            );
+          };
+
+          if (!task.id) {
+            return onNewTaskSuccess$(action$, task.uuid).pipe(
+              switchMap(success => request$({ ...success.payload, ...task })),
+              take(1)
+            );
+          }
+
+          return request$(task);
+        })
+      )
+    )
+  );
+};
+
+export default [
+  apiEpic,
+  newTaskEpic,
+  updateEpic,
+  moveTaskEpic,
+  syncTasksEpic,
+  moveAnotherListEpic
+];

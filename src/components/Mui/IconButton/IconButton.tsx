@@ -1,16 +1,17 @@
 import React, { ComponentType, ReactElement } from 'react';
+import { Omit } from 'react-redux';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import MuiIconButton, { IconButtonProps } from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
 interface Props extends Partial<IconButtonProps> {
   tooltip?: string;
-  icon?: ComponentType<SvgIconProps>;
+  icon?: ComponentType<Omit<SvgIconProps, 'ref'>>;
   iconProps?: SvgIconProps;
-  children?: ReactElement;
+  children?: ReactElement<{}>;
 }
 
-const popperProps = {
+const PopperProps = {
   popperOptions: {
     modifiers: {
       offset: {
@@ -24,16 +25,16 @@ const popperProps = {
 };
 
 export function IconButton({
+  className = '',
   tooltip = '',
   icon: Icon,
   iconProps,
   children,
-  className = '',
   ...props
 }: Props) {
   return (
     <MuiIconButton className={`mui-icon-button ${className}`.trim()} {...props}>
-      <Tooltip title={tooltip} PopperProps={popperProps}>
+      <Tooltip title={tooltip} PopperProps={PopperProps}>
         {Icon ? <Icon {...iconProps} /> : children ? children : <div />}
       </Tooltip>
     </MuiIconButton>

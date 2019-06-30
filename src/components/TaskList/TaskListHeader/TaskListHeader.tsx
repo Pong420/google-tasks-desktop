@@ -1,26 +1,44 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { FormModal } from '../../Mui';
-import { TaskListDropdown } from './TaskListDropdown';
-import { TaskListActionCreators, RootState } from '../../../store';
+import { generatePath } from 'react-router-dom';
+import { push } from 'connected-react-router';
+import { FormModal, MenuItem } from '../../Mui';
+import { TaskListDropdown } from '../../TaskListDropdown';
+import { newTaskList, RootState } from '../../../store';
 import { useBoolean } from '../../../utils/useBoolean';
+import { PATHS } from '../../../constants';
+import { Schema$TaskList } from '../../../typings';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
+import Divider from '@material-ui/core/Divider';
 
-const mapStateToProps = ({ taskList, network }: RootState) => ({
-  ...taskList,
-  isOnline: network.isOnline
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(TaskListActionCreators, dispatch);
-
-export function TaskListHeaderComponent({
-  taskLists,
-  newTaskList,
+const mapStateToProps = ({
+  taskList: { currentTaskList },
+  network: { isOnline }
+}: RootState) => ({
   currentTaskList,
   isOnline
-}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
-  const [modalOpened, modal] = useBoolean(false);
+});
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators({ newTaskList, push }, dispatch);
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export function TaskListHeaderComponent({
+  currentTaskList,
+  isOnline,
+  newTaskList,
+  push
+}: Props) {
+  const [modalOpened, modal] = useBoolean();
+
+  const onSelectCallback = useCallback(
+    ({ id }: Schema$TaskList) => {
+      push(generatePath(PATHS.TASKLIST, { taskListId: id }));
+    },
+    [push]
+  );
 
   return (
     <div className="task-list-header">
@@ -30,10 +48,21 @@ export function TaskListHeaderComponent({
           <span>TASKS</span>
         </div>
         <TaskListDropdown
-          taskLists={taskLists}
-          newTaskList={newTaskList}
-          currentTaskList={currentTaskList}
-          onCreateNewTaskList={modal.on}
+          key={currentTaskList ? currentTaskList.id : ''}
+          onSelect={onSelectCallback}
+          outOfScrollContent={onClose => {
+            return (
+              <>
+                <Divider />
+                <MenuItem
+                  text="Create new list"
+                  onClick={modal.on}
+                  onClose={onClose}
+                />
+              </>
+            );
+          }}
+          paperClassName="header-task-list-dropdown-paper"
         />
       </div>
       <FormModal

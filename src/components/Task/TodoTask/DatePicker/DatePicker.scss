@@ -45,16 +45,23 @@
       border-radius: 50%;
     }
 
+    @mixin backgorundWidthShadow($color) {
+      background-color: $color;
+      [data-theme^='light'] & {
+        box-shadow: 0px 2px 10px -2px #{$color};
+      }
+    }
+
     &.today {
       .grid-content {
-        background-color: var(--accent-light-color);
+        @include backgorundWidthShadow(var(--accent-light-color));
         color: #333;
       }
     }
 
     &.selected {
       .grid-content {
-        background-color: var(--accent-dark-color);
+        @include backgorundWidthShadow(var(--accent-dark-color));
         color: #fff;
       }
     }

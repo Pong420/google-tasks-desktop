@@ -84,46 +84,60 @@ export type TaskListActions =
   | DeleteTaskListSuccess
   | ToggleSortByDate;
 
-export const TaskListActionCreators = {
-  getAllTaskList(): GetAllTaskList {
-    return {
-      type: TaskListActionTypes.GET_ALL_TASK_LIST
-    };
-  },
-  getTaskList(payload: TaskListAPIParams): GetTaskList | GetAllTaskList {
-    return {
-      type: TaskListActionTypes.GET_TASK_LIST,
-      payload
-    };
-  },
-  newTaskList(title: string): NewTaskList {
-    return {
-      type: TaskListActionTypes.NEW_TASK_LIST,
-      payload: {
-        requestBody: {
-          title
-        }
+export function getAllTaskList(): GetAllTaskList {
+  return {
+    type: TaskListActionTypes.GET_ALL_TASK_LIST
+  };
+}
+
+export function getTaskList(
+  payload: TaskListAPIParams
+): GetTaskList | GetAllTaskList {
+  return {
+    type: TaskListActionTypes.GET_TASK_LIST,
+    payload
+  };
+}
+
+export function newTaskList(title: string): NewTaskList {
+  return {
+    type: TaskListActionTypes.NEW_TASK_LIST,
+    payload: {
+      requestBody: {
+        title
       }
-    };
-  },
-  updateTaskList(
-    payload: tasks_v1.Params$Resource$Tasklists$Patch
-  ): UpdateTaskList {
-    return {
-      type: TaskListActionTypes.UPDATE_TASK_LIST,
-      payload
-    };
-  },
-  delteTaskList(payload?: string): DeleteTaskList {
-    return {
-      type: TaskListActionTypes.DELETE_TASK_LIST,
-      payload
-    };
-  },
-  toggleSortByDate(payload?: boolean): ToggleSortByDate {
-    return {
-      type: TaskListActionTypes.TOGGLE_SORT_BY_DATE,
-      payload
-    };
-  }
+    }
+  };
+}
+
+export function updateTaskList(
+  payload: tasks_v1.Params$Resource$Tasklists$Patch
+): UpdateTaskList {
+  return {
+    type: TaskListActionTypes.UPDATE_TASK_LIST,
+    payload
+  };
+}
+
+export function delteTaskList(payload?: string): DeleteTaskList {
+  return {
+    type: TaskListActionTypes.DELETE_TASK_LIST,
+    payload
+  };
+}
+
+export function toggleSortByDate(payload?: boolean): ToggleSortByDate {
+  return {
+    type: TaskListActionTypes.TOGGLE_SORT_BY_DATE,
+    payload
+  };
+}
+
+export const TaskListActionCreators = {
+  getAllTaskList,
+  getTaskList,
+  newTaskList,
+  updateTaskList,
+  delteTaskList,
+  toggleSortByDate
 };

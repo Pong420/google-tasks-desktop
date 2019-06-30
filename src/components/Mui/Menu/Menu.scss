@@ -1,29 +1,38 @@
-.mui-menu-paper.mui-menu-paper {
-  background-color: var(--main-color-diff2);
+.mui-menu-paper {
+  &.mui-menu-paper {
+    border-radius: 8px;
+    background-color: var(--paper-background-color);
+    box-shadow: 0 8px 10px 1px var(--shadow-color),
+      0 3px 14px 2px var(--shadow-color), 0 5px 5px -3px var(--shadow-color);
+    color: var(--text-color);
+  }
+
+  .menu-content {
+    @include padding-y(8px);
+  }
 }
 
-.mui-menu-item.mui-menu-item {
-  @include padding-y(8px);
-  color: var(--text-color);
-  font-size: inherit;
+.mui-menu-item {
+  &.mui-menu-item {
+    @include padding-y(8px);
+    color: var(--text-color);
+    font-size: inherit;
+    min-height: 0;
+
+    &:hover {
+      background-color: var(--menu-item-hover-color);
+    }
+  }
 
   > div {
     @include flex(center, space-between);
-
     flex: 1 1 auto;
     max-width: 100%;
 
     .text {
       @include text-overflow-ellipsis();
-
       flex: 1 1 auto;
       padding-right: 25px;
-    }
-  }
-
-  &:hover {
-    [data-theme^='dark'] & {
-      background-color: var(--main-color-diff);
     }
   }
 }

@@ -18,6 +18,8 @@ export enum TaskActionTypes {
   DELETE_COMPLETED_TASKS_SUCCESS = 'DELETE_COMPLETED_TASKS_SUCCESS',
   MOVE_TASKS = 'MOVE_TASKS',
   MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS',
+  MOVE_TO_ANOHTER_LIST = 'MOVE_TO_ANOHTER_LIST',
+  MOVE_TO_ANOHTER_LIST_SUCCESS = 'MOVE_TO_ANOHTER_LIST_SUCCESS',
   SET_FOCUS_INDEX = 'SET_FOCUS_INDEX'
 }
 
@@ -35,6 +37,11 @@ export interface Payload$MoveTask
 }
 
 export type Payload$SortTasks = 'order' | 'date';
+
+export interface Payload$MoveToAnotherList {
+  task: Schema$Task;
+  tasklist: string;
+}
 
 export interface GetAllTasks {
   type: TaskActionTypes.GET_ALL_TASKS;
@@ -103,6 +110,16 @@ export interface MoveTaskSuccess {
   payload: tasks_v1.Schema$Task;
 }
 
+export interface MoveToAnotherList {
+  type: TaskActionTypes.MOVE_TO_ANOHTER_LIST;
+  payload: Payload$MoveToAnotherList;
+}
+
+export interface MoveToAnotherListSuccess {
+  type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS;
+  payload?: Schema$Task;
+}
+
 export interface SetFocusIndex {
   type: TaskActionTypes.SET_FOCUS_INDEX;
   payload: string | number | null;
@@ -123,50 +140,78 @@ export type TaskActions =
   | DeleteCompletedTasksSuccess
   | MoveTask
   | MoveTaskSuccess
+  | MoveToAnotherList
+  | MoveToAnotherListSuccess
   | SetFocusIndex;
 
+export const getAllTasks = (): GetAllTasks => {
+  return {
+    type: TaskActionTypes.GET_ALL_TASKS
+  };
+};
+
+export const newTask = (payload?: Payload$NewTask): NewTask => {
+  return {
+    type: TaskActionTypes.NEW_TASK,
+    payload: {
+      ...payload,
+      uuid: uuid.v4()
+    }
+  };
+};
+
+export const deleteTask = (payload: Payload$DeleteTask): DeleteTask => {
+  return {
+    type: TaskActionTypes.DELETE_TASK,
+    payload
+  };
+};
+
+export const updateTask = (payload: Schema$Task): UpdateTask => {
+  return {
+    type: TaskActionTypes.UPDATE_TASK,
+    payload
+  };
+};
+
+export const deleteCompletedTasks = (): DeleteCompletedTasks => {
+  return {
+    type: TaskActionTypes.DELETE_COMPLETED_TASKS
+  };
+};
+
+export const moveTask = (payload: Payload$MoveTask): MoveTask => {
+  return {
+    type: TaskActionTypes.MOVE_TASKS,
+    payload
+  };
+};
+
+export const moveToAnotherList = (
+  payload: Payload$MoveToAnotherList
+): MoveToAnotherList => {
+  return {
+    type: TaskActionTypes.MOVE_TO_ANOHTER_LIST,
+    payload
+  };
+};
+
+export const setFocusIndex = (
+  payload: string | number | null
+): SetFocusIndex => {
+  return {
+    type: TaskActionTypes.SET_FOCUS_INDEX,
+    payload
+  };
+};
+
 export const TaskActionCreators = {
-  getAllTasks(): GetAllTasks {
-    return {
-      type: TaskActionTypes.GET_ALL_TASKS
-    };
-  },
-  newTask(payload?: Payload$NewTask): NewTask {
-    return {
-      type: TaskActionTypes.NEW_TASK,
-      payload: {
-        ...payload,
-        uuid: uuid.v4()
-      }
-    };
-  },
-  deleteTask(payload: Payload$DeleteTask): DeleteTask {
-    return {
-      type: TaskActionTypes.DELETE_TASK,
-      payload
-    };
-  },
-  updateTask(payload: Schema$Task): UpdateTask {
-    return {
-      type: TaskActionTypes.UPDATE_TASK,
-      payload
-    };
-  },
-  deleteCompletedTasks(): DeleteCompletedTasks {
-    return {
-      type: TaskActionTypes.DELETE_COMPLETED_TASKS
-    };
-  },
-  moveTask(payload: Payload$MoveTask): MoveTask {
-    return {
-      type: TaskActionTypes.MOVE_TASKS,
-      payload
-    };
-  },
-  setFocusIndex(payload: string | number | null): SetFocusIndex {
-    return {
-      type: TaskActionTypes.SET_FOCUS_INDEX,
-      payload
-    };
-  }
+  getAllTasks,
+  newTask,
+  deleteTask,
+  updateTask,
+  deleteCompletedTasks,
+  moveTask,
+  moveToAnotherList,
+  setFocusIndex
 };

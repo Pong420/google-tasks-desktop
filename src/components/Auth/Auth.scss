@@ -1,5 +1,5 @@
 .auth {
-  @include flex(center, flex-start, column);
+  @include flex($flex-direction: column);
   @include fixed(0, null, 0);
   @include sq-dimen(100%);
 
@@ -15,10 +15,9 @@
 
   .auth-content {
     @include dimen(100%);
-    @include flex(flex-start, center, column);
+    @include flex(stretch, center, $flex-direction: column);
     @include relative();
-
-    flex: 1 1 auto;
+    flex: 1 0 auto;
   }
 
   .auth-confirm-button {
@@ -34,10 +33,10 @@
 
   .file-upload {
     @include dimen(100%);
-    @include flex(stretch, center, column);
-
+    @include flex($flex-direction: column);
     margin-top: 50px;
     font-weight: bold;
+    flex: 1 0 auto;
 
     .file-upload-header {
       a {
@@ -53,7 +52,7 @@
       border-radius: 5px;
       color: var(--text-secondary-color);
       cursor: pointer;
-      flex: 1 1 auto;
+      flex: 1 0 auto;
       margin: 10px 0;
 
       &.dragover {
