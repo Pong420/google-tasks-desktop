@@ -36,7 +36,7 @@ export interface SyncPreferences {
 }
 
 export interface SimplebarAPI {
-  getScrollElement(): HTMLDivElement;
+  getScrollElement(): HTMLDivElement | null;
 }
 
 export interface WithSimplebar {

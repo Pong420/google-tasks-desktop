@@ -47,12 +47,16 @@ export const SelectableDropdown = forwardRef<HTMLButtonElement, Props>(
     const simplebarRef = useRef<SimplebarAPI>(null);
     const focusItemRef = useRef<HTMLLIElement | null>(null);
     const scrollToSelectedItem = useCallback(() => {
-      if (simplebarRef.current && focusItemRef.current) {
-        const scrollEl = simplebarRef.current.getScrollElement();
-        scrollEl.scrollTop =
-          focusItemRef.current.offsetTop -
-          focusItemRef.current.offsetHeight * 2;
-      }
+      setTimeout(() => {
+        if (simplebarRef.current && focusItemRef.current) {
+          const scrollEl = simplebarRef.current.getScrollElement();
+          if (scrollEl) {
+            scrollEl.scrollTop =
+              focusItemRef.current.offsetTop -
+              focusItemRef.current.offsetHeight * 2;
+          }
+        }
+      }, 0);
     }, []);
 
     const label = useMemo(
