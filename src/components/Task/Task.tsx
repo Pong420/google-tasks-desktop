@@ -35,7 +35,9 @@ export function Task({
         fullWidth
         className="task-input-base"
         value={task.title}
-        endAdornment={endAdornment}
+        endAdornment={
+          <div className="task-input-base-end-adornment">{endAdornment}</div>
+        }
         {...inputBaseProps}
         inputComponent={TaskInput}
         inputProps={mergedInputProps}
