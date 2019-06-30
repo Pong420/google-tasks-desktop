@@ -8702,10 +8702,10 @@ pnp-webpack-plugin@1.2.1:
   dependencies:
     ts-pnp "^1.0.0"
 
-pong-react-scripts@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/pong-react-scripts/-/pong-react-scripts-3.0.1.tgz#a42caad82d0ee43cb36db733929da12b87786925"
-  integrity sha512-q54imuqDLiSSK9o8XMA8LypaK/9RugleE9m7klNNHytYx4y4/qgJ1Cn0dv2syRLJKp9+On+x6UQ3mcTh4E5baA==
+pong-react-scripts@3.0.1-1:
+  version "3.0.1-1"
+  resolved "https://registry.yarnpkg.com/pong-react-scripts/-/pong-react-scripts-3.0.1-1.tgz#1ff8f9109c3d9e1a43b948d0aed8c974b290cf28"
+  integrity sha512-mj73qvuJuuV6TMcNxEb5hyiL1Ioad8HDNfVha2O9Iok58dPqQILmwmZ1R31Kj+FO/ibu7ls6rZYXSw3Yrud00Q==
   dependencies:
     "@babel/core" "7.4.3"
     "@svgr/webpack" "4.1.0"

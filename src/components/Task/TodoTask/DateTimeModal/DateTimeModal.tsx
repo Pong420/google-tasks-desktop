@@ -13,7 +13,8 @@ interface Props extends Omit<ModalProps, 'onChange' | 'handleConfirm'> {
   handleConfirm(date: Date): void;
 }
 
-const modalClasses = { paper: 'date-time-modal-paper' };
+const modalClasses: ModalProps['classes'] = { paper: 'date-time-modal-paper' };
+const paperProps: ModalProps['PaperProps'] = { style: { overflow: 'hidden' } };
 
 export function DateTimeModal({ due, handleConfirm, ...props }: Props) {
   const [date, setDate] = useState<Date>(due ? new Date(due) : new Date());
@@ -25,6 +26,7 @@ export function DateTimeModal({ due, handleConfirm, ...props }: Props) {
     <Modal
       classes={modalClasses}
       handleConfirm={handleConfirmCallback}
+      PaperProps={paperProps}
       {...props}
     >
       <DatePicker value={date} onChange={setDate} />
