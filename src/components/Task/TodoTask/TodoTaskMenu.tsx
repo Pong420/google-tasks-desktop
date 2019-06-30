@@ -1,14 +1,15 @@
 import React from 'react';
-import { AnchorPosition } from '../../Mui/Menu/useMuiMenu';
-import { useMuiMenuItem, Menu } from '../../Mui';
+import { useMuiMenuItem, Menu, MenuProps } from '../../Mui';
 
 interface Props {
-  anchorPosition?: AnchorPosition;
+  anchorPosition?: MenuProps['anchorPosition'];
   onClose(): void;
   onDelete(): void;
   openDateTimeModal(): void;
   openTaskListDropdown(): void;
 }
+
+const classes: MenuProps['classes'] = { paper: 'todo-task-menu-paper' };
 
 export function TodoTaskMenu({
   anchorPosition,
@@ -21,10 +22,11 @@ export function TodoTaskMenu({
 
   return (
     <Menu
-      open={Boolean(anchorPosition)}
-      onClose={onClose}
       anchorPosition={anchorPosition}
       anchorReference="anchorPosition"
+      classes={classes}
+      open={!!anchorPosition}
+      onClose={onClose}
     >
       <MenuItem text="Delete" onClick={onDelete} />
       <MenuItem text="Add date/time" onClick={openDateTimeModal} />

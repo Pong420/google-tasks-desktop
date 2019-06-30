@@ -1,6 +1,7 @@
 import React, {
   useRef,
   useState,
+  useCallback,
   useLayoutEffect,
   useImperativeHandle,
   ReactNode,
@@ -38,6 +39,10 @@ export const ScrollContent = ({
 }: Props) => {
   const el = useRef<HTMLDivElement>(null);
   const [simplebar, setSimplebar] = useState<SimplebarAPI>();
+  const getContainer = useCallback(
+    () => el.current && el.current.querySelector('.simplebar-resize-wrapper'),
+    []
+  );
 
   useLayoutEffect(() => {
     if (useSimplebar) {
@@ -47,17 +52,17 @@ export const ScrollContent = ({
 
   useImperativeHandle<SimplebarAPI, SimplebarAPI>(simplebarRef, () => ({
     getScrollElement() {
-      if (useSimplebar) {
-        return simplebar!.getScrollElement();
+      if (useSimplebar && simplebar) {
+        return simplebar.getScrollElement();
       }
-      return el.current!;
+      return el.current;
     }
   }));
 
   return (
     <div {...props} className={`scroll-content ${className}`.trim()} ref={el}>
-      {useSimplebar && el.current ? (
-        <Container container={el.current}>{children}</Container>
+      {useSimplebar && getContainer() ? (
+        <Container container={getContainer()}>{children}</Container>
       ) : (
         children
       )}
