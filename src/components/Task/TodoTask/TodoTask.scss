@@ -40,5 +40,7 @@
 }
 
 .todo-task-menu-paper {
-  min-width: 160px;
+  .scroll-content {
+    min-width: 185px;
+  }
 }
