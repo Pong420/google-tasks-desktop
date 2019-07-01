@@ -1,5 +1,5 @@
 .date-time-modal-paper.date-time-modal-paper {
-  @include sq-dimen(100%);
+  @include dimen(100%);
   @include margin-x(15px);
   color: var(--text-secondary-color);
   max-height: 425px;
@@ -13,24 +13,12 @@
     @include padding-x(6px);
   }
 
-  .row {
-    @include flex(center, stretch);
-    @include padding-x(8px);
-
-    margin-top: 8px;
-    min-height: 34px;
-
-    > svg {
-      margin-right: 8px;
-    }
-
-    .mui-dropdown-button {
-      align-self: stretch;
-    }
-  }
-
   button {
     color: var(--text-secondary-color);
     text-transform: inherit;
+  }
+
+  .modal-actions {
+    margin-top: 20px;
   }
 }
