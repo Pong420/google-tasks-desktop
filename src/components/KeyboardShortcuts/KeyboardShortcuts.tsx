@@ -5,10 +5,6 @@ import {
 } from '../Mui/FullScreenDialog';
 import shortcuts from './shortcuts.json';
 
-interface Props extends FullScreenDialogProps {
-  temp?: string;
-}
-
 function replaceKeyName(str: string) {
   switch (process.platform) {
     case 'darwin':
@@ -19,7 +15,7 @@ function replaceKeyName(str: string) {
   }
 }
 
-export function KeyboardShortcuts({ ...props }: Props) {
+export function KeyboardShortcuts(props: FullScreenDialogProps) {
   return (
     <FullScreenDialog {...props} className="keyboard-shortcuts">
       <h4>Keyboard shortcuts</h4>

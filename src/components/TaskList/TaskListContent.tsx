@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { TodoTasksList, TodoTasksListSortByDate } from './TodoTasksList';
 import { CompletedTasksList } from './CompletedTasksList';
-import { NewTask } from '../NewTask';
+import { NewTask } from './NewTask';
 import { ScrollContent } from '../ScrollContent';
 import { RootState, TaskActionCreators } from '../../store';
 

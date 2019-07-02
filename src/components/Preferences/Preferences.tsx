@@ -80,12 +80,14 @@ function PreferencesComponent({
 
       <FullScreenDialog.Section>
         <FullScreenDialog.Title children="Synchronization" />
+
         <FullScreenDialog.Row>
           <div className="preferences-label">Enable synchronization</div>
           <div className="preferences-switch">
             <Switch checked={sync.enabled} onChange={toggleSync} />
           </div>
         </FullScreenDialog.Row>
+
         {sync.enabled && (
           <>
             <FullScreenDialog.Row>
@@ -97,6 +99,7 @@ function PreferencesComponent({
                 />
               </div>
             </FullScreenDialog.Row>
+
             <FullScreenDialog.Row>
               <div className="preferences-label">Sync after inactive</div>
               <div className="preferences-hours">

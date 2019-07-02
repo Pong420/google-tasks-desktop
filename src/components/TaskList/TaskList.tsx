@@ -1,28 +1,26 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import {
-  RootState,
-  AuthsState,
-  TaskListState,
-  TaskListActionCreators
-} from '../../store';
+import { RootState, getAllTaskList } from '../../store';
 import { TaskListHeader } from './TaskListHeader';
 import { TaskListContent } from './TaskListContent';
 import { classes } from '../../utils/classes';
 
-const mapStateToProps = ({ auth, taskList }: RootState) => ({
-  ...auth,
-  ...taskList
+const mapStateToProps = ({
+  auth: { loggedIn },
+  taskList: { creatingNewTaskList }
+}: RootState) => ({
+  loggedIn,
+  creatingNewTaskList
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(TaskListActionCreators, dispatch);
+  bindActionCreators({ getAllTaskList }, dispatch);
 
 function TaskListComponent({
   loggedIn,
   getAllTaskList,
   creatingNewTaskList
-}: AuthsState & TaskListState & typeof TaskListActionCreators) {
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   useEffect(() => {
     loggedIn && getAllTaskList();
   }, [getAllTaskList, loggedIn]);

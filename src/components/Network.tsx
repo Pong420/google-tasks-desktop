@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { NextWorkActionCreator } from '../store';
+import { NextWorkActionCreators } from '../store';
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(NextWorkActionCreator, dispatch);
+  bindActionCreators(NextWorkActionCreators, dispatch);
 
 export function NetworkComponent({
   online,

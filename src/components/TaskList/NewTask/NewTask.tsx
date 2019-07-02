@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { TaskListMenu } from './TaskListMenu';
-import { useMuiMenu, IconButton } from '../Mui';
-import { Payload$NewTask } from '../../store';
+import { useMuiMenu, IconButton } from '../../Mui';
+import { Payload$NewTask } from '../../../store';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
@@ -15,6 +15,7 @@ const iconProps: SvgIconProps = { color: 'secondary' };
 export function NewTask({ newTask }: Props) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
+  // This avoid passing MouseEvent in newTask
   const newTaskCallback = useCallback(() => {
     newTask();
   }, [newTask]);

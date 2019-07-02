@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useRef,
   ChangeEvent,
+  MouseEvent,
   KeyboardEvent
 } from 'react';
 import {
@@ -121,7 +122,7 @@ export function TaskDetailsView({
   );
 
   const updateDueCallback = useCallback(
-    (date?: any) =>
+    (date?: Date | MouseEvent<HTMLElement>) =>
       setTask({
         ...task,
         due: date instanceof Date ? date.toISOString() : undefined

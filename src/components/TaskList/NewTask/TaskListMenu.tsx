@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { KeyboardShortcuts } from '../KeyboardShortcuts';
-import { Preferences } from '../Preferences';
-import { useMuiMenuItem, Menu, MenuProps, Modal, FormModal } from '../Mui';
-import { useBoolean } from '../../utils/useBoolean';
+import { KeyboardShortcuts } from '../../KeyboardShortcuts';
+import { Preferences } from '../../Preferences';
+import { useMuiMenuItem, Menu, MenuProps, Modal, FormModal } from '../../Mui';
+import { useBoolean } from '../../../utils/useBoolean';
 import {
   deleteCompletedTasks,
   delteTaskList,
@@ -12,7 +12,7 @@ import {
   updateTaskList,
   toggleSortByDate,
   RootState
-} from '../../store';
+} from '../../../store';
 import Divider from '@material-ui/core/Divider';
 
 const mapStateToProps = ({

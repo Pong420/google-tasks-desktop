@@ -13,7 +13,7 @@ interface Offline {
 
 export type NetworkActions = Online | Offline;
 
-export const NextWorkActionCreator = {
+export const NextWorkActionCreators = {
   online(): Online {
     return {
       type: NetworkActionTypes.ONLINE

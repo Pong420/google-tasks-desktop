@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { RootState, AuthActionCreators, AuthsState } from '../../store';
+import { RootState, authenticate, getToken } from '../../store';
 import { Input } from '../Mui/Input';
 import { FileUpload } from './FileUpload';
 import { useInput } from '../../utils/useInput';
@@ -9,16 +9,19 @@ import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
 import { OAuth2Keys } from '../../api';
 import Button from '@material-ui/core/Button';
 
-const mapStateToProps = ({ auth }: RootState) => ({ ...auth });
+const mapStateToProps = ({ auth: { loggedIn, autoLogin } }: RootState) => ({
+  loggedIn,
+  autoLogin
+});
 const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(AuthActionCreators, dispatch);
+  bindActionCreators({ authenticate, getToken }, dispatch);
 
 export function AuthComponent({
   loggedIn,
   autoLogin,
   authenticate,
   getToken
-}: AuthsState & typeof AuthActionCreators) {
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   const code = useInput('');
   const installed = !!OAuth2Keys;
 
@@ -38,7 +41,7 @@ export function AuthComponent({
       </div>
       <div className="auth-content">
         {installed ? (
-          <form action="">
+          <form onSubmit={authenticate}>
             Paste the code here:
             <Input
               {...code}
