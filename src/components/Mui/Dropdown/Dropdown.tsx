@@ -47,7 +47,8 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropDownProps>(
           disableFocusRipple
           {...otherButtonProps}
         >
-          <div>{label}</div> <ArrowDropDownIcon fontSize="default" />
+          <div>{label}</div>
+          <ArrowDropDownIcon fontSize="default" />
         </Button>
         <Menu {...props} classes={mergedMenuClasses}>
           {children}

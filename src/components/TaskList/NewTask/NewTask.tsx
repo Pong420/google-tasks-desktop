@@ -12,7 +12,7 @@ interface Props {
 
 const iconProps: SvgIconProps = { color: 'secondary' };
 
-export function NewTask({ newTask }: Props) {
+export const NewTask = React.memo(({ newTask }: Props) => {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   // This avoid passing MouseEvent in newTask
@@ -30,4 +30,4 @@ export function NewTask({ newTask }: Props) {
       <TaskListMenu anchorEl={anchorEl} onClose={onClose} />
     </div>
   );
-}
+});

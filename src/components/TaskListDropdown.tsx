@@ -1,6 +1,7 @@
 import React, {
   useState,
   useEffect,
+  useMemo,
   useCallback,
   useRef,
   MouseEvent,
@@ -23,36 +24,35 @@ interface Props extends Omit<Partial<SelectableDropdownProps>, 'onSelect'> {
   outOfScrollContent?(onClose: () => void): ReactNode;
 }
 
-const mapStateToProps = ({ taskList }: RootState) => {
-  let currIndex;
-
-  const options = taskList.taskLists.map(({ id, title }, index) => {
-    if (taskList.currentTaskList && taskList.currentTaskList.id === id) {
-      currIndex = index;
-    }
-    return title!;
-  });
-
-  return {
-    options,
-    currIndex,
-    taskLists: taskList.taskLists
-  };
-};
+const mapStateToProps = ({
+  taskList: { taskLists, currentTaskList }
+}: RootState) => ({ taskLists, currentTaskList });
 
 function TaskListDropdownComponent({
   children,
-  currIndex,
   defaultOpen,
   dispatch,
-  options,
+  currentTaskList,
   onSelect,
   taskLists,
   outOfScrollContent,
   ...props
 }: Props & ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
+  const currIndex = useRef(0);
+  const options = useMemo(
+    () =>
+      taskLists.map(({ id, title }, index) => {
+        if (currentTaskList && currentTaskList.id === id) {
+          currIndex.current = index;
+        }
+        return title!;
+      }),
+    [taskLists, currentTaskList]
+  );
+  const [selectedIndex, setIndex] = useState<number | undefined>(
+    currIndex.current
+  );
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-  const [selectedIndex, setIndex] = useState<number | undefined>(currIndex);
   const dropdownRef = useRef<HTMLButtonElement>(null);
 
   const onClickCallback = useCallback(
@@ -91,6 +91,6 @@ function TaskListDropdownComponent({
   );
 }
 
-export const TaskListDropdown = connect(mapStateToProps)(
-  TaskListDropdownComponent
+export const TaskListDropdown = React.memo(
+  connect(mapStateToProps)(TaskListDropdownComponent)
 );
