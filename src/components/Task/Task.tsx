@@ -13,13 +13,13 @@ export interface TaskProps {
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
 }
 
-export function Task({
+export const Task = ({
   className = '',
   task,
   endAdornment,
   inputBaseProps,
   onContextMenu
-}: TaskProps) {
+}: TaskProps) => {
   const mergedInputProps = useMemo(
     () => ({
       task,
@@ -30,7 +30,11 @@ export function Task({
 
   return (
     <div className={classes(`task`, className)} onContextMenu={onContextMenu}>
-      <ToggleCompleted task={task} completed={task.status === 'completed'} />
+      <ToggleCompleted
+        uuid={task.uuid}
+        isEmpty={!(task.title || '').trim()}
+        completed={task.status === 'completed'}
+      />
       <InputBase
         fullWidth
         className="task-input-base"
@@ -44,4 +48,4 @@ export function Task({
       />
     </div>
   );
-}
+};

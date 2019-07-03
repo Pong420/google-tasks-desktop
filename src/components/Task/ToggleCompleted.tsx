@@ -4,20 +4,21 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { IconButton } from '../Mui/IconButton';
 import { useBoolean } from '../../utils/useBoolean';
 import { TaskActionCreators } from '../../store';
-import { Schema$Task } from '../../typings';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
 
 interface Props {
-  task: Schema$Task;
   completed?: boolean;
+  isEmpty: boolean;
+  uuid: string;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispatch);
 
 function ToggleCompletedComponent({
-  task,
+  uuid,
+  isEmpty,
   completed,
   deleteTask,
   updateTask
@@ -25,15 +26,15 @@ function ToggleCompletedComponent({
   const [hover, { on, off }] = useBoolean(false);
 
   const onClickCallback = useCallback(() => {
-    if (!(task.title || '').trim()) {
-      return deleteTask(task);
+    if (isEmpty) {
+      deleteTask({ uuid });
+    } else {
+      updateTask({
+        uuid,
+        status: completed ? 'needsAction' : 'completed'
+      });
     }
-
-    return updateTask({
-      ...task,
-      status: completed ? 'needsAction' : 'completed'
-    });
-  }, [completed, deleteTask, task, updateTask]);
+  }, [uuid, completed, isEmpty, deleteTask, updateTask]);
 
   return (
     <div
@@ -44,7 +45,7 @@ function ToggleCompletedComponent({
     >
       <IconButton tooltip={!completed ? 'Mark complete' : 'Mark incomplete'}>
         {completed || hover ? (
-          <TickIcon className="mui-tick-icon" color="inherit" />
+          <TickIcon className="mui-tick-icon" />
         ) : (
           <CircleIcon />
         )}
@@ -53,7 +54,9 @@ function ToggleCompletedComponent({
   );
 }
 
-export const ToggleCompleted = connect(
-  null,
-  mapDispatchToProps
-)(ToggleCompletedComponent);
+export const ToggleCompleted = React.memo(
+  connect(
+    null,
+    mapDispatchToProps
+  )(ToggleCompletedComponent)
+);

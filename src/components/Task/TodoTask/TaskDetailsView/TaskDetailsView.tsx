@@ -36,7 +36,7 @@ interface Props extends FullScreenDialogProps {
   taskListChange(id: string): void;
 }
 
-export function EditTaskButton({ onClick }: { onClick(): void }) {
+export const EditTaskButton = React.memo(({ onClick }: { onClick(): void }) => {
   return (
     <IconButton
       className="edit-task-button"
@@ -45,7 +45,7 @@ export function EditTaskButton({ onClick }: { onClick(): void }) {
       onClick={onClick}
     />
   );
-}
+});
 
 const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
   evt.which === 13 && evt.preventDefault();

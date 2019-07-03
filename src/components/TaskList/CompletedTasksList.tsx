@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, CSSProperties } from 'react';
 import { CompletedTask } from '../Task';
 import { ScrollContent } from '../ScrollContent';
 import { IconButton } from '../Mui/IconButton';
@@ -14,17 +14,11 @@ interface Props {
 
 export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
   const [expanded, { toggle }] = useBoolean();
-  const Icon = useMemo(() => (expanded ? CollapseIcon : ExpandIcon), [
-    expanded
-  ]);
 
-  const style = useMemo(
-    () =>
-      expanded
-        ? {
-            transform: 'translateY(0)'
-          }
-        : {},
+  const style = useMemo<CSSProperties>(
+    () => ({
+      transform: expanded ? 'translateY(0)' : undefined
+    }),
     [expanded]
   );
 
@@ -33,21 +27,17 @@ export function CompletedTasksList({ completedTasks, deleteTask }: Props) {
       <div className="completed-tasks-list-inner" style={style}>
         <div className="completed-tasks-list-header" onClick={toggle}>
           Completed ({completedTasks.length})
-          <IconButton>
-            <Icon fontSize="default" />
-          </IconButton>
+          <IconButton icon={expanded ? CollapseIcon : ExpandIcon} />
         </div>
         <div className="completed-tasks-list-content">
           <ScrollContent>
-            {completedTasks.map(task => {
-              return (
-                <CompletedTask
-                  key={task.uuid}
-                  task={task}
-                  deleteTask={deleteTask}
-                />
-              );
-            })}
+            {completedTasks.map(task => (
+              <CompletedTask
+                key={task.uuid}
+                task={task}
+                deleteTask={deleteTask}
+              />
+            ))}
           </ScrollContent>
         </div>
       </div>

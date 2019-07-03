@@ -24,19 +24,24 @@ const PopperProps = {
   }
 };
 
-export function IconButton({
-  className = '',
-  tooltip = '',
-  icon: Icon,
-  iconProps,
-  children,
-  ...props
-}: Props) {
-  return (
-    <MuiIconButton className={`mui-icon-button ${className}`.trim()} {...props}>
-      <Tooltip title={tooltip} PopperProps={PopperProps}>
-        {Icon ? <Icon {...iconProps} /> : children ? children : <div />}
-      </Tooltip>
-    </MuiIconButton>
-  );
-}
+export const IconButton = React.memo<Props>(
+  ({
+    className = '',
+    tooltip = '',
+    icon: Icon,
+    iconProps,
+    children,
+    ...props
+  }) => {
+    return (
+      <MuiIconButton
+        className={`mui-icon-button ${className}`.trim()}
+        {...props}
+      >
+        <Tooltip title={tooltip} PopperProps={PopperProps}>
+          {Icon ? <Icon {...iconProps} /> : children ? children : <div />}
+        </Tooltip>
+      </MuiIconButton>
+    );
+  }
+);

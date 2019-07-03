@@ -1,8 +1,8 @@
 import React, {
   useRef,
   useMemo,
-  useEffect,
   useCallback,
+  useLayoutEffect,
   ChangeEvent
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
@@ -62,22 +62,7 @@ function TodoTaskComponent({
   const focused = focusIndex === index || focusIndex === task.uuid;
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      if (focused) {
-        if (document.activeElement !== inputRef.current) {
-          inputRef.current.focus();
-          // place cursot at end of textarea
-          inputRef.current.setSelectionRange(
-            (task.title || '').length,
-            (task.title || '').length
-          );
-        }
-      } else {
-        inputRef.current.blur();
-      }
-    }
-  }, [focused, task.title]);
+  const textLength = useMemo(() => (task.title || '').length, [task.title]);
 
   const { onFocus, onBlur } = useMemo(() => {
     return {
@@ -189,15 +174,6 @@ function TodoTaskComponent({
     };
   }, [index, setFocusIndex, task.title, todoTasks.length]);
 
-  useHotkeys('enter', newTaskCallback, focused);
-  useHotkeys('backspace', backspaceCallback, focused);
-  useHotkeys('shift+enter', detailsView.on, focused);
-  useHotkeys('esc', onBlur, focused);
-  useHotkeys('option+up', moveTaskUp, focused);
-  useHotkeys('option+down', moveTaskDown, focused);
-  useHotkeys('up', focusPrevTask, focused);
-  useHotkeys('down', focusNextTask, focused);
-
   const memoInputBaseProps = useMemo(
     () => ({
       inputRef,
@@ -212,6 +188,33 @@ function TodoTaskComponent({
     }),
     [openDateTimeModal, inputBaseProps, onBlur, onChangeCallback, onFocus]
   );
+
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (input && focused) {
+      if (document.activeElement !== input) {
+        // FIXME: remove timeout
+        setTimeout(() => {
+          input.focus();
+          // place cursor at end of textarea
+          input.setSelectionRange(textLength, textLength);
+
+          return () => {
+            input.blur();
+          };
+        }, 0);
+      }
+    }
+  }, [focused, textLength]);
+
+  useHotkeys('enter', newTaskCallback, focused);
+  useHotkeys('backspace', backspaceCallback, focused);
+  useHotkeys('shift+enter', detailsView.on, focused);
+  useHotkeys('esc', onBlur, focused);
+  useHotkeys('option+up', moveTaskUp, focused);
+  useHotkeys('option+down', moveTaskDown, focused);
+  useHotkeys('up', focusPrevTask, focused);
+  useHotkeys('down', focusNextTask, focused);
 
   return (
     <>
