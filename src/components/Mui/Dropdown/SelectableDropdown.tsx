@@ -67,7 +67,7 @@ export const SelectableDropdown = forwardRef<HTMLButtonElement, Props>(
       [options, selectedIndex, placeholder]
     );
 
-    const mergedPaperProps = useMemo(
+    const mergedPaperProps = useMemo<typeof PaperProps>(
       () => ({
         style: { width: menuWidth },
         classes: { root: paperClassName },

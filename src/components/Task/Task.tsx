@@ -1,7 +1,7 @@
 import React, { ReactNode, MouseEvent, useMemo } from 'react';
 import InputBase, { InputBaseProps } from '@material-ui/core/InputBase';
 import { ToggleCompleted } from './ToggleCompleted';
-import { TaskInput } from './TaskInput';
+import { TaskInput, TaskInputProps } from './TaskInput';
 import { Schema$Task } from '../../typings';
 import { classes } from '../../utils/classes';
 
@@ -20,12 +20,13 @@ export const Task = ({
   inputBaseProps,
   onContextMenu
 }: TaskProps) => {
-  const mergedInputProps = useMemo(
+  const mergedInputProps = useMemo<TaskInputProps>(
     () => ({
-      task,
+      due: task.due,
+      notes: task.notes,
       ...(inputBaseProps && inputBaseProps.inputProps)
     }),
-    [inputBaseProps, task]
+    [inputBaseProps, task.due, task.notes]
   );
 
   return (

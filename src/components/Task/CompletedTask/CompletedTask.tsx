@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import { Omit } from 'react-redux';
-import { Task, TaskProps } from '../Task';
+import { connect } from 'react-redux';
+import { Dispatch, bindActionCreators } from 'redux';
+import { Task } from '../Task';
 import { DeleteIcon, IconButton } from '../../Mui';
-import { Payload$DeleteTask } from '../../../store';
+import { deleteTask, RootState } from '../../../store';
 
-interface Props extends Omit<TaskProps, 'endAdornment'> {
-  deleteTask(task: Payload$DeleteTask): void;
+interface Props {
+  index: number;
 }
 
 const inputBaseProps = {
@@ -15,23 +16,39 @@ const inputBaseProps = {
   }
 };
 
-export const CompletedTask = React.memo(
-  ({ task, deleteTask, ...props }: Props) => {
-    const onDelete = useCallback(
-      () => deleteTask({ id: task.id, uuid: task.uuid }),
-      [deleteTask, task.id, task.uuid]
-    );
+const mapStateToProps = (
+  { task: { completedTasks } }: RootState,
+  ownProps: Props
+) => ({
+  task: completedTasks[ownProps.index]
+});
 
-    return (
-      <Task
-        className="completed-task"
-        task={task}
-        inputBaseProps={inputBaseProps}
-        endAdornment={
-          <IconButton tooltip="Delete" icon={DeleteIcon} onClick={onDelete} />
-        }
-        {...props}
-      />
-    );
-  }
-);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators({ deleteTask }, dispatch);
+
+export const CompletedTaskComponent = ({
+  task,
+  deleteTask
+}: ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>) => {
+  const onDelete = useCallback(
+    () => deleteTask({ id: task.id, uuid: task.uuid }),
+    [deleteTask, task.id, task.uuid]
+  );
+
+  return (
+    <Task
+      className="completed-task"
+      task={task}
+      inputBaseProps={inputBaseProps}
+      endAdornment={
+        <IconButton tooltip="Delete" icon={DeleteIcon} onClick={onDelete} />
+      }
+    />
+  );
+};
+
+export const CompletedTask = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CompletedTaskComponent);

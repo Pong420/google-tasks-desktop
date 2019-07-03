@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { TodoTasksList, TodoTasksListSortByDate } from './TodoTasksList';
@@ -12,7 +12,7 @@ const mapStateToProps = ({
   taskList: { currentTaskList, sortByDate }
 }: RootState) => ({
   todoTasks,
-  completedTasks,
+  completedTasksLength: completedTasks.length,
   currentTaskList,
   sortByDate
 });
@@ -21,7 +21,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 
 function TaskListContentComponent({
   todoTasks,
-  completedTasks,
+  completedTasksLength,
   currentTaskList,
   getAllTasks,
   moveTask,
@@ -46,18 +46,17 @@ function TaskListContentComponent({
             <TodoTasksList onSortEnd={moveTask} todoTasks={todoTasks} />
           )}
         </ScrollContent>
-        {!!completedTasks.length && (
-          <CompletedTasksList
-            deleteTask={deleteTask}
-            completedTasks={completedTasks}
-          />
+        {!!completedTasksLength && (
+          <CompletedTasksList length={completedTasksLength} />
         )}
       </div>
     </>
   );
 }
 
-export const TaskListContent = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TaskListContentComponent);
+export const TaskListContent = React.memo(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(TaskListContentComponent)
+);

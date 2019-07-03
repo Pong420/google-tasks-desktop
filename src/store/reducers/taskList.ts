@@ -80,7 +80,8 @@ export default function(
     case TaskListActionTypes.GET_ALL_TASK_LIST:
       return {
         ...initialState,
-        currentTaskListId: state.currentTaskListId
+        currentTaskListId: state.currentTaskListId,
+        sortByDate: state.sortByDate
       };
 
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:

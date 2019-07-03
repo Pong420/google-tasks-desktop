@@ -16,7 +16,7 @@ const backdropProps = {
 
 export const Menu = forwardRef<SimplebarAPI, MenuProps>(
   ({ classes, children, simplebarRef, outOfScrollContent, ...props }, ref) => {
-    const mergedClasses = useMemo(
+    const mergedClasses = useMemo<PopoverProps['classes']>(
       () =>
         mergeWith({ paper: 'mui-menu-paper' }, classes, (a, b) => a + ' ' + b),
       [classes]

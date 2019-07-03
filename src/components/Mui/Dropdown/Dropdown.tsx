@@ -14,7 +14,7 @@ export interface DropDownProps extends Omit<MenuProps, 'onClick' | 'ref'> {
 
 export const Dropdown = forwardRef<HTMLButtonElement, DropDownProps>(
   ({ buttonProps, children, classes, label, onClick, ...props }, ref) => {
-    const mergedMenuClasses = useMemo(
+    const mergedMenuClasses = useMemo<MenuProps['classes']>(
       () =>
         mergeWith(
           { paper: 'dropdown-menu-paper' },
@@ -28,7 +28,7 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropDownProps>(
       classes: ''
     };
 
-    const mergedButtonClasses = useMemo(
+    const mergedButtonClasses = useMemo<ButtonProps['classes']>(
       () =>
         mergeWith(
           { root: 'mui-dropdown-button' },

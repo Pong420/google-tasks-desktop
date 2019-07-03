@@ -33,7 +33,7 @@ export function Modal({
     }
   }, [handleClose, handleConfirm]);
 
-  const mergedClasses = useMemo(
+  const mergedClasses = useMemo<DialogProps['classes']>(
     () =>
       mergeWith(
         { root: 'mui-modal', paper: 'mui-modal-paper' },
