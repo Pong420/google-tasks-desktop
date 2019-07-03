@@ -5,21 +5,17 @@ import {
   SortEnd,
   SortOver
 } from 'react-sortable-hoc';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { TodoTask, TodoTaskProps } from '../../Task';
 import { useBoolean } from '../../../utils';
 import { Schema$Task } from '../../../typings';
+import { RootState, moveTask } from '../../../store';
 
-interface Props {
-  todoTasks: Schema$Task[];
-}
-
-interface SortableListProps extends Props {
+interface SortableListProps {
   dragging?: boolean;
   insertAfter: number | null;
-}
-
-interface TodoTasksListProps extends Props {
-  onSortEnd(sortEnd: Pick<SortEnd, 'newIndex' | 'oldIndex'>): void;
+  todoTasks: Schema$Task[];
 }
 
 const SortableItem = SortableElement((props: TodoTaskProps) => (
@@ -51,7 +47,18 @@ const SortableList = SortableContainer(
   }
 );
 
-export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
+const mapStateToProps = ({ task: { todoTasks } }: RootState) => ({
+  todoTasks
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators({ onSortEnd: moveTask }, dispatch);
+
+const TodoTasksListComponent = ({
+  onSortEnd,
+  ...props
+}: ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>) => {
   const [dragging, { on, off }] = useBoolean();
   const [insertAfter, setInsertAfter] = useState<number | null>(null);
   const onSortOverCallback = useCallback(
@@ -93,4 +100,9 @@ export function TodoTasksList({ onSortEnd, ...props }: TodoTasksListProps) {
       {...props}
     />
   );
-}
+};
+
+export const TodoTasksList = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoTasksListComponent);

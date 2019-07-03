@@ -1,11 +1,9 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { TodoTask } from '../../Task';
+import { connect } from 'react-redux';
 import { Schema$Task } from '../../../typings';
 import { compare } from '../../../utils/compare';
-
-interface Props {
-  todoTasks: Schema$Task[];
-}
+import { RootState } from '../../../store';
 
 const inputBaseProps = {
   inputProps: {
@@ -13,31 +11,37 @@ const inputBaseProps = {
   }
 };
 
-export function TodoTasksListSortByDate({ todoTasks }: Props) {
+const mapStateToProps = ({ task: { todoTasks } }: RootState) => {
+  const dateLabelHandler = getDateLabelHandler();
+  let prevLabel = '';
+  const sortedTodoTasks = todoTasks
+    .slice()
+    .sort(
+      (a, b) =>
+        compare(a.due, b.due) ||
+        compare(a.position, b.position) ||
+        compare(a.updated, b.updated)
+    )
+    .reduce<Array<string | Schema$Task>>((acc, task) => {
+      const label = dateLabelHandler(task.due);
+      if (prevLabel !== label) {
+        prevLabel = label;
+        acc.push(label);
+      }
+
+      acc.push(task);
+      return acc;
+    }, []);
+
+  return {
+    sortedTodoTasks
+  };
+};
+
+function TodoTasksListSortByDateComponent({
+  sortedTodoTasks
+}: ReturnType<typeof mapStateToProps>) {
   let index = -1;
-
-  const sortedTodoTasks = useMemo(() => {
-    const dateLabelHandler = getDateLabelHandler();
-    let prevLabel = '';
-    return todoTasks
-      .slice()
-      .sort(
-        (a, b) =>
-          compare(a.due, b.due) ||
-          compare(a.position, b.position) ||
-          compare(a.updated, b.updated)
-      )
-      .reduce<Array<string | Schema$Task>>((acc, task) => {
-        const label = dateLabelHandler(task.due);
-        if (prevLabel !== label) {
-          prevLabel = label;
-          acc.push(label);
-        }
-
-        acc.push(task);
-        return acc;
-      }, []);
-  }, [todoTasks]);
 
   return (
     <div className="todo-tasks-list-sort-by-date">
@@ -84,3 +88,7 @@ function getDateLabelHandler() {
     return key;
   };
 }
+
+export const TodoTasksListSortByDate = connect(mapStateToProps)(
+  TodoTasksListSortByDateComponent
+);

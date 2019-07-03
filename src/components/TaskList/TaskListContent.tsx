@@ -1,31 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { TodoTasksList, TodoTasksListSortByDate } from './TodoTasksList';
 import { CompletedTasksList } from './CompletedTasksList';
 import { NewTask } from './NewTask';
 import { ScrollContent } from '../ScrollContent';
-import { RootState, TaskActionCreators } from '../../store';
+import { RootState, getAllTasks, newTask } from '../../store';
 
 const mapStateToProps = ({
-  task: { todoTasks, completedTasks },
+  task: { completedTasks },
   taskList: { currentTaskList, sortByDate }
 }: RootState) => ({
-  todoTasks,
   completedTasksLength: completedTasks.length,
   currentTaskList,
   sortByDate
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(TaskActionCreators, dispatch);
+  bindActionCreators({ getAllTasks, newTask }, dispatch);
 
 function TaskListContentComponent({
-  todoTasks,
   completedTasksLength,
   currentTaskList,
   getAllTasks,
-  moveTask,
-  deleteTask,
   sortByDate,
   newTask
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
@@ -40,11 +36,7 @@ function TaskListContentComponent({
       <div className="task-list-content">
         <NewTask newTask={newTask} />
         <ScrollContent className="task-list-scroll-content">
-          {sortByDate ? (
-            <TodoTasksListSortByDate todoTasks={todoTasks} />
-          ) : (
-            <TodoTasksList onSortEnd={moveTask} todoTasks={todoTasks} />
-          )}
+          {sortByDate ? <TodoTasksListSortByDate /> : <TodoTasksList />}
         </ScrollContent>
         {!!completedTasksLength && (
           <CompletedTasksList length={completedTasksLength} />

@@ -53,11 +53,6 @@ export function DatePicker({ value, onChange }: Props) {
   const prevMonth = useCallback(() => switchMonth(-1), [switchMonth]);
   const nextMonth = useCallback(() => switchMonth(1), [switchMonth]);
 
-  const onDateClick = useCallback(() => {
-    setCurValue(date);
-    onChange && onChange(date);
-  }, [onChange, date]);
-
   return (
     <div className="date-picker">
       <div className="calender">
@@ -79,7 +74,10 @@ export function DatePicker({ value, onChange }: Props) {
               key={index}
               className={getClassName(date)}
               selected={curValue.compare(date).sameDate}
-              onClick={onDateClick}
+              onClick={() => {
+                setCurValue(date);
+                onChange && onChange(date);
+              }}
             >
               {date.getDate()}
             </DateGrid>

@@ -33,7 +33,7 @@ export interface Payload$DeleteTask extends Schema$Task {
 
 export interface Payload$MoveTask
   extends Pick<SortEnd, 'newIndex' | 'oldIndex'> {
-  uuid: string;
+  uuid?: string;
 }
 
 export type Payload$SortTasks = 'order' | 'date';

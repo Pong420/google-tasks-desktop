@@ -25,12 +25,18 @@ export interface TodoTaskProps {
 }
 
 const mapStatetoProps = (
-  { task, taskList }: RootState,
+  {
+    task: { focusIndex, todoTasks },
+    taskList: { taskLists, currentTaskList, sortByDate }
+  }: RootState,
   ownProps: TodoTaskProps
 ) => ({
-  ...task,
-  ...taskList,
-  ...ownProps
+  ...ownProps,
+  currentTaskList,
+  focused: focusIndex === ownProps.index || focusIndex === ownProps.task.uuid,
+  sortByDate,
+  todoTasks,
+  taskLists
 });
 const mapDispatchToProps = (dispath: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispath);
@@ -42,13 +48,13 @@ function TodoTaskComponent({
   todoTasks,
   taskLists,
   currentTaskList,
+  inputBaseProps,
+  sortByDate,
+  focused,
   newTask,
   updateTask,
   deleteTask,
   moveTask,
-  inputBaseProps,
-  sortByDate,
-  focusIndex,
   moveToAnotherList,
   setFocusIndex
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
@@ -59,7 +65,6 @@ function TodoTaskComponent({
     { on: openDateTimeModal, off: closeDateTimeModal }
   ] = useBoolean();
   const [taskListDropdownOpened, taskListDropdown] = useBoolean();
-  const focused = focusIndex === index || focusIndex === task.uuid;
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const textLength = useMemo(() => (task.title || '').length, [task.title]);
