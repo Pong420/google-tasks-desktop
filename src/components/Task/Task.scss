@@ -94,6 +94,7 @@ $min-task-height: 50px;
 
     .mui-input-base {
       $line-height: 20px;
+      @include sq-dimen(auto);
       font-size: 14px;
       line-height: $line-height;
       min-height: 0;
@@ -124,7 +125,7 @@ $min-task-height: 50px;
     cursor: pointer;
     font-size: 12px;
     line-height: 16px;
-    margin-top: 6px;
+    margin-top: 8px;
     padding: 6px 7px 5px;
 
     svg {

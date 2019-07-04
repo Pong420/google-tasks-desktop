@@ -3,12 +3,13 @@ import React, {
   useMemo,
   useCallback,
   useLayoutEffect,
-  ChangeEvent
+  MouseEvent,
+  ChangeEvent,
+  KeyboardEvent
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { InputBaseProps } from '@material-ui/core/InputBase';
-import { Task } from '../Task';
+import { connect, Omit } from 'react-redux';
+import { Task, TaskProps } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
 import { DateTimeModal } from './DateTimeModal';
 import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
@@ -17,11 +18,10 @@ import { useBoolean, classes, useHotkeys } from '../../../utils';
 import { RootState, TaskActionCreators } from '../../../store';
 import { Schema$Task } from '../../../typings';
 
-export interface TodoTaskProps {
+export interface TodoTaskProps extends Omit<TaskProps, 'ref' | 'endAdornment'> {
   className?: string;
   index: number;
   task: Schema$Task;
-  inputBaseProps?: InputBaseProps;
 }
 
 const mapStatetoProps = (
@@ -33,13 +33,15 @@ const mapStatetoProps = (
 ) => ({
   ...ownProps,
   currentTaskList,
-  focused: focusIndex === ownProps.index || focusIndex === ownProps.task.uuid,
   sortByDate,
   todoTasks,
-  taskLists
+  taskLists,
+  focused: focusIndex === ownProps.index || focusIndex === ownProps.task.uuid
 });
 const mapDispatchToProps = (dispath: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispath);
+
+const disableMouseDown = (evt: MouseEvent<HTMLElement>) => evt.preventDefault();
 
 function TodoTaskComponent({
   className = '',
@@ -48,7 +50,6 @@ function TodoTaskComponent({
   todoTasks,
   taskLists,
   currentTaskList,
-  inputBaseProps,
   sortByDate,
   focused,
   newTask,
@@ -56,18 +57,28 @@ function TodoTaskComponent({
   deleteTask,
   moveTask,
   moveToAnotherList,
-  setFocusIndex
+  setFocusIndex,
+  inputProps
 }: ReturnType<typeof mapStatetoProps> & ReturnType<typeof mapDispatchToProps>) {
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [detailsViewOpened, detailsView] = useBoolean();
-  const [
-    dateTimeModalOpened,
-    { on: openDateTimeModal, off: closeDateTimeModal }
-  ] = useBoolean();
+  const [dateTimeModalOpened, dateTimeModal] = useBoolean();
   const [taskListDropdownOpened, taskListDropdown] = useBoolean();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const textLength = useMemo(() => (task.title || '').length, [task.title]);
+  const updateTaskCallback = useCallback(
+    (args: Omit<Parameters<typeof updateTask>[0], 'id' | 'uuid'>) => {
+      updateTask({ id: task.id, uuid: task.uuid, ...args });
+    },
+    [task.id, task.uuid, updateTask]
+  );
+
+  const deleteTaskCallback = useCallback(
+    (args?: Omit<Parameters<typeof deleteTask>[0], 'id' | 'uuid'>) => {
+      deleteTask({ id: task.id, uuid: task.uuid, ...args });
+    },
+    [deleteTask, task.id, task.uuid]
+  );
 
   const { onFocus, onBlur } = useMemo(() => {
     return {
@@ -77,28 +88,19 @@ function TodoTaskComponent({
   }, [focused, index, setFocusIndex]);
 
   const onChangeCallback = useCallback(
-    (evt: ChangeEvent<HTMLTextAreaElement>) => {
-      updateTask({
-        ...task,
+    (evt: ChangeEvent<HTMLTextAreaElement>) =>
+      updateTaskCallback({
         title: evt.target.value
-      });
-    },
-    [task, updateTask]
+      }),
+    [updateTaskCallback]
   );
 
-  const deleteTaskCallback = useCallback(() => deleteTask(task), [
-    deleteTask,
-    task
-  ]);
-
   const onDueDateChangeCallback = useCallback(
-    (date: Date) => {
-      updateTask({
-        ...task,
+    (date: Date) =>
+      updateTaskCallback({
         due: date.toISOString()
-      });
-    },
-    [task, updateTask]
+      }),
+    [updateTaskCallback]
   );
 
   const taskListChangeCallback = useCallback(
@@ -120,13 +122,6 @@ function TodoTaskComponent({
     });
     return false;
   }, [newTask, task, sortByDate]);
-
-  const backspaceCallback = useCallback(() => {
-    if (!task.title) {
-      deleteTask({ ...task, previousTaskIndex: Math.max(0, index - 1) });
-      return false;
-    }
-  }, [deleteTask, index, task]);
 
   const { moveTaskUp, moveTaskDown } = useMemo(() => {
     const handler = (step: number) => () => {
@@ -179,19 +174,27 @@ function TodoTaskComponent({
     };
   }, [index, setFocusIndex, task.title, todoTasks.length]);
 
-  const memoInputBaseProps = useMemo(
+  const mergedInputProps = useMemo(
     () => ({
-      inputRef,
-      onFocus,
-      onBlur,
-      onClick: onFocus,
-      onChange: onChangeCallback,
-      inputProps: {
-        onDueDateBtnClick: openDateTimeModal
-      },
-      ...inputBaseProps
+      ...(inputProps && inputProps),
+      onDueDateBtnClick: dateTimeModal.on
     }),
-    [openDateTimeModal, inputBaseProps, onBlur, onChangeCallback, onFocus]
+    [inputProps, dateTimeModal]
+  );
+
+  const onKeydownCallback = useCallback(
+    (evt: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (evt.key === 'Backspace' && !evt.currentTarget.value.trim()) {
+        deleteTaskCallback({
+          previousTaskIndex: Math.max(0, index - 1)
+        });
+      }
+
+      if (evt.key === 'Escape') {
+        evt.currentTarget.blur();
+      }
+    },
+    [deleteTaskCallback, index]
   );
 
   useLayoutEffect(() => {
@@ -200,41 +203,44 @@ function TodoTaskComponent({
       if (document.activeElement !== input) {
         // FIXME: remove timeout
         setTimeout(() => {
+          const textLength = (task.title || '').length;
+
           input.focus();
           // place cursor at end of textarea
           input.setSelectionRange(textLength, textLength);
-
-          return () => {
-            input.blur();
-          };
         }, 0);
       }
     }
-  }, [focused, textLength]);
+  }, [focused, task.title]);
 
   useHotkeys('enter', newTaskCallback, focused);
-  useHotkeys('backspace', backspaceCallback, focused);
-  useHotkeys('shift+enter', detailsView.on, focused);
-  useHotkeys('esc', onBlur, focused);
-  useHotkeys('option+up', moveTaskUp, focused);
-  useHotkeys('option+down', moveTaskDown, focused);
   useHotkeys('up', focusPrevTask, focused);
   useHotkeys('down', focusNextTask, focused);
+  useHotkeys('shift+enter', detailsView.on, focused);
+  useHotkeys('option+up', moveTaskUp, focused);
+  useHotkeys('option+down', moveTaskDown, focused);
 
   return (
     <>
       <Task
         className={classes(`todo-task`, className, focused && 'focused')}
         task={task}
-        inputBaseProps={memoInputBaseProps}
+        inputRef={inputRef}
+        inputProps={mergedInputProps}
         onContextMenu={setAnchorPosition}
+        onBlur={onBlur}
+        onClick={onFocus}
+        onFocus={onFocus}
+        onChange={onChangeCallback}
+        onKeyDown={onKeydownCallback}
+        onMouseDown={disableMouseDown} // this avoid trigger SET_FOCUS_INDEX when not click on input element directly
         endAdornment={<EditTaskButton onClick={detailsView.on} />}
       />
       <TodoTaskMenu
         onClose={onClose}
         onDelete={deleteTaskCallback}
         anchorPosition={anchorPosition}
-        openDateTimeModal={openDateTimeModal}
+        openDateTimeModal={dateTimeModal.on}
         openTaskListDropdown={taskListDropdown.on}
       />
       <TaskDetailsView
@@ -252,7 +258,7 @@ function TodoTaskComponent({
         confirmLabel="OK"
         due={task.due}
         open={dateTimeModalOpened}
-        handleClose={closeDateTimeModal}
+        handleClose={dateTimeModal.off}
         handleConfirm={onDueDateChangeCallback}
       />
     </>

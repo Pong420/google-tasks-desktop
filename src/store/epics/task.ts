@@ -1,7 +1,6 @@
 import { empty, from, timer, merge, forkJoin } from 'rxjs';
 import {
   debounceTime,
-  // distinctUntilChanged,
   filter,
   groupBy,
   map,
@@ -32,7 +31,6 @@ import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
-// import isEqual from 'lodash/fp/isEqual';
 
 type Actions = TaskActions | NetworkActions;
 type TaskEpic = Epic<Actions, Actions, RootState, EpicDependencies>;
@@ -192,8 +190,6 @@ const updateEpic: TaskEpic = (action$, state$, { withNetworkHelper }) => {
     groupBy(action => action.payload.uuid),
     mergeMap(group$ => {
       return group$.pipe(
-        debounceTime(1000),
-        // distinctUntilChanged(isEqual),
         switchMap(action => {
           const exsits = state$.value.task.tasks.find(
             task => task.uuid === action.payload.uuid

@@ -5,10 +5,8 @@ import { Schema$Task } from '../../../typings';
 import { compare } from '../../../utils/compare';
 import { RootState } from '../../../store';
 
-const inputBaseProps = {
-  inputProps: {
-    hideDateBtn: true
-  }
+const inputProps = {
+  hideDateBtn: true
 };
 
 const mapStateToProps = ({ task: { todoTasks } }: RootState) => {
@@ -57,7 +55,7 @@ function TodoTasksListSortByDateComponent({
             key={data.uuid}
             index={index}
             task={data}
-            inputBaseProps={inputBaseProps}
+            inputProps={inputProps}
           />
         );
       })}

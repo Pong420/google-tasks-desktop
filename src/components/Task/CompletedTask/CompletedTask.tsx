@@ -9,11 +9,8 @@ interface Props {
   index: number;
 }
 
-const inputBaseProps = {
-  readOnly: true,
-  inputProps: {
-    hideDateBtn: true
-  }
+const inputProps = {
+  hideDateBtn: true
 };
 
 const mapStateToProps = (
@@ -38,9 +35,10 @@ export const CompletedTaskComponent = ({
 
   return (
     <Task
+      readOnly
       className="completed-task"
       task={task}
-      inputBaseProps={inputBaseProps}
+      inputProps={inputProps}
       endAdornment={
         <IconButton tooltip="Delete" icon={DeleteIcon} onClick={onDelete} />
       }

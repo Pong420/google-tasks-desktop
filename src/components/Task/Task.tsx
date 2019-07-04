@@ -5,28 +5,29 @@ import { TaskInput, TaskInputProps } from './TaskInput';
 import { Schema$Task } from '../../typings';
 import { classes } from '../../utils/classes';
 
-export interface TaskProps {
+export interface TaskProps extends InputBaseProps {
   className?: string;
   task: Schema$Task;
   endAdornment: ReactNode;
-  inputBaseProps?: InputBaseProps;
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
+  inputProps?: TaskInputProps;
 }
 
 export const Task = ({
   className = '',
   task,
   endAdornment,
-  inputBaseProps,
-  onContextMenu
+  onContextMenu,
+  inputProps,
+  ...inputBaseProps
 }: TaskProps) => {
-  const mergedInputProps = useMemo<TaskInputProps>(
+  const mergedInputProps = useMemo<TaskProps['inputProps']>(
     () => ({
       due: task.due,
       notes: task.notes,
-      ...(inputBaseProps && inputBaseProps.inputProps)
+      ...(inputProps && inputProps)
     }),
-    [inputBaseProps, task.due, task.notes]
+    [task.due, task.notes, inputProps]
   );
 
   return (
@@ -37,15 +38,15 @@ export const Task = ({
         completed={task.status === 'completed'}
       />
       <InputBase
+        {...inputBaseProps}
         fullWidth
         className="task-input-base"
-        value={task.title}
+        defaultValue={task.title}
+        inputComponent={TaskInput}
+        inputProps={mergedInputProps}
         endAdornment={
           <div className="task-input-base-end-adornment">{endAdornment}</div>
         }
-        {...inputBaseProps}
-        inputComponent={TaskInput}
-        inputProps={mergedInputProps}
       />
     </div>
   );

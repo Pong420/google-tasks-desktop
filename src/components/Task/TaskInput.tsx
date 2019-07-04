@@ -1,26 +1,47 @@
-import React from 'react';
+import React, { useCallback, ChangeEvent, useRef, useEffect } from 'react';
 import { Input } from '../Mui/Input';
-import { InputBaseComponentProps } from '@material-ui/core/InputBase';
+import { InputBaseProps } from '@material-ui/core/InputBase';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 
-export interface TaskInputProps extends InputBaseComponentProps {
+export interface TaskInputProps {
   due?: string;
   notes?: string;
   hideDateBtn?: boolean;
   onDueDateBtnClick?(): void;
 }
 
+type Props = TaskInputProps & InputBaseProps;
+
 export const TaskInput = ({
-  notes,
   due,
-  inputRef,
+  notes,
   hideDateBtn,
+  onChange,
   onDueDateBtnClick,
-  ...inputProps
-}: TaskInputProps) => {
+  ...inputBaseProps
+}: Props) => {
+  const timeout = useRef(0);
+
+  const onChangeCallback = useCallback(
+    (evt: ChangeEvent<HTMLTextAreaElement>) => {
+      evt.persist();
+      clearTimeout(timeout.current);
+      if (onChange) {
+        timeout.current = window.setTimeout(() => onChange(evt), 1000);
+      }
+    },
+    [onChange]
+  );
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
   return (
     <div className="task-input-content">
-      <Input multiline inputProps={inputProps} inputRef={inputRef} />
+      <Input {...inputBaseProps} multiline onChange={onChangeCallback} />
       {notes && <div className="task-notes">{notes}</div>}
       {due && !hideDateBtn && (
         <div

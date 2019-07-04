@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useMuiMenuItem, Menu, MenuProps } from '../../Mui';
 
 interface Props {
@@ -19,6 +19,7 @@ export function TodoTaskMenu({
   openTaskListDropdown
 }: Props) {
   const MenuItem = useMuiMenuItem({ onClose });
+  const onDeleteCallback = useCallback(() => onDelete(), [onDelete]);
 
   return (
     <Menu
@@ -28,7 +29,7 @@ export function TodoTaskMenu({
       open={!!anchorPosition}
       onClose={onClose}
     >
-      <MenuItem text="Delete" onClick={onDelete} />
+      <MenuItem text="Delete" onClick={onDeleteCallback} />
       <MenuItem text="Add date/time" onClick={openDateTimeModal} />
       <MenuItem text="Add a subtask" disabled />
       <MenuItem text="Indent" disabled /> {/* TODO: not should on first task */}
