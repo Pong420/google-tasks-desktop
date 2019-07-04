@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo, useCallback, CSSProperties } from 'react';
 import { classes } from '../../utils/classes';
 
 interface Props {
@@ -7,22 +7,23 @@ interface Props {
   width?: number;
 }
 
-export function Switch({ checked = false, width, onChange }: Props) {
-  const [isChecked, setChecked] = useState(checked);
-  const style = useMemo(() => ({ width }), [width]);
+export const Switch = React.memo<Props>(
+  ({ checked = false, width, onChange }) => {
+    const style = useMemo<CSSProperties>(() => ({ width }), [width]);
 
-  useEffect(() => {
-    onChange && onChange(isChecked);
-  }, [onChange, isChecked]);
+    const onClick = useCallback(() => {
+      onChange && onChange(!checked);
+    }, [onChange, checked]);
 
-  return (
-    <div
-      className={classes('switch', isChecked && 'checked')}
-      onClick={() => setChecked(!isChecked)}
-      style={style}
-    >
-      <div className="switch-bar" />
-      <div className="switch-icon" />
-    </div>
-  );
-}
+    return (
+      <div
+        className={classes('switch', checked && 'checked')}
+        onClick={onClick}
+        style={style}
+      >
+        <div className="switch-bar" />
+        <div className="switch-icon" />
+      </div>
+    );
+  }
+);

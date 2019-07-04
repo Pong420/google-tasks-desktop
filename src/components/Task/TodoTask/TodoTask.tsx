@@ -17,6 +17,7 @@ import { useMuiMenu } from '../../Mui/Menu/useMuiMenu';
 import { useBoolean, classes, useHotkeys } from '../../../utils';
 import { RootState, TaskActionCreators } from '../../../store';
 import { Schema$Task } from '../../../typings';
+import { TaskInputProps } from '../TaskInput';
 
 export interface TodoTaskProps extends Omit<TaskProps, 'ref' | 'endAdornment'> {
   className?: string;
@@ -48,7 +49,6 @@ function TodoTaskComponent({
   index,
   task,
   todoTasks,
-  taskLists,
   currentTaskList,
   sortByDate,
   focused,
@@ -174,7 +174,7 @@ function TodoTaskComponent({
     };
   }, [index, setFocusIndex, task.title, todoTasks.length]);
 
-  const mergedInputProps = useMemo(
+  const mergedInputProps = useMemo<TaskInputProps>(
     () => ({
       ...(inputProps && inputProps),
       onDueDateBtnClick: dateTimeModal.on
@@ -249,14 +249,13 @@ function TodoTaskComponent({
         handleClose={handleDetailsClose}
         open={taskListDropdownOpened || detailsViewOpened}
         task={task}
-        taskLists={taskLists}
         taskListChange={taskListChangeCallback}
         taskListDropdownOpened={taskListDropdownOpened}
         updateTask={updateTask}
       />
       <DateTimeModal
         confirmLabel="OK"
-        due={task.due}
+        date={task.due ? new Date(task.due) : new Date()}
         open={dateTimeModalOpened}
         handleClose={dateTimeModal.off}
         handleConfirm={onDueDateChangeCallback}

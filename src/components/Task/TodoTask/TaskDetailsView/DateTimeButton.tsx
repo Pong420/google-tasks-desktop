@@ -9,7 +9,7 @@ interface Props {
   onClose(): void;
 }
 
-export function DateTimeButton({ due, onClick, onClose }: Props) {
+export const DateTimeButton = React.memo(({ due, onClick, onClose }: Props) => {
   if (!due) {
     return <Button onClick={onClick}>Add date/time</Button>;
   }
@@ -27,4 +27,4 @@ export function DateTimeButton({ due, onClick, onClose }: Props) {
       />
     </div>
   );
-}
+});

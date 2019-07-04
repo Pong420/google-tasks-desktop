@@ -1,73 +1,68 @@
-import React, { useCallback, useState, useEffect, FormEvent } from 'react';
+import React, { useCallback, useState, useRef, FormEvent } from 'react';
 import { Omit } from 'react-redux';
-import { InputBaseProps } from '@material-ui/core/InputBase';
 import { Modal, ModalProps } from './Modal';
 import { Input } from '../Input';
 
 interface Props extends Omit<ModalProps, 'handleConfirm' | 'confirmLabel'> {
   defaultValue?: string;
-  inputProps?: InputBaseProps;
-  handleConfirm(val: string): void;
   errorMsg?: string;
+  handleConfirm(val: string): void;
 }
+
+const INPUT_NAME = 'NAME';
 
 export function FormModal({
   defaultValue = '',
+  errorMsg,
   handleClose,
   handleConfirm,
-  inputProps,
-  errorMsg,
   ...props
 }: Props) {
-  const [value, setValue] = useState(defaultValue);
+  const formRef = useRef<HTMLFormElement>(null);
   const [error, setError] = useState(false);
-
-  const handleConfirmCallback = useCallback(() => {
-    const realVal = value.trim();
-    if (!realVal) {
-      setError(true);
-      return false;
-    } else if (realVal !== defaultValue) {
-      handleConfirm(value);
-    }
-  }, [defaultValue, handleConfirm, value]);
 
   const submitCallback = useCallback(
     (evt?: FormEvent<HTMLFormElement>) => {
       evt && evt.preventDefault();
-      if (handleConfirmCallback() !== false) {
-        handleClose();
+
+      const formEl = formRef.current;
+      if (formEl) {
+        const formData = new FormData(formEl);
+        const trimedValue = (formData.get(INPUT_NAME) as string).trim();
+
+        if (!trimedValue) {
+          setError(true);
+          return false;
+        } else if (trimedValue !== defaultValue) {
+          handleConfirm(trimedValue);
+          handleClose();
+        }
       }
     },
-    [handleClose, handleConfirmCallback]
+    [handleClose, handleConfirm, defaultValue]
   );
 
   const onExitedCallback = useCallback(() => {
     setError(false);
   }, []);
 
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
-
   return (
     <Modal
+      {...props}
+      autoFocusConfirmButon={false}
       confirmLabel="Done"
-      handleConfirm={handleConfirmCallback}
+      handleConfirm={submitCallback}
       handleClose={handleClose}
       onExited={onExitedCallback}
-      autoFocusConfirmButon={false}
-      {...props}
     >
-      <form onSubmit={submitCallback}>
+      <form onSubmit={submitCallback} ref={formRef}>
         <Input
           autoFocus
           className="filled bottom-border"
           defaultValue={defaultValue}
-          onChange={evt => setValue(evt.currentTarget.value)}
-          placeholder="Enter name"
           error={error}
-          {...inputProps}
+          name={INPUT_NAME}
+          placeholder="Enter name"
         />
         <div className="form-modal-error-message">{error && errorMsg}</div>
       </form>

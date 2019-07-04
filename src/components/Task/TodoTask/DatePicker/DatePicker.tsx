@@ -1,4 +1,5 @@
 import React, { useState, useCallback, HTMLAttributes } from 'react';
+import { Omit } from 'react-redux';
 import { IconButton } from '../../../Mui/IconButton';
 import { classes } from '../../../../utils/classes';
 import LeftArrowIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
@@ -8,8 +9,10 @@ const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 type GridProps = HTMLAttributes<HTMLDivElement>;
 
-interface DateProps extends GridProps {
+interface DateProps extends Omit<GridProps, 'onClick'> {
+  date: Date;
   selected?: boolean;
+  onClick(d: Date): void;
 }
 
 interface Props {
@@ -17,22 +20,31 @@ interface Props {
   onChange?(date: Date): void;
 }
 
-const Grid = ({ children, className, ...props }: GridProps) => (
+const Grid = React.memo(({ children, className, ...props }: GridProps) => (
   <div className={`grid ${className}`.trim()} {...props}>
     <div className="grid-content">{children}</div>
   </div>
-);
+));
 
-const DateGrid = ({ selected, className, ...props }: DateProps) => (
-  <Grid
-    className={classes('date', className, selected && 'selected')}
-    {...props}
-  />
+const DateGrid = React.memo(
+  ({ date, onClick, selected, className, ...props }: DateProps) => {
+    const onClickCallback = useCallback(() => {
+      onClick(date);
+    }, [date, onClick]);
+
+    return (
+      <Grid
+        className={classes('date', className, selected && 'selected')}
+        onClick={onClickCallback}
+        {...props}
+      />
+    );
+  }
 );
 
 export function DatePicker({ value, onChange }: Props) {
-  const [{ dates, date }, setData] = useState(getDisplayData(value));
-  const [curValue, setCurValue] = useState<Date>(value ? value : date);
+  const [{ dates, date }, setDisplay] = useState(getDisplayData(value));
+  const [currDate, setCurrDate] = useState<Date>(date);
 
   const getClassName = useCallback(
     (dateObj: Date) =>
@@ -43,15 +55,20 @@ export function DatePicker({ value, onChange }: Props) {
     [date]
   );
 
-  const switchMonth = useCallback(
-    (step: number) => {
-      setData(getDisplayData(date.addMonths(step)));
-    },
-    [date]
-  );
+  const switchMonth = useCallback((step: number) => {
+    setDisplay(({ date }) => getDisplayData(date.addMonths(step)));
+  }, []);
 
   const prevMonth = useCallback(() => switchMonth(-1), [switchMonth]);
   const nextMonth = useCallback(() => switchMonth(1), [switchMonth]);
+
+  const onDateClick = useCallback(
+    (d: Date) => {
+      setCurrDate(d);
+      onChange && onChange(d);
+    },
+    [onChange]
+  );
 
   return (
     <div className="date-picker">
@@ -72,12 +89,10 @@ export function DatePicker({ value, onChange }: Props) {
           {dates.map((date, index) => (
             <DateGrid
               key={index}
+              date={date}
               className={getClassName(date)}
-              selected={curValue.compare(date).sameDate}
-              onClick={() => {
-                setCurValue(date);
-                onChange && onChange(date);
-              }}
+              selected={currDate.compare(date).sameDate}
+              onClick={onDateClick}
             >
               {date.getDate()}
             </DateGrid>
@@ -89,8 +104,8 @@ export function DatePicker({ value, onChange }: Props) {
 }
 
 function getDisplayData(dateObj: Date = new Date()) {
-  const curDate = dateObj.getDate(); // current date
-  const one = dateObj.addDays(-1 * curDate + 1); // first day of current month
+  const currDate = dateObj.getDate(); // current date
+  const one = dateObj.addDays(-1 * currDate + 1); // first day of current month
   const index = one.getDay() - 1;
   const MonthDayCount = one.getMonthDayCount();
   const curMonth = [];
@@ -116,7 +131,7 @@ function getDisplayData(dateObj: Date = new Date()) {
 
   dates = dates.concat(nextMonth);
 
-  const cIndex = lastMonth.length + curDate - 1;
+  const cIndex = lastMonth.length + currDate - 1;
   const wIndex = cIndex - dateObj.getDay() + 1; // index of this week first day in days
 
   return {

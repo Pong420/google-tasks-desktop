@@ -29,7 +29,6 @@ import isEqual from 'lodash.isequal';
 interface Props extends FullScreenDialogProps {
   taskListDropdownOpened?: boolean;
   task: Schema$Task;
-  taskLists: Schema$TaskList[];
   currentTaskList: Schema$TaskList | null;
   deleteTask(task: Schema$Task): void;
   updateTask(task: Schema$Task): void;
@@ -56,17 +55,16 @@ const dropdownButtonProps = {
   fullWidth: true
 };
 
-export function TaskDetailsView({
+export const TaskDetailsView = ({
   taskListDropdownOpened,
   task: initialTask,
-  taskLists,
   currentTaskList,
   updateTask,
   deleteTask,
   taskListChange,
   handleClose,
-  ...props
-}: Props) {
+  open
+}: Props) => {
   const [dateTimeModalOpened, dateTimeModal] = useBoolean();
   const titleInputRef = useRef<HTMLTextAreaElement>(null);
   const notesInputRef = useRef<HTMLTextAreaElement>(null);
@@ -112,22 +110,22 @@ export function TaskDetailsView({
   const updateTaskCallback = useCallback(
     (evt: ChangeEvent<HTMLTextAreaElement>) =>
       setTask({ ...task, title: evt.currentTarget.value }),
-    [setTask, task]
+    [task]
   );
 
   const updateNotesCallback = useCallback(
     (evt: ChangeEvent<HTMLTextAreaElement>) =>
       setTask({ ...task, notes: evt.currentTarget.value }),
-    [setTask, task]
+    [task]
   );
 
   const updateDueCallback = useCallback(
     (date?: Date | MouseEvent<HTMLElement>) =>
-      setTask({
+      setTask(task => ({
         ...task,
         due: date instanceof Date ? date.toISOString() : undefined
-      }),
-    [setTask, task]
+      })),
+    []
   );
 
   useEffect(() => {
@@ -139,6 +137,7 @@ export function TaskDetailsView({
       <FullScreenDialog
         className="task-details-view"
         handleClose={handleClose}
+        open={open}
         onEntered={focustTitleInputField}
         onExit={onExitCallback}
         onExited={onExitedCallback}
@@ -149,7 +148,6 @@ export function TaskDetailsView({
             onClick={deleteBtnClickedCallback}
           />
         }
-        {...props}
       >
         <div className="task-details-view-content">
           <Input
@@ -203,11 +201,11 @@ export function TaskDetailsView({
 
       <DateTimeModal
         confirmLabel="OK"
-        due={task.due}
+        date={task.due ? new Date(task.due) : new Date()}
         open={dateTimeModalOpened}
         handleClose={dateTimeModal.off}
         handleConfirm={updateDueCallback}
       />
     </>
   );
-}
+};
