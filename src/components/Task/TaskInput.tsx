@@ -5,7 +5,6 @@ import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 export interface TaskInputProps {
   due?: string;
   notes?: string;
-  showDateBttn?: boolean;
   onDueDateBtnClick?(): void;
 }
 
@@ -16,7 +15,6 @@ export const TaskInput = ({
   notes,
   onChange,
   onDueDateBtnClick,
-  showDateBttn = false,
   ...inputProps
 }: Props) => {
   const timeout = useRef(0);
@@ -42,7 +40,7 @@ export const TaskInput = ({
     <div className="task-input-content">
       <Input {...inputProps} multiline onChange={onChangeCallback} />
       {notes && <div className="task-notes">{notes}</div>}
-      {due && showDateBttn && (
+      {due && (
         <div
           className="task-due-date-button"
           onClick={onDueDateBtnClick}

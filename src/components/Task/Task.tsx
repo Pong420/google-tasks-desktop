@@ -1,56 +1,51 @@
 import React, { useMemo, ReactNode, MouseEvent } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { Input, InputProps } from '../Mui/Input';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskInput, TaskInputProps } from './TaskInput';
-import { RootState } from '../../store';
+import { Schema$Task } from '../../typings';
 
-export interface TaskProps extends InputProps {
+export interface TaskProps
+  extends InputProps,
+    Pick<Schema$Task, 'uuid' | 'title' | 'status' | 'due' | 'notes'> {
   className?: string;
   endAdornment?: ReactNode;
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
   taskInputProps?: TaskInputProps;
-  uuid: number;
 }
-
-const mapStateToProps = (state: RootState, ownProps: TaskProps) => {
-  return {
-    ...ownProps,
-    task: state.task.byIds[ownProps.uuid]
-  };
-};
 
 function TaskComponent({
   className = '',
-  dispatch,
-  task,
+  uuid,
+  title,
+  status,
+  due,
+  notes,
   endAdornment,
   onContextMenu,
   taskInputProps,
   ...inputProps
-}: ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
+}: TaskProps) {
   const mergedTaskInputProps = useMemo<TaskProps['taskInputProps']>(
     () => ({
-      due: task.due,
-      notes: task.notes,
+      due,
+      notes,
       ...(taskInputProps && taskInputProps)
     }),
-    [task.due, task.notes, taskInputProps]
+    [due, notes, taskInputProps]
   );
 
   return (
     <div className={`task ${className}`.trim()} onContextMenu={onContextMenu}>
       <ToggleCompleted
-        uuid={task.uuid}
-        isEmpty={!(task.title || '').trim()}
-        completed={task.status === 'completed'}
+        uuid={uuid}
+        isEmpty={!(title || '').trim()}
+        completed={status === 'completed'}
       />
       <Input
         {...inputProps}
         fullWidth
         className="task-input-base"
-        defaultValue={task.title}
+        defaultValue={title}
         inputComponent={TaskInput}
         inputProps={mergedTaskInputProps}
         endAdornment={
@@ -61,4 +56,4 @@ function TaskComponent({
   );
 }
 
-export const Task = connect(mapStateToProps)(TaskComponent);
+export const Task = TaskComponent;

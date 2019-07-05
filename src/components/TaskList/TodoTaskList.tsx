@@ -22,6 +22,7 @@ export function TodoTaskListComponent({
     </div>
   );
 }
+
 export const TodoTaskList = connect(
   mapStateToProps,
   mapDispatchToProps

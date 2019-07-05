@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { TodoTaskList } from './TodoTaskList';
+import { TaskListHeader } from '../TaskListHeader';
+import { TodoTaskList } from '../TaskList/TodoTaskList';
+import { CompletedTaskList } from '../TaskList/CompletedTaskList';
+import { NewTask } from '../NewTask';
+import { ScrollContent } from '../ScrollContent';
 import {
   RootState,
   getAllTasks,
@@ -10,12 +14,14 @@ import {
 } from '../../store';
 
 const mapStateToProps = (state: RootState) => ({
-  currentTaskListId: currentTaskListIdSelector(state)
+  currentTaskListId: currentTaskListIdSelector(state),
+  showCompleted: !!state.task.completed.length
 });
 
 function TaskListComponent({
   dispatch,
-  currentTaskListId
+  currentTaskListId,
+  showCompleted
 }: ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
   useEffect(() => {
     dispatch(getAllTaskList());
@@ -26,9 +32,16 @@ function TaskListComponent({
   }, [dispatch, currentTaskListId]);
 
   return (
-    <>
-      <TodoTaskList />
-    </>
+    <div className="task-list">
+      <TaskListHeader />
+      <div className="task-list-content">
+        <NewTask />
+        <ScrollContent>
+          <TodoTaskList />
+        </ScrollContent>
+        {showCompleted && <CompletedTaskList />}
+      </div>
+    </div>
   );
 }
 

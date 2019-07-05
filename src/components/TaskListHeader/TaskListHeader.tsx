@@ -35,17 +35,17 @@ function TaskListHeaderComponent({ push }: Props) {
       <div className="task-list-header-dropdown-container">
         <div className="task-list-header-dropdown-label">
           <span>TASKS</span>
-          <TaskListDropdown
-            onSelect={onSelectCallback}
-            paperClassName="task-list-header-dropdown-paper"
-            outOfScrollContent={onClose => (
-              <>
-                <Divider />
-                <MenuItem text="Create new list" onClose={onClose} />
-              </>
-            )}
-          />
         </div>
+        <TaskListDropdown
+          onSelect={onSelectCallback}
+          paperClassName="task-list-header-dropdown-paper"
+          outOfScrollContent={onClose => (
+            <>
+              <Divider />
+              <MenuItem text="Create new list" onClose={onClose} />
+            </>
+          )}
+        />
       </div>
     </div>
   );

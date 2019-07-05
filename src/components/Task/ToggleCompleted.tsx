@@ -10,7 +10,7 @@ import TickIcon from '@material-ui/icons/Check';
 interface Props {
   completed?: boolean;
   isEmpty: boolean;
-  uuid: number;
+  uuid: string;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) =>

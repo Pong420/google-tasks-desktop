@@ -58,9 +58,7 @@ export interface GetAllTasksSilentSuccess {
 
 export interface NewTask {
   type: TaskActionTypes.NEW_TASK;
-  payload: Payload$NewTask & {
-    uuid: number;
-  };
+  payload: Payload$NewTask & Pick<Schema$Task, 'uuid'>;
 }
 
 export interface NewTaskSuccess {

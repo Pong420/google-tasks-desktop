@@ -3,16 +3,20 @@ import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
 import { taskIds } from '../';
 
+type UUID = Schema$Task['uuid'];
+
 export interface TaskState {
   byIds: { [id: string]: Schema$Task };
-  todo: number[];
-  completed: number[];
+  todo: UUID[];
+  completed: UUID[];
+  focused: string | number | null;
 }
 
 const initialState: TaskState = {
   byIds: {},
   todo: [],
-  completed: []
+  completed: [],
+  focused: null
 };
 
 export default function(state = initialState, action: TaskActions): TaskState {
@@ -24,8 +28,8 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
       return (() => {
-        const todo: number[] = [];
-        const completed: number[] = [];
+        const todo: UUID[] = [];
+        const completed: UUID[] = [];
 
         const byIds = (action.payload as Schema$Task[])
           .sort((a, b) => {
@@ -41,7 +45,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
               compare(a.position, b.position) || compare(a.updated, b.updated)
             );
           })
-          .reduce<{ [id: number]: Schema$Task }>((acc, task) => {
+          .reduce<{ [id: string]: Schema$Task }>((acc, task) => {
             const uuid = task.uuid || taskIds.next();
 
             if (task.status === 'completed') {
@@ -66,7 +70,85 @@ export default function(state = initialState, action: TaskActions): TaskState {
         };
       })();
 
+    case TaskActionTypes.NEW_TASK:
+      return (() => {
+        const { previousTask, uuid, ...newTaskPlayload } = action.payload;
+        const index = !!previousTask
+          ? state.todo.indexOf(previousTask.uuid) + 1
+          : 0;
+
+        const newTask = {
+          // position & updated is required when sorting by date
+          position: previousTask && previousTask.position,
+          updated: new Date().toISOString(),
+          uuid,
+          ...newTaskPlayload
+        };
+
+        return {
+          ...state,
+          todo: insert(state.todo, uuid, index),
+          byIds: { ...state.byIds, [uuid]: newTask },
+          focused: uuid
+        };
+      })();
+
+    case TaskActionTypes.UPDATE_TASK:
+    case TaskActionTypes.UPDATE_TASK_SUCCESS:
+    case TaskActionTypes.NEW_TASK_SUCCESS:
+      return (() => {
+        const newTask = action.payload;
+        const { uuid, status } = newTask;
+        let { todo, completed } = state;
+
+        if (status === 'completed') {
+          todo = remove(todo, uuid);
+          completed.push(uuid);
+          completed.sort(compare);
+        } else {
+          completed = remove(completed, uuid);
+          todo = [uuid, ...todo];
+        }
+
+        return {
+          ...state,
+          todo,
+          completed,
+          byIds: {
+            ...state.byIds,
+            [newTask.uuid]: { ...state.byIds[uuid], ...newTask }
+          }
+        };
+      })();
+
+    case TaskActionTypes.DELETE_TASK:
+      return (() => {
+        const { uuid } = action.payload;
+        const { [action.payload.uuid]: deleted, ...byIds } = state.byIds;
+        return {
+          ...state,
+          byIds,
+          todo: remove(state.todo, uuid),
+          completed: remove(state.completed, uuid)
+        };
+      })();
+
     default:
       return state;
   }
+}
+
+function insert<T>(arr: T[], val: T, index: number) {
+  return [...arr.slice(0, index), val, ...arr.slice(index)];
+}
+
+function remove<T>(arr_: T[], val: any) {
+  const arr = arr_.slice();
+
+  const index = arr.indexOf(val);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+
+  return arr;
 }

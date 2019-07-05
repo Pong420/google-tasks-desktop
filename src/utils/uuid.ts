@@ -2,7 +2,8 @@ export class UUID {
   count: number = 0;
 
   next() {
-    return this.count++;
+    this.count++;
+    return String(this.count);
   }
 
   reset() {
