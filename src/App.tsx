@@ -1,16 +1,15 @@
 import React from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { Auth } from './components/Auth';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { Main } from './components/Main';
 import { PATHS } from './constants';
 
 const App = () => (
-  <Router>
+  <>
     <Switch>
-      <Route exact path={PATHS.AUTH} component={Auth} />
-      <Route path={PATHS.TASKLIST} component={Main} />
+      <Route exact path={PATHS.TASKLIST} component={Main} />
+      <Redirect to={PATHS.TASKLIST} />
     </Switch>
-  </Router>
+  </>
 );
 
 export default App;

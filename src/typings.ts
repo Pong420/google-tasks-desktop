@@ -13,7 +13,7 @@ export interface OAuthKeys {
 }
 
 export interface Schema$Task extends tasks_v1.Schema$Task {
-  uuid: string;
+  uuid: number;
 }
 
 // tslint:disable-next-line

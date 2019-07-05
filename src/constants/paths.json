@@ -1,4 +1,3 @@
 {
-  "AUTH": "/",
   "TASKLIST": "/tasklist/:taskListId?"
 }
