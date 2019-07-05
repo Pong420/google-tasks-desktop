@@ -1,0 +1,13 @@
+.app-region {
+  @include absolute(0, null, 0);
+  @include dimen(100%, $header-height);
+
+  > div {
+    @include sq-dimen(100%);
+    align-items: flex-start !important;
+
+    > div:nth-child(1) {
+      z-index: $app-region-z-index;
+    }
+  }
+}

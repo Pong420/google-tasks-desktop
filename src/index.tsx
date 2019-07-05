@@ -2,23 +2,29 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ConnectedRouter } from 'connected-react-router';
+import { theme } from './theme';
 import { Auth } from './components/Auth';
 import configureStore, { history } from './store';
 import App from './App';
+import 'typeface-roboto';
+import 'typeface-nunito-sans';
 import './index.scss';
 
 const store = configureStore();
 
 const render = (Component: React.ComponentType<{}>) => {
   return ReactDOM.render(
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <Auth>
-          <Component />
-        </Auth>
-      </ConnectedRouter>
-    </Provider>,
+    <MuiThemeProvider theme={theme}>
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <Auth>
+            <Component />
+          </Auth>
+        </ConnectedRouter>
+      </Provider>
+    </MuiThemeProvider>,
     document.getElementById('root')
   );
 };
