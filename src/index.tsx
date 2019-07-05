@@ -11,6 +11,7 @@ import App from './App';
 import 'typeface-roboto';
 import 'typeface-nunito-sans';
 import './index.scss';
+import './utils/date';
 
 const store = configureStore();
 
