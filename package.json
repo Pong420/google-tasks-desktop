@@ -1,0 +1,172 @@
+{
+  "name": "electron-react-ts",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nf start",
+    "build": "yarn app:build && yarn electron:compile",
+    "package": "rimraf release && yarn build && electron-builder build --publish never",
+    "package-all": "rimraf release && yarn build && electron-builder build -mwl",
+    "tslint": "tslint 'electron/**/*.ts?(x)' && tslint 'src/**/*.ts?(x)'",
+    "app:dev": "cross-env BROWSER=false ELECTRON=true react-scripts start",
+    "app:build": "cross-env ELECTRON=true react-scripts build",
+    "electron:compile": "tsc --project electron/tsconfig.json",
+    "electron:dev": "cross-env NODE_ENV=development electron electron/main.js",
+    "component": "node scripts/component.js",
+    "precommit": "lint-staged",
+    "get": "node scripts/type.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "homepage": ".",
+  "main": "./electron/main.js",
+  "build": {
+    "productName": "React App",
+    "appId": "React App",
+    "directories": {
+      "buildResources": "public",
+      "output": "release"
+    },
+    "files": [
+      "build/index.html",
+      "build/**/*",
+      "electron/*.js",
+      "package.json"
+    ],
+    "extraFiles": [
+      "credentials"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "pkg",
+        "zip"
+      ],
+      "darkModeSupport": true,
+      "icon": "public/icon/icon.png",
+      "type": "distribution"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "pkg": {
+      "license": "LICENSE"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ],
+      "icon": "public/icon/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "public/icon/icon.ico",
+      "license": "LICENSE",
+      "warningsAsErrors": false
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "snap"
+      ],
+      "icon": "public/icon"
+    },
+    "snap": {
+      "grade": "stable"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "REPLACE_GIT_URL"
+  },
+  "author": {
+    "name": "REPLACE_AUTHOR_NAME",
+    "email": "REPLACE_AUTHOR_EMAIL@gmial.com",
+    "url": "https://REPLACE_AUTHOR_URL"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://REPLACE_BUG_REPORT_URL"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "plugins": [
+      "react-hooks"
+    ],
+    "rules": {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "yarn tslint",
+      "prettier --ignore-path .eslintignore --write",
+      "git add"
+    ],
+    "{*.json,.{babelrc,eslintrc,prettierrc}}": [
+      "prettier --ignore-path .eslintignore --parser json --write",
+      "git add"
+    ],
+    "*.{css,scss}": [
+      "prettier --ignore-path .eslintignore --single-quote --write",
+      "git add"
+    ],
+    "*.{yml,md}": [
+      "prettier --ignore-path .eslintignore --single-quote --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "24.0.15",
+    "@types/node": "12.0.12",
+    "@types/react": "16.8.23",
+    "@types/react-dom": "16.8.4",
+    "@types/react-router-dom": "^4.3.4",
+    "cross-env": "^5.2.0",
+    "electron": "^4.2.6",
+    "electron-builder": "^20.44.4",
+    "electron-devtools-installer": "^2.2.4",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "foreman": "^3.0.1",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.0.2",
+    "node-sass": "npm:sass",
+    "prettier": "^1.18.2",
+    "rimraf": "^2.6.3",
+    "sass": "^1.22.3",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.0.0",
+    "typescript": "3.4.5"
+  },
+  "dependencies": {
+    "electron-store": "^4.0.0",
+    "googleapis": "^40.0.1",
+    "pong-react-scripts": "3.0.1-1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.1"
+  },
+  "devEngines": {
+    "node": ">=7.x",
+    "npm": ">=4.x",
+    "yarn": ">=0.21.3"
+  },
+  "browserslist": [
+    "last 1 chrome version"
+  ]
+}

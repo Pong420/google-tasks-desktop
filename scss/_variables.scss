@@ -1,0 +1,29 @@
+$header-height: 70px;
+$padding-x: 20px;
+
+$mui-menu-z-index: 1300; // default
+$app-region-z-index: $mui-menu-z-index + 10;
+
+$base-colors: (
+  red: #ef5350,
+  blue: #4285f4,
+  amber: #fb0,
+  green: #66bb6a,
+  purple: #ab47bc,
+  grey: #bdbdbd
+);
+
+$accent-colors: ();
+
+@each $name, $color in $base-colors {
+  $accent-colors: map-merge(
+    $accent-colors,
+    (
+      $name: (
+        primary: $color,
+        light: lighten($color, 30%),
+        dark: darken($color, 5%)
+      )
+    )
+  );
+}

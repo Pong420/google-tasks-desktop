@@ -1,0 +1,29 @@
+@mixin textHighlight() {
+  @include relative();
+
+  &:after {
+    @include absolute(null, -1px, 0, 0);
+
+    border-bottom: 2px solid transparent;
+    content: '';
+    margin: auto;
+    z-index: 11;
+  }
+
+  &.focused {
+    &:after {
+      animation: expand 0.4s ease 1;
+      border-color: var(--accent-color);
+      will-change: width;
+    }
+  }
+}
+
+@keyframes expand {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
