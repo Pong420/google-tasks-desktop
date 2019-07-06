@@ -27,7 +27,7 @@ export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
 }
 
 export interface Payload$DeleteTask extends Schema$Task {
-  previousTaskIndex?: number;
+  prevTask?: Schema$Task['uuid'];
 }
 
 export type Payload$SortTasks = 'order' | 'date';

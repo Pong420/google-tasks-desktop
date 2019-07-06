@@ -123,13 +123,14 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.DELETE_TASK:
       return (() => {
-        const { uuid } = action.payload;
+        const { uuid, prevTask } = action.payload;
         const { [action.payload.uuid]: deleted, ...byIds } = state.byIds;
         return {
           ...state,
           byIds,
           todo: remove(state.todo, uuid),
-          completed: remove(state.completed, uuid)
+          completed: remove(state.completed, uuid),
+          ...(prevTask && { focused: prevTask })
         };
       })();
 

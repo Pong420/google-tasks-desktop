@@ -86,10 +86,10 @@ $min-task-height: 50px;
   .task-input-content {
     @include dimen(100%);
     @include flex(flex-start, center, column);
-    @include padding-x(5px);
     @include relative();
     align-self: center;
     overflow: hidden;
+    padding: 12px 5px; // padding-y for multiple line
 
     .mui-input-base {
       $line-height: 20px;

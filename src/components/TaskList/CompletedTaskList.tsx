@@ -4,6 +4,7 @@ import { CompletedTask } from '../Task';
 import { ScrollContent } from '../ScrollContent';
 import { IconButton } from '../Mui/IconButton';
 import { RootState } from '../../store';
+import { classes } from '../../utils/classes';
 import { useBoolean } from '../../utils/useBoolean';
 import ExpandIcon from '@material-ui/icons/ExpandLess';
 import CollapseIcon from '@material-ui/icons/ExpandMore';
@@ -32,13 +33,16 @@ function CompletedTasksListComponent({
           Completed ({completedTasks.length})
           <IconButton icon={expanded ? CollapseIcon : ExpandIcon} />
         </div>
-        <div className="completed-tasks-list-content">
-          <ScrollContent>
-            {completedTasks.map(uuid => (
-              <CompletedTask key={uuid} uuid={uuid} />
-            ))}
-          </ScrollContent>
-        </div>
+        <ScrollContent
+          className={classes(
+            'completed-tasks-list-content',
+            expanded && 'visible'
+          )}
+        >
+          {completedTasks.map(uuid => (
+            <CompletedTask key={uuid} uuid={uuid} />
+          ))}
+        </ScrollContent>
       </div>
     </div>
   );
