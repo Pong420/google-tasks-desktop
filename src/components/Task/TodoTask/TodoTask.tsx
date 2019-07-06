@@ -1,22 +1,67 @@
-import React from 'react';
+import React, { useMemo, useRef, useLayoutEffect, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { Task } from '../Task';
-import { RootState } from '../../../store';
+import { classes } from '../../../utils/classes';
+// import { useBoolean } from '../../../utils/useBoolean';
+import { RootState, TaskActionCreators } from '../../../store';
 import { Schema$Task } from '../../../typings';
+import { Dispatch, bindActionCreators } from 'redux';
 
 interface Props extends Pick<Schema$Task, 'uuid'> {}
 
 const mapStateToProps = (state: RootState, ownProps: Props) => {
   return {
-    ...ownProps,
-    task: state.task.byIds[ownProps.uuid]
+    task: state.task.byIds[ownProps.uuid],
+    focused: state.task.focused === ownProps.uuid
   };
 };
 
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(TaskActionCreators, dispatch);
+
+const disableMouseDown = (evt: MouseEvent<HTMLElement>) => evt.preventDefault();
+
 export function TodoTaskComponent({
-  task
-}: ReturnType<typeof mapStateToProps>) {
-  return <Task uuid={task.uuid} title={task.title} className="todo-task" />;
+  task,
+  focused,
+  setFocused
+}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const [onFocus, onBlur] = useMemo(
+    () => [
+      () => !focused && setFocused(task.uuid),
+      () => focused && setFocused(null)
+    ],
+    [focused, setFocused, task.uuid]
+  );
+
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (input && focused) {
+      if (document.activeElement !== input) {
+        input.focus();
+        // place cursor at end of textarea
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    }
+  }, [focused]);
+
+  return (
+    <Task
+      className={classes(`todo-task`, focused && 'focused')}
+      uuid={task.uuid}
+      title={task.title}
+      inputRef={inputRef}
+      onClick={onFocus}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onMouseDown={disableMouseDown}
+    />
+  );
 }
 
-export const TodoTask = connect(mapStateToProps)(TodoTaskComponent);
+export const TodoTask = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoTaskComponent);

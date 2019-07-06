@@ -5,8 +5,7 @@ import React, {
   MouseEvent,
   ReactNode
 } from 'react';
-import { Dispatch } from 'redux';
-import { connect, Omit } from 'react-redux';
+import { connect, Omit, DispatchProp } from 'react-redux';
 import { useMuiMenu, DropDownProps, Dropdown } from './Mui';
 import { TaskListMenuItem } from './TaskListMenuItem';
 import { RootState, currentTaskListSelector } from '../store';
@@ -35,7 +34,7 @@ function TaskListDropdownComponent({
   paperClassName,
   PaperProps,
   ...props
-}: Props & ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
+}: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const label = currentTaskList ? currentTaskList.title : 'Loading...';
 
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();

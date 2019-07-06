@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
-import { connect, Omit } from 'react-redux';
-import { Dispatch } from 'redux';
+import { connect, Omit, DispatchProp } from 'react-redux';
 import { MenuItem, MenuItemProps } from './Mui';
 import { RootState } from '../store';
 import { Schema$TaskList } from '../typings';
@@ -21,7 +20,7 @@ export function TaskListMenuItemComponent({
   onClose,
   onClick,
   ...props
-}: Props & ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
+}: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const onClickCallback = useCallback(() => {
     onClick(taskList);
   }, [taskList, onClick]);

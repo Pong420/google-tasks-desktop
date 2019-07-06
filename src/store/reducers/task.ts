@@ -133,6 +133,12 @@ export default function(state = initialState, action: TaskActions): TaskState {
         };
       })();
 
+    case TaskActionTypes.SET_FOCUSED:
+      return {
+        ...state,
+        focused: action.payload
+      };
+
     default:
       return state;
   }

@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
+import { connect, DispatchProp } from 'react-redux';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 // import { TaskListMenu } from './TaskListMenu';
 import { useMuiMenu, IconButton } from '../Mui';
@@ -8,13 +7,9 @@ import { newTask } from '../../store';
 import AddIcon from '@material-ui/icons/Add';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
-interface Props {
-  dispatch: Dispatch;
-}
-
 const iconProps: SvgIconProps = { color: 'secondary' };
 
-export function NewTaskComponent({ dispatch }: Props) {
+export function NewTaskComponent({ dispatch }: DispatchProp) {
   const { setAnchorEl } = useMuiMenu();
 
   const newTaskCallback = useCallback(() => {

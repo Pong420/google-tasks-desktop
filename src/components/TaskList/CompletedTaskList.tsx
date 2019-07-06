@@ -1,6 +1,5 @@
 import React, { useMemo, CSSProperties } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { connect, DispatchProp } from 'react-redux';
 import { CompletedTask } from '../Task';
 import { ScrollContent } from '../ScrollContent';
 import { IconButton } from '../Mui/IconButton';
@@ -16,7 +15,7 @@ const mapStateToProps = (state: RootState) => ({
 
 function CompletedTasksListComponent({
   completedTasks
-}: ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
+}: ReturnType<typeof mapStateToProps> & DispatchProp) {
   const [expanded, { toggle }] = useBoolean();
 
   const style = useMemo<CSSProperties>(

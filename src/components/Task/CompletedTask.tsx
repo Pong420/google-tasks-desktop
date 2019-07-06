@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { connect, DispatchProp } from 'react-redux';
 import { Task } from '../Task';
-import { DeleteIcon, IconButton } from '../../Mui';
-import { RootState, deleteTask } from '../../../store';
-import { Schema$Task } from '../../../typings';
+import { DeleteIcon, IconButton } from '../Mui';
+import { RootState, deleteTask } from '../../store';
+import { Schema$Task } from '../../typings';
 
 interface Props extends Pick<Schema$Task, 'uuid'> {}
 
@@ -22,9 +21,7 @@ const inputProps = {
 function CompletedTaskComponent({
   task,
   dispatch
-}: ReturnType<typeof mapStateToProps> & {
-  dispatch: Dispatch;
-}) {
+}: ReturnType<typeof mapStateToProps> & DispatchProp) {
   const deleteTaskCallback = useCallback(
     () => dispatch(deleteTask({ id: task.id, uuid: task.uuid })),
     [dispatch, task.id, task.uuid]

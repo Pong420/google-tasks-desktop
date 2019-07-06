@@ -157,3 +157,9 @@ $min-task-height: 50px;
     }
   }
 }
+
+.completed-task {
+  textarea {
+    text-decoration: line-through;
+  }
+}

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { connect, DispatchProp } from 'react-redux';
 import { TaskListHeader } from '../TaskListHeader';
 import { TodoTaskList } from '../TaskList/TodoTaskList';
 import { CompletedTaskList } from '../TaskList/CompletedTaskList';
@@ -22,7 +21,7 @@ function TaskListComponent({
   dispatch,
   currentTaskListId,
   showCompleted
-}: ReturnType<typeof mapStateToProps> & { dispatch: Dispatch }) {
+}: ReturnType<typeof mapStateToProps> & DispatchProp) {
   useEffect(() => {
     dispatch(getAllTaskList());
   }, [dispatch]);

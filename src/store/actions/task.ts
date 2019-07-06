@@ -19,7 +19,7 @@ export enum TaskActionTypes {
   MOVE_TASKS_SUCCESS = 'MOVE_TASKS_SUCCESS',
   MOVE_TO_ANOHTER_LIST = 'MOVE_TO_ANOHTER_LIST',
   MOVE_TO_ANOHTER_LIST_SUCCESS = 'MOVE_TO_ANOHTER_LIST_SUCCESS',
-  SET_FOCUS_INDEX = 'SET_FOCUS_INDEX'
+  SET_FOCUSED = 'SET_FOCUSED'
 }
 
 export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
@@ -108,8 +108,8 @@ export interface MoveToAnotherListSuccess {
   payload?: Schema$Task;
 }
 
-export interface SetFocusIndex {
-  type: TaskActionTypes.SET_FOCUS_INDEX;
+export interface SetFocused {
+  type: TaskActionTypes.SET_FOCUSED;
   payload: string | number | null;
 }
 
@@ -129,7 +129,7 @@ export type TaskActions =
   | MoveTaskSuccess
   | MoveToAnotherList
   | MoveToAnotherListSuccess
-  | SetFocusIndex;
+  | SetFocused;
 
 export const getAllTasks = (payload: string): GetAllTasks => {
   return {
@@ -177,11 +177,9 @@ export const moveToAnotherList = (
   };
 };
 
-export const setFocusIndex = (
-  payload: string | number | null
-): SetFocusIndex => {
+export const setFocused = (payload: string | number | null): SetFocused => {
   return {
-    type: TaskActionTypes.SET_FOCUS_INDEX,
+    type: TaskActionTypes.SET_FOCUSED,
     payload
   };
 };
@@ -193,5 +191,5 @@ export const TaskActionCreators = {
   updateTask,
   deleteCompletedTasks,
   moveToAnotherList,
-  setFocusIndex
+  setFocused
 };
