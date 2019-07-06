@@ -1,0 +1,74 @@
+.calender-header {
+  @include flex(center, space-between);
+
+  .month-year {
+    @include typeface('Nunito Sans', 700);
+    color: var(--date-color);
+  }
+}
+
+.calendar-content {
+  display: grid;
+  grid-template-columns: repeat(7, auto);
+
+  .grid {
+    @include relative();
+    text-align: center;
+
+    &:before {
+      @include dimen(100%, 0);
+      content: '';
+      display: block;
+      padding-bottom: 100%;
+    }
+
+    .grid-content {
+      @include absolute(0, null, 0);
+      @include flex(center, center);
+      @include sq-dimen(100%);
+      @include typeface('Nunito Sans', 500);
+
+      font-size: 12px;
+    }
+  }
+
+  .day {
+    color: var(--day-color);
+    cursor: default;
+  }
+
+  .date {
+    color: var(--date-color);
+    cursor: pointer;
+
+    .grid-content {
+      border-radius: 50%;
+    }
+
+    @mixin backgorundWidthShadow($color) {
+      background-color: $color;
+      [data-theme^='light'] & {
+        box-shadow: 0px 2px 10px -2px #{$color};
+      }
+    }
+
+    &.today {
+      .grid-content {
+        @include backgorundWidthShadow(var(--accent-light-color));
+        color: #333;
+      }
+    }
+
+    &.selected {
+      .grid-content {
+        @include backgorundWidthShadow(var(--accent-dark-color));
+        color: #fff;
+      }
+    }
+
+    &.lastMonth,
+    &.nextMonth {
+      color: var(--day-color);
+    }
+  }
+}

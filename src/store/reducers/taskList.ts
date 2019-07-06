@@ -4,6 +4,7 @@ import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { PATHS, LAST_VISITED_TASKS_LIST_ID } from '../../constants';
 import { Schema$TaskList } from '../../typings';
 import { formatData } from '../../utils/formatData';
+import { remove } from '../../utils/array';
 
 export interface TaskListState {
   byIds: { [id: string]: Schema$TaskList };
@@ -55,6 +56,18 @@ export default function(
         return {
           ...state,
           ...formatData(action.payload, 'id')
+        };
+      })();
+
+    case TaskListActionTypes.DELETE_TASK_LIST:
+      return (() => {
+        const taskLisdId = action.payload!;
+        const { [taskLisdId]: deleted, ...byIds } = state.byIds;
+        return {
+          ...state,
+          byIds,
+          ids: remove(state.ids, taskLisdId),
+          id: undefined
         };
       })();
 

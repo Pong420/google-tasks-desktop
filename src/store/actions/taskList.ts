@@ -53,7 +53,7 @@ export interface UpdateTaskListSuccess {
 
 export interface DeleteTaskList {
   type: TaskListActionTypes.DELETE_TASK_LIST;
-  payload?: string;
+  payload: string;
 }
 
 export interface DeleteTaskListSuccess {
@@ -107,7 +107,7 @@ export function updateTaskList(
   };
 }
 
-export function delteTaskList(payload?: string): DeleteTaskList {
+export function deleteTaskList(payload: string): DeleteTaskList {
   return {
     type: TaskListActionTypes.DELETE_TASK_LIST,
     payload
@@ -119,5 +119,5 @@ export const TaskListActionCreators = {
   getTaskList,
   newTaskList,
   updateTaskList,
-  delteTaskList
+  deleteTaskList
 };

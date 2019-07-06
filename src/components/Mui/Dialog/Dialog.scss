@@ -1,0 +1,113 @@
+.mui-dialog-paper.mui-dialog-paper {
+  @include dimen(100%);
+  @include margin-x(25px);
+  color: var(--text--color);
+  background-color: var(--main-color-diff2);
+  border-radius: 8px;
+  max-width: 280px;
+  padding: 0;
+
+  [data-theme^='light'] & {
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+  }
+  [data-theme^='dark'] & {
+    box-shadow: 0px 0px 3px 1px var(--shadow-color);
+  }
+
+  .dialog-scroll-content {
+    max-height: 100%;
+    padding: 15px 20px;
+  }
+
+  .dialog-title {
+    @include typeface('Nunito Sans', 700);
+    color: var(--text-color);
+    margin-bottom: 10px;
+  }
+
+  .dialog-actions {
+    @include flex(center, flex-end);
+    flex: 0 0 auto;
+    margin-top: 10px;
+
+    button {
+      @include typeface('Nunito Sans', 700);
+
+      background: none;
+      text-transform: initial;
+
+      + button {
+        color: var(--accent-dark-color);
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+.form-dialog-error-message {
+  @include typeface('Nunito Sans', 600);
+  color: var(--error-color);
+  font-size: 13px;
+  margin-top: 3px;
+  padding-left: 3px;
+}
+
+.FullScreen-dialog-paper.FullScreen-dialog-paper {
+  background-color: var(--main-color);
+  color: var(--text-color);
+}
+
+.FullScreen-diaglog-header {
+  @include dimen(100%, $header-height);
+  @include flex(center, flex-end);
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
+  @include padding-x(10px);
+
+  .mui-icon-button {
+    @include app-region-no-drag;
+  }
+}
+
+.FullScreen-dialog-content {
+  $padding-x: 15px;
+
+  @include flex();
+  @include sq-dimen(100%);
+
+  overflow: hidden;
+
+  .scroll-content {
+    padding: $padding-x;
+  }
+
+  h4 {
+    @include margin-y(0 15px);
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .FullScreen-dialog-section {
+    .FullScreen-dialog-section-title {
+      @include margin-x(-$padding-x);
+      @include padding-x($padding-x);
+      @include padding-y(12px);
+      background-color: var(--main-color-diff);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .FullScreen-dialog-row {
+      @include flex(center, space-between);
+      @include padding-y(12px);
+      min-height: 50px;
+
+      + .FullScreen-dialog-row {
+        border-top: 1px solid var(--border-color);
+      }
+    }
+  }
+}

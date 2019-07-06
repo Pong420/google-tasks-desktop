@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { connect, DispatchProp } from 'react-redux';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
-// import { TaskListMenu } from './TaskListMenu';
+import { TaskListMenu } from './TaskListMenu';
 import { useMuiMenu, IconButton } from '../Mui';
 import { newTask } from '../../store';
 import AddIcon from '@material-ui/icons/Add';
@@ -10,7 +10,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 const iconProps: SvgIconProps = { color: 'secondary' };
 
 export function NewTaskComponent({ dispatch }: DispatchProp) {
-  const { setAnchorEl } = useMuiMenu();
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   const newTaskCallback = useCallback(() => {
     dispatch(newTask());
@@ -23,7 +23,7 @@ export function NewTaskComponent({ dispatch }: DispatchProp) {
         <div>Add a task</div>
       </div>
       <IconButton icon={MoreIcon} onClick={setAnchorEl} />
-      {/* <TaskListMenu anchorEl={anchorEl} onClose={onClose} /> */}
+      <TaskListMenu open={!!anchorEl} anchorEl={anchorEl} onClose={onClose} />
     </div>
   );
 }

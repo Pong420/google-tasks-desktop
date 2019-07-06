@@ -8,3 +8,6 @@ export const focusedSelector = ({ task: { focused } }: RootState) => (
   index: number,
   uuid: string
 ) => focused === index || focused === uuid;
+
+export const getTotalTasks = (state: RootState) =>
+  state.task.todo.length + state.task.completed.length;

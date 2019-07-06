@@ -1,0 +1,24 @@
+.date-time-modal-paper.date-time-modal-paper {
+  @include dimen(100%);
+  @include margin-x(15px);
+  color: var(--text-secondary-color);
+  max-height: 425px;
+  max-width: 300px;
+
+  .modal-scroll-content {
+    padding: 0 15px 10px;
+  }
+
+  .calendar-content {
+    @include padding-x(6px);
+  }
+
+  button {
+    color: var(--text-secondary-color);
+    text-transform: inherit;
+  }
+
+  .modal-actions {
+    margin-top: 20px;
+  }
+}

@@ -2,18 +2,21 @@ import React, {
   useCallback,
   useMemo,
   useRef,
-  useLayoutEffect,
+  useEffect,
   KeyboardEvent,
-  MouseEvent,
-  useEffect
+  MouseEvent
 } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect, Omit } from 'react-redux';
 import { Task } from '../Task';
+import { TodoTaskMenu } from './TodoTaskMenu';
 import { classes } from '../../../utils/classes';
+import { useBoolean } from '../../../utils/useBoolean';
 import { useMouseTrap } from '../../../utils/useMouseTrap';
 import { RootState, TaskActionCreators } from '../../../store';
 import { Schema$Task } from '../../../typings';
+import { useMuiMenu } from '../../Mui';
+import DateTimeDialog from './DateTimeDialog';
 
 interface Props extends Pick<Schema$Task, 'uuid'> {}
 
@@ -39,9 +42,13 @@ export function TodoTaskComponent({
   prevTask,
   nextTask,
   newTask,
-  deleteTask
+  deleteTask,
+  updateTask
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
+  const [dateTimeDialogOpened, dateTimeDialog] = useBoolean();
+  const [, taskListDropdown] = useBoolean();
 
   const [onFocus, onBlur] = useMemo(
     () => [
@@ -63,6 +70,21 @@ export function TodoTaskComponent({
       deleteTask({ id: task.id, uuid: task.uuid, ...args });
     },
     [deleteTask, task.id, task.uuid]
+  );
+
+  const updateTaskCallback = useCallback(
+    (args: Omit<Parameters<typeof updateTask>[0], 'id' | 'uuid'>) => {
+      updateTask({ id: task.id, uuid: task.uuid, ...args });
+    },
+    [task.id, task.uuid, updateTask]
+  );
+
+  const onDueDateChangeCallback = useCallback(
+    (date: Date) =>
+      updateTaskCallback({
+        due: date.toISOString()
+      }),
+    [updateTaskCallback]
   );
 
   const [focusPrevTask, focusNextTask] = useMemo(() => {
@@ -120,17 +142,37 @@ export function TodoTaskComponent({
   // useMouseTrap(inputRef, 'option+down', console.log);
 
   return (
-    <Task
-      className={classes(`todo-task`, focused && 'focused')}
-      uuid={task.uuid}
-      title={task.title}
-      inputRef={inputRef}
-      onClick={onFocus}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onMouseDown={disableMouseDown}
-      onKeyDown={onKeydownCallback}
-    />
+    <>
+      <Task
+        className={classes(`todo-task`, focused && 'focused')}
+        uuid={task.uuid}
+        title={task.title}
+        notes={task.notes}
+        due={task.due}
+        inputRef={inputRef}
+        onClick={onFocus}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        onMouseDown={disableMouseDown}
+        onKeyDown={onKeydownCallback}
+        onContextMenu={setAnchorPosition}
+        onDueDateBtnClick={dateTimeDialog.on}
+      />
+      <TodoTaskMenu
+        onClose={onClose}
+        onDelete={deleteTaskCallback}
+        anchorPosition={anchorPosition}
+        openDateTimeDialog={dateTimeDialog.on}
+        openTaskListDropdown={taskListDropdown.on}
+      />
+      <DateTimeDialog
+        confirmLabel="OK"
+        date={task.due ? new Date(task.due) : new Date()}
+        open={dateTimeDialogOpened}
+        onClose={dateTimeDialog.off}
+        onConfirm={onDueDateChangeCallback}
+      />
+    </>
   );
 }
 

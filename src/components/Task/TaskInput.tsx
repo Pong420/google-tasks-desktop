@@ -1,10 +1,9 @@
 import React, { useCallback, ChangeEvent, useRef, useEffect } from 'react';
 import { Input, InputProps } from '../Mui/Input';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import { Schema$Task } from '../../typings';
 
-export interface TaskInputProps {
-  due?: string;
-  notes?: string;
+export interface TaskInputProps extends Pick<Schema$Task, 'due' | 'notes'> {
   onDueDateBtnClick?(): void;
 }
 

@@ -14,13 +14,13 @@ import {
 
 const mapStateToProps = (state: RootState) => ({
   currentTaskListId: currentTaskListIdSelector(state),
-  showCompleted: !!state.task.completed.length
+  showCompletedTaskList: !!state.task.completed.length
 });
 
 function TaskListComponent({
   dispatch,
   currentTaskListId,
-  showCompleted
+  showCompletedTaskList
 }: ReturnType<typeof mapStateToProps> & DispatchProp) {
   useEffect(() => {
     dispatch(getAllTaskList());
@@ -38,7 +38,7 @@ function TaskListComponent({
         <ScrollContent>
           <TodoTaskList />
         </ScrollContent>
-        {showCompleted && <CompletedTaskList />}
+        {showCompletedTaskList && <CompletedTaskList />}
       </div>
     </div>
   );

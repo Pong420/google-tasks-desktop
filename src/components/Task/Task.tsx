@@ -6,11 +6,11 @@ import { Schema$Task } from '../../typings';
 
 export interface TaskProps
   extends InputProps,
-    Pick<Schema$Task, 'uuid' | 'title' | 'status' | 'due' | 'notes'> {
+    Pick<Schema$Task, 'uuid' | 'title' | 'status'>,
+    TaskInputProps {
   className?: string;
   endAdornment?: ReactNode;
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
-  taskInputProps?: TaskInputProps;
 }
 
 function TaskComponent({
@@ -20,18 +20,18 @@ function TaskComponent({
   status,
   due,
   notes,
+  onDueDateBtnClick,
   endAdornment,
   onContextMenu,
-  taskInputProps,
   ...inputProps
 }: TaskProps) {
-  const mergedTaskInputProps = useMemo<TaskProps['taskInputProps']>(
+  const taskInputProps = useMemo<TaskInputProps>(
     () => ({
       due,
       notes,
-      ...(taskInputProps && taskInputProps)
+      onDueDateBtnClick
     }),
-    [due, notes, taskInputProps]
+    [due, notes, onDueDateBtnClick]
   );
 
   return (
@@ -47,7 +47,7 @@ function TaskComponent({
         className="task-input-base"
         defaultValue={title}
         inputComponent={TaskInput}
-        inputProps={mergedTaskInputProps}
+        inputProps={taskInputProps}
         endAdornment={
           <div className="task-input-base-end-adornment">{endAdornment}</div>
         }

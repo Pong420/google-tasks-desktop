@@ -1,6 +1,7 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
+import { insert, remove } from '../../utils/array';
 import { taskIds } from '../';
 
 type UUID = Schema$Task['uuid'];
@@ -105,7 +106,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
           todo = remove(todo, uuid);
           completed.push(uuid);
           completed.sort(compare);
-        } else {
+        } else if (status === 'needActions') {
           completed = remove(completed, uuid);
           todo = [uuid, ...todo];
         }
@@ -134,6 +135,22 @@ export default function(state = initialState, action: TaskActions): TaskState {
         };
       })();
 
+    case TaskActionTypes.DELETE_COMPLETED_TASKS:
+      return (() => {
+        const byIds = state.completed.reduce(
+          (acc, id) => {
+            delete acc[id];
+            return acc;
+          },
+          { ...state.byIds }
+        );
+        return {
+          ...state,
+          byIds,
+          completed: []
+        };
+      })();
+
     case TaskActionTypes.SET_FOCUSED:
       return {
         ...state,
@@ -143,19 +160,4 @@ export default function(state = initialState, action: TaskActions): TaskState {
     default:
       return state;
   }
-}
-
-function insert<T>(arr: T[], val: T, index: number) {
-  return [...arr.slice(0, index), val, ...arr.slice(index)];
-}
-
-function remove<T>(arr_: T[], val: any) {
-  const arr = arr_.slice();
-
-  const index = arr.indexOf(val);
-  if (index > -1) {
-    arr.splice(index, 1);
-  }
-
-  return arr;
 }
