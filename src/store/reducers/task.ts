@@ -3,6 +3,7 @@ import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
 import { remove, insertAfter } from '../../utils/array';
 import { taskIds } from '../';
+import mergeWith from 'lodash.mergewith';
 
 type UUID = Schema$Task['uuid'];
 
@@ -22,7 +23,7 @@ const initialState: TaskState = {
   focused: null
 };
 
-const getDatekey = (task: Schema$Task) => task.due || 'null';
+const getDatekey = (task?: Schema$Task) => (task && task.due) || 'null';
 
 export default function(state = initialState, action: TaskActions): TaskState {
   switch (action.type) {
@@ -82,26 +83,17 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.NEW_TASK:
       return (() => {
-        const { previousTask, uuid, ...newTaskPlayload } = action.payload;
-        const prevUUID = previousTask && previousTask.uuid;
-
-        const newTask = {
-          // position & updated is required when sorting by date
-          position: previousTask && previousTask.position,
-          updated: new Date().toISOString(),
-          uuid,
-          ...newTaskPlayload
-        };
-
+        const { prevTask, ...newTask } = action.payload;
+        const { uuid } = newTask;
         const dateKey = getDatekey(newTask);
 
         return {
           ...state,
-          todo: insertAfter(state.todo, uuid, prevUUID),
+          todo: insertAfter(state.todo, uuid, prevTask),
           byIds: { ...state.byIds, [uuid]: newTask },
           byDate: {
             ...state.byDate,
-            [dateKey]: insertAfter(state.byDate[dateKey] || [], uuid, prevUUID)
+            [dateKey]: insertAfter(state.byDate[dateKey] || [], uuid, prevTask)
           },
           focused: uuid
         };
@@ -111,23 +103,38 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.UPDATE_TASK_SUCCESS:
     case TaskActionTypes.NEW_TASK_SUCCESS:
       return (() => {
-        const newTask = action.payload;
-        const { uuid, status } = newTask;
+        const newTaskPayload = action.payload;
+        const { uuid, status } = newTaskPayload;
+        const oldTask = state.byIds[uuid];
         let { todo, completed } = state;
 
-        const mergedTask = { ...state.byIds[uuid], ...newTask };
-        const dateKey = getDatekey(mergedTask);
-        let idsByDate = state.byDate[dateKey] || [];
+        const newTask = { ...oldTask, ...newTaskPayload };
+        const oldDateKey = getDatekey(oldTask);
+        const byDatePayload = {
+          [oldDateKey]: state.byDate[oldDateKey] || []
+        };
 
-        if (status === 'completed') {
-          completed.push(uuid);
-          completed.sort(compare);
-          todo = remove(todo, uuid);
-          idsByDate = remove(idsByDate, uuid);
-        } else if (status === 'needActions') {
-          completed = remove(completed, uuid);
-          todo = [uuid, ...todo];
-          idsByDate = [uuid, ...idsByDate];
+        // TODO: detect change
+        if (oldTask.status !== newTask.status) {
+          if (status === 'completed') {
+            completed.push(uuid);
+            completed.sort(compare);
+            todo = remove(todo, uuid);
+            byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
+          } else if (status === 'needsAction') {
+            completed = remove(completed, uuid);
+            todo = [uuid, ...todo];
+            byDatePayload[oldDateKey] = [uuid, ...state.byDate[oldDateKey]];
+          }
+        }
+
+        if (oldTask.due !== newTask.due) {
+          const newDateKey = getDatekey(newTask);
+          byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
+          byDatePayload[newDateKey] = [
+            uuid,
+            ...(state.byDate[newDateKey] || [])
+          ];
         }
 
         return {
@@ -136,11 +143,11 @@ export default function(state = initialState, action: TaskActions): TaskState {
           completed,
           byIds: {
             ...state.byIds,
-            [uuid]: mergedTask
+            [uuid]: newTask
           },
           byDate: {
             ...state.byDate,
-            [dateKey]: idsByDate
+            ...byDatePayload
           }
         };
       })();

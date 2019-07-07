@@ -23,7 +23,7 @@ export enum TaskActionTypes {
 }
 
 export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
-  previousTask?: Schema$Task;
+  prevTask?: Schema$Task['uuid'];
 }
 
 export interface Payload$DeleteTask extends Schema$Task {

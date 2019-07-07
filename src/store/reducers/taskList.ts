@@ -14,7 +14,7 @@ export interface TaskListState {
 }
 
 const SORT_BY_DATE_TASKS_LIST_IDS = 'SORT_BY_DATE_TASKS_LIST_IDS';
-const sortByDateTasksListIds: string[] = JSON.parse(
+let sortByDateTasksListIds: string[] = JSON.parse(
   localStorage.getItem(SORT_BY_DATE_TASKS_LIST_IDS) || '[]'
 );
 
@@ -92,7 +92,7 @@ export default function(
         if (sortByDate) {
           sortByDateTasksListIds.push(state.id!);
         } else {
-          remove(sortByDateTasksListIds, state.id!);
+          sortByDateTasksListIds = remove(sortByDateTasksListIds, state.id!);
         }
 
         localStorage.setItem(

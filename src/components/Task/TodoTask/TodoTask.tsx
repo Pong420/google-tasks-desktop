@@ -27,6 +27,7 @@ interface Props extends Pick<Schema$Task, 'uuid'> {}
 const mapStateToProps = (state: RootState, ownProps: Props) => {
   const todoTasks = getTodoTasksOrder(state);
   const index = todoTasks.indexOf(ownProps.uuid);
+
   return {
     task: state.task.byIds[ownProps.uuid],
     focused: state.task.focused === ownProps.uuid,
@@ -39,7 +40,8 @@ const mapStateToProps = (state: RootState, ownProps: Props) => {
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispatch);
 
-const disableMouseDown = (evt: MouseEvent<HTMLElement>) => evt.preventDefault();
+const disableMouseDown = (evt: MouseEvent<HTMLElement>) =>
+  !(evt.target instanceof HTMLTextAreaElement) && evt.preventDefault();
 
 export function TodoTaskComponent({
   task,
@@ -67,10 +69,11 @@ export function TodoTaskComponent({
 
   const newTaskCallback = useCallback(() => {
     newTask({
-      previousTask: { id: task.id, uuid: task.uuid }
+      prevTask: task.uuid,
+      due: sortByDate ? task.due : undefined
     });
     return false;
-  }, [newTask, task.id, task.uuid]);
+  }, [newTask, task.uuid, task.due, sortByDate]);
 
   const deleteTaskCallback = useCallback(
     (args?: Omit<Parameters<typeof deleteTask>[0], 'id' | 'uuid'>) => {
@@ -166,9 +169,12 @@ export function TodoTaskComponent({
         onDueDateBtnClick={dateTimeDialog.on}
       />
       <TodoTaskMenu
+        anchorPosition={anchorPosition}
+        anchorReference="anchorPosition"
+        due={task.due}
+        open={!!anchorPosition}
         onClose={onClose}
         onDelete={deleteTaskCallback}
-        anchorPosition={anchorPosition}
         openDateTimeDialog={dateTimeDialog.on}
         openTaskListDropdown={taskListDropdown.on}
       />
