@@ -35,12 +35,36 @@
   }
 }
 
+.todo-tasks-list-sort-by-date {
+  .date-label {
+    @include dimen(100%, 40px);
+    @include flex(center);
+    @include padding-x(20px);
+
+    color: var(--text-color);
+
+    &:after {
+      @include typeface('Nunito Sans', 700);
+      content: attr(data-label);
+    }
+
+    &[data-label^='Past'] {
+      color: var(--error-color);
+    }
+
+    &[data-label^='Today'] {
+      color: var(--accent-color);
+    }
+  }
+}
+
 $completed-task-list-header-height: 54px;
 
 .completed-tasks-list {
   @include dimen(100%, $completed-task-list-header-height);
   @include relative();
   flex: 1 0 auto;
+  z-index: $text-highlight-z-index;
 }
 
 .completed-tasks-list-inner {

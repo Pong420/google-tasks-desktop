@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, Omit } from 'react-redux';
 import {
@@ -14,8 +14,9 @@ import {
   deleteTaskList,
   deleteCompletedTasks,
   isMasterTaskList,
-  logout,
   getTotalTasks,
+  logout,
+  toggleSortByDate,
   updateTaskList,
   RootState
 } from '../../store';
@@ -26,12 +27,19 @@ const mapStateToProps = (state: RootState) => ({
   currentTaskList: currentTaskListSelector(state),
   canNotDelete: isMasterTaskList(state),
   numOfCompletedTasks: state.task.completed.length,
-  numOfTotalTasks: getTotalTasks(state)
+  numOfTotalTasks: getTotalTasks(state),
+  sortByDate: state.taskList.sortByDate
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
-    { deleteTaskList, deleteCompletedTasks, updateTaskList, logout },
+    {
+      deleteCompletedTasks,
+      deleteTaskList,
+      logout,
+      toggleSortByDate,
+      updateTaskList
+    },
     dispatch
   );
 
@@ -59,6 +67,8 @@ function TaskListMenuComponent({
   numOfCompletedTasks,
   numOfTotalTasks,
   onClose,
+  sortByDate,
+  toggleSortByDate,
   updateTaskList,
   ...props
 }: Props) {
@@ -89,6 +99,11 @@ function TaskListMenuComponent({
     [currentTaskList, updateTaskList]
   );
 
+  const [setSortByDate, setSortByOrder] = useMemo(
+    () => [() => toggleSortByDate(true), () => toggleSortByDate(false)],
+    [toggleSortByDate]
+  );
+
   const numOfTotalTasks_ = useNotZero(numOfTotalTasks);
   const numOfCompletedTasks_ = useNotZero(numOfCompletedTasks);
 
@@ -96,8 +111,12 @@ function TaskListMenuComponent({
     <>
       <Menu {...props} onClose={onClose} classes={menuClasses}>
         <div className="task-list-menu-title">Sort by</div>
-        <MenuItem text="My order" />
-        <MenuItem text="Date" />
+        <MenuItem
+          text="My order"
+          selected={!sortByDate}
+          onClick={setSortByOrder}
+        />
+        <MenuItem text="Date" selected={sortByDate} onClick={setSortByDate} />
         <Divider />
         <MenuItem text="Rename list" onClick={renameTaskDialog.on} />
         <MenuItem

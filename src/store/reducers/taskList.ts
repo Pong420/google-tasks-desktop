@@ -10,11 +10,18 @@ export interface TaskListState {
   byIds: { [id: string]: Schema$TaskList };
   ids: string[];
   id?: string;
+  sortByDate: boolean;
 }
+
+const SORT_BY_DATE_TASKS_LIST_IDS = 'SORT_BY_DATE_TASKS_LIST_IDS';
+const sortByDateTasksListIds: string[] = JSON.parse(
+  localStorage.getItem(SORT_BY_DATE_TASKS_LIST_IDS) || '[]'
+);
 
 const initialState: TaskListState = {
   byIds: {},
-  ids: []
+  ids: [],
+  sortByDate: false
 };
 
 export default function(
@@ -36,9 +43,11 @@ export default function(
           const id = matches.params.taskListId;
           if (id) {
             localStorage.setItem(LAST_VISITED_TASKS_LIST_ID, id);
+
             return {
               ...state,
-              id
+              id,
+              sortByDate: sortByDateTasksListIds.includes(id)
             };
           }
         }
@@ -48,7 +57,9 @@ export default function(
 
     case TaskListActionTypes.GET_ALL_TASK_LIST:
       return {
-        ...initialState
+        ...initialState,
+        id: state.id,
+        sortByDate: state.sortByDate
       };
 
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
@@ -68,6 +79,30 @@ export default function(
           byIds,
           ids: remove(state.ids, taskLisdId),
           id: undefined
+        };
+      })();
+
+    case TaskListActionTypes.TOGGLE_SORT_BY_DATE:
+      return (() => {
+        const sortByDate =
+          typeof action.payload === 'boolean'
+            ? action.payload
+            : !state.sortByDate;
+
+        if (sortByDate) {
+          sortByDateTasksListIds.push(state.id!);
+        } else {
+          remove(sortByDateTasksListIds, state.id!);
+        }
+
+        localStorage.setItem(
+          SORT_BY_DATE_TASKS_LIST_IDS,
+          JSON.stringify(sortByDateTasksListIds)
+        );
+
+        return {
+          ...state,
+          sortByDate
         };
       })();
 

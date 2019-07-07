@@ -13,7 +13,11 @@ import { TodoTaskMenu } from './TodoTaskMenu';
 import { classes } from '../../../utils/classes';
 import { useBoolean } from '../../../utils/useBoolean';
 import { useMouseTrap } from '../../../utils/useMouseTrap';
-import { RootState, TaskActionCreators } from '../../../store';
+import {
+  RootState,
+  TaskActionCreators,
+  getTodoTasksOrder
+} from '../../../store';
 import { Schema$Task } from '../../../typings';
 import { useMuiMenu } from '../../Mui';
 import DateTimeDialog from './DateTimeDialog';
@@ -21,12 +25,14 @@ import DateTimeDialog from './DateTimeDialog';
 interface Props extends Pick<Schema$Task, 'uuid'> {}
 
 const mapStateToProps = (state: RootState, ownProps: Props) => {
-  const index = state.task.todo.indexOf(ownProps.uuid);
+  const todoTasks = getTodoTasksOrder(state);
+  const index = todoTasks.indexOf(ownProps.uuid);
   return {
     task: state.task.byIds[ownProps.uuid],
     focused: state.task.focused === ownProps.uuid,
-    prevTask: state.task.todo[Math.max(0, index - 1)],
-    nextTask: state.task.todo[Math.min(state.task.todo.length, index + 1)]
+    prevTask: todoTasks[Math.max(0, index - 1)],
+    nextTask: todoTasks[Math.min(todoTasks.length, index + 1)],
+    sortByDate: state.taskList.sortByDate
   };
 };
 
@@ -43,7 +49,8 @@ export function TodoTaskComponent({
   nextTask,
   newTask,
   deleteTask,
-  updateTask
+  updateTask,
+  sortByDate
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
@@ -90,21 +97,21 @@ export function TodoTaskComponent({
   const [focusPrevTask, focusNextTask] = useMemo(() => {
     const handler = (type: 'start' | 'end', uuid?: string) => () => {
       const input = inputRef.current;
-      if (input && focused) {
+      if (input && focused && uuid && uuid !== task.uuid) {
         const { selectionStart, selectionEnd, value } = input;
         const notHightlighted = selectionStart === selectionEnd;
         const shouldFocusPrev = type === 'start' && selectionStart === 0;
         const shouldFocusNext =
           type === 'end' && selectionStart === value.length;
 
-        if (notHightlighted && uuid && (shouldFocusPrev || shouldFocusNext)) {
+        if (notHightlighted && (shouldFocusPrev || shouldFocusNext)) {
           setFocused(uuid);
         }
       }
     };
 
     return [handler('start', prevTask), handler('end', nextTask)];
-  }, [prevTask, nextTask, focused, setFocused]);
+  }, [prevTask, nextTask, focused, setFocused, task.uuid]);
 
   const onKeydownCallback = useCallback(
     (evt: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -148,7 +155,7 @@ export function TodoTaskComponent({
         uuid={task.uuid}
         title={task.title}
         notes={task.notes}
-        due={task.due}
+        due={sortByDate ? undefined : task.due}
         inputRef={inputRef}
         onClick={onFocus}
         onFocus={onFocus}

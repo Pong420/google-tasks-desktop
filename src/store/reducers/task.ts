@@ -1,13 +1,14 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
-import { insert, remove } from '../../utils/array';
+import { remove, insertAfter } from '../../utils/array';
 import { taskIds } from '../';
 
 type UUID = Schema$Task['uuid'];
 
 export interface TaskState {
   byIds: { [id: string]: Schema$Task };
+  byDate: { [date: string]: UUID[] };
   todo: UUID[];
   completed: UUID[];
   focused: string | number | null;
@@ -15,10 +16,13 @@ export interface TaskState {
 
 const initialState: TaskState = {
   byIds: {},
+  byDate: {},
   todo: [],
   completed: [],
   focused: null
 };
+
+const getDatekey = (task: Schema$Task) => task.due || 'null';
 
 export default function(state = initialState, action: TaskActions): TaskState {
   switch (action.type) {
@@ -31,6 +35,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       return (() => {
         const todo: UUID[] = [];
         const completed: UUID[] = [];
+        const byDate: TaskState['byDate'] = {};
 
         const byIds = (action.payload as Schema$Task[])
           .sort((a, b) => {
@@ -48,6 +53,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
           })
           .reduce<{ [id: string]: Schema$Task }>((acc, task) => {
             const uuid = task.uuid || taskIds.next();
+            const dateKey = getDatekey(task);
 
             if (task.status === 'completed') {
               completed.push(uuid);
@@ -60,12 +66,15 @@ export default function(state = initialState, action: TaskActions): TaskState {
               uuid
             };
 
+            byDate[dateKey] = [...(byDate[dateKey] || []), uuid];
+
             return acc;
           }, {});
 
         return {
           ...state,
           byIds,
+          byDate,
           todo,
           completed
         };
@@ -74,9 +83,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.NEW_TASK:
       return (() => {
         const { previousTask, uuid, ...newTaskPlayload } = action.payload;
-        const index = !!previousTask
-          ? state.todo.indexOf(previousTask.uuid) + 1
-          : 0;
+        const prevUUID = previousTask && previousTask.uuid;
 
         const newTask = {
           // position & updated is required when sorting by date
@@ -86,10 +93,16 @@ export default function(state = initialState, action: TaskActions): TaskState {
           ...newTaskPlayload
         };
 
+        const dateKey = getDatekey(newTask);
+
         return {
           ...state,
-          todo: insert(state.todo, uuid, index),
+          todo: insertAfter(state.todo, uuid, prevUUID),
           byIds: { ...state.byIds, [uuid]: newTask },
+          byDate: {
+            ...state.byDate,
+            [dateKey]: insertAfter(state.byDate[dateKey] || [], uuid, prevUUID)
+          },
           focused: uuid
         };
       })();
@@ -102,13 +115,19 @@ export default function(state = initialState, action: TaskActions): TaskState {
         const { uuid, status } = newTask;
         let { todo, completed } = state;
 
+        const mergedTask = { ...state.byIds[uuid], ...newTask };
+        const dateKey = getDatekey(mergedTask);
+        let idsByDate = state.byDate[dateKey] || [];
+
         if (status === 'completed') {
-          todo = remove(todo, uuid);
           completed.push(uuid);
           completed.sort(compare);
+          todo = remove(todo, uuid);
+          idsByDate = remove(idsByDate, uuid);
         } else if (status === 'needActions') {
           completed = remove(completed, uuid);
           todo = [uuid, ...todo];
+          idsByDate = [uuid, ...idsByDate];
         }
 
         return {
@@ -117,7 +136,11 @@ export default function(state = initialState, action: TaskActions): TaskState {
           completed,
           byIds: {
             ...state.byIds,
-            [newTask.uuid]: { ...state.byIds[uuid], ...newTask }
+            [uuid]: mergedTask
+          },
+          byDate: {
+            ...state.byDate,
+            [dateKey]: idsByDate
           }
         };
       })();
@@ -125,10 +148,16 @@ export default function(state = initialState, action: TaskActions): TaskState {
     case TaskActionTypes.DELETE_TASK:
       return (() => {
         const { uuid, prevTask } = action.payload;
-        const { [action.payload.uuid]: deleted, ...byIds } = state.byIds;
+        const { [uuid]: deleted, ...byIds } = state.byIds;
+        const dateKey = getDatekey(deleted);
+
         return {
           ...state,
           byIds,
+          byDate: {
+            ...state.byDate,
+            [dateKey]: remove(state.byDate[dateKey] || [], uuid)
+          },
           todo: remove(state.todo, uuid),
           completed: remove(state.completed, uuid),
           ...(prevTask && { focused: prevTask })

@@ -89,6 +89,7 @@ $min-task-height: 50px;
     @include relative();
     align-self: center;
     overflow: hidden;
+    padding: 12px 5px; // padding-y for multiple line
 
     .mui-input-base {
       $line-height: 20px;
@@ -96,7 +97,7 @@ $min-task-height: 50px;
       font-size: 14px;
       line-height: $line-height;
       min-height: 0;
-      padding: 8px 5px; // padding-y for multiple line
+      padding: 0;
 
       textarea {
         min-height: $line-height;

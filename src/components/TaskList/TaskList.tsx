@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { connect, DispatchProp } from 'react-redux';
 import { TaskListHeader } from '../TaskListHeader';
-import { TodoTaskList } from '../TaskList/TodoTaskList';
-import { CompletedTaskList } from '../TaskList/CompletedTaskList';
+import { TodoTaskList } from './TodoTaskList';
+import { CompletedTaskList } from './CompletedTaskList';
+import { TodoTasksListSortByDate } from './TodoTasksListSortByDate';
 import { NewTask } from '../NewTask';
 import { ScrollContent } from '../ScrollContent';
 import {
@@ -14,13 +15,15 @@ import {
 
 const mapStateToProps = (state: RootState) => ({
   currentTaskListId: currentTaskListIdSelector(state),
-  showCompletedTaskList: !!state.task.completed.length
+  showCompletedTaskList: !!state.task.completed.length,
+  sortByDate: state.taskList.sortByDate
 });
 
 function TaskListComponent({
   dispatch,
   currentTaskListId,
-  showCompletedTaskList
+  showCompletedTaskList,
+  sortByDate
 }: ReturnType<typeof mapStateToProps> & DispatchProp) {
   useEffect(() => {
     dispatch(getAllTaskList());
@@ -36,7 +39,7 @@ function TaskListComponent({
       <div className="task-list-content">
         <NewTask />
         <ScrollContent>
-          <TodoTaskList />
+          {sortByDate ? <TodoTasksListSortByDate /> : <TodoTaskList />}
         </ScrollContent>
         {showCompletedTaskList && <CompletedTaskList />}
       </div>

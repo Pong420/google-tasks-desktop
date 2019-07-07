@@ -1,3 +1,5 @@
+$text-highlight-z-index: 11;
+
 @mixin textHighlight() {
   @include relative();
 
@@ -7,7 +9,7 @@
     border-bottom: 2px solid transparent;
     content: '';
     margin: auto;
-    z-index: 11;
+    z-index: $text-highlight-z-index;
   }
 
   &.focused {

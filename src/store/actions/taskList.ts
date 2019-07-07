@@ -10,7 +10,8 @@ export enum TaskListActionTypes {
   UPDATE_TASK_LIST = 'UPDATE_TASK_LIST',
   UPDATE_TASK_LIST_SUCCESS = 'UPDATE_TASK_LIST_SUCCESS',
   DELETE_TASK_LIST = 'DELETE_TASK_LIST',
-  DELETE_TASK_LIST_SUCCESS = 'DELETE_TASK_LIST_SUCCESS'
+  DELETE_TASK_LIST_SUCCESS = 'DELETE_TASK_LIST_SUCCESS',
+  TOGGLE_SORT_BY_DATE = 'TOGGLE_SORT_BY_DATE'
 }
 
 export interface GetAllTaskList {
@@ -60,6 +61,11 @@ export interface DeleteTaskListSuccess {
   type: TaskListActionTypes.DELETE_TASK_LIST_SUCCESS;
 }
 
+export interface ToggleSortByDate {
+  type: TaskListActionTypes.TOGGLE_SORT_BY_DATE;
+  payload?: boolean;
+}
+
 export type TaskListActions =
   | GetAllTaskList
   | GetAllTaskListSuccess
@@ -70,7 +76,8 @@ export type TaskListActions =
   | UpdateTaskList
   | UpdateTaskListSuccess
   | DeleteTaskList
-  | DeleteTaskListSuccess;
+  | DeleteTaskListSuccess
+  | ToggleSortByDate;
 
 export function getAllTaskList(): GetAllTaskList {
   return {
@@ -114,10 +121,18 @@ export function deleteTaskList(payload: string): DeleteTaskList {
   };
 }
 
+export function toggleSortByDate(payload?: boolean): ToggleSortByDate {
+  return {
+    type: TaskListActionTypes.TOGGLE_SORT_BY_DATE,
+    payload
+  };
+}
+
 export const TaskListActionCreators = {
+  deleteTaskList,
   getAllTaskList,
   getTaskList,
   newTaskList,
-  updateTaskList,
-  deleteTaskList
+  toggleSortByDate,
+  updateTaskList
 };

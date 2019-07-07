@@ -1,8 +1,6 @@
+import { createSelector } from 'reselect';
 import { RootState } from '../reducers';
-
-export const tasksSelector = (state: RootState) => (
-  type: 'todo' | 'completed'
-) => state.task[type].map(id => state.task.byIds[id]);
+import { compare } from '../../utils/compare';
 
 export const focusedSelector = ({ task: { focused } }: RootState) => (
   index: number,
@@ -11,3 +9,13 @@ export const focusedSelector = ({ task: { focused } }: RootState) => (
 
 export const getTotalTasks = (state: RootState) =>
   state.task.todo.length + state.task.completed.length;
+
+export const getTodoTasksByDate = (state: RootState) =>
+  Object.entries(state.task.byDate).sort(([a], [b]) => compare(a, b));
+
+export const getTodoTasksOrder = (state: RootState) =>
+  state.taskList.sortByDate
+    ? Object.keys(state.task.byDate)
+        .sort()
+        .flatMap(date => state.task.byDate[date])
+    : state.task.todo;
