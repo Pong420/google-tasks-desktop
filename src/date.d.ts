@@ -77,5 +77,9 @@ interface Date {
 
   isToday(): boolean;
 
+  dayDiff(d?: Date): number;
+
+  toISODateString(): string;
+
   format(dateFormat: string): string;
 }

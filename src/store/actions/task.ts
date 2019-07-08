@@ -22,12 +22,20 @@ export enum TaskActionTypes {
   SET_FOCUSED = 'SET_FOCUSED'
 }
 
+type UUID = Schema$Task['uuid'];
+
 export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
-  prevTask?: Schema$Task['uuid'];
+  prevTask?: UUID;
 }
 
 export interface Payload$DeleteTask extends Schema$Task {
-  prevTask?: Schema$Task['uuid'];
+  prevTask?: UUID;
+}
+
+export interface Payload$MoveTask {
+  prevTask: UUID;
+  uuid: UUID;
+  step?: number;
 }
 
 export type Payload$SortTasks = 'order' | 'date';
@@ -93,6 +101,11 @@ export interface DeleteCompletedTasksSuccess {
   type: TaskActionTypes.DELETE_COMPLETED_TASKS_SUCCESS;
 }
 
+export interface MoveTask {
+  type: TaskActionTypes.MOVE_TASKS;
+  payload: Payload$MoveTask;
+}
+
 export interface MoveTaskSuccess {
   type: TaskActionTypes.MOVE_TASKS_SUCCESS;
   payload: tasks_v1.Schema$Task;
@@ -126,6 +139,7 @@ export type TaskActions =
   | DeleteTaskSuccess
   | DeleteCompletedTasks
   | DeleteCompletedTasksSuccess
+  | MoveTask
   | MoveTaskSuccess
   | MoveToAnotherList
   | MoveToAnotherListSuccess
@@ -151,6 +165,13 @@ export const newTask = (payload?: Payload$NewTask): NewTask => {
 export const deleteTask = (payload: Payload$DeleteTask): DeleteTask => {
   return {
     type: TaskActionTypes.DELETE_TASK,
+    payload
+  };
+};
+
+export const moveTask = (payload: Payload$MoveTask): MoveTask => {
+  return {
+    type: TaskActionTypes.MOVE_TASKS,
     payload
   };
 };
@@ -185,11 +206,12 @@ export const setFocused = (payload: string | number | null): SetFocused => {
 };
 
 export const TaskActionCreators = {
+  deleteTask,
+  deleteCompletedTasks,
   getAllTasks,
   newTask,
-  deleteTask,
-  updateTask,
-  deleteCompletedTasks,
+  moveTask,
   moveToAnotherList,
-  setFocused
+  setFocused,
+  updateTask
 };

@@ -30,7 +30,8 @@ const mapStateToProps = (state: RootState, ownProps: Props) => {
 
   return {
     task: state.task.byIds[ownProps.uuid],
-    focused: state.task.focused === ownProps.uuid,
+    focused:
+      state.task.focused === ownProps.uuid || state.task.focused === index,
     prevTask: todoTasks[Math.max(0, index - 1)],
     nextTask: todoTasks[Math.min(todoTasks.length, index + 1)],
     sortByDate: state.taskList.sortByDate
@@ -50,6 +51,7 @@ export function TodoTaskComponent({
   prevTask,
   nextTask,
   newTask,
+  moveTask,
   deleteTask,
   updateTask,
   sortByDate
@@ -100,7 +102,7 @@ export function TodoTaskComponent({
   const [focusPrevTask, focusNextTask] = useMemo(() => {
     const handler = (type: 'start' | 'end', uuid?: string) => () => {
       const input = inputRef.current;
-      if (input && focused && uuid && uuid !== task.uuid) {
+      if (input && uuid && uuid !== task.uuid) {
         const { selectionStart, selectionEnd, value } = input;
         const notHightlighted = selectionStart === selectionEnd;
         const shouldFocusPrev = type === 'start' && selectionStart === 0;
@@ -114,7 +116,26 @@ export function TodoTaskComponent({
     };
 
     return [handler('start', prevTask), handler('end', nextTask)];
-  }, [prevTask, nextTask, focused, setFocused, task.uuid]);
+  }, [prevTask, nextTask, setFocused, task.uuid]);
+
+  const [moveTaskUp, moveTaskDown] = useMemo(() => {
+    const handler = (prevTask: Schema$Task['uuid'], step: number) => () => {
+      if (prevTask && prevTask !== task.uuid) {
+        if (sortByDate) {
+          const canMoveUp = !task.due || new Date(task.due).dayDiff() < 0;
+          const canMoveDown = !!task.due;
+          if ((step === -1 && canMoveUp) || (step === 1 && canMoveDown)) {
+            moveTask({ uuid: task.uuid, prevTask, step });
+          }
+        } else {
+          moveTask({ uuid: task.uuid, prevTask });
+        }
+        return false;
+      }
+    };
+
+    return [handler(prevTask, -1), handler(nextTask, 1)];
+  }, [moveTask, prevTask, nextTask, sortByDate, task.uuid, task.due]);
 
   const onKeydownCallback = useCallback(
     (evt: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -148,8 +169,8 @@ export function TodoTaskComponent({
   useMouseTrap(inputRef, 'up', focusPrevTask);
   useMouseTrap(inputRef, 'down', focusNextTask);
   // useMouseTrap(inputRef, 'shift+enter', console.log);
-  // useMouseTrap(inputRef, 'option+up', console.log);
-  // useMouseTrap(inputRef, 'option+down', console.log);
+  useMouseTrap(inputRef, 'option+up', moveTaskUp);
+  useMouseTrap(inputRef, 'option+down', moveTaskDown);
 
   return (
     <>
@@ -189,9 +210,7 @@ export function TodoTaskComponent({
   );
 }
 
-export const TodoTask = React.memo(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(TodoTaskComponent)
-);
+export const TodoTask = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoTaskComponent);

@@ -17,7 +17,7 @@ export function TodoTasksListSortByDateComponent({
 
     if (due !== 'null') {
       const date = new Date(due);
-      const dayDiff = Math.floor((+now.current - +date) / 1000 / 60 / 60 / 24);
+      const dayDiff = date.dayDiff(now.current);
 
       if (dayDiff > 0) {
         label = 'Past';
@@ -45,9 +45,11 @@ export function TodoTasksListSortByDateComponent({
 
         return (
           <Fragment key={date}>
-            {label && <div className="date-label" data-label={label} />}
-            {ids.map(uuid => (
-              <TodoTask key={uuid} uuid={uuid} />
+            {label && !!ids.length && (
+              <div className="date-label" data-label={label} />
+            )}
+            {ids.map((uuid, index) => (
+              <TodoTask key={uuid + index} uuid={uuid} />
             ))}
           </Fragment>
         );

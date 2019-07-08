@@ -16,8 +16,9 @@ export function TodoTaskListComponent({
 }: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
   return (
     <div className="todo-task-list">
-      {todoTasks.map(uuid => (
-        <TodoTask key={uuid} uuid={uuid} />
+      {todoTasks.map((uuid, index) => (
+        // In order to rerender when task move up, uuid and index as key is required.
+        <TodoTask key={uuid + index} uuid={uuid} />
       ))}
     </div>
   );

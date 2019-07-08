@@ -1,9 +1,8 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
-import { remove, insertAfter } from '../../utils/array';
+import { remove, insertAfter, swap } from '../../utils/array';
 import { taskIds } from '../';
-import mergeWith from 'lodash.mergewith';
 
 type UUID = Schema$Task['uuid'];
 
@@ -28,6 +27,8 @@ const getDatekey = (task?: Schema$Task) => (task && task.due) || 'null';
 export default function(state = initialState, action: TaskActions): TaskState {
   switch (action.type) {
     case TaskActionTypes.GET_ALL_TASKS:
+      taskIds.reset();
+
       return {
         ...initialState
       };
@@ -60,14 +61,13 @@ export default function(state = initialState, action: TaskActions): TaskState {
               completed.push(uuid);
             } else {
               todo.push(uuid);
+              byDate[dateKey] = [...(byDate[dateKey] || []), uuid];
             }
 
             acc[uuid] = {
               ...task,
               uuid
             };
-
-            byDate[dateKey] = [...(byDate[dateKey] || []), uuid];
 
             return acc;
           }, {});
@@ -184,6 +184,68 @@ export default function(state = initialState, action: TaskActions): TaskState {
           ...state,
           byIds,
           completed: []
+        };
+      })();
+
+    case TaskActionTypes.MOVE_TASKS:
+      return (() => {
+        const { uuid, prevTask, step } = action.payload;
+        const { todo, byIds, byDate } = state;
+        const byDatePayload: TaskState['byDate'] = {};
+        let currentTask = byIds[uuid];
+
+        // special handling for moving task when ordering by date
+        if (step) {
+          let updatedDate;
+          const now = new Date();
+          if (currentTask.due) {
+            // move with existing date
+            const date = new Date(currentTask.due);
+            const dayDiff = date.dayDiff(now);
+
+            updatedDate =
+              dayDiff > 0 // if date is past
+                ? now // set new date to totody
+                : date.addDays(step); // else set depends on step
+          } else if (step === -1) {
+            // move up from no date
+            // move to prev task's date group
+            const prevTask_ = byIds[prevTask];
+            if (prevTask_ && prevTask_.due) {
+              updatedDate = new Date(prevTask_.due);
+            }
+          }
+
+          if (updatedDate) {
+            // make sure the date is not in the past
+            if (updatedDate.dayDiff(now) > 0) {
+              updatedDate = now;
+            }
+
+            currentTask = {
+              ...currentTask,
+              due: updatedDate.toISODateString()
+            };
+
+            const oldDateKey = getDatekey(byIds[uuid]);
+            const newDateKey = getDatekey(currentTask);
+
+            byDatePayload[oldDateKey] = remove(byDate[oldDateKey] || [], uuid);
+            byDatePayload[newDateKey] = [uuid, ...(byDate[newDateKey] || [])];
+          }
+        }
+
+        return {
+          ...state,
+          todo: swap(todo, todo.indexOf(uuid), todo.indexOf(prevTask)),
+          byDate: {
+            ...byDate,
+            ...byDatePayload
+          },
+          byIds: {
+            ...byIds,
+            [uuid]: currentTask
+          }
         };
       })();
 

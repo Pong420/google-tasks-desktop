@@ -1,4 +1,5 @@
 /* eslint-disable */
+/* tslint:disable:only-arrow-functions */
 
 // Date class extension
 
@@ -186,11 +187,20 @@ Date.prototype.compare = function(dateObj: Date) {
   };
 };
 
+Date.prototype.dayDiff = function(d: Date = new Date()) {
+  return Math.floor((d.getTime() - this.getTime()) / 1000 / 60 / 60 / 24);
+};
+
 Date.prototype.isToday = function() {
-  const dayDiff = Math.floor(
-    (Date.now() - this.getTime()) / 1000 / 60 / 60 / 24
+  return this.dayDiff(new Date()) === 0;
+};
+
+Date.prototype.toISODateString = function() {
+  const str = this.toISOString();
+  return (
+    str.substring(0, str.indexOf('T')) +
+    str.substring(str.indexOf('T')).replace(/\d/g, '0')
   );
-  return dayDiff === 0;
 };
 
 // format provided date into this.format format

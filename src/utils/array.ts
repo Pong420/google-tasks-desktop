@@ -16,3 +16,12 @@ export function remove<T>(arr_: T[], val: any) {
 
   return arr;
 }
+
+export function swap<T>(arr: T[], oldIndex: number, newIndex: number) {
+  const clone = arr.slice();
+  const cache = clone[oldIndex];
+  clone[oldIndex] = clone[newIndex];
+  clone[newIndex] = cache;
+
+  return clone;
+}
