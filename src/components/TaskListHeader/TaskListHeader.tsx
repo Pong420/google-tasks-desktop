@@ -1,57 +1,62 @@
 import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
+import { connect, DispatchProp } from 'react-redux';
 import { generatePath } from 'react-router-dom';
 import { push } from 'connected-react-router';
 import { TaskListDropdown } from '../TaskListDropdown';
-import { MenuItem } from '../Mui/Menu/MenuItem';
+import { FormDialog, MenuItem } from '../Mui';
 import { Schema$TaskList } from '../../typings';
-import { RootState, currentTaskListSelector } from '../../store';
+import { newTaskList } from '../../store';
+import { useBoolean } from '../../utils/useBoolean';
 import { PATHS } from '../../constants';
 import Divider from '@material-ui/core/Divider';
 
-const mapStateToProps = (state: RootState) => ({
-  currentTaskList: currentTaskListSelector(state)
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators({ push }, dispatch);
+function TaskListHeaderComponent({ dispatch }: DispatchProp) {
+  const [dialogOpened, dialog] = useBoolean();
 
-// TODO: Add create new task list
-
-type Props = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
-
-function TaskListHeaderComponent({ push }: Props) {
   const onSelectCallback = useCallback(
-    ({ id }: Schema$TaskList) => {
-      push(generatePath(PATHS.TASKLIST, { taskListId: id }));
-    },
-    [push]
+    ({ id }: Schema$TaskList) =>
+      dispatch(push(generatePath(PATHS.TASKLIST, { taskListId: id }))),
+    [dispatch]
+  );
+
+  const newTaskListCallback = useCallback(
+    (name: string) => dispatch(newTaskList(name)),
+    [dispatch]
   );
 
   return (
-    <div className="task-list-header">
-      <div />
-      <div className="task-list-header-dropdown-container">
-        <div className="task-list-header-dropdown-label">
-          <span>TASKS</span>
+    <>
+      <div className="task-list-header">
+        <div />
+        <div className="task-list-header-dropdown-container">
+          <div className="task-list-header-dropdown-label">
+            <span>TASKS</span>
+          </div>
+          <TaskListDropdown
+            onSelect={onSelectCallback}
+            paperClassName="task-list-header-dropdown-paper"
+            outOfScrollContent={onClose => (
+              <>
+                <Divider />
+                <MenuItem
+                  text="Create new list"
+                  onClick={dialog.on}
+                  onClose={onClose}
+                />
+              </>
+            )}
+          />
         </div>
-        <TaskListDropdown
-          onSelect={onSelectCallback}
-          paperClassName="task-list-header-dropdown-paper"
-          outOfScrollContent={onClose => (
-            <>
-              <Divider />
-              <MenuItem text="Create new list" onClose={onClose} />
-            </>
-          )}
-        />
       </div>
-    </div>
+      <FormDialog
+        title="Create new list"
+        errorMsg="Task list name cannot be empty"
+        open={dialogOpened}
+        onClose={dialog.off}
+        onConfirm={newTaskListCallback}
+      />
+    </>
   );
 }
 
-export const TaskListHeader = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TaskListHeaderComponent);
+export const TaskListHeader = connect()(TaskListHeaderComponent);

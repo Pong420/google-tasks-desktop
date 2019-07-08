@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ConnectedRouter } from 'connected-react-router';
 import { theme } from './theme';
-import { Auth } from './components/Auth';
 import configureStore, { history } from './store';
 import App from './App';
 import 'typeface-roboto';

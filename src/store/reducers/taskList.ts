@@ -3,7 +3,6 @@ import { matchPath } from 'react-router-dom';
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
 import { PATHS, LAST_VISITED_TASKS_LIST_ID } from '../../constants';
 import { Schema$TaskList } from '../../typings';
-import { formatData } from '../../utils/formatData';
 import { remove } from '../../utils/array';
 
 export interface TaskListState {
@@ -11,6 +10,7 @@ export interface TaskListState {
   ids: string[];
   id?: string;
   sortByDate: boolean;
+  creatingNewTaskList: boolean;
 }
 
 const SORT_BY_DATE_TASKS_LIST_IDS = 'SORT_BY_DATE_TASKS_LIST_IDS';
@@ -21,7 +21,8 @@ let sortByDateTasksListIds: string[] = JSON.parse(
 const initialState: TaskListState = {
   byIds: {},
   ids: [],
-  sortByDate: false
+  sortByDate: false,
+  creatingNewTaskList: false
 };
 
 export default function(
@@ -64,9 +65,20 @@ export default function(
 
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
       return (() => {
+        const ids: string[] = [];
+        const byIds = action.payload.reduce<TaskListState['byIds']>(
+          (acc, taskList) => {
+            acc[taskList.id!] = taskList;
+            ids.push(taskList.id!);
+            return acc;
+          },
+          {}
+        );
+
         return {
           ...state,
-          ...formatData(action.payload, 'id')
+          byIds,
+          ids
         };
       })();
 
@@ -79,6 +91,35 @@ export default function(
           byIds,
           ids: remove(state.ids, taskLisdId),
           id: undefined
+        };
+      })();
+
+    case TaskListActionTypes.NEW_TASK_LIST:
+      return {
+        ...state,
+        creatingNewTaskList: true
+      };
+
+    case TaskListActionTypes.NEW_TASK_LIST_SUCCESS:
+      return {
+        ...state,
+        creatingNewTaskList: false,
+        byIds: {
+          ...state.byIds,
+          [action.payload.id!]: action.payload
+        },
+        ids: [...state.ids, action.payload.id!]
+      };
+
+    case TaskListActionTypes.UPDATE_TASK_LIST:
+      return (() => {
+        const { tasklist, requestBody } = action.payload!;
+        return {
+          ...state,
+          byIds: {
+            ...state.byIds,
+            [tasklist!]: { ...state.byIds[tasklist!], ...requestBody }
+          }
         };
       })();
 
