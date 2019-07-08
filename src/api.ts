@@ -2,6 +2,7 @@ import fs from 'fs';
 import { remote } from 'electron';
 import { google } from 'googleapis';
 import { TOKEN_PATH, OAUTH2_KEYS_PATH } from './constants';
+import { writeFileSync } from './utils/writeFileSync';
 import { OAuthKeys } from './typings';
 
 export let OAuth2Keys: OAuthKeys | null = null;
@@ -36,10 +37,15 @@ export function authenticateAPI() {
     fs.readFile(TOKEN_PATH, 'utf-8', (err, token) => {
       if (err) {
         remote.shell.openExternal(authorizeUrl);
-        reject();
+        reject(err);
       } else {
-        oAuth2Client.setCredentials(JSON.parse(token));
-        resolve();
+        try {
+          oAuth2Client.setCredentials(JSON.parse(token));
+          resolve();
+        } catch (error) {
+          fs.unlinkSync(TOKEN_PATH);
+          reject(error);
+        }
       }
     });
   });
@@ -53,7 +59,7 @@ export function getTokenAPI(code: string) {
       } else {
         try {
           oAuth2Client.setCredentials(token!);
-          fs.writeFileSync(TOKEN_PATH, token!);
+          writeFileSync(TOKEN_PATH, token!);
           resolve(token!);
         } catch (err) {
           reject(err);

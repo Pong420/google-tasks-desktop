@@ -1,9 +1,13 @@
 import React, { useEffect, ReactElement } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import { Input } from '../Mui/Input';
+import { FileUpload } from './FileUpload';
 import { RootState, authenticate, getToken } from '../../store';
-import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
+import { useInput } from '../../utils/useInput';
 import { OAuth2Keys } from '../../api';
+import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
+import Button from '@material-ui/core/Button';
 
 const mapStateToProps = ({ auth: { loggedIn, autoLogin } }: RootState) => ({
   loggedIn,
@@ -19,9 +23,12 @@ export function AuthComponent({
   autoLogin,
   authenticate,
   children,
-  loggedIn
+  loggedIn,
+  getToken
 }: ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps> & { children: ReactElement }) {
+  const code = useInput('');
+
   useEffect(() => {
     installed && autoLogin && authenticate();
   }, [authenticate, autoLogin]);
@@ -42,8 +49,27 @@ export function AuthComponent({
       </div>
       <div className="auth-content">
         {installed ? (
-          <form onSubmit={authenticate}>Paste the code here:</form>
-        ) : null}
+          <form action="">
+            Paste the code here:
+            <Input
+              {...code}
+              autoFocus
+              fullWidth
+              className="filled bottom-border"
+            />
+            <div>
+              <Button onClick={authenticate}>Get Code</Button>
+              <Button
+                className="auth-confirm-button"
+                onClick={() => getToken(code.value)}
+              >
+                Confirm
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <FileUpload />
+        )}
       </div>
     </div>
   );

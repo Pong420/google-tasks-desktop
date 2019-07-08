@@ -20,9 +20,7 @@ const render = (Component: React.ComponentType<{}>) => {
     <MuiThemeProvider theme={theme}>
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <Auth>
-            <Component />
-          </Auth>
+          <Component />
         </ConnectedRouter>
       </Provider>
     </MuiThemeProvider>,
