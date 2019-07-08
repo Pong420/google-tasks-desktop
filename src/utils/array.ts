@@ -25,3 +25,10 @@ export function swap<T>(arr: T[], oldIndex: number, newIndex: number) {
 
   return clone;
 }
+
+// credit: https://github.com/sindresorhus/array-move
+export function move<T>(arr: T[], from: number, to: number) {
+  const clone = arr.slice();
+  clone.splice(to < 0 ? clone.length + to : to, 0, clone.splice(from, 1)[0]);
+  return clone;
+}

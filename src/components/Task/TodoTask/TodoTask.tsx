@@ -22,9 +22,11 @@ import { Schema$Task } from '../../../typings';
 import { useMuiMenu } from '../../Mui';
 import DateTimeDialog from './DateTimeDialog';
 
-interface Props extends Pick<Schema$Task, 'uuid'> {}
+export interface TodoTaskProps extends Pick<Schema$Task, 'uuid'> {
+  className?: string;
+}
 
-const mapStateToProps = (state: RootState, ownProps: Props) => {
+const mapStateToProps = (state: RootState, ownProps: TodoTaskProps) => {
   const todoTasks = getTodoTasksOrder(state);
   const index = todoTasks.indexOf(ownProps.uuid);
 
@@ -45,6 +47,7 @@ const disableMouseDown = (evt: MouseEvent<HTMLElement>) =>
   !(evt.target instanceof HTMLTextAreaElement) && evt.preventDefault();
 
 export function TodoTaskComponent({
+  className,
   task,
   focused,
   setFocused,
@@ -55,7 +58,9 @@ export function TodoTaskComponent({
   deleteTask,
   updateTask,
   sortByDate
-}: ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>) {
+}: ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps> &
+  TodoTaskProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [dateTimeDialogOpened, dateTimeDialog] = useBoolean();
@@ -175,7 +180,7 @@ export function TodoTaskComponent({
   return (
     <>
       <Task
-        className={classes(`todo-task`, focused && 'focused')}
+        className={classes(`todo-task`, focused && 'focused', className)}
         uuid={task.uuid}
         title={task.title}
         notes={task.notes}

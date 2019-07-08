@@ -1,7 +1,7 @@
 import { TaskActions, TaskActionTypes } from '../actions/task';
 import { Schema$Task } from '../../typings';
 import { compare } from '../../utils/compare';
-import { remove, insertAfter, swap } from '../../utils/array';
+import { remove, insertAfter, move } from '../../utils/array';
 import { taskIds } from '../';
 
 type UUID = Schema$Task['uuid'];
@@ -237,7 +237,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
         return {
           ...state,
-          todo: swap(todo, todo.indexOf(uuid), todo.indexOf(prevTask)),
+          todo: move(todo, todo.indexOf(uuid), todo.indexOf(prevTask)),
           byDate: {
             ...byDate,
             ...byDatePayload
