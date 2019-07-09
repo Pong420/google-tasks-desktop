@@ -13,10 +13,6 @@
     width: calc(100% - 60px) !important;
     z-index: 1000;
 
-    &:after {
-      border-color: transparent;
-    }
-
     .task-input-base-end-adornment {
       display: none;
     }

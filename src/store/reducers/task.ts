@@ -106,7 +106,8 @@ export default function(state = initialState, action: TaskActions): TaskState {
         const newTaskPayload = action.payload;
         const { uuid, status } = newTaskPayload;
         const oldTask = state.byIds[uuid];
-        let { todo, completed } = state;
+        let todo = state.todo.slice();
+        let completed = state.completed.slice();
 
         const newTask = { ...oldTask, ...newTaskPayload };
         const oldDateKey = getDatekey(oldTask);
@@ -117,7 +118,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         if (oldTask.status !== newTask.status) {
           if (status === 'completed') {
             completed.push(uuid);
-            completed.sort(compare);
+            completed.sort();
             todo = remove(todo, uuid);
             byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
           } else if (status === 'needsAction') {
@@ -244,7 +245,8 @@ export default function(state = initialState, action: TaskActions): TaskState {
           byIds: {
             ...byIds,
             [uuid]: currentTask
-          }
+          },
+          focused: uuid
         };
       })();
 

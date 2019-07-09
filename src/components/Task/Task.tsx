@@ -13,6 +13,10 @@ export interface TaskProps
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
 }
 
+// TODO:: TBC
+// this useful to prevent rerender of TaskInput
+const nil = () => {};
+
 function TaskComponent({
   className = '',
   uuid,
@@ -29,7 +33,10 @@ function TaskComponent({
     () => ({
       due,
       notes,
-      onDueDateBtnClick
+      onDueDateBtnClick,
+      onChange: nil,
+      onBlur: nil,
+      onFocus: nil
     }),
     [due, notes, onDueDateBtnClick]
   );

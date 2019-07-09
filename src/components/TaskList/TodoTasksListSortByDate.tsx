@@ -46,8 +46,8 @@ export function TodoTasksListSortByDateComponent({
         return (
           <Fragment key={date}>
             {label && <div className="date-label" data-label={label} />}
-            {ids.map((uuid, index) => (
-              <TodoTask key={uuid + index} uuid={uuid} />
+            {ids.map(uuid => (
+              <TodoTask key={uuid} uuid={uuid} />
             ))}
           </Fragment>
         );

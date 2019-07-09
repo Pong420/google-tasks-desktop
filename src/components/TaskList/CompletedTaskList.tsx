@@ -9,9 +9,8 @@ import { useBoolean } from '../../utils/useBoolean';
 import ExpandIcon from '@material-ui/icons/ExpandLess';
 import CollapseIcon from '@material-ui/icons/ExpandMore';
 
-// TODO: check slice();
 const mapStateToProps = (state: RootState) => ({
-  completedTasks: state.task.completed.slice()
+  completedTasks: state.task.completed
 });
 
 function CompletedTasksListComponent({

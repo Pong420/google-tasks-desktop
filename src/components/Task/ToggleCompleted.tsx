@@ -23,7 +23,7 @@ function ToggleCompletedComponent({
   deleteTask,
   updateTask
 }: Props & ReturnType<typeof mapDispatchToProps>) {
-  const [hover, { on, off }] = useBoolean(false);
+  const [hover, { on, off }] = useBoolean();
 
   const onClickCallback = useCallback(() => {
     if (isEmpty) {

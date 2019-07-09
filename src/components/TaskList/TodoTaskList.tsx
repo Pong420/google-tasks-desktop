@@ -41,7 +41,7 @@ const SortableList = SortableContainer(
             className={
               dragging && insertAfter === index ? 'highlight-bottom-border' : ''
             }
-            key={uuid + index}
+            key={uuid}
             uuid={uuid}
             index={index}
           />
@@ -69,7 +69,6 @@ export function TodoTaskListComponent({
         insertAfter = newIndex > index ? newIndex : newIndex - 1;
       }
 
-      // TODO: make it better
       setInsertAfter(insertAfter);
     },
     []

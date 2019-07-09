@@ -9,48 +9,44 @@ export interface TaskInputProps extends Pick<Schema$Task, 'due' | 'notes'> {
 
 type Props = TaskInputProps & InputProps;
 
-export const TaskInput = ({
-  due,
-  notes,
-  onChange,
-  onDueDateBtnClick,
-  ...inputProps
-}: Props) => {
-  const timeout = useRef(0);
+export const TaskInput = React.memo(
+  ({ due, notes, onChange, onDueDateBtnClick, ...inputProps }: Props) => {
+    const timeout = useRef(0);
 
-  const onChangeCallback = useCallback(
-    (evt: ChangeEvent<HTMLTextAreaElement>) => {
-      evt.persist();
-      clearTimeout(timeout.current);
-      if (onChange) {
-        timeout.current = window.setTimeout(() => onChange(evt), 1000);
-      }
-    },
-    [onChange]
-  );
+    const onChangeCallback = useCallback(
+      (evt: ChangeEvent<HTMLTextAreaElement>) => {
+        evt.persist();
+        clearTimeout(timeout.current);
+        if (onChange) {
+          timeout.current = window.setTimeout(() => onChange(evt), 1000);
+        }
+      },
+      [onChange]
+    );
 
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeout.current);
-    };
-  }, []);
+    useEffect(() => {
+      return () => {
+        clearTimeout(timeout.current);
+      };
+    }, []);
 
-  return (
-    <div className="task-input-content">
-      <Input {...inputProps} multiline onChange={onChangeCallback} />
-      {notes && <div className="task-notes">{notes}</div>}
-      {due && (
-        <div
-          className="task-due-date-button"
-          onClick={onDueDateBtnClick}
-          data-date={dateFormat(new Date(due))}
-        >
-          <EventAvailableIcon />
-        </div>
-      )}
-    </div>
-  );
-};
+    return (
+      <div className="task-input-content">
+        <Input {...inputProps} multiline onChange={onChangeCallback} />
+        {notes && <div className="task-notes">{notes}</div>}
+        {due && (
+          <div
+            className="task-due-date-button"
+            onClick={onDueDateBtnClick}
+            data-date={dateFormat(new Date(due))}
+          >
+            <EventAvailableIcon />
+          </div>
+        )}
+      </div>
+    );
+  }
+);
 
 function dateFormat(d: Date) {
   const now = new Date();

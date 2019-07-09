@@ -206,7 +206,7 @@ export function TodoTaskComponent({
       />
       <DateTimeDialog
         confirmLabel="OK"
-        date={task.due ? new Date(task.due) : new Date()}
+        date={task.due ? new Date(task.due) : undefined}
         open={dateTimeDialogOpened}
         onClose={dateTimeDialog.off}
         onConfirm={onDueDateChangeCallback}
