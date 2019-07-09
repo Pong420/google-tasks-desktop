@@ -76,7 +76,7 @@ export function TodoTaskComponent({
 
   const newTaskCallback = useCallback(() => {
     newTask({
-      prevTask: task.uuid,
+      prevUUID: task.uuid,
       due: sortByDate ? task.due : undefined
     });
     return false;
@@ -124,16 +124,16 @@ export function TodoTaskComponent({
   }, [prevTask, nextTask, setFocused, task.uuid]);
 
   const [moveTaskUp, moveTaskDown] = useMemo(() => {
-    const handler = (prevTask: Schema$Task['uuid'], step: number) => () => {
-      if (prevTask && prevTask !== task.uuid) {
+    const handler = (prevUUID: Schema$Task['uuid'], step: number) => () => {
+      if (prevUUID) {
         if (sortByDate) {
           const canMoveUp = !task.due || new Date(task.due).dayDiff() < 0;
           const canMoveDown = !!task.due;
           if ((step === -1 && canMoveUp) || (step === 1 && canMoveDown)) {
-            moveTask({ uuid: task.uuid, prevTask, step });
+            moveTask({ uuid: task.uuid, prevUUID, step });
           }
-        } else {
-          moveTask({ uuid: task.uuid, prevTask });
+        } else if (prevUUID !== task.uuid) {
+          moveTask({ uuid: task.uuid, prevUUID });
         }
         return false;
       }
@@ -145,7 +145,7 @@ export function TodoTaskComponent({
   const onKeydownCallback = useCallback(
     (evt: KeyboardEvent<HTMLTextAreaElement>) => {
       if (evt.key === 'Backspace' && !evt.currentTarget.value.trim()) {
-        deleteTaskCallback({ prevTask });
+        deleteTaskCallback({ prevUUID: prevTask });
       }
 
       if (evt.key === 'Escape') {

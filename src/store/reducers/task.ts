@@ -83,17 +83,17 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.NEW_TASK:
       return (() => {
-        const { prevTask, ...newTask } = action.payload;
+        const { prevUUID, ...newTask } = action.payload;
         const { uuid } = newTask;
         const dateKey = getDatekey(newTask);
 
         return {
           ...state,
-          todo: insertAfter(state.todo, uuid, prevTask),
+          todo: insertAfter(state.todo, uuid, prevUUID),
           byIds: { ...state.byIds, [uuid]: newTask },
           byDate: {
             ...state.byDate,
-            [dateKey]: insertAfter(state.byDate[dateKey] || [], uuid, prevTask)
+            [dateKey]: insertAfter(state.byDate[dateKey] || [], uuid, prevUUID)
           },
           focused: uuid
         };
@@ -114,7 +114,6 @@ export default function(state = initialState, action: TaskActions): TaskState {
           [oldDateKey]: state.byDate[oldDateKey] || []
         };
 
-        // TODO: detect change
         if (oldTask.status !== newTask.status) {
           if (status === 'completed') {
             completed.push(uuid);
@@ -154,7 +153,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.DELETE_TASK:
       return (() => {
-        const { uuid, prevTask } = action.payload;
+        const { uuid, prevUUID } = action.payload;
         const { [uuid]: deleted, ...byIds } = state.byIds;
         const dateKey = getDatekey(deleted);
 
@@ -167,7 +166,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
           },
           todo: remove(state.todo, uuid),
           completed: remove(state.completed, uuid),
-          ...(prevTask && { focused: prevTask })
+          ...(prevUUID && { focused: prevUUID })
         };
       })();
 
@@ -189,7 +188,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.MOVE_TASKS:
       return (() => {
-        const { uuid, prevTask, step } = action.payload;
+        const { uuid, prevUUID, step } = action.payload;
         const { todo, byIds, byDate } = state;
         const byDatePayload: TaskState['byDate'] = {};
         let currentTask = byIds[uuid];
@@ -210,7 +209,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
           } else if (step === -1) {
             // move up from no date
             // move to prev task's date group
-            const prevTask_ = byIds[prevTask];
+            const prevTask_ = byIds[prevUUID];
             if (prevTask_ && prevTask_.due) {
               updatedDate = new Date(prevTask_.due);
             }
@@ -237,7 +236,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
         return {
           ...state,
-          todo: move(todo, todo.indexOf(uuid), todo.indexOf(prevTask)),
+          todo: move(todo, todo.indexOf(uuid), todo.indexOf(prevUUID)),
           byDate: {
             ...byDate,
             ...byDatePayload

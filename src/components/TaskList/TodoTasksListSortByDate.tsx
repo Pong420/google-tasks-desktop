@@ -36,7 +36,7 @@ export function TodoTasksListSortByDateComponent({
   return (
     <div className="todo-tasks-list-sort-by-date">
       {todoTasksByDate.map(([date, ids]) => {
-        let label = getDateLabel(date);
+        let label = !!ids.length ? getDateLabel(date) : '';
         if (prevLabel.current === label) {
           label = '';
         } else {
@@ -45,9 +45,7 @@ export function TodoTasksListSortByDateComponent({
 
         return (
           <Fragment key={date}>
-            {label && !!ids.length && (
-              <div className="date-label" data-label={label} />
-            )}
+            {label && <div className="date-label" data-label={label} />}
             {ids.map((uuid, index) => (
               <TodoTask key={uuid + index} uuid={uuid} />
             ))}

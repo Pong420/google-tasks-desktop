@@ -14,10 +14,6 @@ const mapStateToProps = (state: RootState, ownProps: Props) => {
   };
 };
 
-const inputProps = {
-  hideDateBtn: true
-};
-
 function CompletedTaskComponent({
   task,
   dispatch
@@ -34,7 +30,6 @@ function CompletedTaskComponent({
       status={task.status}
       readOnly
       className="completed-task"
-      inputProps={inputProps}
       endAdornment={
         <IconButton
           tooltip="Delete"

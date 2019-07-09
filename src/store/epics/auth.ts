@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { from, of, empty, merge } from 'rxjs';
+import { from, of, empty } from 'rxjs';
 import { switchMap, mergeMap, catchError } from 'rxjs/operators';
 import { ofType, Epic } from 'redux-observable';
 import { RouterAction } from 'connected-react-router';
@@ -18,11 +18,9 @@ const authEpic: AuthEpic = (action$, _, { push }) =>
     switchMap(() =>
       from(authenticateAPI()).pipe(
         mergeMap(() =>
-          merge(
-            of<Actions>({
-              type: AuthActionTypes.AUTHENTICATION_SUCCESS
-            })
-          )
+          of<Actions>({
+            type: AuthActionTypes.AUTHENTICATION_SUCCESS
+          })
         ),
         catchError(() =>
           of<Actions>({

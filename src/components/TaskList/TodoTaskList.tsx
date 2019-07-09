@@ -80,7 +80,7 @@ export function TodoTaskListComponent({
       if (newIndex !== oldIndex) {
         dispatch(
           moveTask({
-            prevTask: todoTasks[newIndex],
+            prevUUID: todoTasks[newIndex],
             uuid: todoTasks[oldIndex]
           })
         );

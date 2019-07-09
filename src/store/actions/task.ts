@@ -25,15 +25,15 @@ export enum TaskActionTypes {
 type UUID = Schema$Task['uuid'];
 
 export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
-  prevTask?: UUID;
+  prevUUID?: UUID;
 }
 
 export interface Payload$DeleteTask extends Schema$Task {
-  prevTask?: UUID;
+  prevUUID?: UUID;
 }
 
 export interface Payload$MoveTask {
-  prevTask: UUID;
+  prevUUID: UUID;
   uuid: UUID;
   step?: number;
 }
