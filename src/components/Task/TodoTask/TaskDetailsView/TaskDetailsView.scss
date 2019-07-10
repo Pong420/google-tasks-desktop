@@ -1,3 +1,5 @@
+$height: 36px;
+
 .task-details-view {
   .scroll-content > * {
     margin-bottom: 8px;
@@ -21,14 +23,14 @@
   }
 
   .row {
-    $height: 36px;
-
     @include flex(center, stretch);
     color: var(--text-secondary-color);
     min-height: 46px;
 
     .mui-dropdown-button {
+      @include typeface('Nunito Sans', 600);
       background: var(--task-highlight-background-color);
+      color: var(--text-color);
       min-height: $height;
       line-height: $height;
     }
@@ -37,21 +39,12 @@
       margin-right: 10px;
     }
 
-    button {
-      text-transform: initial;
-      color: inherit;
-    }
-
-    &.row-task-list {
-      button {
-        @include typeface('Nunito Sans', 600);
-      }
-    }
-
     &.row-date,
     &.row-subtask {
       button {
         @include typeface('Nunito Sans', 700);
+        text-transform: initial;
+        color: inherit;
       }
     }
   }
@@ -81,6 +74,37 @@
       @include absolute(0, null, 0);
       @include sq-dimen(100%);
       cursor: pointer;
+    }
+  }
+}
+
+.details-task-list-dropdown-paper {
+  @include dimen(calc(100% - 60px));
+
+  .menu-content {
+    @include padding-y(0);
+  }
+
+  .scroll-content {
+    max-height: $height * 5;
+  }
+
+  .mui-menu-item {
+    &.mui-menu-item {
+      height: $height;
+
+      > div {
+        @include relative();
+        flex-direction: row-reverse;
+
+        .text {
+          @include padding-x(36px 0);
+
+          + svg {
+            @include absolute(null, null, 0);
+          }
+        }
+      }
     }
   }
 }

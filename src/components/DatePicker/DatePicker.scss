@@ -8,6 +8,7 @@
 }
 
 .calendar-content {
+  @include padding-x(6px);
   display: grid;
   grid-template-columns: repeat(7, auto);
 

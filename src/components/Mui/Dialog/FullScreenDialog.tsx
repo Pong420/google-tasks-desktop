@@ -15,7 +15,7 @@ interface ContainerProps {
   children?: ReactNode;
 }
 
-export const FullScreen_DIALOG_TRANSITION = 300;
+export const FULLSCREEN_DIALOG_TRANSITION = 300;
 
 const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -40,7 +40,7 @@ export function FullScreenDialog({
       classes={paperClasses}
       fullScreen
       onClose={onClose}
-      transitionDuration={FullScreen_DIALOG_TRANSITION}
+      transitionDuration={FULLSCREEN_DIALOG_TRANSITION}
       TransitionComponent={Transition}
     >
       <div className="FullScreen-diaglog-header">

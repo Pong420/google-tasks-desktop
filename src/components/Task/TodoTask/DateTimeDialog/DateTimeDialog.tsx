@@ -8,8 +8,8 @@ interface Props extends Omit<ConfirmDialogProps, 'onChange' | 'onConfirm'> {
   onConfirm(date: Date): void;
 }
 
-const modalClasses: ConfirmDialogProps['classes'] = {
-  paper: 'date-time-modal-paper'
+const dialogClasses: ConfirmDialogProps['classes'] = {
+  paper: 'date-time-dialog-paper'
 };
 
 export const DateTimeDialog = React.memo(
@@ -22,7 +22,7 @@ export const DateTimeDialog = React.memo(
 
     return (
       <ConfirmDialog
-        classes={modalClasses}
+        classes={dialogClasses}
         onConfirm={onConfirmCallback}
         {...props}
       >

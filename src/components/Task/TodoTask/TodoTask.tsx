@@ -64,7 +64,7 @@ export function TodoTaskComponent({
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [dateTimeDialogOpened, dateTimeDialog] = useBoolean();
   const [detailsViewOpened, detailsView] = useBoolean();
-  const [, taskListDropdown] = useBoolean();
+  const [taskListDropdownOpened, taskListDropdown] = useBoolean();
 
   const [onFocus, onBlur] = useMemo(
     () => [() => setFocused(task.uuid), () => setFocused(null)],
@@ -115,6 +115,11 @@ export function TodoTaskComponent({
       }),
     [updateTaskCallback]
   );
+
+  const handleDetailsClose = useCallback(() => {
+    detailsView.off();
+    taskListDropdown.off();
+  }, [detailsView, taskListDropdown]);
 
   const [focusPrevTask, focusNextTask] = useMemo(() => {
     const handler = (type: 'start' | 'end', uuid?: string) => () => {
@@ -216,10 +221,11 @@ export function TodoTaskComponent({
         openTaskListDropdown={taskListDropdown.on}
       />
       <TaskDetailsView
-        open={detailsViewOpened}
+        taskListDropdownOpened={taskListDropdownOpened}
+        open={taskListDropdownOpened || detailsViewOpened}
         onRemoveDateTime={onDueDateChangeCallback}
         openDateTimeDialog={dateTimeDialog.on}
-        onClose={detailsView.off}
+        onClose={handleDetailsClose}
         due={task.due}
         title={task.title}
         notes={task.notes}

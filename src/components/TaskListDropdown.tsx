@@ -8,7 +8,12 @@ import React, {
   useEffect
 } from 'react';
 import { connect, Omit, DispatchProp } from 'react-redux';
-import { useMuiMenu, DropDownProps, Dropdown } from './Mui';
+import {
+  useMuiMenu,
+  DropDownProps,
+  Dropdown,
+  FULLSCREEN_DIALOG_TRANSITION
+} from './Mui';
 import { TaskListMenuItem } from './TaskListMenuItem';
 import { RootState, currentTaskListSelector } from '../store';
 import { Schema$TaskList, SimplebarAPI } from '../typings';
@@ -38,12 +43,14 @@ function TaskListDropdownComponent({
   ...props
 }: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const [taskList, setTaskList] = useState(currentTaskList);
-  const label = taskList ? taskList.title : 'Loading...';
 
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   const simplebarRef = useRef<SimplebarAPI>(null);
   const focusItemRef = useRef<HTMLLIElement | null>(null);
+  const dropdownRef = useRef<HTMLButtonElement>(null);
+
+  const label = taskList ? taskList.title : 'Loading...';
 
   const mergedPaperProps = useMemo<typeof PaperProps>(
     () => ({
@@ -83,6 +90,13 @@ function TaskListDropdownComponent({
     setTaskList(currentTaskList);
   }, [currentTaskList]);
 
+  useEffect(() => {
+    const el = dropdownRef.current;
+    if (defaultOpen && el) {
+      setTimeout(() => setAnchorEl(el), FULLSCREEN_DIALOG_TRANSITION / 2);
+    }
+  }, [setAnchorEl, defaultOpen]);
+
   return (
     <Dropdown
       {...props}
@@ -94,6 +108,7 @@ function TaskListDropdownComponent({
       onEnter={scrollToSelectedItem}
       outOfScrollContent={outOfScrollContent && outOfScrollContent(onClose)}
       PaperProps={mergedPaperProps}
+      ref={dropdownRef}
       simplebarRef={simplebarRef}
     >
       {taskLists.map(id => {
