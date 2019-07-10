@@ -1,0 +1,136 @@
+.preferences {
+  color: var(--text-color);
+
+  .preferences-label {
+    @include typeface('Nunito Sans', 600);
+    flex: 0 0 auto;
+    padding-right: 10px;
+  }
+
+  .preferences-theme-selector {
+    @include flex(center);
+  }
+
+  .preferences-theme {
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5em;
+
+    > div {
+      @include dimen(70px, 45px);
+      @include relative();
+
+      border-radius: 5px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      overflow: hidden;
+
+      &:after {
+        $size: 7px;
+        @include absolute(6px, null, 6px);
+        @include sq-dimen($size);
+
+        content: '';
+        background: #ff5f57;
+        border-radius: 50%;
+        box-shadow: $size * 1.5 0 0 #ffbd2e, $size * 3 0 0 #28ca41;
+      }
+
+      &:before {
+        @include absolute(0, null, 0);
+        @include sq-dimen(100%);
+        border-radius: 3px;
+        content: '';
+      }
+    }
+
+    &.light {
+      &:after {
+        content: 'Light';
+      }
+
+      > div {
+        [data-theme^='light'] & {
+          border-color: var(--accent-color);
+        }
+
+        &:before {
+          background-color: #eee;
+        }
+      }
+    }
+
+    &.dark {
+      margin-left: 20px;
+
+      &:after {
+        content: 'Dark';
+      }
+
+      > div {
+        [data-theme^='dark'] & {
+          border-color: var(--accent-color);
+        }
+
+        &:before {
+          background-color: #232323;
+        }
+      }
+    }
+  }
+
+  .preferences-accent-color-selector {
+    @include flex(center);
+
+    > div {
+      @include sq-dimen(20px);
+      @include relative();
+
+      border-radius: 50%;
+      cursor: pointer;
+      overflow: hidden;
+
+      &:nth-child(n + 2) {
+        margin-left: 10px;
+      }
+    }
+
+    @each $name, $colors in $accent-colors {
+      .#{'' + $name} {
+        background-color: map-get($colors, primary);
+        box-shadow: 2px 2px 10px -3px map-get($colors, dark);
+
+        &:after {
+          @include absolute();
+          @include sq-dimen(100%);
+          content: '';
+        }
+
+        [data-accent-color^='#{"" + $name}'] & {
+          &:before {
+            @include absolute(0px, 0, 0px, 0);
+            @include sq-dimen(8px);
+
+            content: '';
+            border-radius: 50%;
+            background-color: #fff;
+            margin: auto;
+          }
+        }
+      }
+    }
+  }
+
+  .preferences-hours {
+    font-weight: 500;
+    .mui-input-base {
+      @include padding-y(0);
+      margin-right: 5px;
+      max-width: 4em;
+      min-height: 30px;
+      input {
+        text-align: center;
+      }
+    }
+  }
+}

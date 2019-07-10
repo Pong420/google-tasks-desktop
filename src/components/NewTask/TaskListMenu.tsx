@@ -9,6 +9,7 @@ import {
   FormDialog
 } from '../Mui';
 import { KeyboardShortcuts } from '../KeyboardShortcuts';
+import { Preferences } from '../Preferences';
 import {
   currentTaskListSelector,
   deleteTaskList,
@@ -88,6 +89,8 @@ function TaskListMenuComponent({
 
   const [keyboardShortcutsOpened, keyboardShortcuts] = useBoolean();
 
+  const [preferencesOpened, preferences] = useBoolean();
+
   const deleteTaskListCallback = useCallback(
     () => deleteTaskList(currentTaskList!.id!),
     [currentTaskList, deleteTaskList]
@@ -131,7 +134,7 @@ function TaskListMenuComponent({
         />
         <Divider />
         <MenuItem text="Keyboard shortcuts" onClick={keyboardShortcuts.on} />
-        <MenuItem text="Preferences" />
+        <MenuItem text="Preferences" onClick={preferences.on} />
         <MenuItem text="Logout" onClick={logout} />
       </Menu>
       <ConfirmDialog
@@ -164,6 +167,7 @@ function TaskListMenuComponent({
         open={keyboardShortcutsOpened}
         onClose={keyboardShortcuts.off}
       />
+      <Preferences open={preferencesOpened} onClose={preferences.off} />
     </>
   );
 }

@@ -1,0 +1,52 @@
+$defaultWidth: 47.5px;
+
+@mixin shadow($x) {
+  box-shadow: $x 0.5px 3px 0px lighten(#000, 50%);
+}
+
+.switch {
+  @include dimen($defaultWidth);
+  @include relative();
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+
+  .switch-bar {
+    @include animate(background-color);
+    @include dimen(100%, 0);
+    @include relative();
+    background-color: var(--border-color);
+    border-radius: 50px;
+    padding-bottom: 50%;
+  }
+
+  .switch-icon {
+    @include animate(transform);
+    @include absolute(0);
+    @include dimen(50%, 100%);
+    padding: round(percentage(2.5 / strip-unit($defaultWidth)));
+    transform: translateX(0);
+
+    &:before {
+      @include sq-dimen(100%);
+      @include shadow(1px);
+      content: '';
+      background-color: #fff;
+      border-radius: 50%;
+      display: block;
+    }
+  }
+
+  &.checked {
+    .switch-bar {
+      background-color: var(--accent-color);
+    }
+    .switch-icon {
+      transform: translateX(100%);
+      &:before {
+        @include shadow(-1px);
+      }
+    }
+  }
+}

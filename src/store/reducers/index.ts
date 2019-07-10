@@ -3,13 +3,15 @@ import { connectRouter } from 'connected-react-router';
 import auth from './auth';
 import task from './task';
 import taskList from './taskList';
+import preferences from './preferences';
 
 const rootReducer = (history: Parameters<typeof connectRouter>[0]) =>
   combineReducers({
     router: connectRouter(history),
     auth,
     task,
-    taskList
+    taskList,
+    preferences
   });
 
 export * from './auth';
