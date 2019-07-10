@@ -13,8 +13,6 @@ export interface TaskProps
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
 }
 
-// TODO:: TBC
-// this useful to prevent rerender of TaskInput
 const nil = () => {};
 
 function TaskComponent({
@@ -27,6 +25,8 @@ function TaskComponent({
   onDueDateBtnClick,
   endAdornment,
   onContextMenu,
+  onBlur,
+  onFocus,
   ...inputProps
 }: TaskProps) {
   const taskInputProps = useMemo<TaskInputProps>(
@@ -35,10 +35,10 @@ function TaskComponent({
       notes,
       onDueDateBtnClick,
       onChange: nil,
-      onBlur: nil,
-      onFocus: nil
+      onBlur,
+      onFocus
     }),
-    [due, notes, onDueDateBtnClick]
+    [due, notes, onDueDateBtnClick, onBlur, onFocus]
   );
 
   return (

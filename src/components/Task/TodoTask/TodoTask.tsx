@@ -43,9 +43,6 @@ const mapStateToProps = (state: RootState, ownProps: TodoTaskProps) => {
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(TaskActionCreators, dispatch);
 
-const disableMouseDown = (evt: MouseEvent<HTMLElement>) =>
-  !(evt.target instanceof HTMLTextAreaElement) && evt.preventDefault();
-
 export function TodoTaskComponent({
   className,
   task,
@@ -67,12 +64,16 @@ export function TodoTaskComponent({
   const [, taskListDropdown] = useBoolean();
 
   const [onFocus, onBlur] = useMemo(
-    () => [
-      () => !focused && setFocused(task.uuid),
-      () => focused && setFocused(null)
-    ],
-    [focused, setFocused, task.uuid]
+    () => [() => setFocused(task.uuid), () => setFocused(null)],
+    [setFocused, task.uuid]
   );
+
+  const onClickCallback = useCallback((evt: MouseEvent<HTMLDivElement>) => {
+    const el = inputRef.current;
+    if (el && el !== evt.target) {
+      el.focus();
+    }
+  }, []);
 
   const newTaskCallback = useCallback(() => {
     newTask({
@@ -159,13 +160,11 @@ export function TodoTaskComponent({
     const input = inputRef.current;
     if (input && focused) {
       if (document.activeElement !== input) {
-        setTimeout(() => {
-          const { length } = input.value;
+        const { length } = input.value;
 
-          input.focus();
-          // make sure cursor place at end of textarea
-          input.setSelectionRange(length, length);
-        }, 0);
+        input.focus();
+        // make sure cursor place at end of textarea
+        input.setSelectionRange(length, length);
       }
     }
   }, [focused]);
@@ -186,10 +185,9 @@ export function TodoTaskComponent({
         notes={task.notes}
         due={sortByDate ? undefined : task.due}
         inputRef={inputRef}
-        onClick={onFocus}
+        onClick={onClickCallback}
         onFocus={onFocus}
         onBlur={onBlur}
-        onMouseDown={disableMouseDown}
         onKeyDown={onKeydownCallback}
         onContextMenu={setAnchorPosition}
         onDueDateBtnClick={dateTimeDialog.on}

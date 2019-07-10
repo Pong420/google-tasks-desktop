@@ -91,6 +91,7 @@ export function TodoTaskListComponent({
 
   return (
     <SortableList
+      distance={10}
       dragging={dragging}
       helperClass="dragging"
       insertAfter={insertAfter}
@@ -98,7 +99,6 @@ export function TodoTaskListComponent({
       onSortMove={on}
       onSortOver={onSortOverCallback}
       onSortEnd={onSortEndCallack}
-      pressDelay={150}
       todoTasks={todoTasks}
     />
   );
