@@ -9,5 +9,11 @@
     > div:nth-child(1) {
       z-index: $app-region-z-index;
     }
+
+    [data-platform='darwin'] & {
+      > div {
+        visibility: hidden;
+      }
+    }
   }
 }

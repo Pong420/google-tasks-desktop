@@ -78,7 +78,8 @@ export default function(
         return {
           ...state,
           byIds,
-          ids
+          ids,
+          id: state.id || ids[0]
         };
       })();
 

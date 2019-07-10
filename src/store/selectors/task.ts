@@ -1,6 +1,9 @@
 import { RootState } from '../reducers';
 import { compare } from '../../utils/compare';
 
+export const taskSelector = (state: RootState, uuid?: string) =>
+  uuid ? state.task.byIds[uuid] : undefined;
+
 export const focusedSelector = ({ task: { focused } }: RootState) => (
   index: number,
   uuid: string

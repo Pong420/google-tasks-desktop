@@ -7,17 +7,14 @@ import { Schema$Task } from '../../typings';
 
 interface Props extends Pick<Schema$Task, 'uuid'> {}
 
-const mapStateToProps = (state: RootState, ownProps: Props) => {
-  return {
-    ...ownProps,
-    task: state.task.byIds[ownProps.uuid]
-  };
-};
+const mapStateToProps = (state: RootState, { uuid }: Props) => ({
+  task: state.task.byIds[uuid]
+});
 
 function CompletedTaskComponent({
   task,
   dispatch
-}: ReturnType<typeof mapStateToProps> & DispatchProp) {
+}: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const deleteTaskCallback = useCallback(
     () => dispatch(deleteTask({ id: task.id, uuid: task.uuid })),
     [dispatch, task.id, task.uuid]

@@ -31,18 +31,16 @@ export function AppRegion() {
 
   return (
     <div className="app-region">
-      {process.platform !== 'darwin' && (
-        <MacOSTitleBar
-          title=" "
-          inset
-          controls
-          transparent
-          isFullscreen={isFullscreen}
-          onCloseClick={() => close()}
-          onMinimizeClick={() => minimize()}
-          onResizeClick={() => toggleMaximize()}
-        />
-      )}
+      <MacOSTitleBar
+        title=" "
+        inset
+        controls
+        transparent
+        isFullscreen={isFullscreen}
+        onCloseClick={() => close()}
+        onMinimizeClick={() => minimize()}
+        onResizeClick={() => toggleMaximize()}
+      />
     </div>
   );
 }

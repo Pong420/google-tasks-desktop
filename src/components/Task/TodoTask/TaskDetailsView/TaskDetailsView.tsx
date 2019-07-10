@@ -25,7 +25,7 @@ import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 
 interface Props
   extends FullScreenDialogProps,
-    Pick<Schema$Task, 'uuid' | 'title' | 'due' | 'notes'> {
+    Pick<Schema$Task, 'id' | 'uuid' | 'title' | 'due' | 'notes'> {
   taskListDropdownOpened?: boolean;
   openDateTimeDialog(): void;
   onRemoveDateTime(): void;
@@ -55,15 +55,16 @@ export const EditTaskButton = React.memo(({ onClick }: { onClick(): void }) => {
 
 export function TaskDetailsViewComponent({
   currentTaskList,
-  uuid,
-  title,
-  notes,
   due,
   dispatch,
-  taskListDropdownOpened,
+  id,
+  notes,
   onClose,
   openDateTimeDialog,
   onRemoveDateTime,
+  title,
+  taskListDropdownOpened,
+  uuid,
   ...props
 }: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const titleInputRef = useRef<HTMLTextAreaElement>();
@@ -84,8 +85,8 @@ export function TaskDetailsViewComponent({
   );
 
   const deleteTaskCallback = useCallback(() => {
-    dispatch(deleteTask({ uuid }));
-  }, [dispatch, uuid]);
+    dispatch(deleteTask({ id, uuid }));
+  }, [dispatch, uuid, id]);
 
   const onExitCallback = useCallback(() => {
     const titleInput = titleInputRef.current;
@@ -94,9 +95,9 @@ export function TaskDetailsViewComponent({
     const newNotes = notesInput && notesInput.value;
 
     if (title !== newTitle || notes !== newNotes) {
-      dispatch(updateTask({ uuid, title: newTitle, notes: newNotes }));
+      dispatch(updateTask({ id, uuid, title: newTitle, notes: newNotes }));
     }
-  }, [dispatch, uuid, title, notes]);
+  }, [dispatch, id, uuid, title, notes]);
 
   const onExitedCallback = useCallback(() => {
     if (shouldDeleteTask.current) {

@@ -3,35 +3,37 @@ import { connect, DispatchProp } from 'react-redux';
 import { IconButton } from '../Mui/IconButton';
 import { useBoolean } from '../../utils/useBoolean';
 import { deleteTask, updateTask } from '../../store';
+import { Schema$Task } from '../../typings';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
 
-interface Props {
+interface Props extends Pick<Schema$Task, 'id' | 'uuid'> {
   completed?: boolean;
   isEmpty: boolean;
-  uuid: string;
 }
 
 function ToggleCompletedComponent({
-  uuid,
-  isEmpty,
   completed,
-  dispatch
+  dispatch,
+  isEmpty,
+  id,
+  uuid
 }: Props & DispatchProp) {
   const [hover, { on, off }] = useBoolean();
 
   const onClickCallback = useCallback(() => {
     if (isEmpty) {
-      dispatch(deleteTask({ uuid }));
+      dispatch(deleteTask({ id, uuid }));
     } else {
       dispatch(
         updateTask({
+          id,
           uuid,
           status: completed ? 'needsAction' : 'completed'
         })
       );
     }
-  }, [uuid, completed, isEmpty, dispatch]);
+  }, [id, uuid, completed, isEmpty, dispatch]);
 
   return (
     <div

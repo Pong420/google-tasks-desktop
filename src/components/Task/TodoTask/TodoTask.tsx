@@ -221,14 +221,15 @@ export function TodoTaskComponent({
         openTaskListDropdown={taskListDropdown.on}
       />
       <TaskDetailsView
-        taskListDropdownOpened={taskListDropdownOpened}
+        due={task.due}
+        id={task.id}
+        notes={task.notes}
         open={taskListDropdownOpened || detailsViewOpened}
         onRemoveDateTime={onDueDateChangeCallback}
         openDateTimeDialog={dateTimeDialog.on}
         onClose={handleDetailsClose}
-        due={task.due}
         title={task.title}
-        notes={task.notes}
+        taskListDropdownOpened={taskListDropdownOpened}
         uuid={task.uuid}
       />
       <DateTimeDialog

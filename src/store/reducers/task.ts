@@ -99,6 +99,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         };
       })();
 
+    // TODO: new task with prev task then success handling
     case TaskActionTypes.UPDATE_TASK:
     case TaskActionTypes.UPDATE_TASK_SUCCESS:
     case TaskActionTypes.NEW_TASK_SUCCESS:
@@ -106,6 +107,12 @@ export default function(state = initialState, action: TaskActions): TaskState {
         const newTaskPayload = action.payload;
         const { uuid, status } = newTaskPayload;
         const oldTask = state.byIds[uuid];
+
+        // ``oldTask`` can be undefined, if task deleted before NEW_TASK_SUCCESS
+        if (!oldTask) {
+          return state;
+        }
+
         let todo = state.todo.slice();
         let completed = state.completed.slice();
 
@@ -117,13 +124,11 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
         if (oldTask.status !== newTask.status) {
           if (status === 'completed') {
-            completed.push(uuid);
+            completed = [...completed, uuid];
             completed.sort();
-            todo = remove(todo, uuid);
             byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
           } else if (status === 'needsAction') {
-            completed = remove(completed, uuid);
-            todo = [uuid, ...todo];
+            todo = todo.includes(uuid) ? todo : [uuid, ...todo];
             byDatePayload[oldDateKey] = [uuid, ...state.byDate[oldDateKey]];
           }
         }
