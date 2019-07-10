@@ -79,16 +79,9 @@ function TaskListMenuComponent({
     deleteCompletedTaskDialogOpend,
     deleteCompletedTaskDialog
   ] = useBoolean();
-
-  const [
-    deleteTaskListDialogOpend,
-    { on: openDeleteTaskListDialog, off: closeDeleteTaskListDialog }
-  ] = useBoolean();
-
+  const [deleteTaskListDialogOpend, deleteTaskListDialog] = useBoolean();
   const [renameTaskDialogOpend, renameTaskDialog] = useBoolean();
-
   const [keyboardShortcutsOpened, keyboardShortcuts] = useBoolean();
-
   const [preferencesOpened, preferences] = useBoolean();
 
   const deleteTaskListCallback = useCallback(
@@ -125,7 +118,7 @@ function TaskListMenuComponent({
         <MenuItem
           text="Delete list"
           disabled={canNotDelete}
-          onClick={openDeleteTaskListDialog}
+          onClick={deleteTaskListDialog.on}
         />
         <MenuItem
           text="Delete all completed tasks"
@@ -141,7 +134,7 @@ function TaskListMenuComponent({
         title="Delete this list?"
         confirmLabel="Delete"
         open={deleteTaskListDialogOpend}
-        onClose={closeDeleteTaskListDialog}
+        onClose={deleteTaskListDialog.off}
         onConfirm={deleteTaskListCallback}
       >
         Deleting this list will also delete {numOfTotalTasks_} task.

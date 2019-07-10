@@ -49,7 +49,7 @@ export function AuthComponent({
       </div>
       <div className="auth-content">
         {installed ? (
-          <form action="">
+          <form onSubmit={authenticate}>
             Paste the code here:
             <Input
               {...code}

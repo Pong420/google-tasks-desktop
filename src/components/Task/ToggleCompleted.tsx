@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from 'redux';
+import { connect, DispatchProp } from 'react-redux';
 import { IconButton } from '../Mui/IconButton';
 import { useBoolean } from '../../utils/useBoolean';
-import { TaskActionCreators } from '../../store';
+import { deleteTask, updateTask } from '../../store';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
 
@@ -13,28 +12,26 @@ interface Props {
   uuid: string;
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(TaskActionCreators, dispatch);
-
 function ToggleCompletedComponent({
   uuid,
   isEmpty,
   completed,
-  deleteTask,
-  updateTask
-}: Props & ReturnType<typeof mapDispatchToProps>) {
+  dispatch
+}: Props & DispatchProp) {
   const [hover, { on, off }] = useBoolean();
 
   const onClickCallback = useCallback(() => {
     if (isEmpty) {
-      deleteTask({ uuid });
+      dispatch(deleteTask({ uuid }));
     } else {
-      updateTask({
-        uuid,
-        status: completed ? 'needsAction' : 'completed'
-      });
+      dispatch(
+        updateTask({
+          uuid,
+          status: completed ? 'needsAction' : 'completed'
+        })
+      );
     }
-  }, [uuid, completed, isEmpty, deleteTask, updateTask]);
+  }, [uuid, completed, isEmpty, dispatch]);
 
   return (
     <div
@@ -54,9 +51,4 @@ function ToggleCompletedComponent({
   );
 }
 
-export const ToggleCompleted = React.memo(
-  connect(
-    null,
-    mapDispatchToProps
-  )(ToggleCompletedComponent)
-);
+export const ToggleCompleted = React.memo(connect()(ToggleCompletedComponent));

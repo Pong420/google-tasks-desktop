@@ -25,10 +25,10 @@ function CompletedTaskComponent({
 
   return (
     <Task
+      readOnly
       uuid={task.uuid}
       title={task.title}
       status={task.status}
-      readOnly
       className="completed-task"
       endAdornment={
         <IconButton

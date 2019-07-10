@@ -4,10 +4,10 @@ import { createEpicMiddleware, Epic } from 'redux-observable';
 import { routerMiddleware } from 'connected-react-router';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { UUID } from '../utils/uuid';
 import rootEpic from './epics';
 import createRootReducer from './reducers';
 import dependencies from './epicDependencies';
-import { UUID } from '../utils/uuid';
 
 export const history = createHashHistory();
 export const taskIds = new UUID();

@@ -1,12 +1,12 @@
 import React, {
+  useState,
   useRef,
   useCallback,
   useMemo,
   useEffect,
   ChangeEvent,
   ReactNode,
-  MouseEvent,
-  useState
+  MouseEvent
 } from 'react';
 import { Input, InputProps } from '../Mui/Input';
 import { ToggleCompleted } from './ToggleCompleted';
@@ -22,7 +22,7 @@ export interface TaskProps
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
 }
 
-function TaskComponent({
+export function Task({
   className = '',
   uuid,
   title,
@@ -96,5 +96,3 @@ function TaskComponent({
     </div>
   );
 }
-
-export const Task = TaskComponent;
