@@ -3,6 +3,7 @@ import React, {
   useMemo,
   useRef,
   useEffect,
+  ChangeEvent,
   KeyboardEvent,
   MouseEvent
 } from 'react';
@@ -10,6 +11,7 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { connect, Omit } from 'react-redux';
 import { Task } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
+import { TaskDetailsView, EditTaskButton } from './TaskDetailsView';
 import { classes } from '../../../utils/classes';
 import { useBoolean } from '../../../utils/useBoolean';
 import { useMouseTrap } from '../../../utils/useMouseTrap';
@@ -61,6 +63,7 @@ export function TodoTaskComponent({
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [dateTimeDialogOpened, dateTimeDialog] = useBoolean();
+  const [detailsViewOpened, detailsView] = useBoolean();
   const [, taskListDropdown] = useBoolean();
 
   const [onFocus, onBlur] = useMemo(
@@ -97,10 +100,18 @@ export function TodoTaskComponent({
     [task.id, task.uuid, updateTask]
   );
 
-  const onDueDateChangeCallback = useCallback(
-    (date: Date) =>
+  const onChangeCallback = useCallback(
+    (evt: ChangeEvent<HTMLTextAreaElement>) =>
       updateTaskCallback({
-        due: date.toISOString()
+        title: evt.target.value
+      }),
+    [updateTaskCallback]
+  );
+
+  const onDueDateChangeCallback = useCallback(
+    (date?: Date) =>
+      updateTaskCallback({
+        due: date && date.toISOString()
       }),
     [updateTaskCallback]
   );
@@ -172,7 +183,7 @@ export function TodoTaskComponent({
   useMouseTrap(inputRef, 'enter', newTaskCallback);
   useMouseTrap(inputRef, 'up', focusPrevTask);
   useMouseTrap(inputRef, 'down', focusNextTask);
-  // useMouseTrap(inputRef, 'shift+enter', console.log);
+  useMouseTrap(inputRef, 'shift+enter', detailsView.on);
   useMouseTrap(inputRef, 'option+up', moveTaskUp);
   useMouseTrap(inputRef, 'option+down', moveTaskDown);
 
@@ -186,11 +197,13 @@ export function TodoTaskComponent({
         due={sortByDate ? undefined : task.due}
         inputRef={inputRef}
         onClick={onClickCallback}
+        onChange={onChangeCallback}
         onFocus={onFocus}
         onBlur={onBlur}
         onKeyDown={onKeydownCallback}
         onContextMenu={setAnchorPosition}
         onDueDateBtnClick={dateTimeDialog.on}
+        endAdornment={<EditTaskButton onClick={detailsView.on} />}
       />
       <TodoTaskMenu
         anchorPosition={anchorPosition}
@@ -201,6 +214,16 @@ export function TodoTaskComponent({
         onDelete={deleteTaskCallback}
         openDateTimeDialog={dateTimeDialog.on}
         openTaskListDropdown={taskListDropdown.on}
+      />
+      <TaskDetailsView
+        open={detailsViewOpened}
+        onRemoveDateTime={onDueDateChangeCallback}
+        openDateTimeDialog={dateTimeDialog.on}
+        onClose={detailsView.off}
+        due={task.due}
+        title={task.title}
+        notes={task.notes}
+        uuid={task.uuid}
       />
       <DateTimeDialog
         confirmLabel="OK"

@@ -41,7 +41,7 @@ export interface Payload$MoveTask {
 export type Payload$SortTasks = 'order' | 'date';
 
 export interface Payload$MoveToAnotherList {
-  task: Schema$Task;
+  uuid: UUID;
   tasklist: string;
 }
 

@@ -1,4 +1,13 @@
-import React, { useMemo, ReactNode, MouseEvent } from 'react';
+import React, {
+  useRef,
+  useCallback,
+  useMemo,
+  useEffect,
+  ChangeEvent,
+  ReactNode,
+  MouseEvent,
+  useState
+} from 'react';
 import { Input, InputProps } from '../Mui/Input';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskInput, TaskInputProps } from './TaskInput';
@@ -13,8 +22,6 @@ export interface TaskProps
   onContextMenu?(evt: MouseEvent<HTMLDivElement>): void;
 }
 
-const nil = () => {};
-
 function TaskComponent({
   className = '',
   uuid,
@@ -25,21 +32,47 @@ function TaskComponent({
   onDueDateBtnClick,
   endAdornment,
   onContextMenu,
+  onChange,
   onBlur,
   onFocus,
   ...inputProps
 }: TaskProps) {
+  const [value, setValue] = useState(title);
+
+  const timeout = useRef(0);
+  const onChangeCallback = useCallback(
+    (evt: ChangeEvent<HTMLTextAreaElement>) => {
+      evt.persist();
+      clearTimeout(timeout.current);
+      setValue(evt.currentTarget.value);
+      if (onChange) {
+        timeout.current = window.setTimeout(() => onChange(evt), 250);
+      }
+    },
+    [onChange]
+  );
+
   const taskInputProps = useMemo<TaskInputProps>(
     () => ({
       due,
       notes,
       onDueDateBtnClick,
-      onChange: nil,
       onBlur,
-      onFocus
+      onFocus,
+      onChange: onChangeCallback
     }),
-    [due, notes, onDueDateBtnClick, onBlur, onFocus]
+    [due, notes, onDueDateBtnClick, onBlur, onFocus, onChangeCallback]
   );
+
+  useEffect(() => {
+    setValue(title);
+  }, [title]);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
 
   return (
     <div className={`task ${className}`.trim()} onContextMenu={onContextMenu}>
@@ -52,7 +85,8 @@ function TaskComponent({
         {...inputProps}
         fullWidth
         className="task-input-base"
-        defaultValue={title}
+        value={value}
+        onChange={onChangeCallback}
         inputComponent={TaskInput}
         inputProps={taskInputProps}
         endAdornment={

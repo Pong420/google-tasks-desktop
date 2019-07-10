@@ -1,13 +1,12 @@
 .mui-input-base.mui-input-base {
   font-size: inherit;
   min-height: 40px;
-  padding: 1px 10px 0px;
+  padding: 1px 0px 0px 10px;
 
   input,
   textarea {
     color: var(--text-color);
     outline: none;
-    padding: 0;
     overflow: hidden;
 
     &:hover:not(:focus) {

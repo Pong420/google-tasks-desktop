@@ -1,7 +1,7 @@
-import React, { useCallback, ChangeEvent, useRef, useEffect } from 'react';
+import React from 'react';
 import { Input, InputProps } from '../Mui/Input';
-import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import { Schema$Task } from '../../typings';
+import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 
 export interface TaskInputProps extends Pick<Schema$Task, 'due' | 'notes'> {
   onDueDateBtnClick?(): void;
@@ -10,29 +10,10 @@ export interface TaskInputProps extends Pick<Schema$Task, 'due' | 'notes'> {
 type Props = TaskInputProps & InputProps;
 
 export const TaskInput = React.memo(
-  ({ due, notes, onChange, onDueDateBtnClick, ...inputProps }: Props) => {
-    const timeout = useRef(0);
-
-    const onChangeCallback = useCallback(
-      (evt: ChangeEvent<HTMLTextAreaElement>) => {
-        evt.persist();
-        clearTimeout(timeout.current);
-        if (onChange) {
-          timeout.current = window.setTimeout(() => onChange(evt), 1000);
-        }
-      },
-      [onChange]
-    );
-
-    useEffect(() => {
-      return () => {
-        clearTimeout(timeout.current);
-      };
-    }, []);
-
+  ({ due, notes, onDueDateBtnClick, ...inputProps }: Props) => {
     return (
       <div className="task-input-content">
-        <Input {...inputProps} multiline onChange={onChangeCallback} />
+        <Input {...inputProps} multiline />
         {notes && <div className="task-notes">{notes}</div>}
         {due && (
           <div

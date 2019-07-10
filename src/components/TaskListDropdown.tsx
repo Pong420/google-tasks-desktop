@@ -3,7 +3,9 @@ import React, {
   useMemo,
   useRef,
   MouseEvent,
-  ReactNode
+  ReactNode,
+  useState,
+  useEffect
 } from 'react';
 import { connect, Omit, DispatchProp } from 'react-redux';
 import { useMuiMenu, DropDownProps, Dropdown } from './Mui';
@@ -35,12 +37,21 @@ function TaskListDropdownComponent({
   PaperProps,
   ...props
 }: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
-  const label = currentTaskList ? currentTaskList.title : 'Loading...';
+  const [taskList, setTaskList] = useState(currentTaskList);
+  const label = taskList ? taskList.title : 'Loading...';
 
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   const simplebarRef = useRef<SimplebarAPI>(null);
   const focusItemRef = useRef<HTMLLIElement | null>(null);
+
+  const mergedPaperProps = useMemo<typeof PaperProps>(
+    () => ({
+      classes: { root: paperClassName },
+      ...PaperProps
+    }),
+    [paperClassName, PaperProps]
+  );
 
   const scrollToSelectedItem = useCallback(() => {
     setTimeout(() => {
@@ -60,13 +71,17 @@ function TaskListDropdownComponent({
     [setAnchorEl]
   );
 
-  const mergedPaperProps = useMemo<typeof PaperProps>(
-    () => ({
-      classes: { root: paperClassName },
-      ...PaperProps
-    }),
-    [paperClassName, PaperProps]
+  const onSelectCallback = useCallback(
+    (taskList: Schema$TaskList) => {
+      setTaskList(taskList);
+      onSelect(taskList);
+    },
+    [onSelect]
   );
+
+  useEffect(() => {
+    setTaskList(currentTaskList);
+  }, [currentTaskList]);
 
   return (
     <Dropdown
@@ -82,13 +97,13 @@ function TaskListDropdownComponent({
       simplebarRef={simplebarRef}
     >
       {taskLists.map(id => {
-        const selected = !!currentTaskList && currentTaskList.id === id;
+        const selected = !!taskList && taskList.id === id;
         return (
           <TaskListMenuItem
             key={id}
             id={id}
             onClose={onClose}
-            onClick={onSelect}
+            onClick={onSelectCallback}
             selected={selected}
             innerRef={node => selected && (focusItemRef.current = node)}
           />
