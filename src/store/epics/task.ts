@@ -10,9 +10,11 @@ import {
   tap,
   take,
   takeWhile,
-  withLatestFrom
+  withLatestFrom,
+  catchError
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
+import { RouterAction } from 'connected-react-router';
 import { tasks_v1 } from 'googleapis';
 import {
   TaskActions,
@@ -30,8 +32,9 @@ import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
+import { PATHS } from '../../constants';
 
-type Actions = TaskActions | NetworkActions;
+type Actions = TaskActions | NetworkActions | RouterAction;
 type TaskEpic = Epic<Actions, Actions, RootState, EpicDependencies>;
 type UUID = Schema$Task['uuid'];
 
@@ -57,7 +60,7 @@ const onNewTaskSuccess$ = (action$: ActionsObservable<Actions>, uuid: UUID) =>
     )
   );
 
-const taskApiEpic: TaskEpic = (action$, state$, { nprogress }) => {
+const taskApiEpic: TaskEpic = (action$, state$, { nprogress, push }) => {
   return action$.pipe(
     mergeMap(action => {
       // current tasklist id
@@ -73,6 +76,7 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress }) => {
               type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
               payload
             })),
+            catchError(() => push(PATHS.TASKLIST)),
             takeUntil(action$.pipe(ofType(TaskActionTypes.GET_ALL_TASKS)))
           );
 

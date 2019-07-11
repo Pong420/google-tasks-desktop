@@ -24,13 +24,17 @@ import {
 import { useBoolean } from '../../utils/useBoolean';
 import Divider from '@material-ui/core/Divider';
 
-const mapStateToProps = (state: RootState) => ({
-  currentTaskList: currentTaskListSelector(state),
-  canNotDelete: isMasterTaskList(state),
-  numOfCompletedTasks: state.task.completed.length,
-  numOfTotalTasks: getTotalTasks(state),
-  sortByDate: state.taskList.sortByDate
-});
+const mapStateToProps = (state: RootState) => {
+  const currentTaskList = currentTaskListSelector(state);
+  return {
+    currentTaskListId: currentTaskList && currentTaskList.id!,
+    currentTaskListName: currentTaskList && currentTaskList.title,
+    canNotDelete: isMasterTaskList(state),
+    numOfCompletedTasks: state.task.completed.length,
+    totalTasks: getTotalTasks(state),
+    sortByDate: state.taskList.sortByDate
+  };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
@@ -60,15 +64,16 @@ function useNotZero(initialVal: number) {
 const menuClasses = { paper: 'task-list-menu-paper' };
 
 function TaskListMenuComponent({
-  currentTaskList,
+  currentTaskListId,
+  currentTaskListName,
   canNotDelete,
   deleteTaskList,
   deleteCompletedTasks,
   logout,
   numOfCompletedTasks,
-  numOfTotalTasks,
   onClose,
   sortByDate,
+  totalTasks,
   toggleSortByDate,
   updateTaskList,
   ...props
@@ -79,20 +84,29 @@ function TaskListMenuComponent({
     deleteCompletedTaskDialogOpend,
     deleteCompletedTaskDialog
   ] = useBoolean();
-  const [deleteTaskListDialogOpend, deleteTaskListDialog] = useBoolean();
+  const [
+    deleteTaskListDialogOpend,
+    { on: openDeleteTaskListDialog_, off: closeDeleteTaskListDialog }
+  ] = useBoolean();
   const [renameTaskDialogOpend, renameTaskDialog] = useBoolean();
   const [keyboardShortcutsOpened, keyboardShortcuts] = useBoolean();
   const [preferencesOpened, preferences] = useBoolean();
 
   const deleteTaskListCallback = useCallback(
-    () => deleteTaskList(currentTaskList!.id!),
-    [currentTaskList, deleteTaskList]
+    () => currentTaskListId && deleteTaskList(currentTaskListId),
+    [deleteTaskList, currentTaskListId]
+  );
+
+  const openDeleteTaskListDialog = useCallback(
+    () =>
+      !!totalTasks ? openDeleteTaskListDialog_() : deleteTaskListCallback(),
+    [openDeleteTaskListDialog_, deleteTaskListCallback, totalTasks]
   );
 
   const renameTaskListCallback = useCallback(
     (title: string) =>
-      updateTaskList({ tasklist: currentTaskList!.id, requestBody: { title } }),
-    [currentTaskList, updateTaskList]
+      updateTaskList({ tasklist: currentTaskListId, requestBody: { title } }),
+    [currentTaskListId, updateTaskList]
   );
 
   const [setSortByDate, setSortByOrder] = useMemo(
@@ -100,7 +114,7 @@ function TaskListMenuComponent({
     [toggleSortByDate]
   );
 
-  const numOfTotalTasks_ = useNotZero(numOfTotalTasks);
+  const totalTasks_ = useNotZero(totalTasks);
   const numOfCompletedTasks_ = useNotZero(numOfCompletedTasks);
 
   return (
@@ -118,7 +132,7 @@ function TaskListMenuComponent({
         <MenuItem
           text="Delete list"
           disabled={canNotDelete}
-          onClick={deleteTaskListDialog.on}
+          onClick={openDeleteTaskListDialog}
         />
         <MenuItem
           text="Delete all completed tasks"
@@ -134,10 +148,10 @@ function TaskListMenuComponent({
         title="Delete this list?"
         confirmLabel="Delete"
         open={deleteTaskListDialogOpend}
-        onClose={deleteTaskListDialog.off}
+        onClose={closeDeleteTaskListDialog}
         onConfirm={deleteTaskListCallback}
       >
-        Deleting this list will also delete {numOfTotalTasks_} task.
+        Deleting this list will also delete {totalTasks_} task.
       </ConfirmDialog>
       <ConfirmDialog
         title="Delete all completed tasks?"
@@ -151,7 +165,7 @@ function TaskListMenuComponent({
       <FormDialog
         title="Rename list"
         errorMsg="Task list name cannot be empty"
-        defaultValue={currentTaskList ? currentTaskList.title : ''}
+        defaultValue={currentTaskListName}
         open={renameTaskDialogOpend}
         onClose={renameTaskDialog.off}
         onConfirm={renameTaskListCallback}

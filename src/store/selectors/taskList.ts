@@ -7,7 +7,7 @@ export const currentTaskListIdSelector = (state: RootState) =>
 export const currentTaskListSelector = createSelector(
   state => state,
   currentTaskListIdSelector,
-  (state, id) => (id ? state.taskList.byIds[id] : null)
+  (state, id) => (id ? state.taskList.byIds[id] : undefined)
 );
 
 export const isMasterTaskList = createSelector(

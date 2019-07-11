@@ -6,8 +6,8 @@ $height: 36px;
   }
 
   .mui-input-base {
+    @include padding-y(0.5em);
     line-height: 1.42em;
-    padding: 0.5em 10px;
 
     &.task-details-view-title-field {
       @include typeface('Nunito Sans', 600);

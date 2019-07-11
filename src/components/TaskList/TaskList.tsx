@@ -13,16 +13,19 @@ import {
   currentTaskListIdSelector
 } from '../../store';
 import { SimplebarAPI } from '../../typings';
+import { classes } from '../../utils/classes';
 
 const mapStateToProps = (state: RootState) => ({
+  creatingNewTaskList: state.taskList.creatingNewTaskList,
   currentTaskListId: currentTaskListIdSelector(state),
   showCompletedTaskList: !!state.task.completed.length,
   sortByDate: state.taskList.sortByDate
 });
 
 function TaskListComponent({
-  dispatch,
+  creatingNewTaskList,
   currentTaskListId,
+  dispatch,
   showCompletedTaskList,
   sortByDate
 }: ReturnType<typeof mapStateToProps> & DispatchProp) {
@@ -42,7 +45,7 @@ function TaskListComponent({
   }, [sortByDate]);
 
   return (
-    <div className="task-list">
+    <div className={classes('task-list', creatingNewTaskList && 'disabled')}>
       <TaskListHeader />
       <div className="task-list-content">
         <NewTask />

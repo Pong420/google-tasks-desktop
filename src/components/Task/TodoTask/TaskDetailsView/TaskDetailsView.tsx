@@ -9,13 +9,16 @@ import {
 } from '../../../Mui';
 import { connect, DispatchProp } from 'react-redux';
 import { DateTimeButton } from './DateTimeButton';
-import { TaskListDropdown } from '../../../TaskListDropdown';
+import {
+  TaskListDropdown,
+  TaskListDropdownProps
+} from '../../../TaskListDropdown';
 import {
   RootState,
   deleteTask,
   updateTask,
   moveToAnotherList,
-  currentTaskListSelector
+  currentTaskListIdSelector
 } from '../../../../store';
 import { Schema$Task } from '../../../../typings';
 import Button from '@material-ui/core/Button';
@@ -32,7 +35,7 @@ interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
 const mapStateToProps = (state: RootState, { uuid }: Props) => {
   const { due, id, notes, title } = state.task.byIds[uuid];
   return {
-    currentTaskList: currentTaskListSelector(state),
+    currentTaskListId: currentTaskListIdSelector(state),
     due,
     id,
     notes,
@@ -59,7 +62,7 @@ export const EditTaskButton = React.memo(({ onClick }: { onClick(): void }) => {
 });
 
 export function TaskDetailsViewComponent({
-  currentTaskList,
+  currentTaskListId,
   due,
   dispatch,
   id,
@@ -75,7 +78,7 @@ export function TaskDetailsViewComponent({
   const titleInputRef = useRef<HTMLTextAreaElement>();
   const notesInputRef = useRef<HTMLTextAreaElement>();
   const shouldDeleteTask = useRef<boolean>(false);
-  const [newTaskList, setNewTaskList] = useState(currentTaskList);
+  const [newTaskList, setNewTaskList] = useState(currentTaskListId);
 
   // Instead of autoFocus attr.
   // Aims to delay focus so that the focus animation
@@ -92,6 +95,11 @@ export function TaskDetailsViewComponent({
   const deleteTaskCallback = useCallback(() => {
     dispatch(deleteTask({ id, uuid }));
   }, [dispatch, uuid, id]);
+
+  const onSelectTaskList = useCallback<TaskListDropdownProps['onSelect']>(
+    ({ id }) => setNewTaskList(id!),
+    []
+  );
 
   const onExitCallback = useCallback(() => {
     const titleInput = titleInputRef.current;
@@ -115,19 +123,15 @@ export function TaskDetailsViewComponent({
     if (shouldDeleteTask.current) {
       shouldDeleteTask.current = false;
       deleteTaskCallback();
-    } else if (
-      newTaskList &&
-      currentTaskList &&
-      currentTaskList.id !== newTaskList.id
-    ) {
+    } else if (newTaskList && newTaskList !== currentTaskListId) {
       dispatch(
         moveToAnotherList({
-          tasklist: newTaskList.id!,
+          tasklist: newTaskList,
           uuid
         })
       );
     }
-  }, [currentTaskList, deleteTaskCallback, newTaskList, uuid, dispatch]);
+  }, [currentTaskListId, deleteTaskCallback, newTaskList, uuid, dispatch]);
 
   const deleteBtnClickedCallback = useCallback(() => {
     shouldDeleteTask.current = true;
@@ -175,7 +179,7 @@ export function TaskDetailsViewComponent({
         <TaskListDropdown
           buttonProps={dropdownButtonProps}
           defaultOpen={taskListDropdownOpened}
-          onSelect={setNewTaskList}
+          onSelect={onSelectTaskList}
           paperClassName="details-task-list-dropdown-paper"
         />
       </div>

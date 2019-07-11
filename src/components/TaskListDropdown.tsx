@@ -18,7 +18,8 @@ import { TaskListMenuItem } from './TaskListMenuItem';
 import { RootState, currentTaskListSelector } from '../store';
 import { Schema$TaskList, SimplebarAPI } from '../typings';
 
-interface Props extends Omit<Partial<DropDownProps>, 'onSelect'> {
+export interface TaskListDropdownProps
+  extends Omit<Partial<DropDownProps>, 'onSelect'> {
   defaultOpen?: boolean;
   onSelect(taskList: Schema$TaskList): void;
   outOfScrollContent?(onClose: () => void): ReactNode;
@@ -41,7 +42,7 @@ function TaskListDropdownComponent({
   paperClassName,
   PaperProps,
   ...props
-}: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
+}: TaskListDropdownProps & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const [taskList, setTaskList] = useState(currentTaskList);
 
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();

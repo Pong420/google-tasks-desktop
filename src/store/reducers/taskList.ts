@@ -40,17 +40,15 @@ export default function(
           }
         );
 
-        if (matches) {
-          const id = matches.params.taskListId;
-          if (id) {
-            localStorage.setItem(LAST_VISITED_TASKS_LIST_ID, id);
+        const id = (matches && matches.params.taskListId) || state.ids[0];
 
-            return {
-              ...state,
-              id,
-              sortByDate: sortByDateTasksListIds.includes(id)
-            };
-          }
+        if (id) {
+          localStorage.setItem(LAST_VISITED_TASKS_LIST_ID, id);
+          return {
+            ...state,
+            id,
+            sortByDate: sortByDateTasksListIds.includes(id)
+          };
         }
 
         return state;
@@ -85,8 +83,8 @@ export default function(
 
     case TaskListActionTypes.DELETE_TASK_LIST:
       return (() => {
-        const taskLisdId = action.payload!;
-        const { [taskLisdId]: deleted, ...byIds } = state.byIds;
+        const taskLisdId = action.payload || state.id;
+        const { [taskLisdId!]: deleted, ...byIds } = state.byIds;
         return {
           ...state,
           byIds,
