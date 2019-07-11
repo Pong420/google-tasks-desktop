@@ -96,6 +96,7 @@ $completed-task-list-header-height: 54px;
   @include animate(visibility);
   @include sq-dimen(100%);
   overflow: hidden;
+  padding-bottom: 1px; // avoid scroll shown when there is only one completed task
   visibility: hidden;
 
   &.visible {

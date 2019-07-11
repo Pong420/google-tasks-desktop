@@ -36,6 +36,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
       };
 
     case TaskActionTypes.GET_ALL_TASKS_SUCCESS:
+    case TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS:
       return (() => {
         const todo: UUID[] = [];
         const completed: UUID[] = [];

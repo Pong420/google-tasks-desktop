@@ -104,8 +104,9 @@ function PreferencesComponent({
               <div className="preferences-hours">
                 <Input
                   className="filled"
-                  value={sync.inactiveHours}
                   onChange={setInactiveHourCallback}
+                  type="number"
+                  value={sync.inactiveHours}
                 />
                 Hours
               </div>

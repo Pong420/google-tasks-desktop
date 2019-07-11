@@ -163,14 +163,16 @@ export function TodoTaskComponent({
     (evt: KeyboardEvent<HTMLTextAreaElement>) => {
       if (evt.key === 'Backspace' && !evt.currentTarget.value.trim()) {
         evt.preventDefault();
-        deleteTaskCallback({ prevUUID: prevTask });
+        deleteTaskCallback({
+          prevUUID: prevTask === task.uuid ? nextTask : prevTask
+        });
       }
 
       if (evt.key === 'Escape') {
         evt.currentTarget.blur();
       }
     },
-    [deleteTaskCallback, prevTask]
+    [deleteTaskCallback, prevTask, nextTask, task.uuid]
   );
 
   useEffect(() => {

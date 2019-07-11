@@ -5,12 +5,20 @@ import { push } from 'connected-react-router';
 import { TaskListDropdown } from '../TaskListDropdown';
 import { FormDialog, MenuItem } from '../Mui';
 import { Schema$TaskList } from '../../typings';
-import { newTaskList } from '../../store';
+import { RootState, newTaskList } from '../../store';
 import { useBoolean } from '../../utils/useBoolean';
 import { PATHS } from '../../constants';
 import Divider from '@material-ui/core/Divider';
+import WifiOffIcon from '@material-ui/icons/WifiOff';
 
-function TaskListHeaderComponent({ dispatch }: DispatchProp) {
+const mapStateToProps = ({ network: { isOnline } }: RootState) => ({
+  isOnline
+});
+
+function TaskListHeaderComponent({
+  isOnline,
+  dispatch
+}: ReturnType<typeof mapStateToProps> & DispatchProp) {
   const [dialogOpened, dialog] = useBoolean();
 
   const onSelectCallback = useCallback(
@@ -27,7 +35,7 @@ function TaskListHeaderComponent({ dispatch }: DispatchProp) {
   return (
     <>
       <div className="task-list-header">
-        <div />
+        <div className="status">{!isOnline && <WifiOffIcon />}</div>
         <div className="task-list-header-dropdown-container">
           <div className="task-list-header-dropdown-label">
             <span>TASKS</span>
@@ -59,4 +67,4 @@ function TaskListHeaderComponent({ dispatch }: DispatchProp) {
   );
 }
 
-export const TaskListHeader = connect()(TaskListHeaderComponent);
+export const TaskListHeader = connect(mapStateToProps)(TaskListHeaderComponent);

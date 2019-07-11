@@ -1,6 +1,12 @@
 .preferences {
   color: var(--text-color);
 
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   .preferences-label {
     @include typeface('Nunito Sans', 600);
     flex: 0 0 auto;
