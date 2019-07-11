@@ -1,20 +1,42 @@
-## Electron x CRA x Typescript
+## Google Tasks Desktop
 
-The `react-scripts` used in this repo is [my customized version](https://github.com/Pong420/create-react-app). The main difference are `sass-loader` config and allow to change the [webpack target](https://webpack.js.org/concepts/targets/). <br><br>
-If this [CRA pull request are merged](https://github.com/facebook/create-react-app/pull/5498) and you do not require the sass prefix, you could repalce the `react-scripts` to offical version
+> Unofficial google task desktop application. Using React and google task api
 
-### Reference
+<div>
+  <img src="./screenshot/1.png" width="24%">
+  <img src="./screenshot/2.png" width="24%">
+  <img src="./screenshot/3.png" width="24%">
+  <img src="./screenshot/4.png" width="24%">
+</div>
 
-- [How to build an Electron app using create-react-app. No webpack configuration or “ejecting” necessary.](https://medium.freecodecamp.org/building-an-electron-application-with-create-react-app-97945861647c)
-- [electron-react-boilerplate typescript examples](https://github.com/electron-react-boilerplate/examples/tree/master/examples/typescript)
+#### [Download](https://github.com/Pong420/google-tasks-desktop/releases) | [Video Demo](https://pong420.github.io/google-tasks-desktop/demo.mp4)
 
-### Installation
+#### :warning: You will need to enable your own [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer
 
-yarn is requeired, otherwise you should replace 'yarn' in package.json
+1. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
+2. In Google API Console [Credentials](https://console.developers.google.com/apis/credentials) section.
+   Create credentials => OAuth client ID => Other => Create. After, you should get a json file like this.
+
+```json
+{
+  "installed": {
+    "client_id": "...",
+    "project_id": "...",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "...",
+    "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"]
+  }
+}
 ```
-yarn install
-```
+
+3. Start and drag this file into the application.
+
+4. Click on `Get Code` button then you will require authentication. Just ignore the `This app isn't verified` warning and continue because you are the app owner.
+
+5. Paste the code into the input filed and click confirm. Done!
 
 ### Development
 
@@ -23,8 +45,6 @@ yarn dev
 ```
 
 ### Packaging
-
-Before packaging you may edit the build config in `package.json` which prefix with `REPLACE_`. And `React App` in `electron/menu.ts`
 
 To package apps for the local platform:
 
@@ -38,39 +58,23 @@ First, refer to the [Multi Platform Build docs](https://www.electron.build/multi
 yarn package-all
 ```
 
-## Features
+### TODO
 
-- Scss support and configured with some useful mixins. Variables and mixins in `src/scss` can be use directly without `@import`
-- TSLint, ESLint with react-hooks
-- Prettier
-- Pre-commit checking
-- Hot reload configured
-- Helper scripts
+- [x] Support Window & Linux
+- [x] Keyboard shortcuts
+- [x] Dark Theme
+- [x] Add Note
+- [x] Add Date
+- [x] Animation
+- [x] Sync data periodically
+- [x] Move task to another list
+- [x] Improve / check performace
+- [ ] Subtask
+- [ ] Error handling
 
-  - Create a new component
+### Known issue
 
-  ```bash
-  // create component with index, scss, component in a folder
-  yarn component ComponentName
-
-  // create single component with `.tsx` only
-  yarn component -s ComponentName
-  ```
-
-  - Install dependencies with type
-
-  ```bash
-  // equivalent to `yarn add lodash` and `yarn add --dev @types/loadash`
-  yarn get lodash
-  ```
-
-  - Redux
-
-  ```bash
-  // install `redux`, `react-redux`, `rxjs` and `redux-observable`
-  // And create required script
-  yarn redux init
-
-  // Quickly create action, epic, reducer file
-  yarn redux name
-  ```
+- Add time / repeat is not supported as API limitation
+- Tasks sorting type (My Oreder / Date) is not synced to the official platform (Web/App)
+- The tasks that marked as completed through the official platform (Web/App) will not show in this application
+- The position of the task which marks as complete to incomplete will be different after refresh
