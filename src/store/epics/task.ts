@@ -8,7 +8,6 @@ import {
   switchMap,
   takeUntil,
   tap,
-  pairwise,
   take
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
@@ -23,7 +22,6 @@ import {
   MoveTaskSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
-import { taskSelector } from '../selectors';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
@@ -96,6 +94,7 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress }) => {
               ? state$.value.task.byIds[prevUUID]
               : undefined;
 
+            // TODO: remove timer
             const newTaskRequest$ = (uuid: UUID, previous?: string) =>
               timer(2000).pipe(
                 mergeMap(() =>
@@ -135,16 +134,9 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress }) => {
   );
 };
 
+// TODO: debounce ?
 const updateTaskEpic: TaskEpic = (action$, state$) => {
   const updateTaskRequest$ = (requestBody: Schema$Task) => {
-    // delete requestBody.completed;
-    // delete requestBody.position;
-    // delete requestBody.updated;
-
-    // if (!requestBody.id) {
-    //   throw new Error('update task request failed, id is missing');
-    // }
-
     return from(
       tasksAPI.update({
         tasklist: state$.value.taskList.id,
@@ -184,44 +176,30 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
               switchMap(success =>
                 updateTaskRequest$({
                   ...success.payload,
-                  ...action.payload
+                  ...action.payload,
+                  id: success.payload.id // make sure id will not bw overwritten
                 })
               )
             );
           }
 
           return empty();
-        })
+        }),
+        takeUntil(
+          action$.pipe(
+            filter(
+              action =>
+                action.type === TaskActionTypes.DELETE_TASK &&
+                action.payload.uuid === group$.key
+            )
+          )
+        )
       )
     )
   );
 };
 
 const moveTaskEpic: TaskEpic = (action$, state$) => {
-  const moveTaskRequest$ = (uuid: UUID) =>
-    state$.pipe(
-      switchMap(state => [undefined, ...state.task.todo]),
-      pairwise(),
-      filter(([_, b]) => !!b && b === uuid),
-      map(ids => ids.map(uuid => taskSelector(state$.value, uuid))),
-      switchMap(([prevTask, currTask]) => {
-        return from(
-          tasksAPI.move({
-            tasklist: state$.value.taskList.id,
-            task: currTask!.id,
-            previous: prevTask && prevTask.id
-          })
-        ).pipe(
-          map(({ data }) => data),
-          map<tasks_v1.Schema$Task, MoveTaskSuccess>(payload => ({
-            type: TaskActionTypes.MOVE_TASKS_SUCCESS,
-            payload
-          }))
-        );
-      }),
-      take(1)
-    );
-
   return action$.pipe(
     ofType<Actions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     groupBy(action => action.payload.uuid),
@@ -229,14 +207,38 @@ const moveTaskEpic: TaskEpic = (action$, state$) => {
       group$.pipe(
         debounceTime(500),
         switchMap(action => {
-          const task = state$.value.task.byIds[action.payload.uuid];
-          if (!task.id) {
-            return onNewTaskSuccess$(action$, task.uuid).pipe(
-              switchMap(success => moveTaskRequest$(success.payload.uuid))
-            );
-          }
+          const { todo, byIds } = state$.value.task;
+          const index = todo.indexOf(action.payload.uuid);
+          const payload = [todo[index - 1], todo[index]].map(uuid => {
+            const task = byIds[uuid];
+            if (task) {
+              return task.id
+                ? of(task)
+                : onNewTaskSuccess$(action$, task.uuid).pipe(
+                    map(success => success.payload),
+                    take(1)
+                  );
+            }
+            return of(undefined);
+          });
 
-          return moveTaskRequest$(task.uuid);
+          return forkJoin<Schema$Task | undefined>(...payload).pipe(
+            mergeMap(([prevTask, currTask]) => {
+              return from(
+                tasksAPI.move({
+                  tasklist: state$.value.taskList.id,
+                  task: currTask!.id,
+                  previous: prevTask && prevTask.id
+                })
+              ).pipe(
+                map(({ data }) => data),
+                map<tasks_v1.Schema$Task, MoveTaskSuccess>(payload => ({
+                  type: TaskActionTypes.MOVE_TASKS_SUCCESS,
+                  payload
+                }))
+              );
+            })
+          );
         })
       )
     )

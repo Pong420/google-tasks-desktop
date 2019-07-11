@@ -99,10 +99,21 @@ export default function(state = initialState, action: TaskActions): TaskState {
         };
       })();
 
-    // TODO: new task with prev task then success handling
+    case TaskActionTypes.NEW_TASK_SUCCESS:
+      return (() => {
+        const { uuid } = action.payload;
+
+        return {
+          ...state,
+          byIds: {
+            ...state.byIds,
+            [uuid]: { ...action.payload, ...state.byIds[uuid] }
+          }
+        };
+      })();
+
     case TaskActionTypes.UPDATE_TASK:
     case TaskActionTypes.UPDATE_TASK_SUCCESS:
-    case TaskActionTypes.NEW_TASK_SUCCESS:
       return (() => {
         const newTaskPayload = action.payload;
         const { uuid, status } = newTaskPayload;
