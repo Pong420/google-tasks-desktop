@@ -167,7 +167,12 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
           ...payload
         }
       })),
-      takeUntil(action$.pipe(ofType(TaskActionTypes.UPDATE_TASK)))
+      takeUntil(
+        action$.pipe(
+          ofType<Actions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
+          filter(action => action.payload.uuid === requestBody.uuid)
+        )
+      )
     );
   };
 
@@ -176,7 +181,7 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
     groupBy(action => action.payload.uuid),
     mergeMap(group$ =>
       group$.pipe(
-        switchMap(action => {
+        mergeMap(action => {
           const task = state$.value.task.byIds[action.payload.uuid];
 
           if (task) {

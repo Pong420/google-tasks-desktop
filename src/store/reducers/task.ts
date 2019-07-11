@@ -148,7 +148,10 @@ export default function(state = initialState, action: TaskActions): TaskState {
           } else if (status === 'needsAction') {
             completed = remove(completed, uuid);
             todo = todo.includes(uuid) ? todo : [uuid, ...todo];
-            byDatePayload[oldDateKey] = [uuid, ...state.byDate[oldDateKey]];
+            byDatePayload[oldDateKey] = [
+              uuid,
+              ...(state.byDate[oldDateKey] || [])
+            ];
           }
         }
 
