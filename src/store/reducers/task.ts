@@ -107,7 +107,11 @@ export default function(state = initialState, action: TaskActions): TaskState {
           ...state,
           byIds: {
             ...state.byIds,
-            [uuid]: { ...action.payload, ...state.byIds[uuid] }
+            [uuid]: {
+              ...action.payload,
+              ...state.byIds[uuid],
+              id: action.payload.id
+            }
           }
         };
       })();
@@ -127,7 +131,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
         let todo = state.todo.slice();
         let completed = state.completed.slice();
 
-        const newTask = { ...oldTask, ...newTaskPayload };
+        const newTask = { ...newTaskPayload, ...oldTask };
         const oldDateKey = getDatekey(oldTask);
         const byDatePayload = {
           [oldDateKey]: state.byDate[oldDateKey] || []

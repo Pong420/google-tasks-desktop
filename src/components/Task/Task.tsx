@@ -66,7 +66,7 @@ export function Task({
   );
 
   useEffect(() => {
-    setValue(title);
+    title && setValue(title);
   }, [title]);
 
   useEffect(() => {

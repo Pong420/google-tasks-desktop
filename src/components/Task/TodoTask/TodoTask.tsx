@@ -162,6 +162,7 @@ export function TodoTaskComponent({
   const onKeydownCallback = useCallback(
     (evt: KeyboardEvent<HTMLTextAreaElement>) => {
       if (evt.key === 'Backspace' && !evt.currentTarget.value.trim()) {
+        evt.preventDefault();
         deleteTaskCallback({ prevUUID: prevTask });
       }
 

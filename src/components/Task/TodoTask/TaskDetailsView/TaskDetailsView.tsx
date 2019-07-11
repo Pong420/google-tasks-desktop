@@ -94,8 +94,15 @@ export function TaskDetailsViewComponent({
     const newTitle = titleInput && titleInput.value;
     const newNotes = notesInput && notesInput.value;
 
-    if (title !== newTitle || notes !== newNotes) {
-      dispatch(updateTask({ id, uuid, title: newTitle, notes: newNotes }));
+    if ((title || '') !== newTitle || (notes || '') !== newNotes) {
+      dispatch(
+        updateTask({
+          id,
+          uuid,
+          title: newTitle,
+          notes: newNotes
+        })
+      );
     }
   }, [dispatch, id, uuid, title, notes]);
 
@@ -108,7 +115,12 @@ export function TaskDetailsViewComponent({
       currentTaskList &&
       currentTaskList.id !== newTaskList.id
     ) {
-      dispatch(moveToAnotherList({ tasklist: newTaskList.id!, uuid }));
+      dispatch(
+        moveToAnotherList({
+          tasklist: newTaskList.id!,
+          uuid
+        })
+      );
     }
   }, [currentTaskList, deleteTaskCallback, newTaskList, uuid, dispatch]);
 
