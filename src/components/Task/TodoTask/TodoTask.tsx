@@ -197,10 +197,9 @@ export function TodoTaskComponent({
     <>
       <Task
         className={classes(`todo-task`, focused && 'focused', className)}
-        uuid={task.uuid}
-        title={task.title}
-        notes={task.notes}
         due={sortByDate ? undefined : task.due}
+        endAdornment={<EditTaskButton onClick={detailsView.on} />}
+        notes={task.notes}
         inputRef={inputRef}
         onClick={onClickCallback}
         onChange={onChangeCallback}
@@ -209,7 +208,8 @@ export function TodoTaskComponent({
         onKeyDown={onKeydownCallback}
         onContextMenu={setAnchorPosition}
         onDueDateBtnClick={dateTimeDialog.on}
-        endAdornment={<EditTaskButton onClick={detailsView.on} />}
+        title={task.title}
+        uuid={task.uuid}
       />
       <TodoTaskMenu
         anchorPosition={anchorPosition}
@@ -222,14 +222,10 @@ export function TodoTaskComponent({
         openTaskListDropdown={taskListDropdown.on}
       />
       <TaskDetailsView
-        due={task.due}
-        id={task.id}
-        notes={task.notes}
         open={taskListDropdownOpened || detailsViewOpened}
         onRemoveDateTime={onDueDateChangeCallback}
         openDateTimeDialog={dateTimeDialog.on}
         onClose={handleDetailsClose}
-        title={task.title}
         taskListDropdownOpened={taskListDropdownOpened}
         uuid={task.uuid}
       />

@@ -15,7 +15,7 @@ import { Schema$Task } from '../../typings';
 
 export interface TaskProps
   extends InputProps,
-    Pick<Schema$Task, 'id' | 'uuid' | 'title' | 'status'>,
+    Pick<Schema$Task, 'uuid' | 'title'>,
     TaskInputProps {
   className?: string;
   endAdornment?: ReactNode;
@@ -25,7 +25,6 @@ export interface TaskProps
 export function Task({
   className = '',
   due,
-  id,
   notes,
   onDueDateBtnClick,
   endAdornment,
@@ -33,12 +32,11 @@ export function Task({
   onChange,
   onBlur,
   onFocus,
-  status,
   title,
   uuid,
   ...inputProps
 }: TaskProps) {
-  const [value, setValue] = useState(title);
+  const [value, setValue] = useState(title || '');
 
   const timeout = useRef(0);
   const onChangeCallback = useCallback(
@@ -77,12 +75,7 @@ export function Task({
 
   return (
     <div className={`task ${className}`.trim()} onContextMenu={onContextMenu}>
-      <ToggleCompleted
-        completed={status === 'completed'}
-        id={id}
-        isEmpty={!(title || '').trim()}
-        uuid={uuid}
-      />
+      <ToggleCompleted isEmpty={!value.trim()} uuid={uuid} />
       <Input
         {...inputProps}
         className="task-input-base"

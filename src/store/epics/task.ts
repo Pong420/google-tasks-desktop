@@ -21,7 +21,8 @@ import {
   UpdateTaskSuccess,
   MoveTask,
   MoveTaskSuccess,
-  DeleteTask
+  DeleteTask,
+  MoveToAnotherList
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
@@ -85,8 +86,7 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress }) => {
             return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
               switchMap(success =>
                 success ? deleteTaskRequest$(success.payload.id) : empty()
-              ),
-              take(1)
+              )
             );
           }
 
@@ -189,15 +189,16 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
             }
 
             return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
-              switchMap(success =>
-                success
+              switchMap(success => {
+                const task = state$.value.task.byIds[action.payload.uuid];
+                return success && task
                   ? updateTaskRequest$({
                       ...success.payload,
-                      ...action.payload,
+                      ...task,
                       id: success.payload.id // make sure id will not bw overwritten
                     })
-                  : empty()
-              )
+                  : empty();
+              })
             );
           }
 
@@ -259,4 +260,61 @@ const moveTaskEpic: TaskEpic = (action$, state$) => {
   );
 };
 
-export default [taskApiEpic, updateTaskEpic, moveTaskEpic];
+const moveAnotherListEpic: TaskEpic = (action$, state$) => {
+  return action$.pipe(
+    ofType<Actions, MoveToAnotherList>(TaskActionTypes.MOVE_TO_ANOHTER_LIST),
+    groupBy(({ payload }) => payload.uuid),
+    mergeMap(group$ =>
+      group$.pipe(
+        switchMap(({ payload: { uuid, tasklist } }) => {
+          const moveAnotherListRequest$ = (task: Schema$Task) => {
+            const newTask$ = from(
+              tasksAPI.insert({
+                tasklist,
+                requestBody: task
+              })
+            );
+
+            const deleteTask$ = from(
+              tasksAPI.delete({
+                task: task.id,
+                tasklist
+              })
+            );
+
+            return forkJoin(newTask$, deleteTask$).pipe(
+              map<unknown, Actions>(() => ({
+                type: TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS,
+                payload:
+                  state$.value.taskList.id === tasklist ? task : undefined
+              }))
+            );
+          };
+
+          const task = state$.value.task.temp[uuid];
+          if (task) {
+            if (!task.id) {
+              return onNewTaskSuccess$(action$, task.uuid).pipe(
+                switchMap(success =>
+                  success
+                    ? moveAnotherListRequest$({
+                        ...success.payload,
+                        ...task,
+                        id: success.payload.id
+                      })
+                    : empty()
+                )
+              );
+            }
+
+            return moveAnotherListRequest$(task);
+          }
+
+          return empty();
+        })
+      )
+    )
+  );
+};
+
+export default [taskApiEpic, updateTaskEpic, moveTaskEpic, moveAnotherListEpic];

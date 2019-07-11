@@ -23,17 +23,22 @@ import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 
-interface Props
-  extends FullScreenDialogProps,
-    Pick<Schema$Task, 'id' | 'uuid' | 'title' | 'due' | 'notes'> {
+interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
   taskListDropdownOpened?: boolean;
   openDateTimeDialog(): void;
   onRemoveDateTime(): void;
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentTaskList: currentTaskListSelector(state)
-});
+const mapStateToProps = (state: RootState, { uuid }: Props) => {
+  const { due, id, notes, title } = state.task.byIds[uuid];
+  return {
+    currentTaskList: currentTaskListSelector(state),
+    due,
+    id,
+    notes,
+    title
+  };
+};
 
 const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
   evt.which === 13 && evt.preventDefault();

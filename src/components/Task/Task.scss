@@ -70,6 +70,15 @@ $min-task-height: 50px;
   }
 
   .toggle-completed {
+    @include relative();
+
+    .mui-icon-button {
+      + .mui-icon-button {
+        @include absolute();
+        visibility: hidden;
+      }
+    }
+
     .mui-tick-icon {
       color: var(--accent-color);
     }

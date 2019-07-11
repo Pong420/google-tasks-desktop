@@ -1,16 +1,34 @@
 import React, { useCallback } from 'react';
 import { connect, DispatchProp } from 'react-redux';
 import { IconButton } from '../Mui/IconButton';
-import { useBoolean } from '../../utils/useBoolean';
-import { deleteTask, updateTask } from '../../store';
+import { RootState, deleteTask, updateTask } from '../../store';
 import { Schema$Task } from '../../typings';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
 
-interface Props extends Pick<Schema$Task, 'id' | 'uuid'> {
-  completed?: boolean;
+interface Props extends Pick<Schema$Task, 'uuid'> {
   isEmpty: boolean;
 }
+
+const mapStateToProps = (state: RootState, { uuid }: Props) => {
+  const task = state.task.byIds[uuid];
+  return {
+    id: task.id,
+    completed: task.status === 'completed'
+  };
+};
+
+const MarkCompleteButton = React.memo(() => (
+  <IconButton tooltip="Mark complete">
+    <CircleIcon />
+  </IconButton>
+));
+
+const MarkInCompleteButton = React.memo(() => (
+  <IconButton tooltip="Mark incomplete">
+    <TickIcon className="mui-tick-icon" />
+  </IconButton>
+));
 
 function ToggleCompletedComponent({
   completed,
@@ -18,9 +36,7 @@ function ToggleCompletedComponent({
   isEmpty,
   id,
   uuid
-}: Props & DispatchProp) {
-  const [hover, { on, off }] = useBoolean();
-
+}: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const onClickCallback = useCallback(() => {
     if (isEmpty) {
       dispatch(deleteTask({ id, uuid }));
@@ -36,21 +52,13 @@ function ToggleCompletedComponent({
   }, [id, uuid, completed, isEmpty, dispatch]);
 
   return (
-    <div
-      className="toggle-completed"
-      onClick={onClickCallback}
-      onMouseEnter={on}
-      onMouseLeave={off}
-    >
-      <IconButton tooltip={!completed ? 'Mark complete' : 'Mark incomplete'}>
-        {completed || hover ? (
-          <TickIcon className="mui-tick-icon" />
-        ) : (
-          <CircleIcon />
-        )}
-      </IconButton>
+    <div className="toggle-completed" onClick={onClickCallback}>
+      {!completed && <MarkCompleteButton />}
+      <MarkInCompleteButton />
     </div>
   );
 }
 
-export const ToggleCompleted = React.memo(connect()(ToggleCompletedComponent));
+export const ToggleCompleted = connect(mapStateToProps)(
+  ToggleCompletedComponent
+);

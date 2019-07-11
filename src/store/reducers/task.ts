@@ -9,17 +9,19 @@ type UUID = Schema$Task['uuid'];
 export interface TaskState {
   byIds: { [id: string]: Schema$Task };
   byDate: { [date: string]: UUID[] };
-  todo: UUID[];
   completed: UUID[];
   focused: string | number | null;
+  todo: UUID[];
+  temp: { [id: string]: Schema$Task }; // temp storage
 }
 
 const initialState: TaskState = {
   byIds: {},
   byDate: {},
-  todo: [],
   completed: [],
-  focused: null
+  focused: null,
+  todo: [],
+  temp: {}
 };
 
 const getDatekey = (task?: Schema$Task) => (task && task.due) || 'null';
@@ -100,8 +102,14 @@ export default function(state = initialState, action: TaskActions): TaskState {
       })();
 
     case TaskActionTypes.NEW_TASK_SUCCESS:
+    case TaskActionTypes.UPDATE_TASK_SUCCESS:
       return (() => {
         const { uuid } = action.payload;
+
+        // It can be undefined, if task deleted before NEW_TASK_SUCCESS
+        if (!state.byIds[uuid]) {
+          return state;
+        }
 
         return {
           ...state,
@@ -117,39 +125,34 @@ export default function(state = initialState, action: TaskActions): TaskState {
       })();
 
     case TaskActionTypes.UPDATE_TASK:
-    case TaskActionTypes.UPDATE_TASK_SUCCESS:
       return (() => {
-        const newTaskPayload = action.payload;
-        const { uuid, status } = newTaskPayload;
+        const { uuid, status } = action.payload;
         const oldTask = state.byIds[uuid];
-
-        // ``oldTask`` can be undefined, if task deleted before NEW_TASK_SUCCESS
-        if (!oldTask) {
-          return state;
-        }
 
         let todo = state.todo.slice();
         let completed = state.completed.slice();
 
-        const newTask = { ...newTaskPayload, ...oldTask };
+        const newTask = { ...oldTask, ...action.payload };
         const oldDateKey = getDatekey(oldTask);
         const byDatePayload = {
           [oldDateKey]: state.byDate[oldDateKey] || []
         };
 
-        if (oldTask.status !== newTask.status) {
+        if (oldTask.status !== action.payload.status) {
           if (status === 'completed') {
             completed = [...completed, uuid];
             completed.sort();
+            todo = remove(todo, uuid);
             byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
           } else if (status === 'needsAction') {
+            completed = remove(completed, uuid);
             todo = todo.includes(uuid) ? todo : [uuid, ...todo];
             byDatePayload[oldDateKey] = [uuid, ...state.byDate[oldDateKey]];
           }
         }
 
-        if (oldTask.due !== newTask.due) {
-          const newDateKey = getDatekey(newTask);
+        if (oldTask.due !== action.payload.due) {
+          const newDateKey = getDatekey(action.payload);
           byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
           byDatePayload[newDateKey] = [
             uuid,
@@ -267,6 +270,52 @@ export default function(state = initialState, action: TaskActions): TaskState {
             [uuid]: currentTask
           },
           focused: uuid
+        };
+      })();
+
+    case TaskActionTypes.MOVE_TO_ANOHTER_LIST:
+      return (() => {
+        const { uuid } = action.payload;
+        const { [uuid]: deleted, ...byIds } = state.byIds;
+        const dateKey = getDatekey(deleted);
+
+        return {
+          ...state,
+          byIds,
+          byDate: {
+            ...state.byDate,
+            [dateKey]: remove(state.byDate[dateKey] || [], uuid)
+          },
+          todo: remove(state.todo, uuid),
+          temp: {
+            ...state.temp,
+            [uuid]: deleted
+          },
+          focused: null
+        };
+      })();
+
+    case TaskActionTypes.MOVE_TO_ANOHTER_LIST_SUCCESS:
+      return (() => {
+        const newTask = action.payload;
+
+        if (!newTask) {
+          return state;
+        }
+
+        const { uuid } = newTask;
+        const { [uuid]: deleted, ...temp } = state.temp;
+        const dateKey = getDatekey(newTask);
+
+        return {
+          ...state,
+          byIds: { ...state.byIds, [uuid]: newTask },
+          byDate: {
+            ...state.byDate,
+            [dateKey]: [uuid, ...(state.byDate[dateKey] || [])]
+          },
+          todo: [uuid, ...state.todo],
+          temp
         };
       })();
 

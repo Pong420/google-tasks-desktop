@@ -37,6 +37,17 @@
   &:last-child {
     border-bottom: 1px solid var(--border-color);
   }
+
+  .toggle-completed {
+    &:hover {
+      > button:nth-child(1) {
+        visibility: hidden;
+      }
+      > button:nth-child(2) {
+        visibility: visible;
+      }
+    }
+  }
 }
 
 .todo-task-menu-paper {
