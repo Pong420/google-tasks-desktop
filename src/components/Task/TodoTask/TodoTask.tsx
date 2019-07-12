@@ -63,8 +63,14 @@ export function TodoTaskComponent({
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
   const [dateTimeDialogOpened, dateTimeDialog] = useBoolean();
-  const [detailsViewOpened, detailsView] = useBoolean();
-  const [taskListDropdownOpened, taskListDropdown] = useBoolean();
+  const [
+    detailsViewOpened,
+    { on: openDetailsView, off: closeDetailView }
+  ] = useBoolean();
+  const [
+    taskListDropdownOpened,
+    { on: openTaskListDropdown, off: closeTaskListDropdown }
+  ] = useBoolean();
 
   const [onFocus, onBlur] = useMemo(
     () => [() => setFocused(task.uuid), () => setFocused(null)],
@@ -112,9 +118,9 @@ export function TodoTaskComponent({
   );
 
   const handleDetailsClose = useCallback(() => {
-    detailsView.off();
-    taskListDropdown.off();
-  }, [detailsView, taskListDropdown]);
+    closeDetailView();
+    closeTaskListDropdown();
+  }, [closeDetailView, closeTaskListDropdown]);
 
   const [focusPrevTask, focusNextTask] = useMemo(() => {
     const handler = (type: 'start' | 'end', uuid?: string) => () => {
@@ -200,7 +206,7 @@ export function TodoTaskComponent({
   useMouseTrap(inputRef, 'enter', newTaskCallback);
   useMouseTrap(inputRef, 'up', focusPrevTask);
   useMouseTrap(inputRef, 'down', focusNextTask);
-  useMouseTrap(inputRef, 'shift+enter', detailsView.on);
+  useMouseTrap(inputRef, 'shift+enter', openDetailsView);
   useMouseTrap(inputRef, 'option+up', moveTaskUp);
   useMouseTrap(inputRef, 'option+down', moveTaskDown);
 
@@ -209,7 +215,7 @@ export function TodoTaskComponent({
       <Task
         className={classes(`todo-task`, focused && 'focused', className)}
         due={sortByDate ? undefined : task.due}
-        endAdornment={<EditTaskButton onClick={detailsView.on} />}
+        endAdornment={<EditTaskButton onClick={openDetailsView} />}
         notes={task.notes}
         inputRef={inputRef}
         onClick={onClickCallback}
@@ -230,7 +236,7 @@ export function TodoTaskComponent({
         onClose={onClose}
         onDelete={deleteTaskCallback}
         openDateTimeDialog={dateTimeDialog.on}
-        openTaskListDropdown={taskListDropdown.on}
+        openTaskListDropdown={openTaskListDropdown}
       />
       <TaskDetailsView
         open={taskListDropdownOpened || detailsViewOpened}
