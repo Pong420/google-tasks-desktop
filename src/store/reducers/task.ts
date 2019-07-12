@@ -7,12 +7,12 @@ import { taskIds } from '../';
 type UUID = Schema$Task['uuid'];
 
 export interface TaskState {
-  byIds: { [id: string]: Schema$Task };
+  byIds: { [uuid: string]: Schema$Task };
   byDate: { [date: string]: UUID[] };
   completed: UUID[];
   focused: string | number | null;
   todo: UUID[];
-  temp: { [id: string]: Schema$Task }; // temp storage
+  temp: { [uuid: string]: Schema$Task }; // temp storage, for epic
 }
 
 const initialState: TaskState = {
@@ -56,7 +56,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
               compare(a.position, b.position) || compare(a.updated, b.updated)
             );
           })
-          .reduce<{ [id: string]: Schema$Task }>((acc, task) => {
+          .reduce<{ [uuid: string]: Schema$Task }>((acc, task) => {
             const uuid = task.uuid || taskIds.next();
             const dateKey = getDatekey(task);
 
@@ -195,9 +195,22 @@ export default function(state = initialState, action: TaskActions): TaskState {
             ...state.byDate,
             [dateKey]: remove(state.byDate[dateKey] || [], uuid)
           },
-          todo: remove(state.todo, uuid),
           completed: remove(state.completed, uuid),
+          todo: remove(state.todo, uuid),
+          temp: {
+            ...state.temp,
+            [uuid]: deleted
+          },
           ...(prevUUID && { focused: prevUUID })
+        };
+      })();
+
+    case TaskActionTypes.DELETE_TASK_SUCCESS:
+      return (() => {
+        const { [action.payload]: deleted, ...temp } = state.temp;
+        return {
+          ...state,
+          temp
         };
       })();
 

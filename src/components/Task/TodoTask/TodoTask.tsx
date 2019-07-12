@@ -87,33 +87,28 @@ export function TodoTaskComponent({
   }, [newTask, task.uuid, task.due, sortByDate]);
 
   const deleteTaskCallback = useCallback(
-    (args?: Omit<Parameters<typeof deleteTask>[0], 'id' | 'uuid'>) => {
-      deleteTask({ id: task.id, uuid: task.uuid, ...args });
+    (args?: Omit<Parameters<typeof deleteTask>[0], 'uuid'>) => {
+      deleteTask({ uuid: task.uuid, ...args });
     },
-    [deleteTask, task.id, task.uuid]
-  );
-
-  const updateTaskCallback = useCallback(
-    (args: Omit<Parameters<typeof updateTask>[0], 'id' | 'uuid'>) => {
-      updateTask({ id: task.id, uuid: task.uuid, ...args });
-    },
-    [task.id, task.uuid, updateTask]
+    [deleteTask, task.uuid]
   );
 
   const onChangeCallback = useCallback(
     (evt: ChangeEvent<HTMLTextAreaElement>) =>
-      updateTaskCallback({
+      updateTask({
+        uuid: task.uuid,
         title: evt.target.value
       }),
-    [updateTaskCallback]
+    [updateTask, task.uuid]
   );
 
   const onDueDateChangeCallback = useCallback(
     (date?: Date) =>
-      updateTaskCallback({
+      updateTask({
+        uuid: task.uuid,
         due: date && date.toISODateString()
       }),
-    [updateTaskCallback]
+    [updateTask, task.uuid]
   );
 
   const handleDetailsClose = useCallback(() => {
@@ -153,9 +148,7 @@ export function TodoTaskComponent({
             if (newDate.dayDiff(now) > 0) {
               newDate = now;
             }
-            updateTaskCallback({
-              due: newDate.toISODateString()
-            });
+            onDueDateChangeCallback(newDate);
           }
         } else if (prevUUID !== task.uuid) {
           moveTask({ uuid: task.uuid, prevUUID });
@@ -167,7 +160,7 @@ export function TodoTaskComponent({
     return [handler(prevTask, -1), handler(nextTask, 1)];
   }, [
     moveTask,
-    updateTaskCallback,
+    onDueDateChangeCallback,
     prevTask,
     nextTask,
     sortByDate,

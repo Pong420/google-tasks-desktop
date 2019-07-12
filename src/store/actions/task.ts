@@ -28,7 +28,7 @@ export interface Payload$NewTask extends Pick<tasks_v1.Schema$Task, 'due'> {
   prevUUID?: UUID;
 }
 
-export interface Payload$DeleteTask extends Schema$Task {
+export interface Payload$DeleteTask extends Pick<Schema$Task, 'uuid'> {
   prevUUID?: UUID;
 }
 
@@ -89,6 +89,7 @@ export interface DeleteTask {
 
 export interface DeleteTaskSuccess {
   type: TaskActionTypes.DELETE_TASK_SUCCESS;
+  payload: UUID;
 }
 
 export interface DeleteCompletedTasks {

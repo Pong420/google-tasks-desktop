@@ -81,22 +81,24 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress, push }) => {
           );
 
         case TaskActionTypes.DELETE_TASK:
-          const deleteTaskRequest$ = (task?: string) =>
-            from(tasksAPI.delete({ tasklist, task })).pipe(
-              map<unknown, Actions>(() => ({
-                type: TaskActionTypes.DELETE_TASK_SUCCESS
-              }))
-            );
+          return (() => {
+            const task = state$.value.task.temp[action.payload.uuid];
+            const deleteTaskRequest$ = (task?: string) =>
+              from(tasksAPI.delete({ tasklist, task })).pipe(
+                map<unknown, Actions>(() => ({
+                  type: TaskActionTypes.DELETE_TASK_SUCCESS,
+                  payload: action.payload.uuid
+                }))
+              );
 
-          if (!action.payload.id) {
-            return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
-              switchMap(success =>
-                success ? deleteTaskRequest$(success.payload.id) : empty()
-              )
-            );
-          }
-
-          return deleteTaskRequest$(action.payload.id);
+            return task.id
+              ? deleteTaskRequest$(task.id)
+              : onNewTaskSuccess$(action$, action.payload.uuid).pipe(
+                  switchMap(success =>
+                    success ? deleteTaskRequest$(success.payload.id) : empty()
+                  )
+                );
+          })();
 
         case TaskActionTypes.DELETE_COMPLETED_TASKS:
           return from(tasksAPI.clear({ tasklist })).pipe(
@@ -126,13 +128,12 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress, push }) => {
 
             if (prevTask && !prevTask.id) {
               return onNewTaskSuccess$(action$, prevTask.uuid).pipe(
-                mergeMap(success =>
+                switchMap(success =>
                   newTaskRequest$(
                     action.payload.uuid,
                     success && success.payload.id
                   )
-                ),
-                take(1)
+                )
               );
             }
 
@@ -192,13 +193,13 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
               });
             }
 
-            return onNewTaskSuccess$(action$, action.payload.uuid).pipe(
+            return onNewTaskSuccess$(action$, task.uuid).pipe(
               switchMap(success => {
-                const task = state$.value.task.byIds[action.payload.uuid];
-                return success && task
+                const latestTask = state$.value.task.byIds[task.uuid];
+                return success && latestTask
                   ? updateTaskRequest$({
                       ...success.payload,
-                      ...task,
+                      ...latestTask,
                       id: success.payload.id // make sure id will not bw overwritten
                     })
                   : empty();

@@ -10,13 +10,9 @@ interface Props extends Pick<Schema$Task, 'uuid'> {
   isEmpty: boolean;
 }
 
-const mapStateToProps = (state: RootState, { uuid }: Props) => {
-  const task = state.task.byIds[uuid];
-  return {
-    id: task.id,
-    completed: task.status === 'completed'
-  };
-};
+const mapStateToProps = (state: RootState, { uuid }: Props) => ({
+  completed: state.task.byIds[uuid].status === 'completed'
+});
 
 const MarkCompleteButton = React.memo(() => (
   <IconButton tooltip="Mark complete">
@@ -34,22 +30,20 @@ function ToggleCompletedComponent({
   completed,
   dispatch,
   isEmpty,
-  id,
   uuid
 }: Props & ReturnType<typeof mapStateToProps> & DispatchProp) {
   const onClickCallback = useCallback(() => {
     if (isEmpty) {
-      dispatch(deleteTask({ id, uuid }));
+      dispatch(deleteTask({ uuid }));
     } else {
       dispatch(
         updateTask({
-          id,
           uuid,
           status: completed ? 'needsAction' : 'completed'
         })
       );
     }
-  }, [id, uuid, completed, isEmpty, dispatch]);
+  }, [uuid, completed, isEmpty, dispatch]);
 
   return (
     <div className="toggle-completed" onClick={onClickCallback}>

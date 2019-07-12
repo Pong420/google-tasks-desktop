@@ -39,11 +39,10 @@ interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
 }
 
 const mapStateToProps = (state: RootState, { uuid }: Props) => {
-  const { due, id, notes, title } = state.task.byIds[uuid];
+  const { due, notes, title } = state.task.byIds[uuid];
   return {
     currentTaskListId: currentTaskListIdSelector(state),
     due,
-    id,
     notes,
     title
   };
@@ -71,7 +70,6 @@ export function TaskDetailsViewComponent({
   currentTaskListId,
   due,
   dispatch,
-  id,
   notes,
   onClose,
   title,
@@ -119,7 +117,6 @@ export function TaskDetailsViewComponent({
       (date ? date.toISODateString() !== due : date !== due)
     ) {
       change = {
-        id,
         uuid,
         due: date && date.toISODateString(),
         title: newTitle,
@@ -127,12 +124,12 @@ export function TaskDetailsViewComponent({
       };
     }
     return change;
-  }, [id, uuid, title, notes, due, date]);
+  }, [uuid, title, notes, due, date]);
 
   const onExitedCallback = useCallback(() => {
     if (shouldDeleteTask.current) {
       shouldDeleteTask.current = false;
-      dispatch(deleteTask({ id, uuid }));
+      dispatch(deleteTask({ uuid }));
     } else {
       if (newTaskListId && newTaskListId !== currentTaskListId) {
         dispatch(
@@ -146,7 +143,7 @@ export function TaskDetailsViewComponent({
         dispatch(updateTask(change));
       }
     }
-  }, [change, currentTaskListId, dispatch, newTaskListId, id, uuid]);
+  }, [change, currentTaskListId, dispatch, newTaskListId, uuid]);
 
   const deleteBtnClickedCallback = useCallback(() => {
     shouldDeleteTask.current = true;
