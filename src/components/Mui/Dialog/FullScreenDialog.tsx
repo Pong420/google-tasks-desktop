@@ -25,7 +25,7 @@ const backdropProps = {
   open: false
 };
 
-const paperClasses = { paper: 'FullScreen-dialog-paper' };
+const paperClasses = { paper: 'fullScreen-dialog-paper' };
 
 export function FullScreenDialog({
   children,
@@ -47,7 +47,7 @@ export function FullScreenDialog({
         {headerComponents}
         <IconButton tooltip="Close task" icon={CloseIcon} onClick={onClose} />
       </div>
-      <div className="FullScreen-dialog-content">
+      <div className="fullScreen-dialog-content">
         <ScrollContent>{children}</ScrollContent>
       </div>
     </Dialog>
@@ -55,15 +55,15 @@ export function FullScreenDialog({
 }
 
 FullScreenDialog.Section = ({ children }: ContainerProps) => {
-  return <div className="FullScreen-dialog-section">{children}</div>;
+  return <div className="fullScreen-dialog-section">{children}</div>;
 };
 
 FullScreenDialog.Title = ({ children }: ContainerProps) => {
-  return <div className="FullScreen-dialog-section-title">{children}</div>;
+  return <div className="fullScreen-dialog-section-title">{children}</div>;
 };
 
 FullScreenDialog.Row = ({ children }: ContainerProps) => {
-  return <div className="FullScreen-dialog-row">{children}</div>;
+  return <div className="fullScreen-dialog-row">{children}</div>;
 };
 
 export default FullScreenDialog;
