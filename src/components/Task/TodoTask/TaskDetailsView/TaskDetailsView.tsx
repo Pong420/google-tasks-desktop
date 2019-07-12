@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback, KeyboardEvent } from 'react';
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  KeyboardEvent,
+  useMemo
+} from 'react';
 import {
   DeleteIcon,
   EditIcon,
@@ -20,16 +26,16 @@ import {
   moveToAnotherList,
   currentTaskListIdSelector
 } from '../../../../store';
+import { useBoolean } from '../../../../utils/useBoolean';
 import { Schema$Task } from '../../../../typings';
 import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import DateTimeDialog from '../DateTimeDialog';
 
 interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
   taskListDropdownOpened?: boolean;
-  openDateTimeDialog(): void;
-  onRemoveDateTime(): void;
 }
 
 const mapStateToProps = (state: RootState, { uuid }: Props) => {
@@ -68,8 +74,6 @@ export function TaskDetailsViewComponent({
   id,
   notes,
   onClose,
-  openDateTimeDialog,
-  onRemoveDateTime,
   title,
   taskListDropdownOpened,
   uuid,
@@ -78,7 +82,13 @@ export function TaskDetailsViewComponent({
   const titleInputRef = useRef<HTMLTextAreaElement>();
   const notesInputRef = useRef<HTMLTextAreaElement>();
   const shouldDeleteTask = useRef<boolean>(false);
-  const [newTaskList, setNewTaskList] = useState(currentTaskListId);
+  const [newTaskListId, setNewTaskListId] = useState(currentTaskListId);
+  const [date, setDate] = useState(due ? new Date(due) : undefined);
+  const [dateTimeModalOpened, dateTimeModal] = useBoolean();
+
+  const setDateCallback = useCallback((date?: Date) => {
+    setDate(date);
+  }, []);
 
   // Instead of autoFocus attr.
   // Aims to delay focus so that the focus animation
@@ -92,46 +102,51 @@ export function TaskDetailsViewComponent({
     []
   );
 
-  const deleteTaskCallback = useCallback(() => {
-    dispatch(deleteTask({ id, uuid }));
-  }, [dispatch, uuid, id]);
-
   const onSelectTaskList = useCallback<TaskListDropdownProps['onSelect']>(
-    ({ id }) => setNewTaskList(id!),
+    ({ id }) => setNewTaskListId(id!),
     []
   );
 
-  const onExitCallback = useCallback(() => {
+  const change = useMemo(() => {
     const titleInput = titleInputRef.current;
     const notesInput = notesInputRef.current;
     const newTitle = titleInput && titleInput.value;
     const newNotes = notesInput && notesInput.value;
-
-    if ((title || '') !== newTitle || (notes || '') !== newNotes) {
-      dispatch(
-        updateTask({
-          id,
-          uuid,
-          title: newTitle,
-          notes: newNotes
-        })
-      );
+    let change;
+    if (
+      (title || '') !== newTitle ||
+      (notes || '') !== newNotes ||
+      (date ? date.toISODateString() !== due : date !== due)
+    ) {
+      change = {
+        id,
+        uuid,
+        due: date && date.toISODateString(),
+        title: newTitle,
+        notes: newNotes
+      };
     }
-  }, [dispatch, id, uuid, title, notes]);
+    return change;
+  }, [id, uuid, title, notes, due, date]);
 
   const onExitedCallback = useCallback(() => {
     if (shouldDeleteTask.current) {
       shouldDeleteTask.current = false;
-      deleteTaskCallback();
-    } else if (newTaskList && newTaskList !== currentTaskListId) {
-      dispatch(
-        moveToAnotherList({
-          tasklist: newTaskList,
-          uuid
-        })
-      );
+      dispatch(deleteTask({ id, uuid }));
+    } else {
+      if (newTaskListId && newTaskListId !== currentTaskListId) {
+        dispatch(
+          moveToAnotherList({
+            tasklist: newTaskListId,
+            uuid,
+            ...change
+          })
+        );
+      } else if (change) {
+        dispatch(updateTask(change));
+      }
     }
-  }, [currentTaskListId, deleteTaskCallback, newTaskList, uuid, dispatch]);
+  }, [change, currentTaskListId, dispatch, newTaskListId, id, uuid]);
 
   const deleteBtnClickedCallback = useCallback(() => {
     shouldDeleteTask.current = true;
@@ -139,65 +154,73 @@ export function TaskDetailsViewComponent({
   }, [onClose]);
 
   return (
-    <FullScreenDialog
-      {...props}
-      className="task-details-view"
-      headerComponents={
-        <IconButton
-          tooltip="Delete"
-          icon={DeleteIcon}
-          onClick={deleteBtnClickedCallback}
+    <>
+      <FullScreenDialog
+        {...props}
+        className="task-details-view"
+        headerComponents={
+          <IconButton
+            tooltip="Delete"
+            icon={DeleteIcon}
+            onClick={deleteBtnClickedCallback}
+          />
+        }
+        onClose={onClose}
+        onEntered={focustTitleInputField}
+        onExited={onExitedCallback}
+      >
+        <Input
+          multiline
+          className="filled task-details-view-title-field"
+          placeholder="Enter title"
+          defaultValue={title}
+          inputRef={titleInputRef}
+          onKeyPress={preventStartNewLine}
         />
-      }
-      onClose={onClose}
-      onEntered={focustTitleInputField}
-      onExit={onExitCallback}
-      onExited={onExitedCallback}
-    >
-      <Input
-        multiline
-        className="filled task-details-view-title-field"
-        placeholder="Enter title"
-        defaultValue={title}
-        inputRef={titleInputRef}
-        onKeyPress={preventStartNewLine}
+
+        <Input
+          multiline
+          rows={3}
+          rowsMax={Infinity}
+          className="filled task-details-view-notes-field"
+          placeholder="Add details"
+          defaultValue={notes}
+          inputRef={notesInputRef}
+          onClick={focusNotesInputField}
+        />
+
+        <div className="row row-task-list">
+          <FormatListBulletedIcon />
+          <TaskListDropdown
+            buttonProps={dropdownButtonProps}
+            defaultOpen={taskListDropdownOpened}
+            onSelect={onSelectTaskList}
+            paperClassName="details-task-list-dropdown-paper"
+          />
+        </div>
+
+        <div className="row row-date">
+          <EventAvailableIcon />
+          <DateTimeButton
+            date={date}
+            onClick={dateTimeModal.on}
+            onClose={setDateCallback}
+          />
+        </div>
+
+        <div className="row row-subtask">
+          <SubdirectoryIcon />
+          <Button disabled>Add Subtasks</Button>
+        </div>
+      </FullScreenDialog>
+
+      <DateTimeDialog
+        date={date}
+        open={dateTimeModalOpened}
+        onClose={dateTimeModal.off}
+        onConfirm={setDateCallback}
       />
-
-      <Input
-        multiline
-        rows={3}
-        rowsMax={Infinity}
-        className="filled task-details-view-notes-field"
-        placeholder="Add details"
-        defaultValue={notes}
-        inputRef={notesInputRef}
-        onClick={focusNotesInputField}
-      />
-
-      <div className="row row-task-list">
-        <FormatListBulletedIcon />
-        <TaskListDropdown
-          buttonProps={dropdownButtonProps}
-          defaultOpen={taskListDropdownOpened}
-          onSelect={onSelectTaskList}
-          paperClassName="details-task-list-dropdown-paper"
-        />
-      </div>
-
-      <div className="row row-date">
-        <EventAvailableIcon />
-        <DateTimeButton
-          due={due}
-          onClick={openDateTimeDialog}
-          onClose={onRemoveDateTime}
-        />
-      </div>
-
-      <div className="row row-subtask">
-        <SubdirectoryIcon />
-        <Button disabled>Add Subtasks</Button>
-      </div>
-    </FullScreenDialog>
+    </>
   );
 }
 

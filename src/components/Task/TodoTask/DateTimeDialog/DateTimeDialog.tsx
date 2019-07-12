@@ -3,7 +3,8 @@ import { Omit } from 'react-redux';
 import { ConfirmDialog, ConfirmDialogProps } from '../../../Mui/Dialog';
 import { DatePicker } from '../../../DatePicker';
 
-interface Props extends Omit<ConfirmDialogProps, 'onChange' | 'onConfirm'> {
+interface Props
+  extends Omit<ConfirmDialogProps, 'onChange' | 'onConfirm' | 'confirmLabel'> {
   date?: Date;
   onConfirm(date: Date): void;
 }
@@ -22,6 +23,7 @@ export const DateTimeDialog = React.memo(
 
     return (
       <ConfirmDialog
+        confirmLabel="OK"
         classes={dialogClasses}
         onConfirm={onConfirmCallback}
         {...props}
