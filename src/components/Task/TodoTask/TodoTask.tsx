@@ -111,7 +111,7 @@ export function TodoTaskComponent({
   const onDueDateChangeCallback = useCallback(
     (date?: Date) =>
       updateTaskCallback({
-        due: date && date.toISOString()
+        due: date && date.toISODateString()
       }),
     [updateTaskCallback]
   );
@@ -144,10 +144,18 @@ export function TodoTaskComponent({
     const handler = (prevUUID: Schema$Task['uuid'], step: number) => () => {
       if (prevUUID) {
         if (sortByDate) {
-          const canMoveUp = !task.due || new Date(task.due).dayDiff() < 0;
-          const canMoveDown = !!task.due;
+          const now = new Date();
+          const currDate = task.due && new Date(task.due);
+          const canMoveUp = !currDate || currDate.dayDiff(now) < 0;
+          const canMoveDown = !!currDate;
           if ((step === -1 && canMoveUp) || (step === 1 && canMoveDown)) {
-            moveTask({ uuid: task.uuid, prevUUID, step });
+            let newDate = currDate ? currDate.addDays(step) : now;
+            if (newDate.dayDiff(now) > 0) {
+              newDate = now;
+            }
+            updateTaskCallback({
+              due: newDate.toISODateString()
+            });
           }
         } else if (prevUUID !== task.uuid) {
           moveTask({ uuid: task.uuid, prevUUID });
@@ -157,7 +165,15 @@ export function TodoTaskComponent({
     };
 
     return [handler(prevTask, -1), handler(nextTask, 1)];
-  }, [moveTask, prevTask, nextTask, sortByDate, task.uuid, task.due]);
+  }, [
+    moveTask,
+    updateTaskCallback,
+    prevTask,
+    nextTask,
+    sortByDate,
+    task.uuid,
+    task.due
+  ]);
 
   const onKeydownCallback = useCallback(
     (evt: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -225,14 +241,11 @@ export function TodoTaskComponent({
       />
       <TaskDetailsView
         open={taskListDropdownOpened || detailsViewOpened}
-        onRemoveDateTime={onDueDateChangeCallback}
-        openDateTimeDialog={dateTimeDialog.on}
         onClose={handleDetailsClose}
         taskListDropdownOpened={taskListDropdownOpened}
         uuid={task.uuid}
       />
       <DateTimeDialog
-        confirmLabel="OK"
         date={task.due ? new Date(task.due) : undefined}
         open={dateTimeDialogOpened}
         onClose={dateTimeDialog.off}

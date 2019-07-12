@@ -33,6 +33,8 @@ export function TodoTasksListSortByDateComponent({
     return label;
   }, []);
 
+  prevLabel.current = '';
+
   return (
     <div className="todo-tasks-list-sort-by-date">
       {todoTasksByDate.map(([date, ids]) => {

@@ -35,7 +35,6 @@ export interface Payload$DeleteTask extends Schema$Task {
 export interface Payload$MoveTask {
   prevUUID: UUID;
   uuid: UUID;
-  step?: number;
 }
 
 export type Payload$SortTasks = 'order' | 'date';

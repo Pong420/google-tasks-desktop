@@ -127,7 +127,7 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.UPDATE_TASK:
       return (() => {
-        const { uuid, status } = action.payload;
+        const { uuid, status, due } = action.payload;
         const oldTask = state.byIds[uuid];
 
         let todo = state.todo.slice();
@@ -139,10 +139,12 @@ export default function(state = initialState, action: TaskActions): TaskState {
           [oldDateKey]: state.byDate[oldDateKey] || []
         };
 
-        if (oldTask.status !== action.payload.status) {
+        if (
+          action.payload.hasOwnProperty('status') &&
+          status !== oldTask.status
+        ) {
           if (status === 'completed') {
             completed = [...completed, uuid];
-            completed.sort();
             todo = remove(todo, uuid);
             byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
           } else if (status === 'needsAction') {
@@ -153,9 +155,10 @@ export default function(state = initialState, action: TaskActions): TaskState {
               ...(state.byDate[oldDateKey] || [])
             ];
           }
-        }
-
-        if (oldTask.due !== action.payload.due) {
+        } else if (
+          action.payload.hasOwnProperty('due') &&
+          oldTask.due !== due
+        ) {
           const newDateKey = getDatekey(action.payload);
           byDatePayload[oldDateKey] = remove(byDatePayload[oldDateKey], uuid);
           byDatePayload[newDateKey] = [
@@ -216,64 +219,13 @@ export default function(state = initialState, action: TaskActions): TaskState {
 
     case TaskActionTypes.MOVE_TASKS:
       return (() => {
-        const { uuid, prevUUID, step } = action.payload;
-        const { todo, byIds, byDate } = state;
-        const byDatePayload: TaskState['byDate'] = {};
-        let currentTask = byIds[uuid];
-
-        // special handling for moving task when ordering by date
-        if (step) {
-          let updatedDate;
-          const now = new Date();
-          if (currentTask.due) {
-            // move with existing date
-            const date = new Date(currentTask.due);
-            const dayDiff = date.dayDiff(now);
-
-            updatedDate =
-              dayDiff > 0 // if date is past
-                ? now // set new date to totody
-                : date.addDays(step); // else set depends on step
-          } else if (step === -1) {
-            // move up from no date
-            // move to prev task's date group
-            const prevTask_ = byIds[prevUUID];
-            if (prevTask_ && prevTask_.due) {
-              updatedDate = new Date(prevTask_.due);
-            }
-          }
-
-          if (updatedDate) {
-            // make sure the date is not in the past
-            if (updatedDate.dayDiff(now) > 0) {
-              updatedDate = now;
-            }
-
-            currentTask = {
-              ...currentTask,
-              due: updatedDate.toISODateString()
-            };
-
-            const oldDateKey = getDatekey(byIds[uuid]);
-            const newDateKey = getDatekey(currentTask);
-
-            byDatePayload[oldDateKey] = remove(byDate[oldDateKey] || [], uuid);
-            byDatePayload[newDateKey] = [uuid, ...(byDate[newDateKey] || [])];
-          }
-        }
-
         return {
           ...state,
-          todo: move(todo, todo.indexOf(uuid), todo.indexOf(prevUUID)),
-          byDate: {
-            ...byDate,
-            ...byDatePayload
-          },
-          byIds: {
-            ...byIds,
-            [uuid]: currentTask
-          },
-          focused: uuid
+          todo: move(
+            state.todo,
+            state.todo.indexOf(action.payload.uuid),
+            state.todo.indexOf(action.payload.prevUUID)
+          )
         };
       })();
 
