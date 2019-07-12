@@ -93,13 +93,8 @@ $completed-task-list-header-height: 54px;
 }
 
 .completed-tasks-list-content {
-  @include animate(visibility);
+  @include flex();
   @include sq-dimen(100%);
   overflow: hidden;
   padding-bottom: 1px; // avoid scroll shown when there is only one completed task
-  visibility: hidden;
-
-  &.visible {
-    visibility: visible;
-  }
 }

@@ -32,16 +32,13 @@ function CompletedTasksListComponent({
           Completed ({completedTasks.length})
           <IconButton icon={expanded ? CollapseIcon : ExpandIcon} />
         </div>
-        <ScrollContent
-          className={classes(
-            'completed-tasks-list-content',
-            expanded && 'visible'
-          )}
-        >
-          {completedTasks.map(uuid => (
-            <CompletedTask key={uuid} uuid={uuid} />
-          ))}
-        </ScrollContent>
+        <div className="completed-tasks-list-content">
+          <ScrollContent>
+            {completedTasks.map(uuid => (
+              <CompletedTask key={uuid} uuid={uuid} />
+            ))}
+          </ScrollContent>
+        </div>
       </div>
     </div>
   );

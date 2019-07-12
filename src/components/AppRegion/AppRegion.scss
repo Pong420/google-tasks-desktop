@@ -17,3 +17,10 @@
     }
   }
 }
+
+body {
+  > [role='dialog'],
+  > [role='presentation'] {
+    @include app-region-no-drag;
+  }
+}

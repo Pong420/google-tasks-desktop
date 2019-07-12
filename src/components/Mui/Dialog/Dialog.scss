@@ -59,6 +59,7 @@
 }
 
 .FullScreen-diaglog-header {
+  @include app-region-drag;
   @include dimen(100%, $header-height);
   @include flex(center, flex-end);
   @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));

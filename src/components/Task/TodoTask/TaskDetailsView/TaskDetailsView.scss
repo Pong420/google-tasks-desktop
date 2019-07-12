@@ -1,8 +1,12 @@
 $height: 36px;
 
 .task-details-view {
-  .scroll-content > * {
-    margin-bottom: 8px;
+  .row,
+  .mui-input-base {
+    + .row,
+    + .mui-input-base {
+      margin-top: 8px;
+    }
   }
 
   .mui-input-base {
