@@ -15,12 +15,15 @@ import {
 import { SimplebarAPI } from '../../typings';
 import { classes } from '../../utils/classes';
 
-const mapStateToProps = (state: RootState) => ({
-  creatingNewTaskList: state.taskList.creatingNewTaskList,
-  currentTaskListId: currentTaskListIdSelector(state),
-  showCompletedTaskList: !!state.task.completed.length,
-  sortByDate: state.taskList.sortByDate
-});
+const mapStateToProps = (state: RootState) => {
+  const { creatingNewTaskList, sortByDate } = state.taskList;
+  return {
+    creatingNewTaskList,
+    currentTaskListId: currentTaskListIdSelector(state),
+    showCompletedTaskList: !!state.task.completed.length,
+    sortByDate
+  };
+};
 
 function TaskListComponent({
   creatingNewTaskList,

@@ -31,11 +31,10 @@ export interface TodoTaskProps extends Pick<Schema$Task, 'uuid'> {
 const mapStateToProps = (state: RootState, ownProps: TodoTaskProps) => {
   const todoTasks = getTodoTasksOrder(state);
   const index = todoTasks.indexOf(ownProps.uuid);
-
+  const { focused, byIds } = state.task;
   return {
-    task: state.task.byIds[ownProps.uuid],
-    focused:
-      state.task.focused === ownProps.uuid || state.task.focused === index,
+    task: byIds[ownProps.uuid],
+    focused: focused === ownProps.uuid || focused === index,
     prevTask: todoTasks[Math.max(0, index - 1)],
     nextTask: todoTasks[Math.min(todoTasks.length, index + 1)],
     sortByDate: state.taskList.sortByDate

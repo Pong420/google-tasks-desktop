@@ -1,17 +1,24 @@
 import { createSelector } from 'reselect';
 import { RootState } from '../reducers';
 
-export const currentTaskListIdSelector = (state: RootState) =>
-  state.taskList.id || state.taskList.ids[0];
+const idSelector = (state: RootState) => state.taskList.id;
+const idsSelector = (state: RootState) => state.taskList.ids;
+const byIdsSelector = (state: RootState) => state.taskList.byIds;
+
+export const currentTaskListIdSelector = createSelector(
+  idsSelector,
+  idSelector,
+  (ids, id) => id || ids[0]
+);
 
 export const currentTaskListSelector = createSelector(
-  state => state,
+  byIdsSelector,
   currentTaskListIdSelector,
-  (state, id) => (id ? state.taskList.byIds[id] : undefined)
+  (byIds, id) => (id ? byIds[id] : undefined)
 );
 
 export const isMasterTaskList = createSelector(
-  state => state,
+  idsSelector,
   currentTaskListIdSelector,
-  (state, id) => state.taskList.ids[0] === id
+  (ids, id) => ids[0] === id
 );
