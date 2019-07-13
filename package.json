@@ -167,7 +167,7 @@
     "history": "^4.9.0",
     "hotkeys-js": "Pong420/hotkeys#aa5f618",
     "lodash.isequal": "^4.5.0",
-    "lodash.mergewith": "^4.6.1",
+    "lodash.mergewith": "^4.6.2",
     "nprogress": "^0.2.0",
     "pong-react-scripts": "3.0.1-1",
     "react": "^16.8.6",
