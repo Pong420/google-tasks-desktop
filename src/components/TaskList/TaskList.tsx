@@ -1,18 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { connect, DispatchProp } from 'react-redux';
 import { TaskListHeader } from '../TaskListHeader';
 import { TodoTaskList } from './TodoTaskList';
 import { CompletedTaskList } from './CompletedTaskList';
 import { TodoTasksListSortByDate } from './TodoTasksListSortByDate';
 import { NewTask } from '../NewTask';
-import { ScrollContent } from '../ScrollContent';
 import {
   RootState,
   getAllTasks,
   getAllTaskList,
   currentTaskListIdSelector
 } from '../../store';
-import { SimplebarAPI } from '../../typings';
 import { classes } from '../../utils/classes';
 
 const mapStateToProps = (state: RootState) => {
@@ -32,8 +30,6 @@ function TaskListComponent({
   showCompletedTaskList,
   sortByDate
 }: ReturnType<typeof mapStateToProps> & DispatchProp) {
-  const simplebarRef = useRef<SimplebarAPI>(null);
-
   useEffect(() => {
     dispatch(getAllTaskList());
   }, [dispatch]);
@@ -42,19 +38,12 @@ function TaskListComponent({
     currentTaskListId && dispatch(getAllTasks(currentTaskListId));
   }, [dispatch, currentTaskListId]);
 
-  useEffect(() => {
-    const el = simplebarRef.current && simplebarRef.current.getScrollElement();
-    el && el.scrollTo(0, 0);
-  }, [sortByDate]);
-
   return (
     <div className={classes('task-list', creatingNewTaskList && 'disabled')}>
       <TaskListHeader />
       <div className="task-list-content">
         <NewTask />
-        <ScrollContent simplebarRef={simplebarRef}>
-          {sortByDate ? <TodoTasksListSortByDate /> : <TodoTaskList />}
-        </ScrollContent>
+        {sortByDate ? <TodoTasksListSortByDate /> : <TodoTaskList />}
         {showCompletedTaskList && <CompletedTaskList />}
       </div>
     </div>

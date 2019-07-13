@@ -29,8 +29,6 @@ function Container({ children, container }: ContainerProps) {
   return createPortal(children, container);
 }
 
-// TODO: use @types/simplebar
-
 const useSimplebar = process.platform !== 'darwin';
 
 export const ScrollContent = ({
@@ -54,10 +52,9 @@ export const ScrollContent = ({
 
   useImperativeHandle<SimplebarAPI, SimplebarAPI>(simplebarRef, () => ({
     getScrollElement() {
-      if (useSimplebar && simplebar) {
-        return simplebar.getScrollElement();
-      }
-      return el.current;
+      return useSimplebar && simplebar
+        ? simplebar.getScrollElement()
+        : el.current;
     }
   }));
 

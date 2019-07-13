@@ -6,6 +6,7 @@ import {
   SortOverHandler,
   SortEndHandler
 } from 'react-sortable-hoc';
+import { ScrollContent } from '../ScrollContent';
 import { TodoTask, TodoTaskProps } from '../Task/';
 import { useBoolean } from '../../utils/useBoolean';
 import { RootState, moveTask } from '../../store';
@@ -90,17 +91,19 @@ export function TodoTaskListComponent({
   );
 
   return (
-    <SortableList
-      distance={10}
-      dragging={dragging}
-      helperClass="dragging"
-      insertAfter={insertAfter}
-      lockAxis="y"
-      onSortMove={on}
-      onSortOver={onSortOverCallback}
-      onSortEnd={onSortEndCallack}
-      todoTasks={todoTasks}
-    />
+    <ScrollContent>
+      <SortableList
+        distance={10}
+        dragging={dragging}
+        helperClass="dragging"
+        insertAfter={insertAfter}
+        lockAxis="y"
+        onSortMove={on}
+        onSortOver={onSortOverCallback}
+        onSortEnd={onSortEndCallack}
+        todoTasks={todoTasks}
+      />
+    </ScrollContent>
   );
 }
 

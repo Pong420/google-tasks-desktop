@@ -4,7 +4,6 @@ import { CompletedTask } from '../Task';
 import { ScrollContent } from '../ScrollContent';
 import { IconButton } from '../Mui/IconButton';
 import { RootState } from '../../store';
-import { classes } from '../../utils/classes';
 import { useBoolean } from '../../utils/useBoolean';
 import ExpandIcon from '@material-ui/icons/ExpandLess';
 import CollapseIcon from '@material-ui/icons/ExpandMore';

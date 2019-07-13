@@ -1,5 +1,6 @@
 import React, { useRef, Fragment, useCallback } from 'react';
 import { connect, DispatchProp } from 'react-redux';
+import { ScrollContent } from '../ScrollContent/';
 import { TodoTask } from '../Task/';
 import { RootState, getTodoTasksByDate } from '../../store';
 
@@ -36,25 +37,27 @@ export function TodoTasksListSortByDateComponent({
   prevLabel.current = '';
 
   return (
-    <div className="todo-tasks-list-sort-by-date">
-      {todoTasksByDate.map(([date, ids]) => {
-        let label = !!ids.length ? getDateLabel(date) : '';
-        if (prevLabel.current === label) {
-          label = '';
-        } else {
-          prevLabel.current = label;
-        }
+    <ScrollContent>
+      <div className="todo-tasks-list-sort-by-date">
+        {todoTasksByDate.map(([date, ids]) => {
+          let label = !!ids.length ? getDateLabel(date) : '';
+          if (prevLabel.current === label) {
+            label = '';
+          } else {
+            prevLabel.current = label;
+          }
 
-        return (
-          <Fragment key={date}>
-            {label && <div className="date-label" data-label={label} />}
-            {ids.map(uuid => (
-              <TodoTask key={uuid} uuid={uuid} />
-            ))}
-          </Fragment>
-        );
-      })}
-    </div>
+          return (
+            <Fragment key={date}>
+              {label && <div className="date-label" data-label={label} />}
+              {ids.map(uuid => (
+                <TodoTask key={uuid} uuid={uuid} />
+              ))}
+            </Fragment>
+          );
+        })}
+      </div>
+    </ScrollContent>
   );
 }
 
