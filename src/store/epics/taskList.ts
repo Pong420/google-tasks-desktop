@@ -19,9 +19,10 @@ type TaskListEpic<T extends Action> = Epic<T, T, RootState, EpicDependencies>;
 const apiEpic: TaskListEpic<TaskListActions | RouterAction> = (
   action$,
   state$,
-  { nprogress, push }
+  { nprogress, push, withOfflineHelper }
 ) =>
   action$.pipe(
+    withOfflineHelper(state$),
     mergeMap(action => {
       switch (action.type) {
         case TaskListActionTypes.GET_ALL_TASK_LIST:

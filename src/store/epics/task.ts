@@ -60,8 +60,13 @@ const onNewTaskSuccess$ = (action$: ActionsObservable<Actions>, uuid: UUID) =>
     )
   );
 
-const taskApiEpic: TaskEpic = (action$, state$, { nprogress, push }) => {
+const taskApiEpic: TaskEpic = (
+  action$,
+  state$,
+  { nprogress, push, withOfflineHelper }
+) => {
   return action$.pipe(
+    withOfflineHelper(state$),
     mergeMap(action => {
       // current tasklist id
       const tasklist = state$.value.taskList.id;
@@ -151,7 +156,7 @@ const taskApiEpic: TaskEpic = (action$, state$, { nprogress, push }) => {
 };
 
 // TODO: debounce ?
-const updateTaskEpic: TaskEpic = (action$, state$) => {
+const updateTaskEpic: TaskEpic = (action$, state$, { withOfflineHelper }) => {
   const updateTaskRequest$ = (requestBody: Schema$Task) => {
     return from(
       tasksAPI.update({
@@ -178,11 +183,12 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
   };
 
   return action$.pipe(
+    withOfflineHelper(state$),
     ofType<Actions, UpdateTask>(TaskActionTypes.UPDATE_TASK),
     groupBy(action => action.payload.uuid),
     mergeMap(group$ =>
       group$.pipe(
-        mergeMap(action => {
+        switchMap(action => {
           const task = state$.value.task.byIds[action.payload.uuid];
 
           if (task) {
@@ -214,8 +220,9 @@ const updateTaskEpic: TaskEpic = (action$, state$) => {
   );
 };
 
-const moveTaskEpic: TaskEpic = (action$, state$) => {
+const moveTaskEpic: TaskEpic = (action$, state$, { withOfflineHelper }) => {
   return action$.pipe(
+    withOfflineHelper(state$),
     ofType<Actions, MoveTask>(TaskActionTypes.MOVE_TASKS),
     groupBy(action => action.payload.uuid),
     mergeMap(group$ =>
@@ -265,8 +272,13 @@ const moveTaskEpic: TaskEpic = (action$, state$) => {
   );
 };
 
-const moveAnotherListEpic: TaskEpic = (action$, state$) => {
+const moveAnotherListEpic: TaskEpic = (
+  action$,
+  state$,
+  { withOfflineHelper }
+) => {
   return action$.pipe(
+    withOfflineHelper(state$),
     ofType<Actions, MoveToAnotherList>(TaskActionTypes.MOVE_TO_ANOHTER_LIST),
     groupBy(({ payload }) => payload.uuid),
     mergeMap(group$ =>
@@ -324,16 +336,14 @@ const moveAnotherListEpic: TaskEpic = (action$, state$) => {
 
 const syncTasksEpic: TaskEpic = (action$, state$) => {
   const getAllTasksSilent$ = () => {
-    const taskListId = state$.value.taskList.id;
-    if (taskListId) {
-      if (taskListId && state$.value.network.isOnline) {
-        return getAllTasks$(taskListId).pipe(
-          map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
-            type: TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS,
-            payload
-          }))
-        );
-      }
+    const { taskList, network } = state$.value;
+    if (taskList.id && network.isOnline) {
+      return getAllTasks$(taskList.id).pipe(
+        map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
+          type: TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS,
+          payload
+        }))
+      );
     }
     return empty();
   };
@@ -350,7 +360,8 @@ const syncTasksEpic: TaskEpic = (action$, state$) => {
         withSyncPreferences,
         switchMap(([_, { reconnection }]) =>
           reconnection ? getAllTasksSilent$() : empty()
-        )
+        ),
+        takeUntil(action$)
       )
     )
   );
