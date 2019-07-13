@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Google Tasks",
+  "name": "Create Google Tasks Sample",
   "icons": [
     {
       "src": "favicon.ico",
