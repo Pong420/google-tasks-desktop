@@ -155,7 +155,6 @@ const taskApiEpic: TaskEpic = (
   );
 };
 
-// TODO: debounce ?
 const updateTaskEpic: TaskEpic = (action$, state$, { withOfflineHelper }) => {
   const updateTaskRequest$ = (requestBody: Schema$Task) => {
     return from(
@@ -188,6 +187,7 @@ const updateTaskEpic: TaskEpic = (action$, state$, { withOfflineHelper }) => {
     groupBy(action => action.payload.uuid),
     mergeMap(group$ =>
       group$.pipe(
+        debounceTime(10000),
         switchMap(action => {
           const task = state$.value.task.byIds[action.payload.uuid];
 
