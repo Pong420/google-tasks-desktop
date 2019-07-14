@@ -11,7 +11,9 @@
 
 #### [Download](https://github.com/Pong420/google-tasks-desktop/releases) | [Video Demo](https://pong420.github.io/google-tasks-desktop/demo.mp4)
 
-#### :warning: You will need to enable your own [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer
+#### :warning: You will need to enable your own [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer.
+
+#### You could follow below step.
 
 1. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
@@ -75,6 +77,6 @@ yarn package-all
 ### Known issue
 
 - Add time / repeat is not supported as API limitation
-- Tasks sorting type (My Oreder / Date) is not synced to the official platform (Web/App)
+- Tasks sorting type (My order / Date) is not synced to the official platform (Web/App)
 - The tasks that marked as completed through the official platform (Web/App) will not show in this application
-- The position of the task which marks as complete to incomplete will be different after refresh
+- The position of the task which marks as complete to incomplete may be different after refresh
