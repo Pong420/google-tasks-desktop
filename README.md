@@ -13,7 +13,7 @@
 
 #### :warning: You will need to enable your own [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer.
 
-#### You could follow below step.
+#### Step to enable Google Task API.
 
 1. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
