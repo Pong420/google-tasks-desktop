@@ -1,4 +1,4 @@
-import React, { useState, useCallback, HTMLAttributes } from 'react';
+import React, { useState, useCallback, HTMLAttributes, useMemo } from 'react';
 import { Omit } from 'react-redux';
 import { IconButton } from '../Mui/IconButton';
 import { classes } from '../../utils/classes';
@@ -55,12 +55,12 @@ export function DatePicker({ value, onChange }: Props) {
     [date]
   );
 
-  const switchMonth = useCallback((step: number) => {
-    setDisplay(({ date }) => getDisplayData(date.addMonths(step)));
-  }, []);
+  const [prevMonth, nextMonth] = useMemo(() => {
+    const handler = (step: number) => () =>
+      setDisplay(({ date }) => getDisplayData(date.addMonths(step)));
 
-  const prevMonth = useCallback(() => switchMonth(-1), [switchMonth]);
-  const nextMonth = useCallback(() => switchMonth(1), [switchMonth]);
+    return [handler(-1), handler(1)];
+  }, []);
 
   const onDateClick = useCallback(
     (d: Date) => {
