@@ -6,7 +6,7 @@ import { Auth } from './components/Auth';
 import { TaskList } from './components/TaskList';
 import { PATHS } from './constants';
 
-const App = () => (
+const App = React.memo(() => (
   <>
     <AppRegion />
     <Auth>
@@ -17,6 +17,6 @@ const App = () => (
     </Auth>
     <Network />
   </>
-);
+));
 
 export default App;
