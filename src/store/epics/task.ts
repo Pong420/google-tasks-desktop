@@ -1,4 +1,4 @@
-import { empty, from, timer, of, forkJoin, race, merge } from 'rxjs';
+import { empty, from, of, forkJoin, race } from 'rxjs';
 import {
   debounceTime,
   groupBy,
@@ -10,7 +10,6 @@ import {
   tap,
   take,
   takeWhile,
-  withLatestFrom,
   catchError
 } from 'rxjs/operators';
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
@@ -27,25 +26,15 @@ import {
   DeleteTask,
   MoveToAnotherList
 } from '../actions/task';
-import { NetworkActions, NetworkActionTypes } from '../actions/network';
 import { RootState } from '../reducers';
 import { tasksAPI } from '../../api';
 import { EpicDependencies } from '../epicDependencies';
 import { Schema$Task } from '../../typings';
 import { PATHS } from '../../constants';
 
-type Actions = TaskActions | NetworkActions | RouterAction;
+type Actions = TaskActions | RouterAction;
 type TaskEpic = Epic<Actions, Actions, RootState, EpicDependencies>;
 type UUID = Schema$Task['uuid'];
-
-const getAllTasks$ = (tasklist: string) =>
-  from(
-    tasksAPI.list({
-      tasklist,
-      showCompleted: true,
-      showHidden: false
-    })
-  ).pipe(map(({ data }) => data.items));
 
 const onNewTaskSuccess$ = (action$: ActionsObservable<Actions>, uuid: UUID) =>
   race(
@@ -75,8 +64,15 @@ const taskApiEpic: TaskEpic = (
         case TaskActionTypes.GET_ALL_TASKS:
           nprogress.inc(0.4);
 
-          return getAllTasks$(action.payload).pipe(
+          return from(
+            tasksAPI.list({
+              tasklist: action.payload,
+              showCompleted: true,
+              showHidden: false
+            })
+          ).pipe(
             tap(() => nprogress.done()),
+            map(({ data }) => data.items),
             map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
               type: TaskActionTypes.GET_ALL_TASKS_SUCCESS,
               payload
@@ -334,59 +330,4 @@ const moveAnotherListEpic: TaskEpic = (
   );
 };
 
-const syncTasksEpic: TaskEpic = (action$, state$) => {
-  const getAllTasksSilent$ = () => {
-    const { taskList, network } = state$.value;
-    if (taskList.id && network.isOnline) {
-      return getAllTasks$(taskList.id).pipe(
-        map<tasks_v1.Schema$Tasks['items'], Actions>((payload = []) => ({
-          type: TaskActionTypes.GET_ALL_TASKS_SILENT_SUCCESS,
-          payload
-        }))
-      );
-    }
-    return empty();
-  };
-
-  const withSyncPreferences = withLatestFrom(
-    state$.pipe(map(({ preferences }) => preferences.sync))
-  );
-
-  const reconnection = action$.pipe(
-    ofType(NetworkActionTypes.OFFLINE),
-    switchMap(() =>
-      action$.pipe(
-        ofType(NetworkActionTypes.ONLINE),
-        withSyncPreferences,
-        switchMap(([_, { reconnection }]) =>
-          reconnection ? getAllTasksSilent$() : empty()
-        ),
-        takeUntil(action$)
-      )
-    )
-  );
-
-  return merge(
-    reconnection,
-    action$.pipe(
-      withSyncPreferences,
-      switchMap(([_, { enabled, inactiveHours }]) => {
-        const ms = inactiveHours * 60 * 60 * 1000;
-
-        if (!enabled || ms < 60 * 1000) {
-          return empty();
-        }
-
-        return timer(ms).pipe(switchMap(() => getAllTasksSilent$()));
-      })
-    )
-  );
-};
-
-export default [
-  taskApiEpic,
-  updateTaskEpic,
-  moveTaskEpic,
-  moveAnotherListEpic,
-  syncTasksEpic
-];
+export default [taskApiEpic, updateTaskEpic, moveTaskEpic, moveAnotherListEpic];

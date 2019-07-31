@@ -3,6 +3,8 @@ import { tasks_v1 } from 'googleapis';
 export enum TaskListActionTypes {
   GET_ALL_TASK_LIST = 'GET_ALL_TASK_LIST',
   GET_ALL_TASK_LIST_SUCCESS = 'GET_ALL_TASK_LIST_SUCCESS',
+  GET_ALL_TASK_LIST_SILENT = 'GET_ALL_TASK_LIST_SILENT',
+  GET_ALL_TASK_LIST_SILENT_SUCCESS = 'GET_ALL_TASK_LIST_SILENT_SUCCESS',
   GET_TASK_LIST = 'GET_TASK_LIST',
   GET_TASK_LIST_SUCCESS = 'GET_TASK_LIST_SUCCESS',
   NEW_TASK_LIST = 'NEW_TASK_LIST',
@@ -20,6 +22,11 @@ export interface GetAllTaskList {
 
 export interface GetAllTaskListSuccess {
   type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS;
+  payload: tasks_v1.Schema$TaskList[];
+}
+
+export interface GetAllTaskListSilentSuccess {
+  type: TaskListActionTypes.GET_ALL_TASK_LIST_SILENT_SUCCESS;
   payload: tasks_v1.Schema$TaskList[];
 }
 
@@ -69,6 +76,7 @@ export interface ToggleSortByDate {
 export type TaskListActions =
   | GetAllTaskList
   | GetAllTaskListSuccess
+  | GetAllTaskListSilentSuccess
   | GetTaskList
   | GetTaskListSuccess
   | NewTaskList
@@ -87,7 +95,7 @@ export function getAllTaskList(): GetAllTaskList {
 
 export function getTaskList(
   payload: tasks_v1.Params$Resource$Tasks$Get
-): GetTaskList | GetAllTaskList {
+): GetTaskList {
   return {
     type: TaskListActionTypes.GET_TASK_LIST,
     payload

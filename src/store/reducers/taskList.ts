@@ -62,6 +62,7 @@ export default function(
       };
 
     case TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS:
+    case TaskListActionTypes.GET_ALL_TASK_LIST_SILENT_SUCCESS:
       return (() => {
         const ids: string[] = [];
         const byIds = action.payload.reduce<TaskListState['byIds']>(
