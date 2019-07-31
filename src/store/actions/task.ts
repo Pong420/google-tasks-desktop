@@ -5,7 +5,6 @@ import { taskIds } from '../';
 export enum TaskActionTypes {
   GET_ALL_TASKS = 'GET_ALL_TASKS',
   GET_ALL_TASKS_SUCCESS = 'GET_ALL_TASKS_SUCCESS',
-  GET_ALL_TASKS_SILENT = 'GET_ALL_TASKS_SILENT',
   GET_ALL_TASKS_SILENT_SUCCESS = 'GET_ALL_TASKS_SILENT_SUCCESS',
   NEW_TASK = 'NEW_TASK',
   NEW_TASK_SUCCESS = 'NEW_TASK_SUCCESS',
@@ -51,10 +50,6 @@ export interface GetAllTasks {
 export interface GetAllTasksSuccess {
   type: TaskActionTypes.GET_ALL_TASKS_SUCCESS;
   payload: tasks_v1.Schema$Task[];
-}
-
-export interface GetAllTasksSilent {
-  type: TaskActionTypes.GET_ALL_TASKS_SILENT;
 }
 
 export interface GetAllTasksSilentSuccess {
@@ -128,7 +123,6 @@ export interface SetFocused {
 export type TaskActions =
   | GetAllTasks
   | GetAllTasksSuccess
-  | GetAllTasksSilent
   | GetAllTasksSilentSuccess
   | NewTask
   | NewTaskSuccess

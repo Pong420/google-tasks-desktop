@@ -3,10 +3,7 @@ import { tasks_v1 } from 'googleapis';
 export enum TaskListActionTypes {
   GET_ALL_TASK_LIST = 'GET_ALL_TASK_LIST',
   GET_ALL_TASK_LIST_SUCCESS = 'GET_ALL_TASK_LIST_SUCCESS',
-  GET_ALL_TASK_LIST_SILENT = 'GET_ALL_TASK_LIST_SILENT',
   GET_ALL_TASK_LIST_SILENT_SUCCESS = 'GET_ALL_TASK_LIST_SILENT_SUCCESS',
-  GET_TASK_LIST = 'GET_TASK_LIST',
-  GET_TASK_LIST_SUCCESS = 'GET_TASK_LIST_SUCCESS',
   NEW_TASK_LIST = 'NEW_TASK_LIST',
   NEW_TASK_LIST_SUCCESS = 'NEW_TASK_LIST_SUCCESS',
   UPDATE_TASK_LIST = 'UPDATE_TASK_LIST',
@@ -28,15 +25,6 @@ export interface GetAllTaskListSuccess {
 export interface GetAllTaskListSilentSuccess {
   type: TaskListActionTypes.GET_ALL_TASK_LIST_SILENT_SUCCESS;
   payload: tasks_v1.Schema$TaskList[];
-}
-
-export interface GetTaskList {
-  type: TaskListActionTypes.GET_TASK_LIST;
-  payload: tasks_v1.Params$Resource$Tasks$Get;
-}
-
-export interface GetTaskListSuccess {
-  type: TaskListActionTypes.GET_TASK_LIST_SUCCESS;
 }
 
 export interface NewTaskList {
@@ -77,8 +65,6 @@ export type TaskListActions =
   | GetAllTaskList
   | GetAllTaskListSuccess
   | GetAllTaskListSilentSuccess
-  | GetTaskList
-  | GetTaskListSuccess
   | NewTaskList
   | NewTaskListSuccess
   | UpdateTaskList
@@ -90,15 +76,6 @@ export type TaskListActions =
 export function getAllTaskList(): GetAllTaskList {
   return {
     type: TaskListActionTypes.GET_ALL_TASK_LIST
-  };
-}
-
-export function getTaskList(
-  payload: tasks_v1.Params$Resource$Tasks$Get
-): GetTaskList {
-  return {
-    type: TaskListActionTypes.GET_TASK_LIST,
-    payload
   };
 }
 
@@ -139,7 +116,6 @@ export function toggleSortByDate(payload?: boolean): ToggleSortByDate {
 export const TaskListActionCreators = {
   deleteTaskList,
   getAllTaskList,
-  getTaskList,
   newTaskList,
   toggleSortByDate,
   updateTaskList
