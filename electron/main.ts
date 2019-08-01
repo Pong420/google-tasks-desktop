@@ -1,5 +1,5 @@
-import * as path from 'path';
-import * as url from 'url';
+import path from 'path';
+import url from 'url';
 import { app, BrowserWindow, WebPreferences, shell } from 'electron';
 import { MenuBuilder } from './menu';
 import { store } from './store';
@@ -23,8 +23,6 @@ async function createWindow() {
     await installExtension(REDUX_DEVTOOLS);
   }
 
-  const offset = store.get('offset');
-
   mainWindow = new BrowserWindow({
     frame: false,
     height: 500,
@@ -32,7 +30,7 @@ async function createWindow() {
     show: false,
     titleBarStyle: 'hiddenInset',
     webPreferences,
-    ...offset
+    ...store.get('offset').value()
   });
 
   const startUrl =
@@ -80,6 +78,6 @@ app.on('activate', () => {
 app.on('before-quit', () => {
   if (mainWindow) {
     const { x, y } = mainWindow.getBounds();
-    store.set('offset', { x, y });
+    store.set('offset', { x, y }).write();
   }
 });

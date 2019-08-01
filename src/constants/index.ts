@@ -8,8 +8,6 @@ export const STORAGE_DIRECTORY = path.join(
   'google-tasks-desktop'
 );
 
-export const TASK_LISTS_PATH = path.join(STORAGE_DIRECTORY, 'tasks.json');
-
 export const TOKEN_PATH = path.join(STORAGE_DIRECTORY, 'token.json');
 
 export const OAUTH2_KEYS_PATH = path.join(STORAGE_DIRECTORY, 'oauth2.json');

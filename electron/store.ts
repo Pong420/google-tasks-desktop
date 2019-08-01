@@ -1,7 +1,26 @@
-import Store from 'electron-store';
+import { remote } from 'electron';
+import path from 'path';
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
 
-const defaults = {
+interface Schema {
+  offset: {
+    x?: number;
+    y?: number;
+  };
+}
+
+const adapter = new FileSync<Schema>(
+  path.join(
+    remote.app.getPath('userData'),
+    'google-tasks-desktop',
+    'system.json'
+  )
+);
+const db = low(adapter);
+
+db.defaults({
   offset: {}
-};
+}).write();
 
-export const store = new Store({ defaults });
+export const store = db;

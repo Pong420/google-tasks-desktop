@@ -1,29 +1,35 @@
-import Store from 'electron-store';
 import {
   PreferencesActions,
   PreferencesActionTypes
 } from '../actions/preferences';
 import { SyncPreferences } from '../../typings';
+import { STORAGE_DIRECTORY } from '../../constants';
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
 
-export interface PreferencesState {
+interface State {
   sync: SyncPreferences;
 }
 
-const store = new Store<SyncPreferences>();
-const KEY = 'SYNC';
+const adapter = new FileSync<State>(`${STORAGE_DIRECTORY}/preferences.json`);
+const db = low(adapter);
 
-const initialState: PreferencesState = {
-  sync: store.get(KEY, {
+db.defaults({
+  sync: {
     enabled: true,
     reconnection: true,
     inactiveHours: 12
-  })
+  }
+}).write();
+
+const initialState: State = {
+  sync: db.get('sync').value()
 };
 
 export default function(
   state = initialState,
   action: PreferencesActions
-): PreferencesState {
+): State {
   switch (action.type) {
     case PreferencesActionTypes.UPDATE_SYNC_PREFERENCES:
       const sync = {
@@ -31,7 +37,7 @@ export default function(
         ...action.payload
       };
 
-      store.set(KEY, sync);
+      db.set('sync', sync).write();
 
       return {
         ...state,
