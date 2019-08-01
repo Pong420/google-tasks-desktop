@@ -3,7 +3,6 @@ import {
   map,
   switchMap,
   withLatestFrom,
-  tap,
   filter,
   takeUntil
 } from 'rxjs/operators';

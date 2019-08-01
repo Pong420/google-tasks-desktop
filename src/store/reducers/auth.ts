@@ -1,6 +1,5 @@
-import fs from 'fs';
 import { AuthActions, AuthActionTypes } from '../actions/auth';
-import { TOKEN_PATH } from '../../constants';
+import { tokenStorage } from '../../storage';
 
 export interface AuthsState {
   autoLogin: boolean;
@@ -8,7 +7,7 @@ export interface AuthsState {
 }
 
 const initialState: AuthsState = {
-  autoLogin: fs.existsSync(TOKEN_PATH),
+  autoLogin: !tokenStorage.isEmpty().value(),
   loggedIn: false
 };
 

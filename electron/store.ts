@@ -1,4 +1,4 @@
-import { remote } from 'electron';
+import { app } from 'electron';
 import path from 'path';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -11,11 +11,7 @@ interface Schema {
 }
 
 const adapter = new FileSync<Schema>(
-  path.join(
-    remote.app.getPath('userData'),
-    'google-tasks-desktop',
-    'system.json'
-  )
+  path.join(app.getPath('userData'), 'google-tasks-desktop', 'system.json')
 );
 const db = low(adapter);
 

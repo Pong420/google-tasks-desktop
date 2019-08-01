@@ -1,24 +1,16 @@
-import fs from 'fs';
 import { remote } from 'electron';
 import { google } from 'googleapis';
-import { TOKEN_PATH, OAUTH2_KEYS_PATH } from './constants';
-import { writeFileSync } from './utils/writeFileSync';
+import { oAuth2Storage, tokenStorage } from './storage';
 import { OAuthKeys } from './typings';
 
-export let OAuth2Keys: OAuthKeys | null = null;
-export let oAuth2Client = new google.auth.OAuth2();
-
-try {
-  OAuth2Keys = JSON.parse(
-    fs.readFileSync(OAUTH2_KEYS_PATH, 'utf-8')
-  ) as OAuthKeys;
-
-  oAuth2Client = new google.auth.OAuth2(
-    OAuth2Keys.installed.client_id,
-    OAuth2Keys.installed.client_secret,
-    OAuth2Keys.installed.redirect_uris[0]
-  );
-} catch {}
+export let OAuth2Keys: Partial<OAuthKeys> = oAuth2Storage.getState();
+export let oAuth2Client = OAuth2Keys.installed
+  ? new google.auth.OAuth2(
+      OAuth2Keys.installed.client_id,
+      OAuth2Keys.installed.client_secret,
+      OAuth2Keys.installed.redirect_uris[0]
+    )
+  : undefined;
 
 const SCOPES = ['https://www.googleapis.com/auth/tasks'];
 
@@ -27,44 +19,37 @@ export const { tasks: tasksAPI, tasklists: taskListAPI } = google.tasks({
   auth: oAuth2Client
 });
 
-export function authenticateAPI() {
-  return new Promise((resolve, reject) => {
+export async function authenticateAPI() {
+  if (oAuth2Client) {
     const authorizeUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: SCOPES
     });
 
-    fs.readFile(TOKEN_PATH, 'utf-8', (err, token) => {
-      if (err) {
-        remote.shell.openExternal(authorizeUrl);
-        reject(err);
-      } else {
-        try {
-          oAuth2Client.setCredentials(JSON.parse(token));
-          resolve();
-        } catch (error) {
-          fs.unlinkSync(TOKEN_PATH);
-          reject(error);
-        }
-      }
-    });
-  });
+    if (tokenStorage.isEmpty().value()) {
+      remote.shell.openExternal(authorizeUrl);
+      return Promise.reject();
+    } else {
+      const token = tokenStorage.getState();
+      oAuth2Client.setCredentials(token);
+      return Promise.resolve();
+    }
+  }
+
+  return Promise.reject();
 }
 
-export function getTokenAPI(code: string) {
-  return new Promise((resolve, reject) => {
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) {
-        reject(err);
-      } else {
-        try {
-          oAuth2Client.setCredentials(token!);
-          writeFileSync(TOKEN_PATH, token!);
-          resolve(token!);
-        } catch (err) {
-          reject(err);
-        }
-      }
-    });
-  });
+export async function getTokenAPI(code: string) {
+  if (oAuth2Client) {
+    try {
+      const { tokens } = await oAuth2Client.getToken(code);
+      oAuth2Client.setCredentials(tokens);
+      tokenStorage.setState(tokens).write();
+      return tokens;
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  } else {
+    return Promise.reject();
+  }
 }

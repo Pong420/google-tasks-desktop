@@ -1,8 +1,7 @@
 import React, { useCallback, ChangeEvent, useState } from 'react';
 import { classes } from '../../utils/classes';
 import { useBoolean } from '../../utils/useBoolean';
-import { writeFileSync } from '../../utils/writeFileSync';
-import { OAUTH2_KEYS_PATH } from '../../constants';
+import { oAuth2Storage } from '../../storage';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import fs from 'fs';
 
@@ -13,19 +12,18 @@ export function FileUpload() {
   const onChangeCallback = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
     const { files } = evt.currentTarget;
     if (files && files.length && files[0].type === 'application/json') {
-      fs.readFile(files[0].path, 'utf-8', async (_, content) => {
-        try {
-          const data = JSON.parse(content);
-          if (data.installed) {
-            await writeFileSync(OAUTH2_KEYS_PATH, data);
-            window.location.reload();
-          } else {
-            setErrorMsg('Invalid JSON file');
-          }
-        } catch (err) {
+      try {
+        const content = fs.readFileSync(files[0].path, 'utf-8');
+        const data = JSON.parse(content);
+        if (data.installed) {
+          oAuth2Storage.setState(data).write();
+          window.location.reload();
+        } else {
           setErrorMsg('Invalid JSON file');
         }
-      });
+      } catch (err) {
+        setErrorMsg('Invalid JSON file');
+      }
     } else {
       setErrorMsg('Invalid file or format');
     }
