@@ -3,7 +3,6 @@
   "compilerOptions": {
     "module": "commonjs",
     "noEmit": false,
-    "outDir": "./",
     "rootDir": "./"
   },
   "exclude": ["../node_modules"],
