@@ -1,7 +1,8 @@
 import { RouterAction, LOCATION_CHANGE } from 'connected-react-router';
 import { matchPath } from 'react-router-dom';
 import { TaskListActions, TaskListActionTypes } from '../actions/taskList';
-import { PATHS, LAST_VISITED_TASKS_LIST_ID } from '../../constants';
+import { PATHS } from '../../constants';
+import { lastVisit, createLocalStorage } from '../../storage';
 import { Schema$TaskList } from '../../typings';
 import { remove } from '../../utils/array';
 
@@ -13,10 +14,12 @@ export interface TaskListState {
   creatingNewTaskList: boolean;
 }
 
-const SORT_BY_DATE_TASKS_LIST_IDS = 'SORT_BY_DATE_TASKS_LIST_IDS';
-let sortByDateTasksListIds: string[] = JSON.parse(
-  localStorage.getItem(SORT_BY_DATE_TASKS_LIST_IDS) || '[]'
+const sortByDateIds = createLocalStorage<string[]>(
+  'SORT_BY_DATE_TASKS_LIST_IDS',
+  { defaultValue: [] }
 );
+
+let sortByDateTasksListIds: string[] = sortByDateIds.getState();
 
 const initialState: TaskListState = {
   byIds: {},
@@ -43,7 +46,7 @@ export default function(
         const id = (matches && matches.params.taskListId) || state.ids[0];
 
         if (id) {
-          localStorage.setItem(LAST_VISITED_TASKS_LIST_ID, id);
+          lastVisit.setState(id).write(id);
           return {
             ...state,
             id,
@@ -136,10 +139,7 @@ export default function(
           sortByDateTasksListIds = remove(sortByDateTasksListIds, state.id!);
         }
 
-        localStorage.setItem(
-          SORT_BY_DATE_TASKS_LIST_IDS,
-          JSON.stringify(sortByDateTasksListIds)
-        );
+        sortByDateIds.setState(sortByDateTasksListIds).write();
 
         return {
           ...state,

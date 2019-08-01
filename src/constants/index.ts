@@ -11,5 +11,3 @@ export const STORAGE_DIRECTORY = path.join(
 export const TOKEN_PATH = path.join(STORAGE_DIRECTORY, 'token.json');
 
 export const OAUTH2_KEYS_PATH = path.join(STORAGE_DIRECTORY, 'oauth2.json');
-
-export const LAST_VISITED_TASKS_LIST_ID = 'LAST_VISITED_TASKS_LIST_ID';
