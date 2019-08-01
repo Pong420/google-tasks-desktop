@@ -5,7 +5,7 @@ import { Input } from '../Mui/Input';
 import { FileUpload } from './FileUpload';
 import { RootState, authenticate, getToken } from '../../store';
 import { useInput } from '../../utils/useInput';
-import { OAuth2Keys } from '../../api';
+import { oAuth2Storage } from '../../storage';
 import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
 import Button from '@material-ui/core/Button';
 
@@ -17,7 +17,7 @@ const mapStateToProps = ({ auth: { loggedIn, autoLogin } }: RootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators({ authenticate, getToken }, dispatch);
 
-const installed = !!OAuth2Keys;
+const installed = !oAuth2Storage.isEmpty().value();
 
 export function AuthComponent({
   autoLogin,

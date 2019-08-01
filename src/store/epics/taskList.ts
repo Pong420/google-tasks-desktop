@@ -29,11 +29,13 @@ const apiEpic: TaskListEpic<TaskListActions | RouterAction> = (
           nprogress.start();
 
           return from(taskListAPI.list()).pipe(
-            map(({ data }) => data),
-            map<tasks_v1.Schema$TaskLists, TaskListActions>(({ items }) => ({
-              type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
-              payload: items!.map(taskList => taskList)
-            }))
+            map(({ data }) => data.items),
+            map<tasks_v1.Schema$TaskLists['items'], TaskListActions>(
+              (payload = []) => ({
+                type: TaskListActionTypes.GET_ALL_TASK_LIST_SUCCESS,
+                payload
+              })
+            )
           );
 
         case TaskListActionTypes.NEW_TASK_LIST:

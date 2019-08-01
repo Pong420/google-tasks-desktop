@@ -39,12 +39,14 @@ interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
 }
 
 const mapStateToProps = (state: RootState, { uuid }: Props) => {
-  const { due, notes, title } = state.task.byIds[uuid];
+  const task = state.task.byIds[uuid];
   return {
     currentTaskListId: currentTaskListIdSelector(state),
-    due,
-    notes,
-    title
+    ...(task && {
+      due: task.due,
+      notes: task.notes,
+      title: task.title
+    })
   };
 };
 

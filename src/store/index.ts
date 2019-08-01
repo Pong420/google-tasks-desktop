@@ -5,7 +5,8 @@ import { routerMiddleware } from 'connected-react-router';
 import { generatePath } from 'react-router-dom';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { PATHS, LAST_VISITED_TASKS_LIST_ID } from '../constants';
+import { PATHS } from '../constants';
+import { lastVisit } from '../storage';
 import { UUID } from '../utils/uuid';
 import rootEpic from './epics';
 import createRootReducer from './reducers';
@@ -16,7 +17,7 @@ export const taskIds = new UUID();
 
 history.replace(
   generatePath(PATHS.TASKLIST, {
-    taskListId: localStorage.getItem(LAST_VISITED_TASKS_LIST_ID) || undefined
+    taskListId: lastVisit.getState() || undefined
   })
 );
 
