@@ -1,4 +1,5 @@
 import { app } from 'electron';
+import fs from 'fs';
 import path from 'path';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
@@ -10,9 +11,13 @@ interface Schema {
   };
 }
 
-const adapter = new FileSync<Schema>(
-  path.join(app.getPath('userData'), 'google-tasks-desktop', 'system.json')
-);
+const storageDir = path.join(app.getPath('userData'), 'google-tasks-desktop');
+
+if (!fs.existsSync(storageDir)) {
+  fs.mkdirSync(storageDir);
+}
+
+const adapter = new FileSync<Schema>(path.join(storageDir, 'system.json'));
 const db = low(adapter);
 
 db.defaults({
