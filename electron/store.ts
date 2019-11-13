@@ -11,7 +11,12 @@ interface Schema {
   };
 }
 
-const storageDir = path.join(app.getPath('userData'), 'google-tasks-desktop');
+const userDataDir = app.getPath('userData');
+const storageDir = path.join(userDataDir, 'google-tasks-desktop');
+
+if (!fs.existsSync(userDataDir)) {
+  fs.mkdirSync(userDataDir);
+}
 
 if (!fs.existsSync(storageDir)) {
   fs.mkdirSync(storageDir);
