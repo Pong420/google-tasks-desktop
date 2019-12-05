@@ -1,6 +1,6 @@
 ## Google Tasks Desktop
 
-> Unofficial google task desktop application. Using React and google task api
+> Unofficial google tasks desktop application. Using React and google tasks api
 
 <div>
   <img src="./screenshot/1.png" width="24%">
@@ -11,9 +11,9 @@
 
 #### [Download](https://github.com/Pong420/google-tasks-desktop/releases) | [Video Demo](https://pong420.github.io/google-tasks-desktop/demo.mp4)
 
-#### :warning: You will need to enable your own [Google Task API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer.
+#### :warning: You will need to enable your own [Google Tasks API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer.
 
-#### Step to enable Google Task API.
+#### Step to enable Google Tasks API.
 
 1. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
