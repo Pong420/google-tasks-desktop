@@ -150,7 +150,9 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
+    "googleapis": "^47.0.0",
     "react": "^16.13.0",
+    "react-desktop": "^0.3.9",
     "react-dom": "^16.13.0",
     "react-router-dom": "^5.1.2",
     "typeface-nunito-sans": "^0.0.72",
