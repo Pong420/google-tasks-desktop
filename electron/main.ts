@@ -1,6 +1,6 @@
-import * as path from 'path';
-import * as url from 'url';
-import { app, shell, BrowserWindow } from 'electron';
+import path from 'path';
+import url from 'url';
+import { app, BrowserWindow, shell } from 'electron';
 import { MenuBuilder } from './menu';
 
 let mainWindow: BrowserWindow | null = null;
@@ -19,11 +19,13 @@ async function createWindow() {
   }
 
   mainWindow = new BrowserWindow({
+    frame: false,
+    height: 500,
+    width: 300,
     show: false,
-    height: 600,
-    width: 800,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, './preload/index.js')
     }
   });
 

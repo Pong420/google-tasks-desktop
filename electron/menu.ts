@@ -53,17 +53,17 @@ export class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout = {
-      label: 'React App',
+      label: 'Google Tasks',
       submenu: [
         {
-          label: 'About React App',
+          label: 'About Google Tasks',
           selector: 'orderFrontStandardAboutPanel:'
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide React App',
+          label: 'Hide Google Tasks',
           accelerator: 'Command+H',
           selector: 'hide:'
         },

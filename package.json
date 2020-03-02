@@ -1,6 +1,6 @@
 {
-  "name": "electron-react-ts",
-  "version": "1.0.0",
+  "name": "google-task-desktop",
+  "version": "3.0.0",
   "scripts": {
     "dev": "nf start",
     "build": "yarn app:build && yarn electron:compile",
@@ -20,8 +20,8 @@
   "homepage": ".",
   "main": "./electron/main.js",
   "build": {
-    "productName": "React App",
-    "appId": "React App",
+    "productName": "Google Tasks",
+    "appId": "Google Tasks",
     "directories": {
       "buildResources": "public",
       "output": "release"
@@ -29,7 +29,7 @@
     "files": [
       "build/index.html",
       "build/**/*",
-      "electron/*.js",
+      "electron/**/*.js",
       "package.json"
     ],
     "extraFiles": [
@@ -90,16 +90,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "REPLACE_GIT_URL"
+    "url": "https://github.com/Pong420/google-tasks-desktop"
   },
   "author": {
-    "name": "REPLACE_AUTHOR_NAME",
-    "email": "REPLACE_AUTHOR_EMAIL@gmial.com",
-    "url": "https://REPLACE_AUTHOR_URL"
+    "name": "Pong",
+    "email": "samfunghp@gmial.com",
+    "url": "https://pong420.netlify.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://REPLACE_BUG_REPORT_URL"
+    "url": "https://github.com/Pong420/google-tasks-desktop/issues"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -152,7 +152,9 @@
   "dependencies": {
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-router-dom": "^5.1.2"
+    "react-router-dom": "^5.1.2",
+    "typeface-nunito-sans": "^0.0.72",
+    "typeface-roboto": "^0.0.75"
   },
   "devEngines": {
     "node": ">=7.x",

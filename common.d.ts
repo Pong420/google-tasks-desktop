@@ -1,4 +1,7 @@
+type THEME = 'light' | 'dark';
+type ACCENT_COLOR = 'red' | 'blue' | 'amber' | 'green' | 'purple' | 'grey';
+
 declare interface Window {
-  getCurrentWindow: Electron.Remote['getCurrentWindow'];
-  platform: NodeJS.Platform;
+  __setTheme(theme?: THEME): void;
+  __setAccentColor(color?: ACCENT_COLOR): void;
 }
