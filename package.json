@@ -1,0 +1,165 @@
+{
+  "name": "electron-react-ts",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nf start",
+    "build": "yarn app:build && yarn electron:compile",
+    "package": "rimraf release && yarn build && electron-builder build --publish never",
+    "package-all": "rimraf release && yarn build && electron-builder build -mwl",
+    "lint": "eslint 'electron/**/*.ts?(x)' && eslint 'src/**/*.ts?(x)'",
+    "app:dev": "cross-env BROWSER=false react-scripts start",
+    "app:build": "cross-env react-scripts build",
+    "electron:compile": "tsc --project electron/tsconfig.json",
+    "electron:dev": "cross-env NODE_ENV=development electron electron/main.js",
+    "component": "node scripts/component.js",
+    "get": "node scripts/type.js",
+    "redux": "node scripts/redux.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "homepage": ".",
+  "main": "./electron/main.js",
+  "build": {
+    "productName": "React App",
+    "appId": "React App",
+    "directories": {
+      "buildResources": "public",
+      "output": "release"
+    },
+    "files": [
+      "build/index.html",
+      "build/**/*",
+      "electron/*.js",
+      "package.json"
+    ],
+    "extraFiles": [
+      "credentials"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "pkg",
+        "zip"
+      ],
+      "darkModeSupport": true,
+      "icon": "public/icon/icon.png",
+      "type": "distribution"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "pkg": {
+      "license": "LICENSE"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ],
+      "icon": "public/icon/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "public/icon/icon.ico",
+      "license": "LICENSE",
+      "warningsAsErrors": false
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "snap"
+      ],
+      "icon": "public/icon"
+    },
+    "snap": {
+      "grade": "stable"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "REPLACE_GIT_URL"
+  },
+  "author": {
+    "name": "REPLACE_AUTHOR_NAME",
+    "email": "REPLACE_AUTHOR_EMAIL@gmial.com",
+    "url": "https://REPLACE_AUTHOR_URL"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://REPLACE_BUG_REPORT_URL"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "rules": {
+      "react/self-closing-comp": "warn"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --max-warnings=0",
+      "prettier --ignore-path .eslintignore --write",
+      "git add"
+    ],
+    "{*.json,.{babelrc,eslintrc,prettierrc}}": [
+      "prettier --ignore-path .eslintignore --parser json --write",
+      "git add"
+    ],
+    "*.{css,scss}": [
+      "prettier --ignore-path .eslintignore --single-quote --write",
+      "git add"
+    ],
+    "*.{yml,md}": [
+      "prettier --ignore-path .eslintignore --single-quote --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.6",
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-router-dom": "^5.1.3",
+    "cross-env": "^7.0.0",
+    "electron": "^8.0.2",
+    "electron-builder": "^22.3.2",
+    "electron-devtools-installer": "^2.2.4",
+    "foreman": "^3.0.1",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
+    "pong-react-scripts": "3.4.0",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.2",
+    "sass": "^1.26.1",
+    "typescript": "3.8.2"
+  },
+  "dependencies": {
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-router-dom": "^5.1.2"
+  },
+  "devEngines": {
+    "node": ">=7.x",
+    "npm": ">=4.x",
+    "yarn": ">=0.21.3"
+  },
+  "browserslist": [
+    "last 1 chrome version"
+  ]
+}

@@ -1,0 +1,55 @@
+@mixin dimen($width: null, $height: null) {
+  @if ($width) {
+    width: $width;
+  }
+
+  @if ($height) {
+    height: $height;
+  }
+}
+
+@mixin sq-dimen($length: null) {
+  @if ($length) {
+    @include dimen($length, $length);
+  }
+}
+
+@mixin margin-x($margin-sizes) {
+  @if (length($margin-sizes) == 1) {
+    margin-left: $margin-sizes;
+    margin-right: $margin-sizes;
+  } @else {
+    margin-left: nth($margin-sizes, 1);
+    margin-right: nth($margin-sizes, 2);
+  }
+}
+
+@mixin margin-y($margin-sizes) {
+  @if (length($margin-sizes) == 1) {
+    margin-top: $margin-sizes;
+    margin-bottom: $margin-sizes;
+  } @else {
+    margin-top: nth($margin-sizes, 1);
+    margin-bottom: nth($margin-sizes, 2);
+  }
+}
+
+@mixin padding-x($padding-sizes) {
+  @if (length($padding-sizes) == 1) {
+    padding-left: $padding-sizes;
+    padding-right: $padding-sizes;
+  } @else {
+    padding-left: nth($padding-sizes, 1);
+    padding-right: nth($padding-sizes, 2);
+  }
+}
+
+@mixin padding-y($padding-sizes) {
+  @if (length($padding-sizes) == 1) {
+    padding-top: $padding-sizes;
+    padding-bottom: $padding-sizes;
+  } @else {
+    padding-top: nth($padding-sizes, 1);
+    padding-bottom: nth($padding-sizes, 2);
+  }
+}
