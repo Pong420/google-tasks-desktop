@@ -1,16 +1,9 @@
-// https://medium.com/dailyjs/typescript-create-a-condition-based-subset-types-9d902cea5b8c
-export type FilterFlags<Base, Condition> = {
-  [Key in keyof Base]: Base[Key] extends Condition ? Key : never;
-};
+import { tasks_v1 } from 'googleapis';
 
-export type AllowedNames<Base, Condition> = FilterFlags<
-  Base,
-  Condition
->[keyof Base];
+export interface Schema$Task extends tasks_v1.Schema$Task {
+  uuid: string;
+}
 
-export type SubType<Base, Condition> = Pick<
-  Base,
-  AllowedNames<Base, Condition>
->;
-
-export type ValueOf<T> = T[keyof T];
+export interface Schema$TaskList extends tasks_v1.Schema$TaskList {
+  id: string;
+}

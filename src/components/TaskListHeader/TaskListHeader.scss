@@ -1,0 +1,37 @@
+$button-height: 26px;
+
+.task-list-header {
+  @include dimen(100%, $header-height);
+  @include flex(flex-end, space-between);
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
+  @include padding-x($padding-x);
+  @include relative();
+
+  padding-bottom: 8px;
+
+  .task-list-header-dropdown-container {
+    @include app-region-no-drag;
+    overflow: hidden;
+
+    .task-list-header-dropdown-label {
+      color: #80868b;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      text-align: right;
+      padding-right: 6px;
+    }
+
+    .mui-dropdown-button {
+      @include dimen(100%, $button-height);
+      @include typeface('Nunito Sans', 600);
+      color: var(--text-color);
+      font-size: 15px;
+
+      &:not(:hover) {
+        background-color: transparent;
+      }
+    }
+  }
+}

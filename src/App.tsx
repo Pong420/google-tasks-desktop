@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect, generatePath } from 'react-router-dom';
 import { AppRegion } from './components/AppRegion';
 import { PrivateRoute } from './components/PrivateRoute';
 import { Auth } from './pages/Auth';
@@ -11,8 +11,9 @@ const App = () => (
     <AppRegion />
     <>
       <Switch>
-        <Route exact path={PATHS.AUTH} component={Auth} />
-        <PrivateRoute exact path={PATHS.TASKLIST} component={TaskList} />
+        <Route path={PATHS.AUTH} component={Auth} />
+        <PrivateRoute path={PATHS.TASKLIST} component={TaskList} />
+        <Redirect to={generatePath(PATHS.TASKLIST, {})} />
       </Switch>
     </>
   </>

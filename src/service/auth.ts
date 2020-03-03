@@ -13,6 +13,8 @@ export let oAuth2Client = OAuth2Keys
 
 const SCOPES = ['https://www.googleapis.com/auth/tasks'];
 
+authenticate();
+
 export const { tasks: tasksAPI, tasklists: taskListAPI } = google.tasks({
   version: 'v1',
   auth: oAuth2Client

@@ -17,8 +17,6 @@ export function Auth() {
     onSuccess: authenticated
   });
 
-  console.log(value);
-
   return (
     <div className="auth">
       <div className="auth-header">

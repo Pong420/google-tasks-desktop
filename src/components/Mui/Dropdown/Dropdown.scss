@@ -1,0 +1,14 @@
+.mui-dropdown-button {
+  &.mui-dropdown-button {
+    @include flex(center, space-between);
+    font-size: inherit;
+    text-transform: initial;
+    padding: 0 0 0 10px;
+
+    > span:nth-child(1) {
+      div {
+        @include text-overflow-ellipsis();
+      }
+    }
+  }
+}

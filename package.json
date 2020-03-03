@@ -133,6 +133,7 @@
   },
   "devDependencies": {
     "@types/history": "^4.7.5",
+    "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.6",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
@@ -159,6 +160,7 @@
     "customize-cra": "^0.9.1",
     "googleapis": "^47.0.0",
     "history": "^4.10.1",
+    "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-app-rewired": "^2.1.5",
     "react-desktop": "^0.3.9",
@@ -170,7 +172,7 @@
     "rxjs": "^6.5.4",
     "typeface-nunito-sans": "^0.0.72",
     "typeface-roboto": "^0.0.75",
-    "use-rx-hooks": "^1.4.3-beta.1"
+    "use-rx-hooks": "1.4.3"
   },
   "devEngines": {
     "node": ">=7.x",
