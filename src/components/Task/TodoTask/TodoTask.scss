@@ -1,0 +1,51 @@
+.todo-task {
+  @include noSelect;
+  @include textHighlight();
+
+  &.dragging {
+    @include padding-x((0px, 20px));
+
+    border-radius: 12.5px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 7px 10px -5px var(--shadow-color);
+    left: auto !important;
+    right: 5px !important;
+    width: calc(100% - 60px) !important;
+    z-index: 1000;
+
+    .task-input-base-end-adornment {
+      display: none;
+    }
+
+    .toggle-completed {
+      margin-left: 0;
+    }
+  }
+
+  &.highlight-bottom-border {
+    &:after {
+      @include dimen(100%);
+      border-color: var(--accent-color);
+      transition: 0s;
+    }
+
+    .task-input-base {
+      border-color: transparent;
+    }
+  }
+
+  &:last-child {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .toggle-completed {
+    &:hover {
+      > button:nth-child(1) {
+        visibility: hidden;
+      }
+      > button:nth-child(2) {
+        visibility: visible;
+      }
+    }
+  }
+}
