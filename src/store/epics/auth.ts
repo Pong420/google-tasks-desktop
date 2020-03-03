@@ -12,7 +12,7 @@ type AuthEpic = Epic<Actions, Actions, RootState>;
 const authEpic: AuthEpic = action$ =>
   action$.pipe(
     ofType('AUTHENTICATED'),
-    switchMap(action => of(replace(PATHS.HOME)))
+    switchMap(() => of(replace(PATHS.TASKLIST)))
   );
 
 const logoutEpic: AuthEpic = action$ =>

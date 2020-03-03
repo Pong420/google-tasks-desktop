@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import { AppRegion } from './components/AppRegion';
 import { PrivateRoute } from './components/PrivateRoute';
 import { Auth } from './pages/Auth';
-import { Home } from './pages/Home';
+import { TaskList } from './pages/TaskList';
 import { PATHS } from './constants';
 
 const App = () => (
@@ -12,7 +12,7 @@ const App = () => (
     <>
       <Switch>
         <Route exact path={PATHS.AUTH} component={Auth} />
-        <PrivateRoute exact path={PATHS.HOME} component={Home} />
+        <PrivateRoute exact path={PATHS.TASKLIST} component={TaskList} />
       </Switch>
     </>
   </>

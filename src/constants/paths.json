@@ -1,4 +1,4 @@
 {
   "AUTH": "/auth",
-  "HOME": "/"
+  "TASKLIST": "/tasklist/:taskListId?"
 }
