@@ -1,5 +1,6 @@
 import { remote } from 'electron';
 import { handleOSTheme } from './theme';
+import './storage';
 
 window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
   const color = newColor || localStorage.ACCENT_COLOR || 'blue';

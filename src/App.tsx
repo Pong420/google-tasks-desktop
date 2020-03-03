@@ -1,17 +1,20 @@
 import React from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { AppRegion } from './components/AppRegion';
+import { PrivateRoute } from './components/PrivateRoute';
+import { Auth } from './pages/Auth';
 import { Home } from './pages/Home';
 import { PATHS } from './constants';
 
 const App = () => (
   <>
     <AppRegion />
-    <Router>
+    <>
       <Switch>
-        <Route exact path={PATHS.HOME} component={Home} />
+        <Route exact path={PATHS.AUTH} component={Auth} />
+        <PrivateRoute exact path={PATHS.HOME} component={Home} />
       </Switch>
-    </Router>
+    </>
   </>
 );
 
