@@ -1,8 +1,10 @@
-import { of, empty } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { generatePath } from 'react-router-dom';
 import { ofType, Epic } from 'redux-observable';
 import { RouterAction, replace } from 'connected-react-router';
+import { of, empty } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AuthActions } from '../actions/auth';
+import { authenticate } from '../../service';
 import { RootState } from '../reducers';
 import { PATHS } from '../../constants';
 
@@ -12,7 +14,10 @@ type AuthEpic = Epic<Actions, Actions, RootState>;
 const authEpic: AuthEpic = action$ =>
   action$.pipe(
     ofType('AUTHENTICATED'),
-    switchMap(() => of(replace(PATHS.TASKLIST)))
+    switchMap(() => {
+      authenticate();
+      return of(replace(generatePath(PATHS.TASKLIST, {})));
+    })
   );
 
 const logoutEpic: AuthEpic = action$ =>

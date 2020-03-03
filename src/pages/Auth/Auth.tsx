@@ -3,7 +3,7 @@ import { useRxInput, useRxAsync } from 'use-rx-hooks';
 import { Button } from '@material-ui/core';
 import { Input } from '../../components/Mui/Input';
 import { FileUpload } from './FileUpload';
-import { authenticate, getToken } from '../../service';
+import { generateAuthUrl, getToken } from '../../service';
 import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
 import { useAuthActions } from '../../store';
 
@@ -35,7 +35,7 @@ export function Auth() {
               fullWidth
             />
             <div>
-              <Button disabled={loading} onClick={authenticate}>
+              <Button disabled={loading} onClick={generateAuthUrl}>
                 Get Code
               </Button>
               <Button

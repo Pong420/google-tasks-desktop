@@ -20,20 +20,20 @@ export const { tasks: tasksAPI, tasklists: taskListAPI } = google.tasks({
   auth: oAuth2Client
 });
 
-export function authenticate() {
+export function generateAuthUrl() {
   if (oAuth2Client) {
     const authorizeUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: SCOPES
     });
+    window.openExternal(authorizeUrl);
+  }
+}
 
-    const token = tokenStorage.get();
-
-    if (!token) {
-      window.openExternal(authorizeUrl);
-    } else {
-      oAuth2Client.setCredentials(token);
-    }
+export function authenticate() {
+  const token = tokenStorage.get();
+  if (oAuth2Client && token) {
+    oAuth2Client.setCredentials(token);
   }
 }
 
