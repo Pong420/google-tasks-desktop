@@ -1,26 +1,33 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useMemo } from 'react';
-import { AnyAction } from 'redux';
+import { useMemo, useRef, Dispatch as ReactDispatch } from 'react';
+import { AnyAction, Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
 
-interface Actions {
+interface ActionCreators {
   [k: string]: (...args: any[]) => AnyAction;
 }
 
-export function useActions<A extends Actions>(actions: A): A {
+type Handler<A extends ActionCreators> = {
+  [X in keyof A]: (...args: Parameters<A[X]>) => void;
+};
+
+export function withDispatch<A extends ActionCreators>(
+  creators: A,
+  dispatch: Dispatch | ReactDispatch<any>
+) {
+  const handler = {} as Handler<A>;
+  for (const key in creators) {
+    const creator = creators[key];
+    handler[key] = (...args: Parameters<typeof creator>) => {
+      dispatch(creator(...args));
+    };
+  }
+
+  return handler;
+}
+
+export function useActions<A extends ActionCreators>(creators: A): Handler<A> {
   const dispatch = useDispatch();
+  const creatorsRef = useRef(creators);
 
-  return useMemo(() => {
-    const handler: any = {};
-
-    for (const key in actions) {
-      const action = actions[key];
-      handler[key] = (...args: Parameters<typeof action>) => {
-        dispatch(action(...args));
-      };
-    }
-
-    return handler as A;
-  }, [actions, dispatch]);
+  return useMemo(() => withDispatch(creatorsRef.current, dispatch), [dispatch]);
 }

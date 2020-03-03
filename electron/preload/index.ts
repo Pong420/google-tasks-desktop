@@ -14,6 +14,7 @@ window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
 
 window.platform = process.platform;
 window.getCurrentWindow = remote.getCurrentWindow;
+window.openExternal = remote.shell.openExternal;
 
 process.once('loaded', () => {
   handleOSTheme();

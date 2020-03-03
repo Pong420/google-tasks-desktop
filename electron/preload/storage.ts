@@ -7,9 +7,15 @@ const STORAGE_DIRECTORY = path.join(
   'google-tasks-desktop'
 );
 
-export const TOKEN_PATH = path.join(STORAGE_DIRECTORY, 'token.json');
+export const TOKEN_PATH = (window.TOKEN_PATH = path.join(
+  STORAGE_DIRECTORY,
+  'token.json'
+));
 
-export const OAUTH2_KEYS_PATH = path.join(STORAGE_DIRECTORY, 'oauth2.json');
+export const OAUTH2_KEYS_PATH = (window.OAUTH2_KEYS_PATH = path.join(
+  STORAGE_DIRECTORY,
+  'oauth2.json'
+));
 
 if (!fs.existsSync(STORAGE_DIRECTORY)) {
   fs.mkdirSync(STORAGE_DIRECTORY);

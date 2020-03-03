@@ -1,12 +1,7 @@
 import { UnionCRUDActions } from '@pong420/redux-crud';
 import { useActions } from '../../hooks/useActions';
 
-// export enum AuthActionTypes {
-//   AUTHENTICATED = 'AUTHENTICATED',
-//   LOGOUT = 'LOGOUT'
-// }
-
-export function authenticate() {
+export function authenticated() {
   return {
     type: 'AUTHENTICATED' as const
   };
@@ -18,8 +13,8 @@ export function logout() {
   };
 }
 
-const actions = { authenticate, logout };
+const actions = { authenticated, logout };
 
 export type AuthActions = UnionCRUDActions<typeof actions>;
 
-export const useAuthActions = () => useActions({ authenticate, logout });
+export const useAuthActions = () => useActions({ authenticated, logout });

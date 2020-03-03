@@ -1,0 +1,93 @@
+.auth {
+  @include flex($flex-direction: column);
+  @include fixed(0, null, 0);
+  @include sq-dimen(100%);
+
+  background-color: var(--main-color);
+  color: var(--text-color);
+  padding: $padding-x;
+  text-align: center;
+  z-index: $app-region-z-index - 1;
+
+  .auth-header {
+    margin-top: 65px;
+  }
+
+  .auth-content {
+    @include dimen(100%);
+    @include flex(stretch, center, $flex-direction: column);
+    @include relative();
+    flex: 1 0 auto;
+  }
+
+  .auth-confirm-button {
+    color: var(--accent-color);
+  }
+
+  form {
+    @include dimen(100%);
+    .mui-input-base {
+      margin: 5px 0 15px;
+    }
+  }
+
+  .file-upload {
+    @include dimen(100%);
+    @include flex($flex-direction: column);
+    margin-top: 50px;
+    font-weight: bold;
+    flex: 1 0 auto;
+
+    .file-upload-header {
+      a {
+        color: var(--accent-color);
+        text-decoration: underline;
+      }
+    }
+
+    .file-upload-content {
+      @include relative();
+
+      border: 2px dashed;
+      border-radius: 5px;
+      color: var(--text-secondary-color);
+      cursor: pointer;
+      flex: 1 0 auto;
+      margin: 10px 0;
+
+      &.dragover {
+        label {
+          opacity: 0.5;
+        }
+      }
+
+      input[type='file'] {
+        @include absolute(0, null, 0);
+        @include sq-dimen(100%);
+
+        opacity: 0;
+        outline: none;
+      }
+
+      label {
+        @include absolute(0, null, 0);
+        @include flex(center, center);
+        @include sq-dimen(100%);
+
+        line-height: 1.5em;
+        padding: 15px;
+      }
+    }
+
+    .file-upload-footer {
+      @include flex(center);
+
+      color: var(--error-color);
+      min-height: 24px;
+
+      svg {
+        margin-right: 5px;
+      }
+    }
+  }
+}

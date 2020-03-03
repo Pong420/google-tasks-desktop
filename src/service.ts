@@ -1,30 +1,24 @@
-import { remote } from 'electron';
-import { google, tasks_v1 } from 'googleapis';
+import { google } from 'googleapis';
 
 const { oAuth2Storage, tokenStorage } = window;
 
 export let OAuth2Keys = oAuth2Storage.get();
-export let oAuth2Client =
-  OAuth2Keys && OAuth2Keys.installed
-    ? new google.auth.OAuth2(
-        OAuth2Keys.installed.client_id,
-        OAuth2Keys.installed.client_secret,
-        OAuth2Keys.installed.redirect_uris[0]
-      )
-    : undefined;
+export let oAuth2Client = OAuth2Keys
+  ? new google.auth.OAuth2(
+      OAuth2Keys.installed.client_id,
+      OAuth2Keys.installed.client_secret,
+      OAuth2Keys.installed.redirect_uris[0]
+    )
+  : undefined;
 
 const SCOPES = ['https://www.googleapis.com/auth/tasks'];
 
-export let tasksAPI: tasks_v1.Resource$Tasks;
-export let taskListAPI: tasks_v1.Resource$Tasklists;
+export const { tasks: tasksAPI, tasklists: taskListAPI } = google.tasks({
+  version: 'v1',
+  auth: oAuth2Client
+});
 
-if (oAuth2Client) {
-  const api = google.tasks({ version: 'v1', auth: oAuth2Client });
-  tasksAPI = api.tasks;
-  taskListAPI = api.tasklists;
-}
-
-export async function authenticate() {
+export function authenticate() {
   if (oAuth2Client) {
     const authorizeUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',
@@ -33,16 +27,12 @@ export async function authenticate() {
 
     const token = tokenStorage.get();
 
-    if (token) {
-      remote.shell.openExternal(authorizeUrl);
-      return Promise.reject();
+    if (!token) {
+      window.openExternal(authorizeUrl);
     } else {
       oAuth2Client.setCredentials(token);
-      return Promise.resolve();
     }
   }
-
-  return Promise.reject();
 }
 
 export async function getToken(code: string) {
@@ -55,7 +45,7 @@ export async function getToken(code: string) {
     } catch (err) {
       return Promise.reject(err);
     }
-  } else {
-    return Promise.reject();
   }
+
+  return Promise.reject();
 }

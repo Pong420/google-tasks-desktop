@@ -1,8 +1,10 @@
 @import './mixins/animation';
 @import './mixins/background';
 @import './mixins/border';
+@import './mixins/electron';
 @import './mixins/flex';
+@import './mixins/font';
 @import './mixins/position';
 @import './mixins/size';
+@import './mixins/textHighlight';
 @import './mixins/textOverflow';
-@import './mixins/electron';

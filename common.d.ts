@@ -21,6 +21,7 @@ declare interface Window {
   __setTheme(theme?: THEME): void;
   __setAccentColor(color?: ACCENT_COLOR): void;
   platform: NodeJS.Platform;
+  openExternal: Electron.Shell['openExternal'];
   getCurrentWindow(): Electron.BrowserWindow;
   oAuth2Storage: Schema$Storage<OAuthKeys | undefined>;
   tokenStorage: Schema$Storage<any>;

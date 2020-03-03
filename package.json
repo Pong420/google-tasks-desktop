@@ -7,14 +7,14 @@
     "package": "rimraf release && yarn build && electron-builder build --publish never",
     "package-all": "rimraf release && yarn build && electron-builder build -mwl",
     "lint": "eslint 'electron/**/*.ts?(x)' && eslint 'src/**/*.ts?(x)'",
-    "app:dev": "cross-env BROWSER=false react-scripts start",
-    "app:build": "cross-env react-scripts build",
+    "app:dev": "cross-env BROWSER=false react-app-rewired start --scripts-version pong-react-scripts",
+    "app:build": "cross-env react-app-rewired build --scripts-version pong-react-scripts",
     "electron:compile": "tsc --project electron/tsconfig.json",
     "electron:dev": "cross-env NODE_ENV=development electron electron/main.js",
     "component": "node scripts/component.js",
     "get": "node scripts/type.js",
     "redux": "node scripts/redux.js",
-    "test": "react-scripts test",
+    "test": "react-app-rewired test --scripts-version pong-react-scripts",
     "eject": "react-scripts eject"
   },
   "homepage": ".",
@@ -152,11 +152,15 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
+    "@material-ui/core": "^4.9.5",
+    "@material-ui/icons": "^4.9.1",
     "@pong420/redux-crud": "^1.4.2",
     "connected-react-router": "^6.7.0",
+    "customize-cra": "^0.9.1",
     "googleapis": "^47.0.0",
     "history": "^4.10.1",
     "react": "^16.13.0",
+    "react-app-rewired": "^2.1.5",
     "react-desktop": "^0.3.9",
     "react-dom": "^16.13.0",
     "react-redux": "^7.2.0",
@@ -165,7 +169,8 @@
     "redux-observable": "^1.2.0",
     "rxjs": "^6.5.4",
     "typeface-nunito-sans": "^0.0.72",
-    "typeface-roboto": "^0.0.75"
+    "typeface-roboto": "^0.0.75",
+    "use-rx-hooks": "^1.4.3-beta.1"
   },
   "devEngines": {
     "node": ">=7.x",

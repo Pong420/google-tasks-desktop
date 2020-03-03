@@ -1,3 +1,48 @@
+:root {
+  --main-color: #fff;
+  --main-color-diff: #f1f3f4;
+  --main-color-diff2: #fff;
+  --accent-color: #{getColor(blue)};
+  --accent-light-color: #{getColor(blue, light)};
+  --accent-dark-color: #{getColor(blue, dark)};
+  --text-color: #202124;
+  --text-secondary-color: #5f6368;
+  --border-color: #e0e0e0;
+  --task-highlight-background-color: #f8f9fa;
+  --day-color: #9e9e9e;
+  --date-color: #000;
+  --error-color: #da3125;
+  --shadow-color: #e6e6e6;
+  --paper-background-color: #fff;
+  --menu-item-hover-color: #{darken(#fff, 6%)};
+}
+
+$darkMain: #222;
+
+[data-theme^='dark'] {
+  --main-color: #{$darkMain};
+  --main-color-diff: #{lighten($darkMain, 5%)};
+  --main-color-diff2: #{lighten($darkMain, 10%)};
+  --text-color: #dfdedb;
+  --text-secondary-color: #a09c97;
+  --border-color: #313030;
+  --task-highlight-background-color: #333;
+  --day-color: #9e9e9e;
+  --date-color: #fff;
+  --error-color: #f44336;
+  --shadow-color: #161616;
+  --paper-background-color: var(--main-color-diff);
+  --menu-item-hover-color: #444;
+}
+
+@each $name, $colors in $accent-colors {
+  [data-accent-color^='#{"" + $name}'] {
+    --accent-color: #{map-get($colors, primary)};
+    --accent-light-color: #{map-get($colors, light)};
+    --accent-dark-color: #{map-get($colors, dark)};
+  }
+}
+
 *,
 *:before,
 *:after {
@@ -8,14 +53,18 @@ html,
 body,
 #root {
   min-height: 100vh;
-  height: 100%;
+}
+
+html {
+  background-color: var(--main-color);
 }
 
 body {
+  @include typeface();
+  color: var(--text-secondary-color);
+  font-size: 14px;
   margin: 0;
-  padding: 0;
-
-  font-family: Helvetica, Arial, 微軟正黑體, Microsoft JhengHei, sans-serif;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

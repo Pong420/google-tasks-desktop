@@ -1,0 +1,31 @@
+.mui-input-base.mui-input-base {
+  font-size: inherit;
+  min-height: 40px;
+  padding: 1px 0px 0px 10px;
+
+  input,
+  textarea {
+    color: var(--text-color);
+    outline: none;
+    overflow: hidden;
+
+    &:hover:not(:focus) {
+      cursor: default;
+    }
+  }
+
+  &.filled {
+    @include textHighlight();
+    background-color: var(--task-highlight-background-color);
+  }
+
+  &.bottom-border {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &.error {
+    &:after {
+      border-color: var(--error-color) !important;
+    }
+  }
+}
