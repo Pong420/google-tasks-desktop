@@ -1,0 +1,44 @@
+$completed-task-list-header-height: 54px;
+
+.completed-tasks-list {
+  @include dimen(100%, $completed-task-list-header-height);
+  @include relative();
+  flex: 1 0 auto;
+  z-index: $text-highlight-z-index;
+
+  .scroll-content {
+    overflow: scroll;
+  }
+}
+
+.completed-tasks-list-inner {
+  @include absolute(null, 0, 0);
+  @include animate(transform);
+  @include flex($flex-direction: column);
+  @include dimen(100%);
+
+  background-color: var(--main-color);
+  max-height: calc(100vh - #{$header-height});
+  padding-bottom: 2px;
+  transform: translateY(calc(100% - #{$completed-task-list-header-height}));
+  z-index: 10;
+}
+
+.completed-tasks-list-header {
+  @include dimen(100%, $completed-task-list-header-height);
+  @include flex(center, space-between);
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
+  @include typeface('Nunito Sans', 600);
+  @include padding-x(($padding-x, 10px));
+
+  border-top: 1px solid var(--border-color);
+  cursor: pointer;
+  flex: 1 0 auto;
+}
+
+.completed-tasks-list-content {
+  @include flex();
+  @include sq-dimen(100%);
+  overflow: hidden;
+  padding-bottom: 1px; // avoid scroll shown when there is only one completed task
+}
