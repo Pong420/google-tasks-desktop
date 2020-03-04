@@ -134,6 +134,7 @@
   "devDependencies": {
     "@types/history": "^4.7.5",
     "@types/lodash": "^4.14.149",
+    "@types/mousetrap": "^1.6.3",
     "@types/node": "^13.7.6",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^16.9.23",
@@ -162,6 +163,7 @@
     "googleapis": "^47.0.0",
     "history": "^4.10.1",
     "lodash": "^4.17.15",
+    "mousetrap": "^1.6.5",
     "nprogress": "^0.2.0",
     "react": "^16.13.0",
     "react-app-rewired": "^2.1.5",

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useRxAsync } from 'use-rx-hooks';
-import { Task } from '../Task';
+import { TodoTask } from '../Task';
 import { getAllTasks } from '../../service';
 import { useTaskActions, taskIdsSelector } from '../../store';
 import { NProgress } from '../../utils/nprogress';
@@ -29,7 +29,7 @@ export function TaskListContent({ tasklist }: Props) {
   return (
     <div className="task-list-content">
       {todo.map(uuid => (
-        <Task key={uuid} uuid={uuid} />
+        <TodoTask key={uuid} uuid={uuid} />
       ))}
     </div>
   );

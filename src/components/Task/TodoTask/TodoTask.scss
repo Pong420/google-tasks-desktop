@@ -1,6 +1,6 @@
 .todo-task {
-  @include noSelect;
   @include textHighlight();
+  user-select: none;
 
   &.dragging {
     @include padding-x((0px, 20px));

@@ -11,20 +11,20 @@ interface Props extends Pick<Schema$Task, 'uuid'> {
 }
 
 const MarkCompleteButton = React.memo(() => (
-  <IconButton tooltip="Mark complete">
+  <IconButton tooltip="Mark incomplete">
     <CircleIcon />
   </IconButton>
 ));
 
 const MarkInCompleteButton = React.memo(() => (
-  <IconButton tooltip="Mark incomplete">
+  <IconButton tooltip="Mark complete">
     <TickIcon className="mui-tick-icon" />
   </IconButton>
 ));
 
 export function ToggleCompleted({ uuid, isEmpty }: Props) {
   const { updateTask, deleteTask } = useTaskActions();
-  const { completed } = useSelector(taskSelector(uuid)) || {};
+  const { status } = useSelector(taskSelector(uuid)) || {};
 
   return (
     <div
@@ -34,11 +34,11 @@ export function ToggleCompleted({ uuid, isEmpty }: Props) {
           ? deleteTask({ uuid })
           : updateTask({
               uuid,
-              completed: completed === 'completed' ? 'needsAction' : 'completed'
+              completed: status === 'completed' ? 'needsAction' : 'completed'
             })
       }
     >
-      {!completed && <MarkCompleteButton />}
+      {status === 'needsAction' && <MarkCompleteButton />}
       <MarkInCompleteButton />
     </div>
   );
