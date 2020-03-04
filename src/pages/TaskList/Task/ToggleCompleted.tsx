@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { IconButton } from '../Mui';
-import { useTaskActions, taskSelector } from '../../store';
-import { Schema$Task } from '../../typings';
+import { IconButton } from '../../../components/Mui';
+import { useTaskActions, taskSelector } from '../../../store';
+import { Schema$Task } from '../../../typings';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TickIcon from '@material-ui/icons/Check';
 

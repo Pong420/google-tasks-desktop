@@ -1,7 +1,7 @@
 import React from 'react';
-import { DeleteIcon, IconButton } from '../Mui';
+import { DeleteIcon, IconButton } from '../../../components/Mui';
 import { Task, TaskProps } from './Task';
-import { useTaskActions } from '../../store';
+import { useTaskActions } from '../../../store';
 
 interface Props extends TaskProps {}
 

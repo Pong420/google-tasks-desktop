@@ -1,5 +1,5 @@
-import { useBoolean } from '../../../hooks/useBoolean';
-import { useMouseTrap } from '../../../hooks/useMouseTrap';
+import { useBoolean } from '../../../../hooks/useBoolean';
+import { useMouseTrap } from '../../../../hooks/useMouseTrap';
 import { useMemo } from 'react';
 
 export function useFocusTask(el: HTMLElement | null) {

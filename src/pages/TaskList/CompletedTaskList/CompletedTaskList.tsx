@@ -1,7 +1,7 @@
 import React from 'react';
 import { CompletedTask } from '../Task';
-import { IconButton } from '../Mui/IconButton';
-import { useBoolean } from '../../hooks/useBoolean';
+import { IconButton } from '../../../components/Mui';
+import { useBoolean } from '../../../hooks/useBoolean';
 import ExpandIcon from '@material-ui/icons/ExpandLess';
 import CollapseIcon from '@material-ui/icons/ExpandMore';
 

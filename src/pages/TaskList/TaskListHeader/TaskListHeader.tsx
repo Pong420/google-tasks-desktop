@@ -1,8 +1,8 @@
 import React from 'react';
 import { generatePath } from 'react-router-dom';
 import { TaskListDropdown } from '../TaskListDropdown';
-import { history } from '../../store';
-import { PATHS } from '../../constants';
+import { history } from '../../../store';
+import { PATHS } from '../../../constants';
 
 export function TaskListHeader() {
   return (

@@ -1,0 +1,9 @@
+.task-list-header {
+  @include dimen(100%, $header-height);
+  @include flex(flex-end, space-between);
+  @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
+  @include padding-x($padding-x);
+  @include relative();
+
+  padding-bottom: 8px;
+}

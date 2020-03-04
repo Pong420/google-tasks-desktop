@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { useRxInput } from 'use-rx-hooks';
-import { Input, InputProps } from '../Mui';
+import { Input, InputProps } from '../../../components/Mui';
+import { taskSelector } from '../../../store';
 import { ToggleCompleted } from './ToggleCompleted';
 import { TaskInput } from './TaskInput';
-import { taskSelector } from '../../store';
 
 export interface TaskProps extends InputProps {
   className?: string;

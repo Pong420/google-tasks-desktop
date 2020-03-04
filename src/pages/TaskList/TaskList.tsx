@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useRxAsync } from 'use-rx-hooks';
-import { TaskListHeader } from '../../components/TaskListHeader';
-import { TodoTaskList } from '../../components/TodoTaskList';
-import { CompletedTaskList } from '../../components/CompletedTaskList';
+import { TaskListHeader } from './TaskListHeader';
+import { TodoTaskList } from './TodoTaskList';
+import { CompletedTaskList } from './CompletedTaskList';
 import { getAllTasklist, getAllTasks } from '../../service';
 import {
   useTaskListActions,
@@ -45,7 +45,7 @@ export function TaskList() {
       <TaskListHeader />
       <div className="task-list-content">
         <TodoTaskList tasks={todo} />
-        <CompletedTaskList tasks={completed} />
+        {!!completed.length && <CompletedTaskList tasks={completed} />}
       </div>
     </div>
   );

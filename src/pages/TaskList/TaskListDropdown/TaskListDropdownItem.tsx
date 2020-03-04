@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { MenuItem, MenuItemProps } from './Mui';
-import { Schema$TaskList } from '../typings';
-import { taskListsSelector } from '../store';
+import { MenuItem, MenuItemProps } from '../../../components/Mui';
+import { Schema$TaskList } from '../../../typings';
+import { taskListsSelector } from '../../../store';
 
 interface Props extends Omit<MenuItemProps, 'onClick'> {
   id: string;

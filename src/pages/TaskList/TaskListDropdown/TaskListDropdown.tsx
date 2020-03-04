@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useMuiMenu, Dropdown, DropdownProps } from './Mui';
+import { useMuiMenu, Dropdown, DropdownProps } from '../../../components/Mui';
 import { TaskListDropdownItem } from './TaskListDropdownItem';
-import { taskListIdsSelector } from '../store';
-import { Schema$TaskList } from '../typings';
-import { useCurrenTaskList } from '../hooks/useCurrenTaskList';
+import { taskListIdsSelector } from '../../../store';
+import { Schema$TaskList } from '../../../typings';
+import { useCurrenTaskList } from '../../../hooks/useCurrenTaskList';
 
 export interface TaskListDropdownProps
   extends Omit<Partial<DropdownProps>, 'onSelect'> {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input, InputProps } from '../Mui/Input';
-import { Schema$Task } from '../../typings';
+import { Input, InputProps } from '../../../components/Mui';
+import { Schema$Task } from '../../../typings';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 
 export interface TaskInputProps extends Pick<Schema$Task, 'due' | 'notes'> {
