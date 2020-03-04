@@ -1306,10 +1306,10 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
-"@pong420/redux-crud@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@pong420/redux-crud/-/redux-crud-1.4.2.tgz#6703df2102f698a9c47a384238aae7d6ec984607"
-  integrity sha512-Es7JAy3MaRQ9jS0xr5lsMWE3YXuLjKTuouTRTVaYJzWruNiWChgeth87fG3p/qJmMfoOYZ0D9k6d7GUVm+aaFA==
+"@pong420/redux-crud@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@pong420/redux-crud/-/redux-crud-1.4.3.tgz#03803e5f2c683155d5949c9e02d07a07f1e00431"
+  integrity sha512-hfjp5NrtH10rqX1PrNWbpyJxrJ/+eJlXz1g5famyF37wC019lyDDpoCFrJTs5xpukvP7BBg6AQnk4mVbdVWjQg==
   dependencies:
     qs "^6.9.1"
 

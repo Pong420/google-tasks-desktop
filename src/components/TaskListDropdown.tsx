@@ -36,14 +36,12 @@ export function TaskListDropdown({
     >
       {ids.map(id => {
         return (
-          id && (
-            <TaskListDropdownItem
-              id={id}
-              key={id}
-              onClick={onSelect}
-              onClose={onClose}
-            />
-          )
+          <TaskListDropdownItem
+            id={id}
+            key={id}
+            onClick={onSelect}
+            onClose={onClose}
+          />
         );
       })}
     </Dropdown>

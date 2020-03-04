@@ -28,7 +28,9 @@ export function TaskListContent({ tasklist }: Props) {
 
   return (
     <div className="task-list-content">
-      {todo.map(uuid => uuid && <Task key={uuid} uuid={uuid} />)}
+      {todo.map(uuid => (
+        <Task key={uuid} uuid={uuid} />
+      ))}
     </div>
   );
 }
