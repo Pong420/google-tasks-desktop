@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { theme } from './theme';
 import configureStore, { history } from './store';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -13,11 +15,13 @@ const store = configureStore();
 
 function render() {
   return ReactDOM.render(
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <App />
-      </ConnectedRouter>
-    </Provider>,
+    <MuiThemeProvider theme={theme}>
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <App />
+        </ConnectedRouter>
+      </Provider>
+    </MuiThemeProvider>,
     document.getElementById('root')
   );
 }
