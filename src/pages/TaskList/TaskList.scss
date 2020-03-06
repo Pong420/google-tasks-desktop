@@ -16,12 +16,12 @@
 
   .task-list-header,
   .new-task {
-    flex: 1 0 auto;
+    flex: 0 0 auto;
   }
 }
 
 .task-list-content {
-  @include dimen(100%, 100%);
+  @include sq-dimen(100%);
   @include flex($flex-direction: column);
   max-height: calc(100vh - #{$header-height});
   overflow: hidden;

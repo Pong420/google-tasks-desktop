@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useRxAsync } from 'use-rx-hooks';
 import { TaskListHeader } from './TaskListHeader';
 import { TodoTaskList } from './TodoTaskList';
+import { NewTask } from './NewTask';
 import { CompletedTaskList } from './CompletedTaskList';
 import { getAllTasklist, getAllTasks } from '../../service';
 import {
@@ -44,7 +45,10 @@ export function TaskList() {
     <div className="task-list">
       <TaskListHeader />
       <div className="task-list-content">
-        <TodoTaskList tasks={todo} />
+        <NewTask />
+        <div className="scroll-content">
+          <TodoTaskList tasks={todo} />
+        </div>
         {!!completed.length && <CompletedTaskList tasks={completed} />}
       </div>
     </div>

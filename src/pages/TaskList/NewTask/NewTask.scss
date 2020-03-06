@@ -1,0 +1,28 @@
+.new-task {
+  @include dimen(100%, 56px);
+  @include flex(center);
+  @include padding-x(10px);
+
+  .new-task-button {
+    @include flex(center);
+    border-radius: 50px;
+    cursor: pointer;
+    flex: 1 0 auto;
+    margin-right: 10px;
+    user-select: none;
+
+    &:hover {
+      background-color: var(--main-color-diff);
+    }
+
+    .mui-icon-button {
+      background: none;
+      font-weight: 500;
+      margin-right: 5px;
+    }
+
+    svg {
+      color: var(--accent-color);
+    }
+  }
+}
