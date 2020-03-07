@@ -4,7 +4,7 @@ import { google, tasks_v1 } from 'googleapis';
 import { oAuth2Client } from './auth';
 import { Schema$TaskList } from '../typings';
 
-const { tasklists } = google.tasks({
+export const { tasklists } = google.tasks({
   version: 'v1',
   auth: oAuth2Client
 });

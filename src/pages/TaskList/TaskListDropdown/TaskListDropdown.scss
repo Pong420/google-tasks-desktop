@@ -1,4 +1,5 @@
 $button-height: 26px;
+$item-height: 40px;
 
 .task-list-header-dropdown-container {
   @include app-region-no-drag;
@@ -23,5 +24,22 @@ $button-height: 26px;
     &:not(:hover) {
       background-color: transparent;
     }
+  }
+}
+
+.dropdown-menu-paper.task-list-header-dropdown-paper {
+  @include dimen(auto);
+  margin-top: $button-height;
+
+  .scroll-content {
+    max-height: $item-height * 5;
+    min-width: 180px;
+    overflow: scroll;
+  }
+
+  .mui-menu-item {
+    @include typeface('Nunito Sans', 500);
+    letter-spacing: 0.2px;
+    height: $item-height;
   }
 }
