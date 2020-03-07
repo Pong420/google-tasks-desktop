@@ -1,7 +1,10 @@
+import { createSelector } from 'reselect';
 import { RootState } from '../reducers';
 
-export const taskIdsSelector = (state: RootState) =>
-  state.task.list.reduce(
+const allTaskSelector = (state: RootState) => state.task.list;
+
+export const taskIdsSelector = createSelector(allTaskSelector, tasks =>
+  tasks.reduce(
     (result, { uuid, status }) => {
       return {
         ...result,
@@ -15,7 +18,11 @@ export const taskIdsSelector = (state: RootState) =>
       todo: [] as string[],
       completed: [] as string[]
     }
-  );
+  )
+);
 
 export const taskSelector = (id: string) => (state: RootState) =>
   state.task.byIds[id];
+
+export const focusedSelector = (id: string) => (state: RootState) =>
+  state.task.focused === id;

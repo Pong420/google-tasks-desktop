@@ -27,7 +27,7 @@ export const Task = React.forwardRef<HTMLDivElement, TaskProps>(
           .trim()}
         ref={ref}
       >
-        <ToggleCompleted isEmpty={!!value.trim()} uuid={uuid} />
+        <ToggleCompleted isEmpty={!value.trim()} uuid={uuid} />
         <Input
           {...inputProps}
           {...inputHandler}

@@ -8,8 +8,13 @@ interface Props {
 export function TodoTaskList({ tasks }: Props) {
   return (
     <div className="todo-tasks-list">
-      {tasks.map(uuid => (
-        <TodoTask key={uuid} uuid={uuid} />
+      {tasks.map((uuid, index) => (
+        <TodoTask
+          key={uuid}
+          uuid={uuid}
+          prev={tasks[index - 1]}
+          next={tasks[index + 1]}
+        />
       ))}
     </div>
   );

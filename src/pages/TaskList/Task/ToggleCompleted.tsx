@@ -34,11 +34,11 @@ export function ToggleCompleted({ uuid, isEmpty }: Props) {
           ? deleteTask({ uuid })
           : updateTask({
               uuid,
-              completed: status === 'completed' ? 'needsAction' : 'completed'
+              status: status === 'completed' ? 'needsAction' : 'completed'
             })
       }
     >
-      {status === 'needsAction' && <MarkCompleteButton />}
+      {status !== 'completed' && <MarkCompleteButton />}
       <MarkInCompleteButton />
     </div>
   );
