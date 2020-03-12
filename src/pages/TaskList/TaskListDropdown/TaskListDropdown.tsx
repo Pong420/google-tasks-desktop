@@ -36,6 +36,14 @@ export function TaskListDropdown({
       anchorEl={anchorEl}
       onClick={setAnchorEl}
       onClose={onClose}
+      onEnter={el => {
+        const scroller = el.querySelector<HTMLDivElement>('.scroll-content');
+        const item = el.querySelector<SVGElement>('svg')!.parentElement!
+          .offsetParent as HTMLElement;
+        if (scroller && item) {
+          scroller.scrollTop = item.offsetTop;
+        }
+      }}
       footer={footer && footer(onClose)}
     >
       {ids.map(id => {

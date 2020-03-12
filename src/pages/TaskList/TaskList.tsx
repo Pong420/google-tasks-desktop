@@ -5,38 +5,31 @@ import { TaskListHeader } from './TaskListHeader';
 import { TodoTaskList } from './TodoTaskList';
 import { NewTask } from './NewTask';
 import { CompletedTaskList } from './CompletedTaskList';
-import { tasklists, getAllTasklist, getAllTasks } from '../../service';
+import { getAllTasklist, getAllTasks } from '../../service';
 import {
   useTaskListActions,
   useTaskActions,
-  taskIdsSelector
+  taskIdsSelector,
+  RootState
 } from '../../store';
 import { NProgress } from '../../utils/nprogress';
 import { useCurrenTaskList } from '../../hooks/useCurrenTaskList';
-
-const newTaskListReq = (title: string) =>
-  tasklists.insert({ requestBody: { title } }).then(res => res.data);
 
 export function TaskList() {
   const tasklistActions = useTaskListActions();
   const taskActions = useTaskActions();
 
-  const { run: _getAllTasks } = useRxAsync(getAllTasks, {
+  const { run } = useRxAsync(getAllTasks, {
     defer: true,
     onSuccess: taskActions.paginateTask
   });
 
-  const { run: createTaskList, loading: loadingNewTaskList } = useRxAsync(
-    newTaskListReq,
-    {
-      defer: true,
-      onSuccess: tasklistActions.createTaskList
-    }
-  );
-
   const tasklist = useCurrenTaskList();
 
   const { todo, completed } = useSelector(taskIdsSelector);
+  const creatingTasklist = useSelector(
+    (state: RootState) => state.taskList.creatingTasklist
+  );
 
   useRxAsync(getAllTasklist, {
     onSuccess: tasklistActions.paginateTaskList
@@ -49,17 +42,17 @@ export function TaskList() {
   useEffect(() => {
     if (tasklist) {
       NProgress.start();
-      _getAllTasks({ tasklist: tasklist.id });
+      run({ tasklist: tasklist.id });
     }
-  }, [_getAllTasks, tasklist]);
+  }, [run, tasklist]);
 
   return (
     <div
-      className={[`task-list`, loadingNewTaskList ? 'disabled' : '']
+      className={[`task-list`, creatingTasklist ? 'disabled' : '']
         .join(' ')
         .trim()}
     >
-      <TaskListHeader onConfirm={createTaskList} />
+      <TaskListHeader onConfirm={tasklistActions.newTaskList} />
       <div className="task-list-content">
         <NewTask />
         <div className="scroll-content">

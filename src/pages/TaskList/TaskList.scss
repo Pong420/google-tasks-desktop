@@ -28,8 +28,8 @@
   z-index: 1;
 
   > .scroll-content {
+    @include sq-dimen(100%);
     flex: 1 1 auto;
-    height: 100%;
     overflow: auto;
   }
 }
