@@ -1,7 +1,6 @@
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { TaskActionTypes, TaskActions } from '../actions/task';
 import { Schema$Task } from '../../typings';
-import { taskUUID } from '../../service';
 
 type DefaultState = typeof defaultState;
 interface State extends DefaultState {
@@ -26,9 +25,8 @@ export function taskReducer(
   switch (action.type) {
     case 'CREATE_TASK':
       return (() => {
-        const { prevTask } = action.payload || {};
+        const { prevTask, uuid } = action.payload;
         const index = prevTask ? state.ids.indexOf(prevTask) + 1 : 0;
-        const uuid = taskUUID.next();
         const newTask = { uuid };
 
         return {

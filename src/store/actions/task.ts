@@ -1,6 +1,7 @@
 import { UnionCRUDActions, createCRUDActions } from '@pong420/redux-crud';
 import { useActions } from '../../hooks/useActions';
 import { Schema$Task } from '../../typings';
+import { taskUUID } from '../../service';
 
 export const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
   updateTask: ['UPDATE', 'UPDATE_TASK'],
@@ -14,12 +15,13 @@ export const TaskActionTypes = {
   FOCUS: 'FOCUS_TASK' as const
 };
 
-export function createTask(
-  payload?: Partial<Schema$Task> & { prevTask?: string }
-) {
+export function createTask(payload?: { prevTask?: string }) {
   return {
     type: TaskActionTypes.CREATE,
-    payload
+    payload: {
+      ...payload,
+      uuid: taskUUID.next()
+    }
   };
 }
 
