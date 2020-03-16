@@ -5,6 +5,7 @@ import { Schema$Task } from '../../typings';
 type DefaultState = typeof defaultState;
 interface State extends DefaultState {
   focused: string | null;
+  deleted: { [x: string]: Schema$Task };
 }
 
 const [defaultState, reducer] = createCRUDReducer<Schema$Task, 'uuid'>({
@@ -15,7 +16,8 @@ const [defaultState, reducer] = createCRUDReducer<Schema$Task, 'uuid'>({
 
 const initialState: State = {
   ...defaultState,
-  focused: null
+  focused: null,
+  deleted: {}
 };
 
 export function taskReducer(
@@ -46,11 +48,25 @@ export function taskReducer(
       })();
 
     case 'DELETE_TASK':
-      return {
-        ...state,
-        ...reducer(state, action),
-        focused: action.payload.prevTask || state.focused
-      };
+      return (() => {
+        const { uuid, prevTask } = action.payload;
+        const newState = reducer(state, action);
+
+        console.log(
+          state.focused && state.ids[0] === uuid ? newState.ids[0] : null
+        );
+        return {
+          ...state,
+          ...newState,
+          deleted: {
+            ...state.deleted,
+            [uuid]: state.byIds[uuid]!
+          },
+          focused:
+            prevTask ||
+            (state.focused && state.ids[0] === uuid ? newState.ids[0] : null) // for delete task by backspace
+        };
+      })();
 
     case 'FOCUS_TASK':
       return {

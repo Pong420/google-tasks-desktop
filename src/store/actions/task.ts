@@ -12,7 +12,8 @@ export const TaskActionTypes = {
   ...actionTypes,
   CREATE: 'CREATE_TASK' as const,
   DELETE: 'DELETE_TASK' as const,
-  FOCUS: 'FOCUS_TASK' as const
+  FOCUS: 'FOCUS_TASK' as const,
+  UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS' as const
 };
 
 export function createTask(payload?: { prevTask?: string }) {
@@ -40,6 +41,15 @@ export function setFocus(payload?: string | null) {
   };
 }
 
+export function updateTaskSuccess(
+  ...args: Parameters<typeof actions['updateTask']>
+) {
+  return {
+    ...actions.updateTask(...args),
+    type: TaskActionTypes.UPDATE_SUCCESS
+  };
+}
+
 export const taskActions = {
   ...actions,
   createTask,
@@ -49,8 +59,6 @@ export const taskActions = {
 
 export type TaskActions =
   | UnionCRUDActions<typeof taskActions>
-  | ReturnType<typeof createTask>
-  | ReturnType<typeof deleteTask>
-  | ReturnType<typeof setFocus>;
+  | ReturnType<typeof updateTaskSuccess>;
 
 export const useTaskActions = () => useActions(taskActions);
