@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useRef, FormEvent } from 'react';
-import { Omit } from 'react-redux';
 import { ConfirmDialog, ConfirmDialogProps } from './ConfirmDialog';
 import { Input } from '../Input';
 

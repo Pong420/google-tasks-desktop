@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Omit } from 'react-redux';
 import InputBase, { InputBaseProps } from '@material-ui/core/InputBase';
 
 export type InputProps = Omit<InputBaseProps, 'ref'>;

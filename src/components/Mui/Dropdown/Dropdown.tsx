@@ -1,5 +1,4 @@
 import React, { useMemo, ReactNode, MouseEvent, forwardRef } from 'react';
-import { Omit } from 'react-redux';
 import { Menu, MenuProps } from '../Menu';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownRounded';
