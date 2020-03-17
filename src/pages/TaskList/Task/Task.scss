@@ -115,11 +115,12 @@ $min-task-height: 50px;
   }
 
   .task-notes {
+    @include dimen(100%);
     @include multi-line-ellipsis($line-height: 16px);
     @include margin-y(2px);
-
     color: var(--text-secondary-color);
     font-size: 12px;
+    overflow-wrap: break-word;
   }
 
   .task-due-date-button {

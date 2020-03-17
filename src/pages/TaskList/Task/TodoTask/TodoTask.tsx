@@ -1,7 +1,23 @@
-import React, { useRef, useMemo, useEffect, KeyboardEvent } from 'react';
-import { Task, TaskProps } from '../Task';
+import React, {
+  useRef,
+  useMemo,
+  useEffect,
+  MouseEvent,
+  KeyboardEvent
+} from 'react';
 import { useSelector } from 'react-redux';
-import { focusedSelector, useTaskActions } from '../../../../store';
+import { Task, TaskProps } from '../Task';
+import { TodoTaskMenu } from './TodoTaskMenu';
+import { TodoTaskDetails, EditTaskButton } from '../TodoTaskDetails';
+import {
+  focusedSelector,
+  useTaskActions,
+  taskSelector
+} from '../../../../store';
+import { useMuiMenu } from '../../../../components/Mui';
+import { useBoolean } from '../../../../hooks/useBoolean';
+import { useMouseTrap } from '../../../../hooks/useMouseTrap';
+import idx from 'idx.macro';
 
 interface Props extends TaskProps {
   prev?: string;
@@ -10,13 +26,30 @@ interface Props extends TaskProps {
 
 export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { createTask, deleteTask, setFocus } = useTaskActions();
-  const handler = useMemo(() => {
+  const { createTask, deleteTask, updateTask, setFocus } = useTaskActions();
+  const { onDelete, ...handler } = useMemo(() => {
     return {
-      onClick: () => setFocus(uuid),
+      onDelete: () => deleteTask({ uuid }),
+      // prevent focused task trigger `onBlur` event
+      onMouseDown: (event: MouseEvent<HTMLElement>) => {
+        !(event.target instanceof HTMLTextAreaElement) &&
+          event.preventDefault();
+      },
+      onClick: (event: MouseEvent<HTMLElement>) => {
+        event.currentTarget
+          .querySelector<HTMLTextAreaElement>('textarea')!
+          .focus();
+      },
       onBlur: () => {
+        // reduce unnecessary `FOCUS_TASK` action
         setTimeout(() => {
-          document.activeElement === document.body && setFocus(null);
+          const el = idx(
+            document,
+            d =>
+              d.activeElement.parentElement.parentElement.parentElement
+                .parentElement
+          );
+          (!el || !el.classList.contains('task')) && setFocus(null);
         }, 0);
       },
       onKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -57,6 +90,12 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
 
   const focused = useSelector(focusedSelector(uuid));
 
+  const { title } = useSelector(taskSelector(uuid)) || {};
+
+  const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
+
+  const [detailViewOpened, openDetailsView, closeDetailsView] = useBoolean();
+
   useEffect(() => {
     const el = ref.current;
     const input = el && el.querySelector<HTMLTextAreaElement>('textarea');
@@ -68,13 +107,41 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
     }
   }, [focused]);
 
+  useMouseTrap(focused ? 'shift+enter' : '', openDetailsView);
+
   return (
-    <Task
-      {...props}
-      {...handler}
-      ref={ref}
-      uuid={uuid}
-      className={['todo-task', focused ? 'focused' : ''].join(' ').trim()}
-    />
+    <>
+      <Task
+        {...props}
+        {...handler}
+        ref={ref}
+        uuid={uuid}
+        value={title}
+        isEmpty={!!(title && title.trim())}
+        onContextMenu={setAnchorPosition}
+        onFocus={() => !focused && setFocus(uuid)}
+        onChange={event =>
+          updateTask({ uuid, title: event.currentTarget.value })
+        }
+        className={['todo-task', focused ? 'focused' : ''].join(' ').trim()}
+        endAdornment={<EditTaskButton onClick={openDetailsView} />}
+      />
+      <TodoTaskMenu
+        uuid={uuid}
+        keepMounted={false}
+        anchorReference="anchorPosition"
+        anchorPosition={anchorPosition}
+        open={!!anchorPosition}
+        onClose={onClose}
+        onDelete={onDelete}
+      />
+      <TodoTaskDetails
+        uuid={uuid}
+        keepMounted={false}
+        open={detailViewOpened}
+        onClose={closeDetailsView}
+        onDelete={onDelete}
+      />
+    </>
   );
 });

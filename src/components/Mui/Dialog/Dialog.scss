@@ -53,12 +53,12 @@
   padding-left: 3px;
 }
 
-.fullScreen-dialog-paper.fullScreen-dialog-paper {
+.fullscreen-dialog-paper.fullscreen-dialog-paper {
   background-color: var(--main-color);
   color: var(--text-color);
 }
 
-.FullScreen-diaglog-header {
+.fullscreen-diaglog-header {
   @include app-region-drag;
   @include dimen(100%, $header-height);
   @include flex(center, flex-end);
@@ -70,7 +70,7 @@
   }
 }
 
-.fullScreen-dialog-content {
+.fullscreen-dialog-content {
   $padding-x: 15px;
 
   @include flex();
@@ -89,8 +89,8 @@
     font-weight: 500;
   }
 
-  .fullScreen-dialog-section {
-    .fullScreen-dialog-section-title {
+  .fullscreen-dialog-section {
+    .fullscreen-dialog-section-title {
       @include margin-x(-$padding-x);
       @include padding-x($padding-x);
       @include padding-y(12px);
@@ -101,12 +101,12 @@
       font-size: 15px;
     }
 
-    .fullScreen-dialog-row {
+    .fullscreen-dialog-row {
       @include flex(center, space-between);
       @include padding-y(12px);
       min-height: 50px;
 
-      + .fullScreen-dialog-row {
+      + .fullscreen-dialog-row {
         border-top: 1px solid var(--border-color);
       }
     }

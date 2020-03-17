@@ -1,0 +1,114 @@
+$height: 36px;
+
+.todo-task-details {
+  .row,
+  .mui-input-base {
+    + .row,
+    + .mui-input-base {
+      margin-top: 8px;
+    }
+  }
+
+  .mui-input-base {
+    @include padding-y(0.5em);
+    line-height: 1.42em;
+
+    &.todo-task-details-title-field {
+      @include typeface('Nunito Sans', 600);
+      font-size: 16px;
+    }
+
+    &.todo-task-details-notes-field {
+      &,
+      textarea::placeholder {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .row {
+    @include flex(center, stretch);
+    color: var(--text-secondary-color);
+    min-height: 46px;
+
+    .mui-dropdown-button {
+      @include typeface('Nunito Sans', 600);
+      background: var(--task-highlight-background-color);
+      color: var(--text-color);
+      min-height: $height;
+      line-height: $height;
+    }
+
+    > svg {
+      margin-right: 10px;
+    }
+
+    &.row-date,
+    &.row-subtask {
+      button {
+        @include typeface('Nunito Sans', 700);
+        text-transform: initial;
+        color: inherit;
+      }
+    }
+  }
+
+  .task-deatails-due-date-button {
+    @include dimen(100%);
+    @include flex(center, space-between);
+    @include padding-x(15px);
+    @include relative();
+
+    align-self: stretch;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    user-select: none;
+
+    .date {
+      color: var(--accent-dark-color);
+      font-weight: 500;
+    }
+
+    button {
+      background: none;
+      padding: 0;
+    }
+
+    .task-deatails-due-date-clickable {
+      @include absolute(0, null, 0);
+      @include sq-dimen(100%);
+      cursor: pointer;
+    }
+  }
+}
+
+.details-task-list-dropdown-paper {
+  @include dimen(calc(100% - 60px));
+
+  .menu-content {
+    @include padding-y(0);
+  }
+
+  .scroll-content {
+    max-height: $height * 5;
+  }
+
+  .mui-menu-item {
+    &.mui-menu-item {
+      height: $height;
+
+      > div {
+        @include relative();
+        flex-direction: row-reverse;
+
+        .text {
+          @include padding-x(36px 0);
+
+          + svg {
+            @include absolute(null, null, 0);
+          }
+        }
+      }
+    }
+  }
+}

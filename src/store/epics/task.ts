@@ -6,7 +6,9 @@ import {
   map,
   filter,
   distinctUntilKeyChanged,
-  catchError
+  catchError,
+  groupBy,
+  debounceTime
 } from 'rxjs/operators';
 import { TaskActions, updateTaskSuccess } from '../actions/task';
 import { RootState } from '../reducers';
@@ -70,29 +72,35 @@ const createTaskEpic: TaskEpic = (action$, state$) =>
 const updateTaskEpic: TaskEpic = (action$, state$) =>
   action$.pipe(
     ofType<Actions, ExtractAction<Actions, 'UPDATE_TASK'>>('UPDATE_TASK'),
-    mergeMap(action => {
-      const { uuid, ...changes } = action.payload;
-      const tasklist = currentTaskListsSelector(state$.value)!;
-      const task = state$.value.task.byIds[uuid];
-      const task$ =
-        task && task.id ? of(task) : waitForTaskCreated$(state$, uuid);
+    groupBy(action => action.payload.uuid),
+    mergeMap(group$ =>
+      group$.pipe(
+        debounceTime(250),
+        switchMap(action => {
+          const { uuid, ...changes } = action.payload;
+          const tasklist = currentTaskListsSelector(state$.value)!;
+          const task = state$.value.task.byIds[uuid];
+          const task$ =
+            task && task.id ? of(task) : waitForTaskCreated$(state$, uuid);
 
-      return task$.pipe(
-        switchMap(task =>
-          defer(() =>
-            tasksAPI.update({
-              task: task.id!,
-              tasklist: tasklist.id!,
-              requestBody: task
-            })
-          ).pipe(
-            map(res => res.data),
-            map(task => updateTaskSuccess({ ...task, ...changes, uuid })),
-            catchError(() => empty())
-          )
-        )
-      );
-    })
+          return task$.pipe(
+            switchMap(task =>
+              defer(() =>
+                tasksAPI.update({
+                  task: task.id!,
+                  tasklist: tasklist.id!,
+                  requestBody: task
+                })
+              ).pipe(
+                map(res => res.data),
+                map(task => updateTaskSuccess({ ...task, ...changes, uuid })),
+                catchError(() => empty())
+              )
+            )
+          );
+        })
+      )
+    )
   );
 
 const deleteTaskEpic: TaskEpic = (action$, state$) =>
