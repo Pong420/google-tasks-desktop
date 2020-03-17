@@ -2,7 +2,7 @@ import { defer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { google, tasks_v1 } from 'googleapis';
 import { oAuth2Client } from './auth';
-import { Schema$TaskList, Schema$Task } from '../typings';
+import { Schema$Task } from '../typings';
 import { UUID } from '../utils/uuid';
 
 const { tasks } = google.tasks({
@@ -17,9 +17,11 @@ export function getAllTasks(params: tasks_v1.Params$Resource$Tasks$List) {
     tasks.list({ showCompleted: true, showHidden: false, ...params })
   ).pipe(
     map(res => {
-      const data = (res.data.items || []) as Schema$TaskList[];
+      const data = (res.data.items || []) as Schema$Task[];
       return {
-        data: data.map<Schema$Task>(d => ({ ...d, uuid: taskUUID.next() })),
+        data: data
+          .sort((a, b) => Number(a.position) - Number(b.position))
+          .map<Schema$Task>(d => ({ ...d, uuid: taskUUID.next() })),
         pageNo: 1,
         total: data.length
       };
