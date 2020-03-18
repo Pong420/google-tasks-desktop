@@ -1,5 +1,5 @@
 import { createCRUDReducer } from '@pong420/redux-crud';
-import { TaskActionTypes, TaskActions } from '../actions/task';
+import { TaskActionTypes, TaskActions, taskActions } from '../actions/task';
 import { Schema$Task } from '../../typings';
 
 type DefaultState = typeof defaultState;
@@ -72,6 +72,12 @@ export function taskReducer(
       return {
         ...state,
         focused: action.payload || null
+      };
+
+    case 'UPDATE_TASK_SUCCESS':
+      return {
+        ...state,
+        ...reducer(state, taskActions.updateTask(action.payload))
       };
 
     default:
