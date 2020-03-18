@@ -52,9 +52,6 @@ export function taskReducer(
         const { uuid, prevTask } = action.payload;
         const newState = reducer(state, action);
 
-        console.log(
-          state.focused && state.ids[0] === uuid ? newState.ids[0] : null
-        );
         return {
           ...state,
           ...newState,

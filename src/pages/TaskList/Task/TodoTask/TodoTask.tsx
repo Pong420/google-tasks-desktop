@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { Task, TaskProps } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
 import { TodoTaskDetails, EditTaskButton } from '../TodoTaskDetails';
+import { DateTimeDialog } from '../DateTimeDialog';
 import {
   focusedSelector,
   useTaskActions,
@@ -90,11 +91,12 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
 
   const focused = useSelector(focusedSelector(uuid));
 
-  const { title } = useSelector(taskSelector(uuid)) || {};
+  const { title, due } = useSelector(taskSelector(uuid)) || {};
 
   const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 
   const [detailViewOpened, openDetailsView, closeDetailsView] = useBoolean();
+  const [dialogOpened, openDateTimeDialog, closeDateTimeDialog] = useBoolean();
 
   useEffect(() => {
     const el = ref.current;
@@ -119,6 +121,7 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
         value={title}
         isEmpty={!!(title && title.trim())}
         onContextMenu={setAnchorPosition}
+        onDueDateBtnClick={openDateTimeDialog}
         onFocus={() => !focused && setFocus(uuid)}
         onChange={event =>
           updateTask({ uuid, title: event.currentTarget.value })
@@ -134,6 +137,7 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
         open={!!anchorPosition}
         onClose={onClose}
         onDelete={onDelete}
+        openDateTimeDialog={openDateTimeDialog}
       />
       <TodoTaskDetails
         uuid={uuid}
@@ -141,6 +145,13 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
         open={detailViewOpened}
         onClose={closeDetailsView}
         onDelete={onDelete}
+        openDateTimeDialog={openDateTimeDialog}
+      />
+      <DateTimeDialog
+        date={due ? new Date(due) : undefined}
+        open={dialogOpened}
+        onClose={closeDateTimeDialog}
+        onConfirm={date => updateTask({ uuid, due: date.toISODateString() })}
       />
     </>
   );

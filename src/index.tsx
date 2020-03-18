@@ -7,8 +7,10 @@ import { theme } from './theme';
 import configureStore, { history } from './store';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+
 import 'typeface-roboto';
 import 'typeface-nunito-sans';
+import './utils/date';
 import './index.scss';
 
 const store = configureStore();

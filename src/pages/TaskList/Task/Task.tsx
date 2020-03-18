@@ -3,9 +3,11 @@ import { useSelector } from 'react-redux';
 import { Input, InputProps } from '../../../components/Mui';
 import { taskSelector } from '../../../store';
 import { ToggleCompleted } from './ToggleCompleted';
-import { TaskInput } from './TaskInput';
+import { TaskInput, TaskInputProps } from './TaskInput';
 
-export interface TaskProps extends InputProps {
+export interface TaskProps
+  extends InputProps,
+    Pick<TaskInputProps, 'onDueDateBtnClick'> {
   className?: string;
   uuid: string;
   isEmpty?: boolean;
@@ -13,7 +15,17 @@ export interface TaskProps extends InputProps {
 }
 
 export const Task = React.forwardRef<HTMLDivElement, TaskProps>(
-  ({ className, uuid, isEmpty, endAdornment, ...inputProps }, ref) => {
+  (
+    {
+      className,
+      uuid,
+      isEmpty,
+      endAdornment,
+      onDueDateBtnClick,
+      ...inputProps
+    },
+    ref
+  ) => {
     const { due, notes } = useSelector(taskSelector(uuid)) || {};
 
     return (
@@ -29,7 +41,7 @@ export const Task = React.forwardRef<HTMLDivElement, TaskProps>(
           {...inputProps}
           fullWidth
           className="task-input-base"
-          inputProps={{ due, notes }}
+          inputProps={{ due, notes, onDueDateBtnClick }}
           inputComponent={TaskInput as InputProps['inputComponent']}
           endAdornment={
             <div className="task-input-base-end-adornment">{endAdornment}</div>

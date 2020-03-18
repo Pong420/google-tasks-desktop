@@ -56,7 +56,7 @@ $height: 36px;
   .task-deatails-due-date-button {
     @include dimen(100%);
     @include flex(center, space-between);
-    @include padding-x(15px);
+    @include padding-x(15px 0);
     @include relative();
 
     align-self: stretch;
@@ -71,7 +71,6 @@ $height: 36px;
 
     button {
       background: none;
-      padding: 0;
     }
 
     .task-deatails-due-date-clickable {

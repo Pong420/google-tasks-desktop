@@ -9,17 +9,19 @@ import {
   Input
 } from '../../../../components/Mui';
 import { TaskListDropdown } from '../../TaskListDropdown';
+import { DateTimeButton } from './DateTimeButton';
 import { Schema$Task } from '../../../../typings';
+import { useBoolean } from '../../../../hooks/useBoolean';
+import { taskSelector, useTaskActions } from '../../../../store';
 import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
-import { useBoolean } from '../../../../hooks/useBoolean';
-import { taskSelector, useTaskActions } from '../../../../store';
 
 interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
   taskListDropdownOpened?: boolean;
   onDelete: () => void;
+  openDateTimeDialog: () => void;
 }
 
 const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
@@ -45,12 +47,13 @@ export function TodoTaskDetails({
   open,
   onClose,
   onDelete,
+  openDateTimeDialog,
   taskListDropdownOpened,
   ...props
 }: Props) {
   const [shouldBeDeleted, deleteOnExited] = useBoolean();
   const { updateTask } = useTaskActions();
-  const { title, notes } = useSelector(taskSelector(uuid)) || {};
+  const { title, notes, due } = useSelector(taskSelector(uuid)) || {};
 
   return (
     <FullScreenDialog
@@ -103,6 +106,11 @@ export function TodoTaskDetails({
 
       <div className="row row-date">
         <EventAvailableIcon />
+        <DateTimeButton
+          date={due ? new Date(due) : undefined}
+          onClick={openDateTimeDialog}
+          onRemove={() => updateTask({ uuid, due: null })}
+        />
       </div>
 
       <div className="row row-subtask">

@@ -23,11 +23,38 @@ export function TaskInput({
         <div
           className="task-due-date-button"
           onClick={onDueDateBtnClick}
-          // data-date={dateFormat(new Date(due))}
+          data-date={dateFormat(new Date(due))}
         >
           <EventAvailableIcon />
         </div>
       )}
     </div>
   );
+}
+
+function dateFormat(d: Date) {
+  const now = new Date();
+  const dayDiff = Math.floor((+now - +d) / 1000 / 60 / 60 / 24);
+
+  if (dayDiff === 0) {
+    return 'Today';
+  }
+
+  if (dayDiff === -1) {
+    return 'Tomorrow';
+  }
+
+  if (dayDiff < -1) {
+    return d.format('D, j M');
+  }
+
+  if (dayDiff === 1) {
+    return 'Yesterday';
+  }
+
+  if (dayDiff < 7) {
+    return `${dayDiff} days ago`;
+  }
+
+  return `${Math.floor(dayDiff / 7)} weeks ago`;
 }

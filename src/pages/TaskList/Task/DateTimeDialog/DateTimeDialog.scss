@@ -1,0 +1,19 @@
+.date-time-dialog-paper.date-time-dialog-paper {
+  @include dimen(100%);
+  color: var(--text-secondary-color);
+  max-height: 420px;
+  max-width: 300px;
+
+  button {
+    color: var(--text-secondary-color);
+    text-transform: inherit;
+  }
+
+  .dialog-scroll-content {
+    padding: 5px 15px 20px 15px;
+  }
+
+  .dialog-actions {
+    margin-top: 20px;
+  }
+}
