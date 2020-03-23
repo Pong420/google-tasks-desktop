@@ -119,7 +119,7 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
         ref={ref}
         uuid={uuid}
         value={title}
-        isEmpty={!!(title && title.trim())}
+        isEmpty={!(title && title.trim())}
         onContextMenu={setAnchorPosition}
         onDueDateBtnClick={openDateTimeDialog}
         onFocus={() => !focused && setFocus(uuid)}
