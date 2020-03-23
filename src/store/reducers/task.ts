@@ -71,6 +71,7 @@ export function taskReducer(
         focused: action.payload || null
       };
 
+    case 'CREATE_TASK_SUCCESS':
     case 'UPDATE_TASK_SUCCESS':
       return {
         ...state,

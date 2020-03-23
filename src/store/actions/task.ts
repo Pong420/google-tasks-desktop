@@ -11,6 +11,7 @@ export const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
 export const TaskActionTypes = {
   ...actionTypes,
   CREATE: 'CREATE_TASK' as const,
+  CREATE_SUCCESS: 'CREATE_TASK_SUCCESS' as const,
   DELETE: 'DELETE_TASK' as const,
   FOCUS: 'FOCUS_TASK' as const,
   UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS' as const
@@ -41,6 +42,14 @@ export function setFocus(payload?: string | null) {
   };
 }
 
+export function createTaskSuccess(payload: Schema$Task) {
+  return {
+    ...actions.updateTask(payload),
+    payload,
+    type: TaskActionTypes.CREATE_SUCCESS
+  };
+}
+
 export function updateTaskSuccess(
   ...args: Parameters<typeof actions['updateTask']>
 ) {
@@ -59,6 +68,7 @@ export const taskActions = {
 
 export type TaskActions =
   | UnionCRUDActions<typeof taskActions>
+  | ReturnType<typeof createTaskSuccess>
   | ReturnType<typeof updateTaskSuccess>;
 
 export const useTaskActions = () => useActions(taskActions);

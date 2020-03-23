@@ -1,18 +1,25 @@
-import { ofType, Epic, StateObservable } from 'redux-observable';
-import { empty, defer, of } from 'rxjs';
+import { ofType, Epic, ActionsObservable } from 'redux-observable';
+import { Observable, empty, defer, of } from 'rxjs';
 import {
   switchMap,
   mergeMap,
   map,
   filter,
-  distinctUntilKeyChanged,
   catchError,
   groupBy,
-  debounceTime
+  debounceTime,
+  takeUntil,
+  shareReplay,
+  take,
+  tap
 } from 'rxjs/operators';
-import { TaskActions, updateTaskSuccess } from '../actions/task';
+import {
+  TaskActions,
+  createTaskSuccess,
+  updateTaskSuccess
+} from '../actions/task';
 import { RootState } from '../reducers';
-import { currentTaskListsSelector, taskSelector } from '../selectors';
+import { taskSelector, currentTaskListsSelector } from '../selectors';
 import { tasksAPI } from '../../service';
 import { ExtractAction, Schema$Task } from '../../typings';
 import NProgress from '../../utils/nprogress';
@@ -21,13 +28,26 @@ type Actions = TaskActions;
 type TaskEpic = Epic<Actions, Actions, RootState>;
 
 const waitForTaskCreated$ = (
-  state$: StateObservable<RootState>,
+  action$: ActionsObservable<Actions>,
   uuid: string
-) =>
-  state$.pipe(
-    map(state => state.task.byIds[uuid]),
-    filter((task): task is Schema$Task => !!task && !!task.id),
-    distinctUntilKeyChanged('id')
+): Observable<Schema$Task> =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'CREATE_TASK_SUCCESS'>>(
+      'CREATE_TASK_SUCCESS'
+    ),
+    filter(action => action.payload.uuid === uuid),
+    map(action => action.payload),
+    take(1)
+  );
+
+const deleteTask$ = (
+  action$: ActionsObservable<Actions>,
+  uuid: string
+): Observable<ExtractAction<Actions, 'DELETE_TASK'>> =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'DELETE_TASK'>>('DELETE_TASK'),
+    filter(action => action.payload.uuid === uuid),
+    take(1)
   );
 
 const nprogressEpic: TaskEpic = action$ =>
@@ -51,20 +71,37 @@ const createTaskEpic: TaskEpic = (action$, state$) =>
       const prevTask$ =
         !prevTask || prevTask.id
           ? of(prevTask)
-          : waitForTaskCreated$(state$, prevTask.uuid);
+          : waitForTaskCreated$(action$, prevTask.uuid);
 
-      return defer(() =>
-        prevTask$.pipe(
-          switchMap(prevTask =>
+      const createTask$ = prevTask$.pipe(
+        switchMap(prevTask =>
+          defer(() =>
             tasksAPI.insert({
               previous: prevTask && prevTask.id!,
               tasklist: tasklist && tasklist.id!
             })
           )
-        )
-      ).pipe(
+        ),
         map(res => res.data),
-        map(task => updateTaskSuccess({ ...task, uuid }))
+        shareReplay(1)
+      );
+
+      return createTask$.pipe(
+        mergeMap(task => of(createTaskSuccess({ ...task, uuid }))),
+        takeUntil(
+          deleteTask$(action$, uuid).pipe(
+            tap(action => {
+              if (action.type === 'DELETE_TASK') {
+                createTask$.subscribe(task =>
+                  tasksAPI.delete({
+                    task: task.id!,
+                    tasklist: tasklist && tasklist.id
+                  })
+                );
+              }
+            })
+          )
+        )
       );
     })
   );
@@ -81,8 +118,7 @@ const updateTaskEpic: TaskEpic = (action$, state$) =>
           const tasklist = currentTaskListsSelector(state$.value)!;
           const task = state$.value.task.byIds[uuid];
           const task$ =
-            task && task.id ? of(task) : waitForTaskCreated$(state$, uuid);
-
+            task && task.id ? of(task) : waitForTaskCreated$(action$, uuid);
           return task$.pipe(
             switchMap(task =>
               defer(() =>
@@ -98,7 +134,8 @@ const updateTaskEpic: TaskEpic = (action$, state$) =>
               )
             )
           );
-        })
+        }),
+        takeUntil(deleteTask$(action$, group$.key))
       )
     )
   );
@@ -113,7 +150,7 @@ const deleteTaskEpic: TaskEpic = (action$, state$) =>
 
       return (task && task.id
         ? of(task)
-        : waitForTaskCreated$(state$, uuid)
+        : waitForTaskCreated$(action$, uuid)
       ).pipe(
         switchMap(task =>
           defer(() =>
