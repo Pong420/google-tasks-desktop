@@ -3,6 +3,11 @@ import { useActions } from '../../hooks/useActions';
 import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
 
+export interface Payload$MoveTask {
+  prevUUID: string;
+  uuid: string;
+}
+
 export const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
   updateTask: ['UPDATE', 'UPDATE_TASK'],
   paginateTask: ['PAGINATE', 'PAGINATE_TASK']
@@ -14,7 +19,9 @@ export const TaskActionTypes = {
   CREATE_SUCCESS: 'CREATE_TASK_SUCCESS' as const,
   DELETE: 'DELETE_TASK' as const,
   FOCUS: 'FOCUS_TASK' as const,
-  UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS' as const
+  UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS' as const,
+  MOVE_TASK: 'MOVE_TASK' as const,
+  MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const
 };
 
 export function createTask(payload?: { prevTask?: string }) {
@@ -59,16 +66,31 @@ export function updateTaskSuccess(
   };
 }
 
+export function moveTask(payload: Payload$MoveTask) {
+  return {
+    type: TaskActionTypes.MOVE_TASK,
+    payload
+  };
+}
+
+export function moveTaskSuccess() {
+  return {
+    type: TaskActionTypes.MOVE_TASK_SUCCESS
+  };
+}
+
 export const taskActions = {
   ...actions,
   createTask,
   deleteTask,
-  setFocus
+  setFocus,
+  moveTask
 };
 
 export type TaskActions =
   | UnionCRUDActions<typeof taskActions>
   | ReturnType<typeof createTaskSuccess>
-  | ReturnType<typeof updateTaskSuccess>;
+  | ReturnType<typeof updateTaskSuccess>
+  | ReturnType<typeof moveTaskSuccess>;
 
 export const useTaskActions = () => useActions(taskActions);

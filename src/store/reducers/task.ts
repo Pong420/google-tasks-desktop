@@ -77,6 +77,17 @@ export function taskReducer(
         ...state,
         ...reducer(state, taskActions.updateTask(action.payload))
       };
+    case 'MOVE_TASK':
+      const from = state.ids.indexOf(action.payload.uuid);
+      const to = state.ids.indexOf(action.payload.prevUUID);
+      return {
+        ...state,
+        ids: move(state.ids, from, to),
+        list: move(state.list, from, to)
+      };
+
+    case 'MOVE_TASK_SUCCESS':
+      return state;
 
     default:
       return {
@@ -84,4 +95,11 @@ export function taskReducer(
         ...reducer(state, action)
       };
   }
+}
+
+// credit: https://github.com/sindresorhus/array-move
+function move<T>(arr: T[], from: number, to: number) {
+  const clone = arr.slice();
+  clone.splice(to < 0 ? clone.length + to : to, 0, clone.splice(from, 1)[0]);
+  return clone;
 }

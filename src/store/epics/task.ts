@@ -1,5 +1,5 @@
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
-import { Observable, empty, defer, of } from 'rxjs';
+import { Observable, empty, defer, of, forkJoin } from 'rxjs';
 import {
   switchMap,
   mergeMap,
@@ -16,7 +16,8 @@ import {
 import {
   TaskActions,
   createTaskSuccess,
-  updateTaskSuccess
+  updateTaskSuccess,
+  moveTaskSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { taskSelector, currentTaskListsSelector } from '../selectors';
@@ -164,4 +165,63 @@ const deleteTaskEpic: TaskEpic = (action$, state$) =>
     })
   );
 
-export default [nprogressEpic, createTaskEpic, updateTaskEpic, deleteTaskEpic];
+const moveTaskEpic: TaskEpic = (action$, state$) => {
+  return action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'MOVE_TASK'>>('MOVE_TASK'),
+    groupBy(action => action.payload.uuid),
+    mergeMap(group$ =>
+      group$.pipe(
+        debounceTime(500),
+        switchMap(action => {
+          const { ids, byIds } = state$.value.task;
+          const tasklist = currentTaskListsSelector(state$.value);
+          const index = ids.indexOf(action.payload.uuid);
+          const payload = ids.slice(index - 1, index - 1).map(uuid => {
+            const task = byIds[uuid];
+            if (task) {
+              return task.id
+                ? of(task)
+                : waitForTaskCreated$(action$, task.uuid);
+            }
+            return of(undefined);
+          });
+
+          console.log('1');
+
+          return forkJoin<Schema$Task | undefined>(...payload).pipe(
+            mergeMap(([prevTask, currTask]) => {
+              const taskId = currTask && currTask.id;
+              const prevId = prevTask && prevTask.id;
+
+              console.log('2');
+
+              // currTask may be delete before successful loaded
+              if (taskId && prevId) {
+                return defer(() =>
+                  tasksAPI.move({
+                    task: taskId,
+                    previous: prevId,
+                    tasklist: tasklist && tasklist.id
+                  })
+                ).pipe(
+                  //
+                  map(moveTaskSuccess)
+                );
+              }
+
+              return empty();
+            })
+          );
+        })
+      )
+    )
+  );
+};
+
+export default [
+  nprogressEpic,
+  createTaskEpic,
+  updateTaskEpic,
+  deleteTaskEpic,
+  moveTaskEpic
+];

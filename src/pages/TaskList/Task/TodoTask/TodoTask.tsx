@@ -27,9 +27,17 @@ interface Props extends TaskProps {
 
 export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { createTask, deleteTask, updateTask, setFocus } = useTaskActions();
-  const { onDelete, ...handler } = useMemo(() => {
+  const {
+    createTask,
+    deleteTask,
+    updateTask,
+    moveTask,
+    setFocus
+  } = useTaskActions();
+  const { onDelete, moveTaskUp, moveTaskDown, ...handler } = useMemo(() => {
     return {
+      moveTaskUp: () => prev && moveTask({ uuid, prevUUID: prev }),
+      moveTaskDown: () => next && moveTask({ uuid, prevUUID: next }),
       onDelete: () => deleteTask({ uuid }),
       // prevent focused task trigger `onBlur` event
       onMouseDown: (event: MouseEvent<HTMLElement>) => {
@@ -87,7 +95,7 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
         }
       }
     };
-  }, [uuid, prev, next, createTask, deleteTask, setFocus]);
+  }, [uuid, prev, next, createTask, deleteTask, moveTask, setFocus]);
 
   const focused = useSelector(focusedSelector(uuid));
 
@@ -110,6 +118,8 @@ export const TodoTask = React.memo(({ uuid, prev, next, ...props }: Props) => {
   }, [focused]);
 
   useMouseTrap(focused ? 'shift+enter' : '', openDetailsView);
+  useMouseTrap(focused ? 'option+up' : '', moveTaskUp);
+  useMouseTrap(focused ? 'option+down' : '', moveTaskDown);
 
   return (
     <>
