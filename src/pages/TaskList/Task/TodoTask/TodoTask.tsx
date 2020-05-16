@@ -20,14 +20,14 @@ import { useBoolean } from '../../../../hooks/useBoolean';
 import { useMouseTrap } from '../../../../hooks/useMouseTrap';
 import idx from 'idx.macro';
 
-interface Props extends TaskProps {
+export interface TodoTaskProps extends TaskProps {
   prev?: string;
   next?: string;
   prevPrev?: string;
 }
 
 export const TodoTask = React.memo(
-  ({ uuid, prevPrev, prev, next, ...props }: Props) => {
+  ({ uuid, prevPrev, prev, next, className, ...props }: TodoTaskProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const {
       createTask,
@@ -154,7 +154,9 @@ export const TodoTask = React.memo(
           onChange={event =>
             updateTask({ uuid, title: event.currentTarget.value })
           }
-          className={['todo-task', focused ? 'focused' : ''].join(' ').trim()}
+          className={['todo-task', focused ? 'focused' : '', className]
+            .join(' ')
+            .trim()}
           endAdornment={<EditTaskButton onClick={openDetailsView} />}
         />
         <TodoTaskMenu

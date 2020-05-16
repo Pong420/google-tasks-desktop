@@ -20,6 +20,12 @@
     .toggle-completed {
       margin-left: 0;
     }
+
+    // override textHighlight
+    &:before,
+    &:after {
+      visibility: hidden;
+    }
   }
 
   &.highlight-bottom-border {

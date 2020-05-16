@@ -30,6 +30,7 @@ export const Task = React.forwardRef<HTMLDivElement, TaskProps>(
 
     return (
       <div
+        data-uuid={uuid}
         className={['task', className]
           .filter(Boolean)
           .join(' ')
