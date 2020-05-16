@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
-import { TransitionProps } from '@material-ui/core/transitions/transition';
+import { SlideProps } from '@material-ui/core/Slide';
 import { IconButton } from '../IconButton';
 import Slide from '@material-ui/core/Slide';
 import CloseIcon from '@material-ui/icons/Close';
@@ -16,7 +16,7 @@ interface ContainerProps {
 
 export const FULLSCREEN_DIALOG_TRANSITION = 300;
 
-const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
+const Transition = React.forwardRef<unknown, SlideProps>((props, ref) => {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
