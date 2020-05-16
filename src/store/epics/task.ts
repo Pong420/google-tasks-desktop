@@ -168,39 +168,36 @@ const deleteTaskEpic: TaskEpic = (action$, state$) =>
 const moveTaskEpic: TaskEpic = (action$, state$) => {
   return action$.pipe(
     ofType<Actions, ExtractAction<Actions, 'MOVE_TASK'>>('MOVE_TASK'),
-    groupBy(action => action.payload.uuid),
+    groupBy(action => action.payload.from),
     mergeMap(group$ =>
       group$.pipe(
         debounceTime(500),
-        switchMap(action => {
-          const { ids, byIds } = state$.value.task;
+        switchMap((action: ExtractAction<Actions, 'MOVE_TASK'>) => {
+          const { byIds } = state$.value.task;
           const tasklist = currentTaskListsSelector(state$.value);
-          const index = ids.indexOf(action.payload.uuid);
-          const payload = ids.slice(index - 1, index - 1).map(uuid => {
-            const task = byIds[uuid];
-            if (task) {
-              return task.id
-                ? of(task)
-                : waitForTaskCreated$(action$, task.uuid);
+          const payload = [action.payload.prevUUID, action.payload.from].map(
+            uuid => {
+              const task = uuid && byIds[uuid];
+              if (task) {
+                return task.id
+                  ? of(task)
+                  : waitForTaskCreated$(action$, task.uuid);
+              }
+              return of(undefined);
             }
-            return of(undefined);
-          });
-
-          console.log('1');
+          ) as [any, any];
 
           return forkJoin<Schema$Task | undefined>(...payload).pipe(
             mergeMap(([prevTask, currTask]) => {
               const taskId = currTask && currTask.id;
               const prevId = prevTask && prevTask.id;
 
-              console.log('2');
-
               // currTask may be delete before successful loaded
-              if (taskId && prevId) {
+              if (taskId) {
                 return defer(() =>
                   tasksAPI.move({
                     task: taskId,
-                    previous: prevId,
+                    previous: prevId || undefined,
                     tasklist: tasklist && tasklist.id
                   })
                 ).pipe(

@@ -77,9 +77,11 @@ export function taskReducer(
         ...state,
         ...reducer(state, taskActions.updateTask(action.payload))
       };
+
     case 'MOVE_TASK':
-      const from = state.ids.indexOf(action.payload.uuid);
-      const to = state.ids.indexOf(action.payload.prevUUID);
+      const from = state.ids.indexOf(action.payload.from);
+      const to = state.ids.indexOf(action.payload.to);
+
       return {
         ...state,
         ids: move(state.ids, from, to),

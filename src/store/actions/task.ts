@@ -4,8 +4,9 @@ import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
 
 export interface Payload$MoveTask {
-  prevUUID: string;
-  uuid: string;
+  prevUUID?: string; // for goole task api
+  to: string;
+  from: string;
 }
 
 export const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
