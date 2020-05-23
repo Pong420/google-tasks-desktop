@@ -1,5 +1,6 @@
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { TaskActionTypes, TaskActions, taskActions } from '../actions/task';
+import { taskSelector } from '../selectors';
 import { Schema$Task } from '../../typings';
 
 interface State {
@@ -169,9 +170,12 @@ export function taskReducer(
     case 'CREATE_TASK_SUCCESS':
     case 'UPDATE_TASK_SUCCESS':
       return (() => {
-        const { title, ...payload } = action.payload;
-        const isTodoTask = state.todo.ids.includes(payload.uuid);
-        const action_ = taskActions.updateTask(payload);
+        const task = {
+          ...action.payload,
+          ...taskSelector(action.payload.uuid)({ task: state })
+        };
+        const isTodoTask = state.todo.ids.includes(task.uuid);
+        const action_ = taskActions.updateTask(task);
         const newState = isTodoTask
           ? { todo: todoReducer(state.todo, action_) }
           : { completed: completeReducer(state.completed, action_) };
