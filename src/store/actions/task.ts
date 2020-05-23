@@ -4,9 +4,9 @@ import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
 
 export interface Payload$MoveTask {
-  prevUUID?: string; // for goole task api
-  to: string;
-  from: string;
+  to: number;
+  from: number;
+  uuid: string;
 }
 
 export const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
@@ -25,17 +25,20 @@ export const TaskActionTypes = {
   MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const
 };
 
-export function createTask(payload?: { prevTask?: string }) {
+export function createTask(
+  payload: { prevTask?: string } & Partial<Schema$Task> = {}
+) {
   return {
     type: TaskActionTypes.CREATE,
+    sub: 'CREATE' as const,
     payload: {
-      ...payload,
-      uuid: taskUUID.next()
+      uuid: taskUUID.next(),
+      ...payload
     }
   };
 }
 
-export function deleteTask(payload: { uuid: string; prevTask?: string }) {
+export function deleteTask(payload: { uuid: string; prevTaskIndex?: number }) {
   return {
     type: TaskActionTypes.DELETE,
     sub: 'DELETE' as const,
@@ -43,7 +46,7 @@ export function deleteTask(payload: { uuid: string; prevTask?: string }) {
   };
 }
 
-export function setFocus(payload?: string | null) {
+export function setFocus(payload?: string | number | null) {
   return {
     type: TaskActionTypes.FOCUS,
     payload

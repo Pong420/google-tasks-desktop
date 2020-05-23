@@ -1,16 +1,19 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { CompletedTask } from '../Task';
 import { IconButton } from '../../../components/Mui';
 import { useBoolean } from '../../../hooks/useBoolean';
+import { completedTaskIdsSelector } from '../../../store';
 import ExpandIcon from '@material-ui/icons/ExpandLess';
 import CollapseIcon from '@material-ui/icons/ExpandMore';
 
-interface Props {
-  tasks: string[];
-}
-
-export function CompletedTaskList({ tasks }: Props) {
+export function CompletedTaskList() {
+  const tasks = useSelector(completedTaskIdsSelector);
   const [expanded, , , toggle] = useBoolean();
+
+  if (tasks.length === 0) {
+    return null;
+  }
 
   return (
     <div className="completed-tasks-list">

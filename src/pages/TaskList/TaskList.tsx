@@ -6,12 +6,7 @@ import { TodoTaskList } from './TodoTaskList';
 import { NewTask } from './NewTask';
 import { CompletedTaskList } from './CompletedTaskList';
 import { getAllTasklist, getAllTasks } from '../../service';
-import {
-  useTaskListActions,
-  useTaskActions,
-  taskIdsSelector,
-  RootState
-} from '../../store';
+import { useTaskListActions, useTaskActions, RootState } from '../../store';
 import { NProgress } from '../../utils/nprogress';
 import { useCurrenTaskList } from '../../hooks/useCurrenTaskList';
 
@@ -25,8 +20,6 @@ export function TaskList() {
   });
 
   const tasklist = useCurrenTaskList();
-
-  const { todo, completed } = useSelector(taskIdsSelector);
 
   const creatingTasklist = useSelector(
     (state: RootState) => state.taskList.creatingTasklist
@@ -57,9 +50,9 @@ export function TaskList() {
       <div className="task-list-content">
         <NewTask />
         <div className="scroll-content">
-          <TodoTaskList tasks={todo} />
+          <TodoTaskList />
         </div>
-        {!!completed.length && <CompletedTaskList tasks={completed} />}
+        {<CompletedTaskList />}
       </div>
     </div>
   );

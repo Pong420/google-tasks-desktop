@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useMuiMenuItem, Menu, MenuProps } from '../../../../components/Mui';
-import { taskSelector } from '../../../../store';
+import { todoTaskSelector } from '../../../../store';
 
 interface Props extends Omit<MenuProps, 'ref'> {
   uuid: string;
@@ -21,7 +21,7 @@ export const TodoTaskMenu = ({
   ...props
 }: Props) => {
   const MenuItem = useMuiMenuItem({ onClose });
-  const { due } = useSelector(taskSelector(uuid)) || {};
+  const { due } = useSelector(todoTaskSelector(uuid)) || {};
 
   return (
     <Menu {...props} classes={classes} onClose={onClose}>

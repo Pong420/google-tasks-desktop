@@ -2,20 +2,30 @@ import { createCRUDReducer } from '@pong420/redux-crud';
 import { TaskActionTypes, TaskActions, taskActions } from '../actions/task';
 import { Schema$Task } from '../../typings';
 
-type DefaultState = typeof defaultState;
-interface State extends DefaultState {
+interface State {
+  todo: typeof todoState;
+  completed: typeof completeState;
   focused: string | null;
   deleted: { [x: string]: Schema$Task };
 }
 
-const [defaultState, reducer] = createCRUDReducer<Schema$Task, 'uuid'>({
+const [todoState, todoReducer] = createCRUDReducer<Schema$Task, 'uuid'>({
   key: 'uuid',
   prefill: false,
   actions: TaskActionTypes
 });
 
+const [completeState, completeReducer] = createCRUDReducer<Schema$Task, 'uuid'>(
+  {
+    key: 'uuid',
+    prefill: false,
+    actions: TaskActionTypes
+  }
+);
+
 const initialState: State = {
-  ...defaultState,
+  todo: todoState,
+  completed: completeState,
   focused: null,
   deleted: {}
 };
@@ -25,77 +35,171 @@ export function taskReducer(
   action: TaskActions
 ): typeof initialState {
   switch (action.type) {
+    case 'PAGINATE_TASK':
+      return (() => {
+        const todo: Schema$Task[] = [];
+        const completed: Schema$Task[] = [];
+        for (const task of action.payload.data) {
+          task.status === 'completed' ? completed.push(task) : todo.push(task);
+        }
+        return {
+          ...state,
+          todo: todoReducer(
+            state.todo,
+            taskActions.paginateTask({
+              data: todo,
+              total: todo.length,
+              pageNo: 1
+            })
+          ),
+          completed: todoReducer(
+            state.completed,
+            taskActions.paginateTask({
+              data: completed,
+              total: completed.length,
+              pageNo: 1
+            })
+          )
+        };
+      })();
+
     case 'CREATE_TASK':
       return (() => {
-        const { prevTask, uuid } = action.payload;
-        const index = prevTask ? state.ids.indexOf(prevTask) + 1 : 0;
-        const newTask = { uuid };
-
+        const { prevTask, uuid, ...task } = action.payload;
+        const index = prevTask ? state.todo.ids.indexOf(prevTask) + 1 : 0;
+        const newTask = { uuid, ...task };
         return {
           ...state,
           focused: uuid,
-          ids: [...state.ids.slice(0, index), uuid, ...state.ids.slice(index)],
-          list: [
-            ...state.list.slice(0, index),
-            newTask,
-            ...state.list.slice(index)
-          ],
-          byIds: {
-            ...state.byIds,
-            [uuid]: newTask
+          todo: {
+            ...state.todo,
+            ids: [
+              ...state.todo.ids.slice(0, index),
+              uuid,
+              ...state.todo.ids.slice(index)
+            ],
+            list: [
+              ...state.todo.list.slice(0, index),
+              newTask,
+              ...state.todo.list.slice(index)
+            ],
+            byIds: {
+              ...state.todo.byIds,
+              [uuid]: newTask
+            }
           }
+        };
+      })();
+
+    case 'UPDATE_TASK':
+      return (() => {
+        const { uuid } = action.payload;
+        const isTodoTask = state.todo.ids.includes(uuid);
+        const deleteTask = taskActions.deleteTask({ uuid });
+        const updateTask = taskActions.updateTask(action.payload);
+
+        if (action.payload.status === 'completed') {
+          return {
+            ...state,
+            todo: todoReducer(state.todo, deleteTask),
+            completed: completeReducer(
+              state.completed,
+              taskActions.createTask(state.todo.byIds[uuid])
+            )
+          };
+        } else if (action.payload.status === 'needsAction') {
+          return {
+            ...state,
+            todo: todoReducer(
+              state.todo,
+              taskActions.createTask(state.completed.byIds[uuid])
+            ),
+            completed: completeReducer(state.completed, deleteTask)
+          };
+        }
+
+        return {
+          ...state,
+          ...(isTodoTask
+            ? { todo: todoReducer(state.todo, updateTask) }
+            : { completed: completeReducer(state.completed, updateTask) })
         };
       })();
 
     case 'DELETE_TASK':
       return (() => {
-        const { uuid, prevTask } = action.payload;
-        const newState = reducer(state, action);
+        const { uuid, prevTaskIndex } = action.payload;
+        const isTodoTask = state.todo.ids.includes(uuid);
+        const [newState, task] = isTodoTask
+          ? [todoReducer(state.todo, action), state.todo.byIds[uuid]]
+          : [
+              completeReducer(state.completed, action),
+              state.completed.byIds[uuid]
+            ];
+        const prevTask =
+          typeof prevTaskIndex === 'number' && state.todo.ids[prevTaskIndex];
 
         return {
           ...state,
-          ...newState,
+          ...(isTodoTask ? { todo: newState } : { completed: newState }),
           deleted: {
             ...state.deleted,
-            [uuid]: state.byIds[uuid]!
+            [uuid]: task!
           },
           focused:
             prevTask ||
-            (state.focused && state.ids[0] === uuid ? newState.ids[0] : null) // for delete task by backspace
+            (state.focused && state.todo.ids[0] === uuid
+              ? state.todo.ids[0]
+              : null)
         };
       })();
 
     case 'FOCUS_TASK':
       return {
         ...state,
-        focused: action.payload || null
+        focused:
+          (typeof action.payload === 'number'
+            ? state.todo.ids[
+                Math.max(0, Math.min(state.todo.ids.length - 1, action.payload))
+              ]
+            : action.payload) || null
       };
 
     case 'CREATE_TASK_SUCCESS':
     case 'UPDATE_TASK_SUCCESS':
-      return {
-        ...state,
-        ...reducer(state, taskActions.updateTask(action.payload))
-      };
+      return (() => {
+        const { title, ...payload } = action.payload;
+        const isTodoTask = state.todo.ids.includes(payload.uuid);
+        const action_ = taskActions.updateTask(payload);
+        const newState = isTodoTask
+          ? { todo: todoReducer(state.todo, action_) }
+          : { completed: completeReducer(state.completed, action_) };
+
+        return {
+          ...state,
+          ...newState
+        };
+      })();
 
     case 'MOVE_TASK':
-      const from = state.ids.indexOf(action.payload.from);
-      const to = state.ids.indexOf(action.payload.to);
+      const { from, to } = action.payload;
 
-      return {
-        ...state,
-        ids: move(state.ids, from, to),
-        list: move(state.list, from, to)
-      };
+      return to < 0
+        ? state
+        : {
+            ...state,
+            todo: {
+              ...state.todo,
+              ids: move(state.todo.ids, from, to),
+              list: move(state.todo.list, from, to)
+            }
+          };
 
     case 'MOVE_TASK_SUCCESS':
       return state;
 
     default:
-      return {
-        ...state,
-        ...reducer(state, action)
-      };
+      return state;
   }
 }
 

@@ -13,7 +13,7 @@ import { DateTimeDialog } from '../DateTimeDialog';
 import {
   focusedSelector,
   useTaskActions,
-  taskSelector
+  todoTaskSelector
 } from '../../../../store';
 import { useMuiMenu } from '../../../../components/Mui';
 import { useBoolean } from '../../../../hooks/useBoolean';
@@ -21,13 +21,11 @@ import { useMouseTrap } from '../../../../hooks/useMouseTrap';
 import idx from 'idx.macro';
 
 export interface TodoTaskProps extends TaskProps {
-  prev?: string;
-  next?: string;
-  prevPrev?: string;
+  index: number;
 }
 
 export const TodoTask = React.memo(
-  ({ uuid, prevPrev, prev, next, className, ...props }: TodoTaskProps) => {
+  ({ uuid, index, className, ...props }: TodoTaskProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const {
       createTask,
@@ -39,10 +37,8 @@ export const TodoTask = React.memo(
 
     const { onDelete, moveTaskUp, moveTaskDown, ...handler } = useMemo(() => {
       return {
-        moveTaskUp: () =>
-          prev && moveTask({ from: uuid, to: prev, prevUUID: prevPrev }),
-        moveTaskDown: () =>
-          next && moveTask({ from: uuid, to: next, prevUUID: next }),
+        moveTaskUp: () => moveTask({ uuid, from: index, to: index - 1 }),
+        moveTaskDown: () => moveTask({ uuid, from: index, to: index + 1 }),
         onDelete: () => deleteTask({ uuid }),
         // prevent focused task trigger `onBlur` event
         onMouseDown: (event: MouseEvent<HTMLElement>) => {
@@ -76,7 +72,7 @@ export const TodoTask = React.memo(
 
           if (event.key === 'Backspace' && !input.value.trim()) {
             event.preventDefault();
-            deleteTask({ uuid, prevTask: prev });
+            deleteTask({ uuid, prevTaskIndex: index - 1 });
           }
 
           if (event.key === 'Escape') {
@@ -91,29 +87,20 @@ export const TodoTask = React.memo(
             const shouldFocusNext =
               event.key === 'ArrowDown' && selectionStart === value.length;
 
-            const to = event.key === 'ArrowUp' ? prev : next;
+            const to = event.key === 'ArrowUp' ? index - 1 : index + 1;
 
-            if (notHightlighted && (shouldFocusPrev || shouldFocusNext) && to) {
+            if (notHightlighted && (shouldFocusPrev || shouldFocusNext)) {
               event.preventDefault();
               setFocus(to);
             }
           }
         }
       };
-    }, [
-      uuid,
-      prevPrev,
-      prev,
-      next,
-      createTask,
-      deleteTask,
-      moveTask,
-      setFocus
-    ]);
+    }, [uuid, index, createTask, deleteTask, moveTask, setFocus]);
 
     const focused = useSelector(focusedSelector(uuid));
 
-    const { title, due } = useSelector(taskSelector(uuid)) || {};
+    const { title, due } = useSelector(todoTaskSelector(uuid)) || {};
 
     const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 

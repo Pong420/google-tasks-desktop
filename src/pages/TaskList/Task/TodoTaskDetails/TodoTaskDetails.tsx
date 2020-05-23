@@ -12,7 +12,7 @@ import { TaskListDropdown } from '../../TaskListDropdown';
 import { DateTimeButton } from './DateTimeButton';
 import { Schema$Task } from '../../../../typings';
 import { useBoolean } from '../../../../hooks/useBoolean';
-import { taskSelector, useTaskActions } from '../../../../store';
+import { todoTaskSelector, useTaskActions } from '../../../../store';
 import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
@@ -53,7 +53,7 @@ export function TodoTaskDetails({
 }: Props) {
   const [shouldBeDeleted, deleteOnExited] = useBoolean();
   const { updateTask } = useTaskActions();
-  const { title, notes, due } = useSelector(taskSelector(uuid)) || {};
+  const { title, notes, due } = useSelector(todoTaskSelector(uuid)) || {};
 
   return (
     <FullScreenDialog

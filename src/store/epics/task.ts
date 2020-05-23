@@ -117,16 +117,17 @@ const updateTaskEpic: TaskEpic = (action$, state$) =>
         switchMap(action => {
           const { uuid, ...changes } = action.payload;
           const tasklist = currentTaskListsSelector(state$.value)!;
-          const task = state$.value.task.byIds[uuid];
+          const task = taskSelector(uuid)(state$.value);
           const task$ =
             task && task.id ? of(task) : waitForTaskCreated$(action$, uuid);
+
           return task$.pipe(
             switchMap(task =>
               defer(() =>
                 tasksAPI.update({
                   task: task.id!,
                   tasklist: tasklist.id!,
-                  requestBody: task
+                  requestBody: { ...task, ...changes }
                 })
               ).pipe(
                 map(res => res.data),
@@ -168,24 +169,23 @@ const deleteTaskEpic: TaskEpic = (action$, state$) =>
 const moveTaskEpic: TaskEpic = (action$, state$) => {
   return action$.pipe(
     ofType<Actions, ExtractAction<Actions, 'MOVE_TASK'>>('MOVE_TASK'),
-    groupBy(action => action.payload.from),
+    groupBy(action => action.payload.uuid),
     mergeMap(group$ =>
       group$.pipe(
         debounceTime(500),
         switchMap((action: ExtractAction<Actions, 'MOVE_TASK'>) => {
-          const { byIds } = state$.value.task;
           const tasklist = currentTaskListsSelector(state$.value);
-          const payload = [action.payload.prevUUID, action.payload.from].map(
-            uuid => {
-              const task = uuid && byIds[uuid];
-              if (task) {
-                return task.id
-                  ? of(task)
-                  : waitForTaskCreated$(action$, task.uuid);
-              }
-              return of(undefined);
+          const index = action.payload.to;
+          const todo = state$.value.task.todo.ids;
+          const payload = [todo[index - 1], todo[index]].map(uuid => {
+            const task = uuid && taskSelector(uuid)(state$.value);
+            if (task) {
+              return task.id
+                ? of(task)
+                : waitForTaskCreated$(action$, task.uuid);
             }
-          ) as [any, any];
+            return of(undefined);
+          }) as [any, any];
 
           return forkJoin<Schema$Task | undefined>(...payload).pipe(
             mergeMap(([prevTask, currTask]) => {
