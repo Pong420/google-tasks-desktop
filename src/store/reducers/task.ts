@@ -140,6 +140,7 @@ export function taskReducer(
             ];
         const prevTask =
           typeof prevTaskIndex === 'number' && state.todo.ids[prevTaskIndex];
+        const [first, second] = state.todo.ids;
 
         return {
           ...state,
@@ -149,10 +150,8 @@ export function taskReducer(
             [uuid]: task!
           },
           focused:
-            prevTask ||
-            (state.focused && state.todo.ids[0] === uuid
-              ? state.todo.ids[0]
-              : null)
+            // focus if task deleted by backspace or it is the first task and focused
+            prevTask || (state.focused && first === uuid && second) || null
         };
       })();
 
