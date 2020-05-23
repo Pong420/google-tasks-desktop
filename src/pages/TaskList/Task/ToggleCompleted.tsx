@@ -24,7 +24,8 @@ const MarkInCompleteButton = React.memo(() => (
 
 export function ToggleCompleted({ uuid, isEmpty }: Props) {
   const { updateTask, deleteTask } = useTaskActions();
-  const { status } = useSelector(taskSelector(uuid)) || {};
+  const { status, hidden } = useSelector(taskSelector(uuid)) || {};
+  const isCompleted = hidden || status === 'completed';
 
   return (
     <div
@@ -34,11 +35,12 @@ export function ToggleCompleted({ uuid, isEmpty }: Props) {
           ? deleteTask({ uuid })
           : updateTask({
               uuid,
-              status: status === 'completed' ? 'needsAction' : 'completed'
+              hidden: !isCompleted,
+              status: isCompleted ? 'needsAction' : 'completed'
             })
       }
     >
-      {status !== 'completed' && <MarkCompleteButton />}
+      {!isCompleted && <MarkCompleteButton />}
       <MarkInCompleteButton />
     </div>
   );

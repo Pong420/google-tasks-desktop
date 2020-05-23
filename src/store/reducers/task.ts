@@ -40,7 +40,9 @@ export function taskReducer(
         const todo: Schema$Task[] = [];
         const completed: Schema$Task[] = [];
         for (const task of action.payload.data) {
-          task.status === 'completed' ? completed.push(task) : todo.push(task);
+          task.hidden || task.status === 'completed'
+            ? completed.push(task)
+            : todo.push(task);
         }
         return {
           ...state,

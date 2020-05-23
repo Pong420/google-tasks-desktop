@@ -7,8 +7,8 @@ $completed-task-list-header-height: 54px;
   z-index: $text-highlight-z-index;
 
   .scroll-content {
-    @include sq-dimen(100%);
-    overflow: scroll;
+    @include dimen(100%);
+    overflow: auto;
   }
 }
 

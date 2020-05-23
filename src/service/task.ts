@@ -14,7 +14,7 @@ export const taskUUID = new UUID();
 
 export function getAllTasks(params: tasks_v1.Params$Resource$Tasks$List) {
   return defer(() =>
-    tasks.list({ showCompleted: true, showHidden: false, ...params })
+    tasks.list({ showCompleted: true, showHidden: true, ...params })
   ).pipe(
     map(res => {
       const data = (res.data.items || []) as Schema$Task[];
