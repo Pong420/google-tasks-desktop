@@ -88,18 +88,16 @@ const createTaskEpic: TaskEpic = (action$, state$) =>
       );
 
       return createTask$.pipe(
-        mergeMap(task => of(createTaskSuccess({ ...task, uuid }))),
+        map(task => createTaskSuccess({ ...task, uuid })),
         takeUntil(
           deleteTask$(action$, uuid).pipe(
-            tap(action => {
-              if (action.type === 'DELETE_TASK') {
-                createTask$.subscribe(task =>
-                  tasksAPI.delete({
-                    task: task.id!,
-                    tasklist: tasklist && tasklist.id
-                  })
-                );
-              }
+            tap(() => {
+              createTask$.subscribe(task =>
+                tasksAPI.delete({
+                  task: task.id!,
+                  tasklist: tasklist && tasklist.id
+                })
+              );
             })
           )
         )
@@ -121,23 +119,39 @@ const updateTaskEpic: TaskEpic = (action$, state$) =>
           const task$ =
             task && task.id ? of(task) : waitForTaskCreated$(action$, uuid);
 
-          return task$.pipe(
+          const patchUpdate$ = task$.pipe(
             switchMap(task =>
               defer(() =>
-                tasksAPI.update({
+                tasksAPI.patch({
                   task: task.id!,
                   tasklist: tasklist.id!,
-                  requestBody: { ...task, ...changes }
+                  requestBody: changes
                 })
               ).pipe(
                 map(res => res.data),
-                map(task => updateTaskSuccess({ ...task, ...changes, uuid })),
                 catchError(() => empty())
+              )
+            ),
+            shareReplay(1)
+          );
+
+          return patchUpdate$.pipe(
+            map(task => updateTaskSuccess({ ...task, ...changes, uuid })),
+            takeUntil(
+              deleteTask$(action$, group$.key).pipe(
+                tap(() => {
+                  // patch update will create a new task if task is not exits
+                  patchUpdate$.subscribe(task =>
+                    tasksAPI.delete({
+                      task: task.id!,
+                      tasklist: tasklist && tasklist.id
+                    })
+                  );
+                })
               )
             )
           );
-        }),
-        takeUntil(deleteTask$(action$, group$.key))
+        })
       )
     )
   );
