@@ -1,10 +1,12 @@
+import { LOCATION_CHANGE, LocationChangeAction } from 'connected-react-router';
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { TaskListActionTypes, TaskListActions } from '../actions/taskList';
-import { Schema$TaskList } from '../../typings';
+import { Schema$TaskList, ExtractAction } from '../../typings';
+import { TaskActions } from '../actions';
 
 type DefaultState = typeof defaultState;
 interface State extends DefaultState {
-  creatingTasklist: boolean;
+  loading: boolean;
 }
 
 const [defaultState, reducer] = createCRUDReducer<Schema$TaskList, 'id'>({
@@ -16,25 +18,35 @@ const [defaultState, reducer] = createCRUDReducer<Schema$TaskList, 'id'>({
 
 const initialState: State = {
   ...defaultState,
-  creatingTasklist: false
+  loading: false
 };
 
 export function taskListReducer(
   state = initialState,
-  action: TaskListActions
+  action:
+    | TaskListActions
+    | LocationChangeAction
+    | ExtractAction<TaskActions, 'PAGINATE_TASK'>
 ): State {
   switch (action.type) {
+    case LOCATION_CHANGE:
     case TaskListActionTypes.NEW:
       return {
         ...state,
-        creatingTasklist: true
+        loading: true
       };
 
     case TaskListActionTypes.CREATE:
       return {
         ...state,
         ...reducer(state, action),
-        creatingTasklist: false
+        loading: false
+      };
+
+    case 'PAGINATE_TASK':
+      return {
+        ...state,
+        loading: false
       };
 
     default:

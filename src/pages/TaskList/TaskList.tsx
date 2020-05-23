@@ -21,9 +21,7 @@ export function TaskList() {
 
   const tasklist = useCurrenTaskList();
 
-  const creatingTasklist = useSelector(
-    (state: RootState) => state.taskList.creatingTasklist
-  );
+  const loading = useSelector((state: RootState) => state.taskList.loading);
 
   useRxAsync(getAllTasklist, {
     onSuccess: tasklistActions.paginateTaskList
@@ -41,11 +39,7 @@ export function TaskList() {
   }, [run, tasklist]);
 
   return (
-    <div
-      className={[`task-list`, creatingTasklist ? 'disabled' : '']
-        .join(' ')
-        .trim()}
-    >
+    <div className={[`task-list`, loading ? 'disabled' : ''].join(' ').trim()}>
       <TaskListHeader onConfirm={tasklistActions.newTaskList} />
       <div className="task-list-content">
         <NewTask />

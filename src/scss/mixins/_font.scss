@@ -1,4 +1,4 @@
-@mixin typeface($font: 'Roboto', $font-weight: noraml) {
+@mixin typeface($font: 'Roboto', $font-weight: normal) {
   font-family: $font, Helvetica, Arial, 微軟正黑體, Microsoft JhengHei,
     sans-serif;
   font-weight: $font-weight;
