@@ -1,5 +1,5 @@
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
-import { Observable, empty, defer, of, forkJoin } from 'rxjs';
+import { Observable, empty, defer, of, forkJoin, from } from 'rxjs';
 import {
   switchMap,
   mergeMap,
@@ -11,13 +11,16 @@ import {
   takeUntil,
   shareReplay,
   take,
-  tap
+  tap,
+  concatMap,
+  retry
 } from 'rxjs/operators';
 import {
   TaskActions,
   createTaskSuccess,
   updateTaskSuccess,
-  moveTaskSuccess
+  moveTaskSuccess,
+  deleteAllCompletedTasksSuccess
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { taskSelector, currentTaskListsSelector } from '../selectors';
@@ -229,10 +232,36 @@ const moveTaskEpic: TaskEpic = (action$, state$) => {
   );
 };
 
+const deleteCompletedTasksEpic: TaskEpic = (action$, state$) =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'DELETE_ALL_COMPLETED_TASKS'>>(
+      'DELETE_ALL_COMPLETED_TASKS'
+    ),
+    switchMap(() => {
+      const tasklist = currentTaskListsSelector(state$.value);
+      const completedTasks = state$.value.task.completed.list;
+      if (tasklist) {
+        return from(completedTasks).pipe(
+          concatMap(task =>
+            defer(() =>
+              tasksAPI.delete({ task: task.id!, tasklist: tasklist.id })
+            ).pipe(
+              retry(1),
+              catchError(() => of([]))
+            )
+          ),
+          map(() => deleteAllCompletedTasksSuccess())
+        );
+      }
+      return empty();
+    })
+  );
+
 export default [
   nprogressEpic,
   createTaskEpic,
   updateTaskEpic,
   deleteTaskEpic,
-  moveTaskEpic
+  moveTaskEpic,
+  deleteCompletedTasksEpic
 ];

@@ -2,9 +2,8 @@ import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { useMuiMenu, Dropdown, DropdownProps } from '../../../components/Mui';
 import { TaskListDropdownItem } from './TaskListDropdownItem';
-import { taskListIdsSelector } from '../../../store';
+import { taskListIdsSelector, currentTaskListsSelector } from '../../../store';
 import { Schema$TaskList } from '../../../typings';
-import { useCurrenTaskList } from '../../../hooks/useCurrenTaskList';
 
 export interface TaskListDropdownProps
   extends Omit<Partial<DropdownProps>, 'onSelect'> {
@@ -25,7 +24,7 @@ export function TaskListDropdown({
 }: TaskListDropdownProps) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const ids = useSelector(taskListIdsSelector);
-  const current = useCurrenTaskList();
+  const current = useSelector(currentTaskListsSelector);
 
   return (
     <Dropdown
@@ -41,7 +40,7 @@ export function TaskListDropdown({
         const item = el.querySelector<SVGElement>('svg')!.parentElement!
           .offsetParent as HTMLElement;
         if (scroller && item) {
-          scroller.scrollTop = item.offsetTop;
+          scroller.scrollTop = item.offsetTop - 10; // 10px padding;
         }
       }}
       footer={footer && footer(onClose)}

@@ -1,7 +1,8 @@
-import { RootState } from '../reducers';
-import { Schema$TaskList } from '../../typings';
+import { createSelector } from 'reselect';
 import { matchPath } from 'react-router-dom';
+import { RootState } from '../reducers';
 import { PATHS } from '../../constants';
+import { Schema$TaskList } from '../../typings';
 
 export const taskListIdsSelector = (state: RootState) => state.taskList.ids;
 
@@ -21,3 +22,9 @@ export const currentTaskListsSelector = (state: RootState) => {
     ? state.taskList.byIds[id]
     : (state.taskList.list[0] as Schema$TaskList);
 };
+
+export const isMasterTaskListSelector = createSelector(
+  taskListIdsSelector,
+  currentTaskListsSelector,
+  (ids, list) => list && list.id === ids[0]
+);

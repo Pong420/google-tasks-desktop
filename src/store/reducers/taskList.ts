@@ -49,6 +49,18 @@ export function taskListReducer(
         loading: false
       };
 
+    case 'DELETE_TASK_LIST':
+      return {
+        ...state,
+        loading: false
+      };
+
+    case 'DELETE_CURRENT_TASKLIST':
+      return {
+        ...state,
+        loading: true
+      };
+
     default:
       return {
         ...state,

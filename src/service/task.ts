@@ -12,6 +12,7 @@ const { tasks } = google.tasks({
 
 export const taskUUID = new UUID();
 
+// TODO: https://developers.google.com/tasks/performance#partial
 export function getAllTasks(params: tasks_v1.Params$Resource$Tasks$List) {
   return defer(() =>
     tasks.list({ showCompleted: true, showHidden: true, ...params })

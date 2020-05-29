@@ -6,25 +6,29 @@ import { TodoTaskList } from './TodoTaskList';
 import { NewTask } from './NewTask';
 import { CompletedTaskList } from './CompletedTaskList';
 import { getAllTasklist, getAllTasks } from '../../service';
-import { useTaskListActions, useTaskActions, RootState } from '../../store';
+import {
+  useTaskListActions,
+  useTaskActions,
+  RootState,
+  currentTaskListsSelector
+} from '../../store';
 import { NProgress } from '../../utils/nprogress';
-import { useCurrenTaskList } from '../../hooks/useCurrenTaskList';
 
 export function TaskList() {
-  const tasklistActions = useTaskListActions();
-  const taskActions = useTaskActions();
+  const { paginateTaskList, newTaskList } = useTaskListActions();
+  const { paginateTask } = useTaskActions();
+
+  const currentTasklist = useSelector(currentTaskListsSelector);
+
+  const disabled = useSelector((state: RootState) => state.taskList.loading);
+
+  useRxAsync(getAllTasklist, {
+    onSuccess: paginateTaskList
+  });
 
   const { run } = useRxAsync(getAllTasks, {
     defer: true,
-    onSuccess: taskActions.paginateTask
-  });
-
-  const tasklist = useCurrenTaskList();
-
-  const loading = useSelector((state: RootState) => state.taskList.loading);
-
-  useRxAsync(getAllTasklist, {
-    onSuccess: tasklistActions.paginateTaskList
+    onSuccess: paginateTask
   });
 
   useEffect(() => {
@@ -32,15 +36,15 @@ export function TaskList() {
   }, []);
 
   useEffect(() => {
-    if (tasklist) {
+    if (currentTasklist) {
       NProgress.start();
-      run({ tasklist: tasklist.id });
+      run({ tasklist: currentTasklist.id });
     }
-  }, [run, tasklist]);
+  }, [run, currentTasklist]);
 
   return (
-    <div className={[`task-list`, loading ? 'disabled' : ''].join(' ').trim()}>
-      <TaskListHeader onConfirm={tasklistActions.newTaskList} />
+    <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>
+      <TaskListHeader onConfirm={newTaskList} />
       <div className="task-list-content">
         <NewTask />
         <div className="scroll-content">

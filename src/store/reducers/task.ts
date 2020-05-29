@@ -200,8 +200,8 @@ export function taskReducer(
             }
           };
 
-    case 'MOVE_TASK_SUCCESS':
-      return state;
+    case 'DELETE_ALL_COMPLETED_TASKS_SUCCESS':
+      return { ...state, completed: initialState.completed };
 
     default:
       return state;

@@ -26,3 +26,15 @@
     }
   }
 }
+
+.task-list-menu-paper {
+  @include dimen(100%);
+  .task-list-menu-title {
+    @include padding-x(16px);
+    color: var(--text-color);
+    font-size: 0.875em !important;
+    height: 30px;
+    line-height: 30px;
+    outline: none;
+  }
+}

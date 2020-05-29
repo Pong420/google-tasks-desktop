@@ -11,20 +11,27 @@ const [actions, actionTypes] = createCRUDActions<Schema$TaskList, 'id'>()({
 
 export const TaskListActionTypes = {
   ...actionTypes,
-  NEW: 'NEW_TASK_LIST' as const
+  NEW: 'NEW_TASK_LIST' as const,
+  DELETE_CURRENT_TASKLIST: 'DELETE_CURRENT_TASKLIST' as const
 };
 
 export function newTaskList(payload: string) {
   return { type: TaskListActionTypes.NEW, payload };
 }
 
+export function deleteCurrTaskList() {
+  return { type: TaskListActionTypes.DELETE_CURRENT_TASKLIST };
+}
+
 export const taskListActions = {
   ...actions,
-  newTaskList
+  newTaskList,
+  deleteCurrTaskList
 };
 
 export type TaskListActions =
+  | UnionCRUDActions<typeof taskListActions>
   | ReturnType<typeof newTaskList>
-  | UnionCRUDActions<typeof taskListActions>;
+  | ReturnType<typeof deleteCurrTaskList>;
 
 export const useTaskListActions = () => useActions(taskListActions);

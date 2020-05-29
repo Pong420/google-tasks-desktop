@@ -1,25 +1,24 @@
 import { ofType, Epic } from 'redux-observable';
 import { generatePath } from 'react-router-dom';
-import { RouterAction, push } from 'connected-react-router';
-import { of, defer } from 'rxjs';
+import { RouterAction, push, replace } from 'connected-react-router';
+import { of, defer, empty, merge } from 'rxjs';
 import { switchMap, mergeMap, map, tap } from 'rxjs/operators';
-import {
-  newTaskList,
-  taskListActions,
-  TaskListActions
-} from '../actions/taskList';
+import { taskListActions, TaskListActions } from '../actions/taskList';
 import { RootState } from '../reducers';
-import { tasklists } from '../../service';
+import { tasklists, taskListAPI } from '../../service';
 import { PATHS } from '../../constants';
-import { Schema$TaskList } from '../../typings';
+import { ExtractAction, Schema$TaskList } from '../../typings';
+import { currentTaskListsSelector } from '../selectors';
 import NProgress from '../../utils/nprogress';
 
 type Actions = TaskListActions | RouterAction;
 type TaskEpic = Epic<Actions, Actions, RootState>;
 
+const gotoMasterTasklist = () => of(replace(generatePath(PATHS.TASKLIST, {})));
+
 const newTaskListEpic: TaskEpic = action$ =>
   action$.pipe(
-    ofType<Actions, ReturnType<typeof newTaskList>>('NEW_TASK_LIST'),
+    ofType<Actions, ExtractAction<Actions, 'NEW_TASK_LIST'>>('NEW_TASK_LIST'),
     switchMap(action => {
       NProgress.start();
       return defer(() =>
@@ -40,4 +39,32 @@ const newTaskListEpic: TaskEpic = action$ =>
     })
   );
 
-export default [newTaskListEpic];
+const deleteCurrentTaskListEpic: TaskEpic = (action$, state$) =>
+  action$.pipe(
+    ofType('DELETE_CURRENT_TASKLIST'),
+    switchMap(() => {
+      NProgress.start();
+
+      const current = currentTaskListsSelector(state$.value);
+      return current
+        ? defer(() => taskListAPI.delete({ tasklist: current.id })).pipe(
+            mergeMap(() =>
+              merge(
+                of(taskListActions.deleteTaskList({ id: current.id })),
+                gotoMasterTasklist()
+              )
+            )
+          )
+        : empty();
+    })
+  );
+
+const redirectEpic: TaskEpic = (action$, state$) =>
+  action$.pipe(
+    ofType('PAGINATE_TASK_LIST'),
+    switchMap(() =>
+      currentTaskListsSelector(state$.value) ? empty() : gotoMasterTasklist()
+    )
+  );
+
+export default [newTaskListEpic, deleteCurrentTaskListEpic, redirectEpic];

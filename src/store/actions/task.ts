@@ -22,7 +22,9 @@ export const TaskActionTypes = {
   FOCUS: 'FOCUS_TASK' as const,
   UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS' as const,
   MOVE_TASK: 'MOVE_TASK' as const,
-  MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const
+  MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const,
+  DELETE_ALL_COMPLETED_TASKS: 'DELETE_ALL_COMPLETED_TASKS' as const,
+  DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS' as const
 };
 
 export function createTask(
@@ -83,18 +85,33 @@ export function moveTaskSuccess() {
   };
 }
 
+export function deleteAllCompletedTasks() {
+  return {
+    type: TaskActionTypes.DELETE_ALL_COMPLETED_TASKS
+  };
+}
+
+export function deleteAllCompletedTasksSuccess() {
+  return {
+    type: TaskActionTypes.DELETE_ALL_COMPLETED_TASKS_SUCCESS
+  };
+}
+
 export const taskActions = {
   ...actions,
   createTask,
   deleteTask,
   setFocus,
-  moveTask
+  moveTask,
+  deleteAllCompletedTasks
 };
 
 export type TaskActions =
   | UnionCRUDActions<typeof taskActions>
   | ReturnType<typeof createTaskSuccess>
   | ReturnType<typeof updateTaskSuccess>
-  | ReturnType<typeof moveTaskSuccess>;
+  | ReturnType<typeof moveTaskSuccess>
+  | ReturnType<typeof deleteAllCompletedTasks>
+  | ReturnType<typeof deleteAllCompletedTasksSuccess>;
 
 export const useTaskActions = () => useActions(taskActions);
