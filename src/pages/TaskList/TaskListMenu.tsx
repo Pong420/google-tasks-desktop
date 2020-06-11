@@ -5,13 +5,15 @@ import {
   Menu,
   MenuProps,
   useMuiMenuItem,
+  FormDialog,
   ConfirmDialog
 } from '../../components/Mui';
 import {
   useTaskActions,
   isMasterTaskListSelector,
   RootState,
-  useTaskListActions
+  useTaskListActions,
+  currentTaskListsSelector
 } from '../../store';
 import { useBoolean } from '../../hooks/useBoolean';
 
@@ -24,7 +26,8 @@ function selector(state: RootState) {
   return {
     isMasterTaskList: isMasterTaskListSelector(state),
     totalTasks: completedTasks + state.task.todo.ids.length,
-    completedTasks
+    completedTasks,
+    currentTaskList: currentTaskListsSelector(state)
   };
 }
 
@@ -32,9 +35,15 @@ export function TaskListMenu({ onClose, ...props }: Props) {
   const MenuItem = useMuiMenuItem({ onClose });
   const taskListActions = useTaskListActions();
   const { deleteAllCompletedTasks } = useTaskActions();
-  const { isMasterTaskList, totalTasks, completedTasks } = useSelector(
-    selector
-  );
+  const {
+    isMasterTaskList,
+    totalTasks,
+    completedTasks,
+    currentTaskList
+  } = useSelector(selector);
+
+  const { title: currentTaskListTitle, id: currentTaskListId } =
+    currentTaskList || {};
 
   const [
     deleteCompletedTaskDialogOpend,
@@ -48,6 +57,12 @@ export function TaskListMenu({ onClose, ...props }: Props) {
     closeDeleteTaskListDialog
   ] = useBoolean();
 
+  const [
+    renameTaskDialogOpend,
+    openRenameTaskDialog,
+    closeRenameTaskDialog
+  ] = useBoolean();
+
   return (
     <>
       <Menu {...props} onClose={onClose} classes={menuClasses}>
@@ -55,7 +70,7 @@ export function TaskListMenu({ onClose, ...props }: Props) {
         <MenuItem text="My order" />
         <MenuItem text="Date" />
         <Divider />
-        <MenuItem text="Rename list" />
+        <MenuItem text="Rename list" onClick={openRenameTaskDialog} />
         <MenuItem
           text="Delete list"
           disabled={isMasterTaskList}
@@ -75,6 +90,17 @@ export function TaskListMenu({ onClose, ...props }: Props) {
         <MenuItem text="Preferences" />
         <MenuItem text="Logout" />
       </Menu>
+      <FormDialog
+        title="Rename list"
+        errorMsg="Task list name cannot be empty"
+        defaultValue={currentTaskListTitle || ''}
+        open={renameTaskDialogOpend}
+        onClose={closeRenameTaskDialog}
+        onConfirm={title =>
+          currentTaskListId &&
+          taskListActions.updateTaskList({ id: currentTaskListId, title })
+        }
+      />
       <ConfirmDialog
         title="Delete this list?"
         confirmLabel="Delete"

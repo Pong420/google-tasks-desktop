@@ -59,6 +59,25 @@ const deleteCurrentTaskListEpic: TaskEpic = (action$, state$) =>
     })
   );
 
+const updateTaskListEpic: TaskEpic = action$ =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'UPDATE_TASK_LIST'>>(
+      'UPDATE_TASK_LIST'
+    ),
+    switchMap(action => {
+      const { id } = action.payload;
+      console.log(action);
+      return defer(() =>
+        id
+          ? taskListAPI.update({
+              tasklist: id,
+              requestBody: action.payload
+            })
+          : Promise.resolve()
+      ).pipe(mergeMap(() => empty()));
+    })
+  );
+
 const redirectEpic: TaskEpic = (action$, state$) =>
   action$.pipe(
     ofType('PAGINATE_TASK_LIST'),
@@ -67,4 +86,9 @@ const redirectEpic: TaskEpic = (action$, state$) =>
     )
   );
 
-export default [newTaskListEpic, deleteCurrentTaskListEpic, redirectEpic];
+export default [
+  newTaskListEpic,
+  deleteCurrentTaskListEpic,
+  updateTaskListEpic,
+  redirectEpic
+];
