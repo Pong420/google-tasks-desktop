@@ -15,12 +15,12 @@
 
 #### :warning: You will need to enable your own [Google Tasks API](https://console.developers.google.com/apis/library/tasks.googleapis.com) whether you are user or developer.
 
-#### Setup
+#### Step to enable Google Tasks API.
 
-1. Enable your own [Google Tasks API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
+1. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
 
 2. In Google API Console [Credentials](https://console.developers.google.com/apis/credentials) section.
-   Create credentials => OAuth client ID => Desktop App => Create. After, you should get a json file like this.
+   Create credentials => OAuth client ID => Other => Create. After, you should get a json file like this.
 
 ```json
 {
