@@ -19,6 +19,7 @@ export function TaskList() {
   const { paginateTask } = useTaskActions();
 
   const currentTasklist = useSelector(currentTaskListsSelector);
+  const taskListId = currentTasklist && currentTasklist.id;
 
   const disabled = useSelector((state: RootState) => state.taskList.loading);
 
@@ -36,11 +37,11 @@ export function TaskList() {
   }, []);
 
   useEffect(() => {
-    if (currentTasklist) {
+    if (taskListId) {
       NProgress.start();
-      run({ tasklist: currentTasklist.id });
+      run({ tasklist: taskListId });
     }
-  }, [run, currentTasklist]);
+  }, [run, taskListId]);
 
   return (
     <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>
@@ -50,7 +51,7 @@ export function TaskList() {
         <div className="scroll-content">
           <TodoTaskList />
         </div>
-        {<CompletedTaskList />}
+        <CompletedTaskList key={taskListId} />
       </div>
     </div>
   );

@@ -51,7 +51,7 @@ export function taskListReducer(
 
     case 'DELETE_TASK_LIST':
       return {
-        ...state,
+        ...reducer(state, action),
         loading: false
       };
 
