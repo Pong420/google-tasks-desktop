@@ -25,6 +25,9 @@ declare interface Window {
   getCurrentWindow(): Electron.BrowserWindow;
   oAuth2Storage: Schema$Storage<OAuthKeys | undefined>;
   tokenStorage: Schema$Storage<any>;
+  preferencesStorage: Schema$Storage<any>;
   TOKEN_PATH: string;
   OAUTH2_KEYS_PATH: string;
+  PREFERENCES_PATH: string;
+  STORAGE_DIRECTORY: string;
 }

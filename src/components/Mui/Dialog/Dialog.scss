@@ -72,13 +72,12 @@
 
 .fullscreen-dialog-content {
   $padding-x: 15px;
-
   @include flex();
   @include sq-dimen(100%);
+  overflow: auto;
 
-  overflow: hidden;
-
-  .scroll-content {
+  .fullscreen-dialog-inner-content {
+    @include dimen(100%);
     padding: $padding-x;
   }
 

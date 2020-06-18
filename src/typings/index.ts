@@ -12,3 +12,9 @@ export type ExtractAction<
   T1 extends { type: string },
   T2 extends T1['type']
 > = T1 extends { type: T2 } ? T1 : never;
+
+export interface SyncPreferences {
+  enabled: boolean;
+  reconnection: boolean;
+  inactiveHours: number;
+}

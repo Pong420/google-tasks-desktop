@@ -8,6 +8,7 @@ import {
   FormDialog,
   ConfirmDialog
 } from '../../components/Mui';
+import { Preferences } from '../../components/Preferences';
 import {
   useTaskActions,
   isMasterTaskListSelector,
@@ -63,6 +64,8 @@ export function TaskListMenu({ onClose, ...props }: Props) {
     closeRenameTaskDialog
   ] = useBoolean();
 
+  const [preferencesOpened, openPreferences, closePrefences] = useBoolean();
+
   return (
     <>
       <Menu {...props} onClose={onClose} classes={menuClasses}>
@@ -87,7 +90,7 @@ export function TaskListMenu({ onClose, ...props }: Props) {
         />
         <Divider />
         <MenuItem text="Keyboard shortcuts" />
-        <MenuItem text="Preferences" />
+        <MenuItem text="Preferences" onClick={openPreferences} />
         <MenuItem text="Logout" />
       </Menu>
       <FormDialog
@@ -120,6 +123,8 @@ export function TaskListMenu({ onClose, ...props }: Props) {
         {completedTasks} completed task will be permanently removed unless it
         repeats.
       </ConfirmDialog>
+
+      <Preferences open={preferencesOpened} onClose={closePrefences} />
     </>
   );
 }

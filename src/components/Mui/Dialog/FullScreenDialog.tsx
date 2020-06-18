@@ -47,7 +47,7 @@ export function FullScreenDialog({
         <IconButton tooltip="Close task" icon={CloseIcon} onClick={onClose} />
       </div>
       <div className="fullscreen-dialog-content">
-        <div className="scroll-content">{children}</div>
+        <div className="fullscreen-dialog-inner-content">{children}</div>
       </div>
     </Dialog>
   );
