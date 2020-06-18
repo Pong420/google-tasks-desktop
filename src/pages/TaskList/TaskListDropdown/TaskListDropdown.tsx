@@ -40,7 +40,7 @@ export function TaskListDropdown({
         const item = el.querySelector<SVGElement>('svg')!.parentElement!
           .offsetParent as HTMLElement;
         if (scroller && item) {
-          scroller.scrollTop = item.offsetTop - 10; // 10px padding;
+          scroller.scrollTop = item.offsetTop - 10 - item.offsetHeight * 2; // 10px padding;
         }
       }}
       footer={footer && footer(onClose)}

@@ -13,7 +13,8 @@ export const TaskListActionTypes = {
   ...actionTypes,
   NEW: 'NEW_TASK_LIST' as const,
   DELETE_CURRENT_TASKLIST: 'DELETE_CURRENT_TASKLIST' as const,
-  SORT_BY: 'SORT_TASKLIST_BY' as const
+  SORT_BY: 'SORT_TASKLIST_BY' as const,
+  DISABLE: 'DISABLE_TASKLIST' as const
 };
 
 export function newTaskList(payload: string) {
@@ -31,17 +32,23 @@ export function sortTaskListBy(payload: {
   return { type: TaskListActionTypes.SORT_BY, payload };
 }
 
+export function disableTaskList() {
+  return { type: TaskListActionTypes.DISABLE };
+}
+
 export const taskListActions = {
   ...actions,
   newTaskList,
   deleteCurrTaskList,
-  sortTaskListBy
+  sortTaskListBy,
+  disableTaskList
 };
 
 export type TaskListActions =
   | UnionCRUDActions<typeof taskListActions>
   | ReturnType<typeof newTaskList>
   | ReturnType<typeof deleteCurrTaskList>
-  | ReturnType<typeof sortTaskListBy>;
+  | ReturnType<typeof sortTaskListBy>
+  | ReturnType<typeof disableTaskList>;
 
 export const useTaskListActions = () => useActions(taskListActions);

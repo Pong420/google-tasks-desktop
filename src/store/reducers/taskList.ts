@@ -1,4 +1,3 @@
-import { LOCATION_CHANGE, LocationChangeAction } from 'connected-react-router';
 import { createCRUDReducer, removeFromArray } from '@pong420/redux-crud';
 import { TaskListActionTypes, TaskListActions } from '../actions/taskList';
 import { Schema$TaskList, ExtractAction } from '../../typings';
@@ -25,14 +24,11 @@ const initialState: State = {
 
 export function taskListReducer(
   state = initialState,
-  action:
-    | TaskListActions
-    | LocationChangeAction
-    | ExtractAction<TaskActions, 'PAGINATE_TASK'>
+  action: TaskListActions | ExtractAction<TaskActions, 'PAGINATE_TASK'>
 ): State {
   switch (action.type) {
-    case LOCATION_CHANGE:
     case TaskListActionTypes.NEW:
+    case TaskListActionTypes.DISABLE:
       return {
         ...state,
         loading: true

@@ -15,7 +15,11 @@ import {
 import { NProgress } from '../../utils/nprogress';
 
 export function TaskList() {
-  const { paginateTaskList, newTaskList } = useTaskListActions();
+  const {
+    paginateTaskList,
+    newTaskList,
+    disableTaskList
+  } = useTaskListActions();
   const { paginateTask } = useTaskActions();
 
   const currentTasklist = useSelector(currentTaskListsSelector);
@@ -34,14 +38,11 @@ export function TaskList() {
 
   useEffect(() => {
     NProgress.start();
-  }, []);
-
-  useEffect(() => {
+    disableTaskList();
     if (taskListId) {
-      NProgress.start();
       run({ tasklist: taskListId });
     }
-  }, [run, taskListId]);
+  }, [run, taskListId, disableTaskList]);
 
   return (
     <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>

@@ -19,9 +19,9 @@ const gotoMasterTasklist = () => of(replace(generatePath(PATHS.TASKLIST, {})));
 const newTaskListEpic: TaskEpic = action$ =>
   action$.pipe(
     ofType<Actions, ExtractAction<Actions, 'NEW_TASK_LIST'>>('NEW_TASK_LIST'),
-    switchMap(action => {
-      NProgress.start();
-      return defer(() =>
+    tap(() => NProgress.start()),
+    switchMap(action =>
+      defer(() =>
         tasklists.insert({ requestBody: { title: action.payload } })
       ).pipe(
         map(res => res.data as Schema$TaskList),
@@ -33,18 +33,17 @@ const newTaskListEpic: TaskEpic = action$ =>
                 taskListId: tasklist.id
               })
             )
-          ).pipe(tap(() => NProgress.done()))
+          )
         )
-      );
-    })
+      )
+    )
   );
 
 const deleteCurrentTaskListEpic: TaskEpic = (action$, state$) =>
   action$.pipe(
     ofType('DELETE_CURRENT_TASKLIST'),
+    tap(() => NProgress.start()),
     switchMap(() => {
-      NProgress.start();
-
       const current = currentTaskListsSelector(state$.value);
       return current
         ? defer(() => taskListAPI.delete({ tasklist: current.id })).pipe(
