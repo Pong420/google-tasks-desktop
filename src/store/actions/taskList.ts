@@ -1,4 +1,8 @@
-import { UnionCRUDActions, createCRUDActions } from '@pong420/redux-crud';
+import {
+  UnionCRUDActions,
+  createCRUDActions,
+  PagePayload
+} from '@pong420/redux-crud';
 import { useActions } from '../../hooks/useActions';
 import { Schema$TaskList } from '../../typings';
 
@@ -14,7 +18,8 @@ export const TaskListActionTypes = {
   NEW: 'NEW_TASK_LIST' as const,
   DELETE_CURRENT_TASKLIST: 'DELETE_CURRENT_TASKLIST' as const,
   SORT_BY: 'SORT_TASKLIST_BY' as const,
-  DISABLE: 'DISABLE_TASKLIST' as const
+  DISABLE: 'DISABLE_TASKLIST' as const,
+  SYNC: 'SYNC_TASKLIST' as const
 };
 
 export function newTaskList(payload: string) {
@@ -36,6 +41,10 @@ export function disableTaskList() {
   return { type: TaskListActionTypes.DISABLE };
 }
 
+export function syncTaskList(payload: PagePayload<Schema$TaskList>) {
+  return { type: TaskListActionTypes.SYNC, payload };
+}
+
 export const taskListActions = {
   ...actions,
   newTaskList,
@@ -49,6 +58,7 @@ export type TaskListActions =
   | ReturnType<typeof newTaskList>
   | ReturnType<typeof deleteCurrTaskList>
   | ReturnType<typeof sortTaskListBy>
-  | ReturnType<typeof disableTaskList>;
+  | ReturnType<typeof disableTaskList>
+  | ReturnType<typeof syncTaskList>;
 
 export const useTaskListActions = () => useActions(taskListActions);

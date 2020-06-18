@@ -36,6 +36,7 @@ export function taskReducer(
   action: TaskActions
 ): typeof initialState {
   switch (action.type) {
+    case 'SYNC_TASKS':
     case 'PAGINATE_TASK':
       return (() => {
         const todo: Schema$Task[] = [];
@@ -48,7 +49,7 @@ export function taskReducer(
         return {
           ...state,
           todo: todoReducer(
-            state.todo,
+            todoState,
             taskActions.paginateTask({
               data: todo,
               total: todo.length,
@@ -56,7 +57,7 @@ export function taskReducer(
             })
           ),
           completed: todoReducer(
-            state.completed,
+            completeState,
             taskActions.paginateTask({
               data: completed,
               total: completed.length,

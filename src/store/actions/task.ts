@@ -1,4 +1,8 @@
-import { UnionCRUDActions, createCRUDActions } from '@pong420/redux-crud';
+import {
+  UnionCRUDActions,
+  createCRUDActions,
+  PagePayload
+} from '@pong420/redux-crud';
 import { useActions } from '../../hooks/useActions';
 import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
@@ -29,7 +33,8 @@ export const TaskActionTypes = {
   MOVE_TASK: 'MOVE_TASK' as const,
   MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const,
   DELETE_ALL_COMPLETED_TASKS: 'DELETE_ALL_COMPLETED_TASKS' as const,
-  DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS' as const
+  DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS' as const,
+  SYNC: 'SYNC_TASKS' as const
 };
 
 export function createTask(payload: Payload$CreateTask = {}) {
@@ -100,13 +105,18 @@ export function deleteAllCompletedTasksSuccess() {
   };
 }
 
+export function syncTasks(payload: PagePayload<Schema$Task>) {
+  return { type: TaskActionTypes.SYNC, payload };
+}
+
 export const taskActions = {
   ...actions,
   createTask,
   deleteTask,
   setFocus,
   moveTask,
-  deleteAllCompletedTasks
+  deleteAllCompletedTasks,
+  syncTasks
 };
 
 export type TaskActions =
@@ -115,6 +125,7 @@ export type TaskActions =
   | ReturnType<typeof updateTaskSuccess>
   | ReturnType<typeof moveTaskSuccess>
   | ReturnType<typeof deleteAllCompletedTasks>
-  | ReturnType<typeof deleteAllCompletedTasksSuccess>;
+  | ReturnType<typeof deleteAllCompletedTasksSuccess>
+  | ReturnType<typeof syncTasks>;
 
 export const useTaskActions = () => useActions(taskActions);

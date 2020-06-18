@@ -17,6 +17,17 @@ const accentColors: ACCENT_COLOR[] = [
   'grey'
 ];
 
+const normalizeNumber = (value: string) => {
+  const num = Number(value);
+  return value === '' ||
+    value === '-0' ||
+    isNaN(num) ||
+    /^0\d+/.test(value) ||
+    /\.(0+)?$/.test(value)
+    ? String(value)
+    : num;
+};
+
 export function Preferences(props: FullScreenDialogProps) {
   const {
     setInactiveHour,
@@ -84,14 +95,14 @@ export function Preferences(props: FullScreenDialogProps) {
               <div className="preferences-hours">
                 <Input
                   className="filled"
+                  value={sync.inactiveHours}
                   onChange={(evt: ChangeEvent<HTMLInputElement>) => {
-                    const value = Number(evt.target.value);
+                    const normalized = normalizeNumber(evt.target.value);
+                    const value = Number(normalized);
                     if (!isNaN(value)) {
                       setInactiveHour(value);
                     }
                   }}
-                  type="number"
-                  value={sync.inactiveHours}
                 />
                 Hours
               </div>

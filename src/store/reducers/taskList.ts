@@ -1,5 +1,9 @@
 import { createCRUDReducer, removeFromArray } from '@pong420/redux-crud';
-import { TaskListActionTypes, TaskListActions } from '../actions/taskList';
+import {
+  TaskListActionTypes,
+  TaskListActions,
+  taskListActions
+} from '../actions/taskList';
 import { Schema$TaskList, ExtractAction } from '../../typings';
 import { TaskActions } from '../actions';
 
@@ -73,6 +77,15 @@ export function taskListReducer(
           orderType === 'date'
             ? [...state.sortByDate, id]
             : removeFromArray(sortByDate, sortByDate.indexOf(id))
+      };
+
+    case 'SYNC_TASKLIST':
+      return {
+        ...state,
+        ...reducer(
+          initialState,
+          taskListActions.paginateTaskList(action.payload)
+        )
       };
 
     default:

@@ -87,7 +87,7 @@ const sortTaskListEpic: TaskEpic = (action$, state$) =>
 
 const redirectEpic: TaskEpic = (action$, state$) =>
   action$.pipe(
-    ofType('PAGINATE_TASK_LIST'),
+    ofType('PAGINATE_TASK_LIST', 'SYNC_TASKLIST'),
     switchMap(() =>
       currentTaskListsSelector(state$.value) ? empty() : gotoMasterTasklist()
     )
