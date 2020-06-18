@@ -21,7 +21,7 @@ export function Auth() {
     <div className="auth">
       <div className="auth-header">
         <LogoSvg className="logo" />
-        <h4>Unoffical Google Task Clinet</h4>
+        <h4>Unoffical Google Tasks Clinet</h4>
       </div>
       <div className="auth-content">
         {installed ? (
