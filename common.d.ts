@@ -26,8 +26,10 @@ declare interface Window {
   oAuth2Storage: Schema$Storage<OAuthKeys | undefined>;
   tokenStorage: Schema$Storage<any>;
   preferencesStorage: Schema$Storage<any>;
+  taskListSortByDateStorage: Schema$Storage<string[]>;
   TOKEN_PATH: string;
   OAUTH2_KEYS_PATH: string;
   PREFERENCES_PATH: string;
+  TASKLIST_SORT_BY_DATE_PATH: string;
   STORAGE_DIRECTORY: string;
 }

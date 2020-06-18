@@ -49,7 +49,7 @@ export function TaskList() {
       <div className="task-list-content">
         <NewTask />
         <div className="scroll-content">
-          <TodoTaskList />
+          <TodoTaskList taskListId={taskListId} />
         </div>
         <CompletedTaskList key={taskListId} />
       </div>

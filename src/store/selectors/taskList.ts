@@ -28,3 +28,6 @@ export const isMasterTaskListSelector = createSelector(
   currentTaskListsSelector,
   (ids, list) => list && list.id === ids[0]
 );
+
+export const isSortByDateSelector = (id: string) => (state: RootState) =>
+  state.taskList.sortByDate.includes(id);

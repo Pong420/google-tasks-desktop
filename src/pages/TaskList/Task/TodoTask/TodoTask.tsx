@@ -18,14 +18,16 @@ import {
 import { useMuiMenu } from '../../../../components/Mui';
 import { useBoolean } from '../../../../hooks/useBoolean';
 import { useMouseTrap } from '../../../../hooks/useMouseTrap';
+import { Schema$Task } from '../../../../typings';
 import idx from 'idx.macro';
 
 export interface TodoTaskProps extends TaskProps {
   index: number;
+  inherit?: (keyof Schema$Task)[];
 }
 
 export const TodoTask = React.memo(
-  ({ uuid, index, className, ...props }: TodoTaskProps) => {
+  ({ uuid, index, className, inherit, ...props }: TodoTaskProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const {
       createTask,
@@ -67,7 +69,10 @@ export const TodoTask = React.memo(
 
           if (event.key === 'Enter') {
             event.preventDefault();
-            createTask({ prevTask: uuid });
+            createTask({
+              prevTask: uuid,
+              inherit: inherit && { uuid, keys: inherit }
+            });
           }
 
           if (event.key === 'Backspace' && !input.value.trim()) {
@@ -96,7 +101,7 @@ export const TodoTask = React.memo(
           }
         }
       };
-    }, [uuid, index, createTask, deleteTask, moveTask, setFocus]);
+    }, [uuid, index, createTask, deleteTask, moveTask, setFocus, inherit]);
 
     const focused = useSelector(focusedSelector(uuid));
 

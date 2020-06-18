@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { TodoTask, TodoTaskProps } from '../Task';
-import { useTaskActions, todoTaskIdsSelector } from '../../../store';
+import { TodoTaskListByDate } from './TodoTaskListByDate';
+import {
+  useTaskActions,
+  todoTaskIdsSelector,
+  isSortByDateSelector
+} from '../../../store';
 import { useBoolean } from '../../../hooks/useBoolean';
 
 interface InsertAfter {
@@ -43,41 +48,48 @@ const SortableList = SortableContainer(
   }
 );
 
-export function TodoTaskList() {
+function TodoTaskListByOrder() {
   const tasks = useSelector(todoTaskIdsSelector);
   const [dragging, dragStart, dragEnd] = useBoolean();
   const [insertAfter, setInsertAfter] = useState<number>();
   const { moveTask } = useTaskActions();
 
   return (
+    <SortableList
+      lockAxis="y"
+      helperClass="dragging"
+      distance={10}
+      dragging={dragging}
+      insertAfter={insertAfter}
+      todoTasks={tasks}
+      onSortMove={dragStart}
+      onSortOver={({ newIndex, oldIndex, index }) => {
+        let insertAfter;
+        const move = newIndex - oldIndex > 0 ? 'down' : 'up';
+
+        if (move === 'down') {
+          insertAfter = newIndex > index ? oldIndex + 1 : oldIndex;
+        } else if (move === 'up') {
+          insertAfter = newIndex > index ? newIndex : newIndex - 1;
+        }
+
+        setInsertAfter(insertAfter);
+      }}
+      onSortEnd={({ newIndex, oldIndex }) => {
+        if (newIndex !== oldIndex) {
+          moveTask({ uuid: tasks[oldIndex], from: oldIndex, to: newIndex });
+        }
+        dragEnd();
+      }}
+    />
+  );
+}
+
+export function TodoTaskList({ taskListId = '' }: { taskListId?: string }) {
+  const sortByDate = useSelector(isSortByDateSelector(taskListId));
+  return (
     <div className="todo-tasks-list">
-      <SortableList
-        lockAxis="y"
-        helperClass="dragging"
-        distance={10}
-        dragging={dragging}
-        insertAfter={insertAfter}
-        todoTasks={tasks}
-        onSortMove={dragStart}
-        onSortOver={({ newIndex, oldIndex, index }) => {
-          let insertAfter;
-          const move = newIndex - oldIndex > 0 ? 'down' : 'up';
-
-          if (move === 'down') {
-            insertAfter = newIndex > index ? oldIndex + 1 : oldIndex;
-          } else if (move === 'up') {
-            insertAfter = newIndex > index ? newIndex : newIndex - 1;
-          }
-
-          setInsertAfter(insertAfter);
-        }}
-        onSortEnd={({ newIndex, oldIndex }) => {
-          if (newIndex !== oldIndex) {
-            moveTask({ uuid: tasks[oldIndex], from: oldIndex, to: newIndex });
-          }
-          dragEnd();
-        }}
-      />
+      {sortByDate ? <TodoTaskListByDate /> : <TodoTaskListByOrder />}
     </div>
   );
 }

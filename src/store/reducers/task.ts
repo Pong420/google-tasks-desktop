@@ -68,9 +68,18 @@ export function taskReducer(
 
     case 'CREATE_TASK':
       return (() => {
-        const { prevTask, uuid, ...task } = action.payload;
+        const { prevTask, uuid, inherit, ...task } = action.payload;
         const index = prevTask ? state.todo.ids.indexOf(prevTask) + 1 : 0;
-        const newTask = { uuid, ...task };
+        const inheritFrom = inherit && state.todo.byIds[inherit.uuid];
+        const newTask = {
+          uuid,
+          ...task,
+          ...(inheritFrom &&
+            inherit!.keys.reduce(
+              (t, k) => ({ ...t, [k]: inheritFrom[k] }),
+              {} as Partial<Schema$Task>
+            ))
+        };
         return {
           ...state,
           focused: uuid,

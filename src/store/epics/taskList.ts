@@ -66,7 +66,6 @@ const updateTaskListEpic: TaskEpic = action$ =>
     ),
     switchMap(action => {
       const { id } = action.payload;
-      console.log(action);
       return defer(() =>
         id
           ? taskListAPI.update({
@@ -75,6 +74,15 @@ const updateTaskListEpic: TaskEpic = action$ =>
             })
           : Promise.resolve()
       ).pipe(mergeMap(() => empty()));
+    })
+  );
+
+const sortTaskListEpic: TaskEpic = (action$, state$) =>
+  action$.pipe(
+    ofType('DELETE_TASK_LIST', 'SORT_TASKLIST_BY'),
+    switchMap(() => {
+      window.taskListSortByDateStorage.save(state$.value.taskList.sortByDate);
+      return empty();
     })
   );
 
@@ -90,5 +98,6 @@ export default [
   newTaskListEpic,
   deleteCurrentTaskListEpic,
   updateTaskListEpic,
+  sortTaskListEpic,
   redirectEpic
 ];

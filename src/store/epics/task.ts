@@ -77,12 +77,16 @@ const createTaskEpic: TaskEpic = (action$, state$) =>
           ? of(prevTask)
           : waitForTaskCreated$(action$, prevTask.uuid);
 
+      const { uuid: ignore, ...requestBody } =
+        taskSelector(uuid)(state$.value) || {};
+
       const createTask$ = prevTask$.pipe(
         switchMap(prevTask =>
           defer(() =>
             tasksAPI.insert({
               previous: prevTask && prevTask.id!,
-              tasklist: tasklist && tasklist.id!
+              tasklist: tasklist && tasklist.id!,
+              requestBody
             })
           )
         ),

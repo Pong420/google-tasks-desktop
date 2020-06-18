@@ -1,4 +1,10 @@
-.todo-tasks-list-sort-by-date {
+.todo-tasks-list-by-date {
+  .todo-task {
+    .task-due-date-button {
+      display: none;
+    }
+  }
+
   .date-label {
     @include dimen(100%, 40px);
     @include flex(center);
@@ -17,6 +23,10 @@
 
     &[data-label^='Today'] {
       color: var(--accent-color);
+    }
+
+    & + .task .task-input-base:before {
+      border-top-color: transparent;
     }
   }
 }

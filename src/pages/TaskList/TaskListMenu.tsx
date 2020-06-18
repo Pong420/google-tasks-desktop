@@ -15,7 +15,8 @@ import {
   isMasterTaskListSelector,
   RootState,
   useTaskListActions,
-  currentTaskListsSelector
+  currentTaskListsSelector,
+  isSortByDateSelector
 } from '../../store';
 import { useBoolean } from '../../hooks/useBoolean';
 
@@ -73,12 +74,28 @@ export function TaskListMenu({ onClose, ...props }: Props) {
 
   const [preferencesOpened, openPreferences, closePrefences] = useBoolean();
 
+  const isSoryByDate = useSelector(
+    isSortByDateSelector(currentTaskListId || '')
+  );
+  const sortTaskListBy = (orderType: 'date' | 'order') => {
+    currentTaskListId &&
+      taskListActions.sortTaskListBy({ id: currentTaskListId, orderType });
+  };
+
   return (
     <>
       <Menu {...props} onClose={onClose} classes={menuClasses}>
         <div className="task-list-menu-title">Sort by</div>
-        <MenuItem text="My order" />
-        <MenuItem text="Date" />
+        <MenuItem
+          text="My order"
+          selected={!isSoryByDate}
+          onClick={() => sortTaskListBy('order')}
+        />
+        <MenuItem
+          text="Date"
+          selected={isSoryByDate}
+          onClick={() => sortTaskListBy('date')}
+        />
         <Divider />
         <MenuItem text="Rename list" onClick={openRenameTaskDialog} />
         <MenuItem

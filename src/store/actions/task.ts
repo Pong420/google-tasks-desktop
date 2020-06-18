@@ -3,7 +3,12 @@ import { useActions } from '../../hooks/useActions';
 import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
 
-export interface Payload$MoveTask {
+interface Payload$CreateTask extends Partial<Schema$Task> {
+  prevTask?: string;
+  inherit?: { uuid: string; keys: (keyof Schema$Task)[] };
+}
+
+interface Payload$MoveTask {
   to: number;
   from: number;
   uuid: string;
@@ -27,9 +32,7 @@ export const TaskActionTypes = {
   DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS' as const
 };
 
-export function createTask(
-  payload: { prevTask?: string } & Partial<Schema$Task> = {}
-) {
+export function createTask(payload: Payload$CreateTask = {}) {
   return {
     type: TaskActionTypes.CREATE,
     sub: 'CREATE' as const,

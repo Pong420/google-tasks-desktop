@@ -22,6 +22,11 @@ export const PREFERENCES_PATH = (window.PREFERENCES_PATH = path.join(
   'preferences.json'
 ));
 
+export const TASKLIST_SORT_BY_DATE_PATH = (window.TASKLIST_SORT_BY_DATE_PATH = path.join(
+  STORAGE_DIRECTORY,
+  'tasklist-order.json'
+));
+
 if (!fs.existsSync(STORAGE_DIRECTORY)) {
   fs.mkdirSync(STORAGE_DIRECTORY);
 }
@@ -50,6 +55,8 @@ window.STORAGE_DIRECTORY = STORAGE_DIRECTORY;
 window.oAuth2Storage = FileStorage(OAUTH2_KEYS_PATH);
 
 window.tokenStorage = FileStorage(TOKEN_PATH);
+
+window.taskListSortByDateStorage = FileStorage(TASKLIST_SORT_BY_DATE_PATH, []);
 
 window.preferencesStorage = FileStorage(PREFERENCES_PATH, {
   enabled: true,
