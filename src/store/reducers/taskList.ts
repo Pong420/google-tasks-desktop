@@ -22,7 +22,7 @@ const [defaultState, reducer] = createCRUDReducer<Schema$TaskList, 'id'>({
 
 const initialState: State = {
   ...defaultState,
-  loading: false,
+  loading: true,
   sortByDate: window.taskListSortByDateStorage.get()
 };
 

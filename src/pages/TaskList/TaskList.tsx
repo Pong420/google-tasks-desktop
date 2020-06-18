@@ -15,38 +15,33 @@ import {
 import { NProgress } from '../../utils/nprogress';
 
 export function TaskList() {
-  const {
-    paginateTaskList,
-    newTaskList,
-    disableTaskList
-  } = useTaskListActions();
-  const { paginateTask } = useTaskActions();
-
+  const taskListActions = useTaskListActions();
+  const taskActions = useTaskActions();
   const currentTasklist = useSelector(currentTaskListsSelector);
-  const taskListId = currentTasklist && currentTasklist.id;
 
+  const taskListId = currentTasklist && currentTasklist.id;
   const disabled = useSelector((state: RootState) => state.taskList.loading);
 
   useRxAsync(getAllTasklist, {
-    onSuccess: paginateTaskList
+    onSuccess: taskListActions.paginateTaskList
   });
 
   const { run } = useRxAsync(getAllTasks, {
     defer: true,
-    onSuccess: paginateTask
+    onStart: taskListActions.disableTaskList,
+    onSuccess: taskActions.paginateTask
   });
 
   useEffect(() => {
     NProgress.start();
-    disableTaskList();
     if (taskListId) {
       run({ tasklist: taskListId });
     }
-  }, [run, taskListId, disableTaskList]);
+  }, [run, taskListId]);
 
   return (
     <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>
-      <TaskListHeader onConfirm={newTaskList} />
+      <TaskListHeader onConfirm={taskListActions.newTaskList} />
       <div className="task-list-content">
         <NewTask />
         <div className="scroll-content">
