@@ -1,5 +1,5 @@
 {
-  "name": "google-task-desktop",
+  "name": "google-tasks-desktop",
   "version": "3.0.0",
   "scripts": {
     "dev": "nf start",
@@ -95,7 +95,7 @@
   "author": {
     "name": "Pong",
     "email": "samfunghp@gmial.com",
-    "url": "https://pong420.netlify.com"
+    "url": "https://pong420.netlify.app"
   },
   "license": "MIT",
   "bugs": {
