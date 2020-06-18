@@ -1,0 +1,13 @@
+.keyboard-shortcuts {
+  color: var(--text-color);
+
+  .keyboard-shortcuts-label {
+    @include dimen(100%);
+  }
+
+  .keyboard-shortcuts-key {
+    min-width: 100px;
+    text-align: right;
+    padding-left: 10px;
+  }
+}

@@ -9,6 +9,7 @@ import {
   ConfirmDialog
 } from '../../components/Mui';
 import { Preferences } from '../../components/Preferences';
+import { KeyboardShortcuts } from '../../components/KeyboardShortcuts';
 import {
   useTaskActions,
   isMasterTaskListSelector,
@@ -64,6 +65,12 @@ export function TaskListMenu({ onClose, ...props }: Props) {
     closeRenameTaskDialog
   ] = useBoolean();
 
+  const [
+    keyboardShortcutsOpened,
+    openKeyboardShortcuts,
+    closeKeyboardShortcuts
+  ] = useBoolean();
+
   const [preferencesOpened, openPreferences, closePrefences] = useBoolean();
 
   return (
@@ -89,7 +96,7 @@ export function TaskListMenu({ onClose, ...props }: Props) {
           disabled={completedTasks === 0}
         />
         <Divider />
-        <MenuItem text="Keyboard shortcuts" />
+        <MenuItem text="Keyboard shortcuts" onClick={openKeyboardShortcuts} />
         <MenuItem text="Preferences" onClick={openPreferences} />
         <MenuItem text="Logout" />
       </Menu>
@@ -125,6 +132,11 @@ export function TaskListMenu({ onClose, ...props }: Props) {
       </ConfirmDialog>
 
       <Preferences open={preferencesOpened} onClose={closePrefences} />
+
+      <KeyboardShortcuts
+        open={keyboardShortcutsOpened}
+        onClose={closeKeyboardShortcuts}
+      />
     </>
   );
 }
