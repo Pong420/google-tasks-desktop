@@ -27,6 +27,7 @@ declare interface Window {
   tokenStorage: Schema$Storage<any>;
   preferencesStorage: Schema$Storage<any>;
   taskListSortByDateStorage: Schema$Storage<string[]>;
+  logout: () => void;
   TOKEN_PATH: string;
   OAUTH2_KEYS_PATH: string;
   PREFERENCES_PATH: string;

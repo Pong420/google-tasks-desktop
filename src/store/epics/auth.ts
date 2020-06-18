@@ -1,7 +1,7 @@
 import { generatePath } from 'react-router-dom';
 import { ofType, Epic } from 'redux-observable';
 import { RouterAction, replace } from 'connected-react-router';
-import { of, empty } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AuthActions } from '../actions/auth';
 import { authenticate } from '../../service';
@@ -24,11 +24,8 @@ const logoutEpic: AuthEpic = action$ =>
   action$.pipe(
     ofType('LOGOUT'),
     switchMap(() => {
-      try {
-        // TODO:
-        // fs.unlinkSync(TOKEN_PATH);
-      } catch (err) {}
-      return empty();
+      window.logout();
+      return of(replace(PATHS.AUTH));
     })
   );
 

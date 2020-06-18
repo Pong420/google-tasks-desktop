@@ -16,7 +16,8 @@ import {
   RootState,
   useTaskListActions,
   currentTaskListsSelector,
-  isSortByDateSelector
+  isSortByDateSelector,
+  useAuthActions
 } from '../../store';
 import { useBoolean } from '../../hooks/useBoolean';
 
@@ -82,6 +83,8 @@ export function TaskListMenu({ onClose, ...props }: Props) {
       taskListActions.sortTaskListBy({ id: currentTaskListId, orderType });
   };
 
+  const { logout } = useAuthActions();
+
   return (
     <>
       <Menu {...props} onClose={onClose} classes={menuClasses}>
@@ -115,7 +118,7 @@ export function TaskListMenu({ onClose, ...props }: Props) {
         <Divider />
         <MenuItem text="Keyboard shortcuts" onClick={openKeyboardShortcuts} />
         <MenuItem text="Preferences" onClick={openPreferences} />
-        <MenuItem text="Logout" />
+        <MenuItem text="Logout" onClick={logout} />
       </Menu>
       <FormDialog
         title="Rename list"

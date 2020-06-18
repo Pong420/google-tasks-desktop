@@ -38,6 +38,7 @@ function FileStorage<T extends {}>(path: string, defaultValue?: T): Schema$Stora
   return {
     get() {
       try {
+        console.log(path);
         const val = fs.readFileSync(path, 'utf8');
         return JSON.parse(val);
       } catch (error) {}
