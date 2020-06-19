@@ -13,7 +13,8 @@ import { DateTimeDialog } from '../DateTimeDialog';
 import {
   focusedSelector,
   useTaskActions,
-  todoTaskSelector
+  todoTaskSelector,
+  getDateLabel
 } from '../../../../store';
 import { useMuiMenu } from '../../../../components/Mui';
 import { useBoolean } from '../../../../hooks/useBoolean';
@@ -24,10 +25,20 @@ import idx from 'idx.macro';
 export interface TodoTaskProps extends TaskProps {
   index: number;
   inherit?: (keyof Schema$Task)[];
+  prevDue?: string | null;
+  sortByDate?: boolean;
 }
 
 export const TodoTask = React.memo(
-  ({ uuid, index, className, inherit, ...props }: TodoTaskProps) => {
+  ({
+    uuid,
+    index,
+    className,
+    inherit,
+    prevDue,
+    sortByDate,
+    ...props
+  }: TodoTaskProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const {
       createTask,
@@ -36,6 +47,10 @@ export const TodoTask = React.memo(
       moveTask,
       setFocus
     } = useTaskActions();
+
+    const focused = useSelector(focusedSelector(uuid));
+
+    const { title, due } = useSelector(todoTaskSelector(uuid)) || {};
 
     const { onDelete, moveTaskUp, moveTaskDown, ...handler } = useMemo(() => {
       return {
@@ -103,9 +118,36 @@ export const TodoTask = React.memo(
       };
     }, [uuid, index, createTask, deleteTask, moveTask, setFocus, inherit]);
 
-    const focused = useSelector(focusedSelector(uuid));
+    const { updateDue, moveDownByDate, moveUpByDate } = useMemo(() => {
+      // const now = new Date();
+      const date = due ? new Date(due) : null;
+      const updateDue = (date?: Date) => {
+        date && updateTask({ uuid, due: date.toISODateString() });
+      };
 
-    const { title, due } = useSelector(todoTaskSelector(uuid)) || {};
+      const moveDownByDate = () => {
+        const now = new Date();
+        const label = getDateLabel(due, now);
+        let newDate: Date | null = null;
+        if (label === 'Past') newDate = now;
+        else if (label !== 'No date') newDate = date!.addDays(1);
+
+        newDate && updateDue(newDate);
+      };
+
+      const moveUpByDate = () => {
+        const now = new Date();
+        const label = getDateLabel(due, now);
+        let newDate: Date | null = null;
+        if (label === 'No date') newDate = prevDue ? new Date(prevDue) : now;
+        else if (label !== 'Past' && label !== 'Today')
+          newDate = date!.addDays(-1);
+
+        newDate && updateDue(newDate);
+      };
+
+      return { updateDue, moveUpByDate, moveDownByDate };
+    }, [uuid, due, prevDue, updateTask]);
 
     const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 
@@ -128,8 +170,14 @@ export const TodoTask = React.memo(
     }, [focused]);
 
     useMouseTrap(focused ? 'shift+enter' : '', openDetailsView);
-    useMouseTrap(focused ? 'option+up' : '', moveTaskUp);
-    useMouseTrap(focused ? 'option+down' : '', moveTaskDown);
+    useMouseTrap(
+      focused ? 'option+up' : '',
+      sortByDate ? moveUpByDate : moveTaskUp
+    );
+    useMouseTrap(
+      focused ? 'option+down' : '',
+      sortByDate ? moveDownByDate : moveTaskDown
+    );
 
     return (
       <>
@@ -173,7 +221,7 @@ export const TodoTask = React.memo(
           date={due ? new Date(due) : undefined}
           open={dialogOpened}
           onClose={closeDateTimeDialog}
-          onConfirm={date => updateTask({ uuid, due: date.toISODateString() })}
+          onConfirm={updateDue}
         />
       </>
     );

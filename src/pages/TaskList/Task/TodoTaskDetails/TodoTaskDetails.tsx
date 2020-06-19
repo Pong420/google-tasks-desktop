@@ -99,6 +99,7 @@ export function TodoTaskDetails({
         <TaskListDropdown
           buttonProps={dropdownButtonProps}
           defaultOpen={taskListDropdownOpened}
+          // TODO:
           onSelect={console.log}
           paperClassName="details-task-list-dropdown-paper"
         />
