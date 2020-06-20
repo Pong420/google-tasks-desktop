@@ -27,6 +27,8 @@ export interface TodoTaskProps extends TaskProps {
   inherit?: (keyof Schema$Task)[];
   prevDue?: string | null;
   sortByDate?: boolean;
+  prevIndex?: number;
+  nextIndex?: number;
 }
 
 export const TodoTask = React.memo(
@@ -37,6 +39,8 @@ export const TodoTask = React.memo(
     inherit,
     prevDue,
     sortByDate,
+    prevIndex = index - 1,
+    nextIndex = index + 1,
     ...props
   }: TodoTaskProps) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -107,7 +111,7 @@ export const TodoTask = React.memo(
             const shouldFocusNext =
               event.key === 'ArrowDown' && selectionStart === value.length;
 
-            const to = event.key === 'ArrowUp' ? index - 1 : index + 1;
+            const to = event.key === 'ArrowUp' ? prevIndex : nextIndex;
 
             if (notHightlighted && (shouldFocusPrev || shouldFocusNext)) {
               event.preventDefault();
@@ -116,7 +120,17 @@ export const TodoTask = React.memo(
           }
         }
       };
-    }, [uuid, index, createTask, deleteTask, moveTask, setFocus, inherit]);
+    }, [
+      uuid,
+      index,
+      createTask,
+      deleteTask,
+      moveTask,
+      setFocus,
+      inherit,
+      prevIndex,
+      nextIndex
+    ]);
 
     const { updateDue, moveDownByDate, moveUpByDate } = useMemo(() => {
       // const now = new Date();

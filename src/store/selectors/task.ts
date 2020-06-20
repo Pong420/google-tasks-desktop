@@ -4,6 +4,8 @@ import { Schema$Task } from '../../typings';
 
 export const todoTaskIdsSelector = (state: RootState) => state.task.todo.ids;
 export const todoTaskListSelector = (state: RootState) => state.task.todo.list;
+export const todoTaskByIdsSelector = (state: RootState) =>
+  state.task.todo.byIds;
 
 export const completedTaskIdsSelector = (state: RootState) =>
   state.task.completed.ids;
@@ -44,16 +46,20 @@ export const getDateLabel = (due: string | null | undefined, now: Date) => {
 };
 
 export const todoTasksIdsByDateSelector = createSelector(
-  todoTaskListSelector,
-  list => {
-    const map = list
+  todoTaskIdsSelector,
+  todoTaskByIdsSelector,
+  (ids, byIds) => {
+    const order = ids
       .slice()
-      .sort((a, b) => getDate(a) - getDate(b))
-      .reduce((result, task) => {
-        const { due } = task;
-        const label = getDateLabel(due, new Date());
+      .sort((a, b) => getDate(byIds[a]) - getDate(byIds[b]));
+    const map = order.reduce((result, id) => {
+      const task = byIds[id];
+      if (task) {
+        const label = getDateLabel(task.due, new Date());
         return { ...result, [label]: [...(result[label] || []), task] };
-      }, {} as Record<string, Schema$Task[]>);
-    return Object.entries(map);
+      }
+      return result;
+    }, {} as Record<string, Schema$Task[]>);
+    return { order, tasks: Object.entries(map) };
   }
 );
