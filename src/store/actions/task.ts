@@ -18,7 +18,12 @@ interface Payload$MoveTask {
   uuid: string;
 }
 
-export const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
+export interface Payload$MoveToAnotherList {
+  tasklistId: string;
+  uuid: string;
+}
+
+const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
   updateTask: ['UPDATE', 'UPDATE_TASK'],
   paginateTask: ['PAGINATE', 'PAGINATE_TASK']
 });
@@ -34,7 +39,8 @@ export const TaskActionTypes = {
   MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const,
   DELETE_ALL_COMPLETED_TASKS: 'DELETE_ALL_COMPLETED_TASKS' as const,
   DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS' as const,
-  SYNC: 'SYNC_TASKS' as const
+  SYNC: 'SYNC_TASKS' as const,
+  MOVE_TO_ANOTHER_LIST: 'MOVE_TO_ANOTHER_LIST' as const
 };
 
 export function createTask(payload: Payload$CreateTask = {}) {
@@ -109,6 +115,10 @@ export function syncTasks(payload: PagePayload<Schema$Task>) {
   return { type: TaskActionTypes.SYNC, payload };
 }
 
+export function moveToAnotherList(payload: Payload$MoveToAnotherList) {
+  return { type: TaskActionTypes.MOVE_TO_ANOTHER_LIST, payload };
+}
+
 export const taskActions = {
   ...actions,
   createTask,
@@ -116,7 +126,8 @@ export const taskActions = {
   setFocus,
   moveTask,
   deleteAllCompletedTasks,
-  syncTasks
+  syncTasks,
+  moveToAnotherList
 };
 
 export type TaskActions =
@@ -126,6 +137,7 @@ export type TaskActions =
   | ReturnType<typeof moveTaskSuccess>
   | ReturnType<typeof deleteAllCompletedTasks>
   | ReturnType<typeof deleteAllCompletedTasksSuccess>
-  | ReturnType<typeof syncTasks>;
+  | ReturnType<typeof syncTasks>
+  | ReturnType<typeof moveToAnotherList>;
 
 export const useTaskActions = () => useActions(taskActions);

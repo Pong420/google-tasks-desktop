@@ -11,6 +11,7 @@ export interface TaskListDropdownProps
   paperClassName?: string;
   footer?(onClose: () => void): ReactNode;
   onSelect(taskList: Schema$TaskList): void;
+  taskList?: Schema$TaskList;
 }
 
 export function TaskListDropdown({
@@ -20,17 +21,19 @@ export function TaskListDropdown({
   footer,
   paperClassName,
   PaperProps,
+  taskList: controlled,
   ...props
 }: TaskListDropdownProps) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
   const ids = useSelector(taskListIdsSelector);
-  const current = useSelector(currentTaskListsSelector);
+  const currentTaskList = useSelector(currentTaskListsSelector);
+  const taskList = controlled || currentTaskList;
 
   return (
     <Dropdown
       {...props}
       PaperProps={{ className: paperClassName }}
-      label={(current && current.title) || 'Loading...'}
+      label={(taskList && taskList.title) || 'Loading...'}
       open={!!anchorEl}
       anchorEl={anchorEl}
       onClick={setAnchorEl}
@@ -52,7 +55,7 @@ export function TaskListDropdown({
             key={id}
             onClick={onSelect}
             onClose={onClose}
-            selected={current && current.id === id}
+            selected={taskList && taskList.id === id}
           />
         );
       })}

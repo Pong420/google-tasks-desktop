@@ -1,4 +1,4 @@
-import React, { KeyboardEvent } from 'react';
+import React, { KeyboardEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   DeleteIcon,
@@ -10,13 +10,11 @@ import {
 } from '../../../../components/Mui';
 import { TaskListDropdown } from '../../TaskListDropdown';
 import { DateTimeButton } from './DateTimeButton';
-import { Schema$Task } from '../../../../typings';
+import { Schema$Task, Schema$TaskList } from '../../../../typings';
 import { useBoolean } from '../../../../hooks/useBoolean';
 import { todoTaskSelector, useTaskActions } from '../../../../store';
-import Button from '@material-ui/core/Button';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
-import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 
 interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
   taskListDropdownOpened?: boolean;
@@ -52,7 +50,8 @@ export function TodoTaskDetails({
   ...props
 }: Props) {
   const [shouldBeDeleted, deleteOnExited] = useBoolean();
-  const { updateTask } = useTaskActions();
+  const [moveTo, setMoveTo] = useState<Schema$TaskList>();
+  const { updateTask, moveToAnotherList } = useTaskActions();
   const { title, notes, due } = useSelector(todoTaskSelector(uuid)) || {};
 
   return (
@@ -68,7 +67,13 @@ export function TodoTaskDetails({
           onClick={deleteOnExited}
         />
       }
-      onExited={shouldBeDeleted ? onDelete : undefined}
+      onExited={() => {
+        if (shouldBeDeleted) {
+          onDelete();
+        } else {
+          moveTo && moveToAnotherList({ tasklistId: moveTo.id, uuid });
+        }
+      }}
     >
       <Input
         multiline
@@ -99,8 +104,8 @@ export function TodoTaskDetails({
         <TaskListDropdown
           buttonProps={dropdownButtonProps}
           defaultOpen={taskListDropdownOpened}
-          // TODO:
-          onSelect={console.log}
+          onSelect={setMoveTo}
+          taskList={moveTo}
           paperClassName="details-task-list-dropdown-paper"
         />
       </div>
@@ -112,11 +117,6 @@ export function TodoTaskDetails({
           onClick={openDateTimeDialog}
           onRemove={() => updateTask({ uuid, due: null })}
         />
-      </div>
-
-      <div className="row row-subtask">
-        <SubdirectoryIcon />
-        <Button disabled>Add Subtasks</Button>
       </div>
     </FullScreenDialog>
   );

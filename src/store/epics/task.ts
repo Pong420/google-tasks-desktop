@@ -1,5 +1,5 @@
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
-import { Observable, empty, defer, of, forkJoin, from } from 'rxjs';
+import { Observable, empty, defer, of, forkJoin, from, concat } from 'rxjs';
 import {
   switchMap,
   mergeMap,
@@ -261,11 +261,50 @@ const deleteCompletedTasksEpic: TaskEpic = (action$, state$) =>
     })
   );
 
+const moveToAnotherListEpic: TaskEpic = (action$, state$) =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'MOVE_TO_ANOTHER_LIST'>>(
+      'MOVE_TO_ANOTHER_LIST'
+    ),
+    switchMap(action => {
+      const tasklist = currentTaskListsSelector(state$.value);
+      const task = state$.value.task.deleted[action.payload.uuid];
+      if (tasklist && task && task.id) {
+        const { uuid, ...requestBody } = task;
+
+        const newTask$ = defer(() =>
+          tasksAPI.insert({
+            tasklist: action.payload.tasklistId,
+            requestBody
+          })
+        );
+
+        const deleteTask$ = defer(() =>
+          tasksAPI.delete({
+            task: task.id!,
+            tasklist: tasklist.id
+          })
+        );
+
+        concat(newTask$, deleteTask$).subscribe();
+      } else {
+        console.warn(
+          'Cannot move task to anthor list',
+          !!tasklist,
+          !!task,
+          !!task.id
+        );
+      }
+      return empty();
+    })
+  );
+
 export default [
   nprogressEpic,
   createTaskEpic,
   updateTaskEpic,
   deleteTaskEpic,
   moveTaskEpic,
-  deleteCompletedTasksEpic
+  deleteCompletedTasksEpic,
+  moveToAnotherListEpic
 ];

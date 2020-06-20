@@ -2,10 +2,11 @@ import React from 'react';
 import { generatePath } from 'react-router-dom';
 import { FormDialog, MenuItem } from '../../../components/Mui';
 import { TaskListDropdown } from '../TaskListDropdown';
-import { history } from '../../../store';
+import { history, currentTaskListsSelector } from '../../../store';
 import { PATHS } from '../../../constants';
 import { useBoolean } from '../../../hooks/useBoolean';
 import { Divider } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 interface Props {
   onConfirm: (payload: string) => void;
@@ -13,6 +14,7 @@ interface Props {
 
 export function TaskListHeader({ onConfirm }: Props) {
   const [dialogOpened, openDialog, closeDialog] = useBoolean();
+  const taskList = useSelector(currentTaskListsSelector);
 
   return (
     <>
@@ -24,6 +26,7 @@ export function TaskListHeader({ onConfirm }: Props) {
           </div>
           <TaskListDropdown
             paperClassName="task-list-header-dropdown-paper"
+            taskList={taskList}
             onSelect={({ id }) =>
               history.push(generatePath(PATHS.TASKLIST, { taskListId: id }))
             }

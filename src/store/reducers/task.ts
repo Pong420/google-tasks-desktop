@@ -213,6 +213,20 @@ export function taskReducer(
     case 'DELETE_ALL_COMPLETED_TASKS_SUCCESS':
       return { ...state, completed: initialState.completed };
 
+    case 'MOVE_TO_ANOTHER_LIST':
+      return (() => {
+        const { uuid } = action.payload;
+        return {
+          ...state,
+          focued: null,
+          deleted: {
+            ...state.deleted,
+            [uuid]: state.todo.byIds[uuid]!
+          },
+          todo: todoReducer(state.todo, taskActions.deleteTask({ uuid }))
+        };
+      })();
+
     default:
       return state;
   }
