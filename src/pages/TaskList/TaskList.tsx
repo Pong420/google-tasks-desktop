@@ -6,6 +6,8 @@ import { TodoTaskList } from './TodoTaskList';
 import { NewTask } from './NewTask';
 import { CompletedTaskList } from './CompletedTaskList';
 import { TodoTaskDetailsProvider } from './Task/TodoTaskDetails';
+import { DateTimeDialogProvider } from './Task/DateTimeDialog';
+import { TodoTaskMenuProvider } from './Task/TodoTask/TodoTaskMenu';
 import { getAllTasklist, getAllTasks } from '../../service';
 import {
   useTaskListActions,
@@ -44,13 +46,17 @@ export function TaskList() {
     <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>
       <TaskListHeader onConfirm={taskListActions.newTaskList} />
       <TodoTaskDetailsProvider>
-        <div className="task-list-content">
-          <NewTask />
-          <div className="scroll-content">
-            <TodoTaskList taskListId={taskListId} />
-          </div>
-          <CompletedTaskList key={taskListId} />
-        </div>
+        <DateTimeDialogProvider>
+          <TodoTaskMenuProvider>
+            <div className="task-list-content">
+              <NewTask />
+              <div className="scroll-content">
+                <TodoTaskList taskListId={taskListId} />
+              </div>
+              <CompletedTaskList key={taskListId} />
+            </div>
+          </TodoTaskMenuProvider>
+        </DateTimeDialogProvider>
       </TodoTaskDetailsProvider>
     </div>
   );

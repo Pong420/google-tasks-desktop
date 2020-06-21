@@ -3,7 +3,8 @@ import React, {
   useState,
   createContext,
   ReactNode,
-  useEffect
+  useEffect,
+  useContext
 } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -38,7 +39,11 @@ const dropdownButtonProps = {
   fullWidth: true
 };
 
-export const TodoTaskDetailsContext = createContext({} as Context);
+export const Context = createContext({} as Context);
+
+export function useTodoTaskDetails() {
+  return useContext(Context);
+}
 
 export function TodoTaskDetailsProvider({ children }: { children: ReactNode }) {
   const [props, setProps] = useState<Props & Partial<FullScreenDialogProps>>();
@@ -49,7 +54,7 @@ export function TodoTaskDetailsProvider({ children }: { children: ReactNode }) {
   }, [props, open]);
 
   return (
-    <TodoTaskDetailsContext.Provider value={{ openTodoTaskDetails: setProps }}>
+    <Context.Provider value={{ openTodoTaskDetails: setProps }}>
       {children}
       {props && (
         <TodoTaskDetails
@@ -62,7 +67,7 @@ export function TodoTaskDetailsProvider({ children }: { children: ReactNode }) {
           }}
         />
       )}
-    </TodoTaskDetailsContext.Provider>
+    </Context.Provider>
   );
 }
 

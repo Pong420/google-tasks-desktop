@@ -2,23 +2,20 @@ import React, {
   useRef,
   useMemo,
   useEffect,
-  useContext,
   MouseEvent,
   KeyboardEvent
 } from 'react';
 import { useSelector } from 'react-redux';
 import { Task, TaskProps } from '../Task';
-import { TodoTaskMenu } from './TodoTaskMenu';
-import { TodoTaskDetailsContext, EditTaskButton } from '../TodoTaskDetails';
-import { DateTimeDialog } from '../DateTimeDialog';
+import { useTodoTaskDetails, EditTaskButton } from '../TodoTaskDetails';
+import { useDateTimeDialog } from '../DateTimeDialog';
+import { useTodoTaskMenu } from './TodoTaskMenu';
 import {
   focusedSelector,
   useTaskActions,
   todoTaskSelector,
   getDateLabel
 } from '../../../../store';
-import { useMuiMenu } from '../../../../components/Mui';
-import { useBoolean } from '../../../../hooks/useBoolean';
 import { useMouseTrap } from '../../../../hooks/useMouseTrap';
 import { Schema$Task } from '../../../../typings';
 import idx from 'idx.macro';
@@ -164,17 +161,31 @@ export const TodoTask = React.memo(
       return { updateDue, moveUpByDate, moveDownByDate };
     }, [uuid, due, prevDue, updateTask]);
 
-    const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
+    const { openDateTimeDialog: _openDateTimeDialog } = useDateTimeDialog();
+    const openDateTimeDialog = () =>
+      _openDateTimeDialog({
+        date: due ? new Date(due) : undefined,
+        onConfirm: updateDue
+      });
 
-    const [
-      dialogOpened,
-      openDateTimeDialog,
-      closeDateTimeDialog
-    ] = useBoolean();
+    const { openTodoTaskDetails: _openTodoTaskDetails } = useTodoTaskDetails();
+    const openTodoTaskDetails = () =>
+      _openTodoTaskDetails({ openDateTimeDialog, uuid });
 
-    const { openTodoTaskDetails } = useContext(TodoTaskDetailsContext);
-    const openTodoTaskDetailsCallback = () =>
-      openTodoTaskDetails({ openDateTimeDialog, uuid });
+    const { openTodoTaskMenu: _openTodoTaskMenu } = useTodoTaskMenu();
+    const openTodoTaskMenu = (event: MouseEvent<HTMLElement>) =>
+      _openTodoTaskMenu({
+        event,
+        uuid,
+        onDelete,
+        openDateTimeDialog,
+        moveToAnotherList: () =>
+          _openTodoTaskDetails({
+            taskListDropdownOpened: true,
+            openDateTimeDialog,
+            uuid
+          })
+      });
 
     useEffect(() => {
       const el = ref.current;
@@ -187,7 +198,7 @@ export const TodoTask = React.memo(
       }
     }, [focused]);
 
-    useMouseTrap(focused ? 'shift+enter' : '', openTodoTaskDetailsCallback);
+    useMouseTrap(focused ? 'shift+enter' : '', openTodoTaskDetails);
     useMouseTrap(
       focused ? 'option+up' : '',
       sortByDate ? moveUpByDate : moveTaskUp
@@ -206,7 +217,7 @@ export const TodoTask = React.memo(
           uuid={uuid}
           value={title}
           isEmpty={!(title && title.trim())}
-          onContextMenu={setAnchorPosition}
+          onContextMenu={openTodoTaskMenu}
           onDueDateBtnClick={openDateTimeDialog}
           onFocus={() => !focused && setFocus(uuid)}
           onChange={event =>
@@ -215,34 +226,7 @@ export const TodoTask = React.memo(
           className={['todo-task', focused ? 'focused' : '', className]
             .join(' ')
             .trim()}
-          endAdornment={
-            <EditTaskButton onClick={openTodoTaskDetailsCallback} />
-          }
-        />
-
-        <TodoTaskMenu
-          uuid={uuid}
-          keepMounted={false}
-          anchorReference="anchorPosition"
-          anchorPosition={anchorPosition}
-          open={!!anchorPosition}
-          onClose={onClose}
-          onDelete={onDelete}
-          openDateTimeDialog={openDateTimeDialog}
-          moveToAnotherList={() =>
-            openTodoTaskDetails({
-              taskListDropdownOpened: true,
-              openDateTimeDialog,
-              uuid
-            })
-          }
-        />
-
-        <DateTimeDialog
-          date={due ? new Date(due) : undefined}
-          open={dialogOpened}
-          onClose={closeDateTimeDialog}
-          onConfirm={updateDue}
+          endAdornment={<EditTaskButton onClick={openTodoTaskDetails} />}
         />
       </>
     );
