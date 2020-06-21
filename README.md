@@ -2,8 +2,6 @@
 
 > Unofficial google tasks desktop application. Using React and google tasks api
 
-:warning: This is the v3 branch, which is working in progress.
-
 <div>
   <img src="./screenshot/1.png" width="24%">
   <img src="./screenshot/2.png" width="24%">
