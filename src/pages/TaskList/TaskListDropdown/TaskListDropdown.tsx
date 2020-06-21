@@ -1,6 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { useMuiMenu, Dropdown, DropdownProps } from '../../../components/Mui';
+import {
+  useMuiMenu,
+  Dropdown,
+  DropdownProps,
+  FULLSCREEN_DIALOG_TRANSITION
+} from '../../../components/Mui';
 import { TaskListDropdownItem } from './TaskListDropdownItem';
 import { taskListIdsSelector, currentTaskListsSelector } from '../../../store';
 import { Schema$TaskList } from '../../../typings';
@@ -28,10 +33,19 @@ export function TaskListDropdown({
   const ids = useSelector(taskListIdsSelector);
   const currentTaskList = useSelector(currentTaskListsSelector);
   const taskList = controlled || currentTaskList;
+  const dropdownRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const el = dropdownRef.current;
+    if (defaultOpen && el) {
+      setTimeout(() => setAnchorEl(el), FULLSCREEN_DIALOG_TRANSITION / 2);
+    }
+  }, [setAnchorEl, defaultOpen]);
 
   return (
     <Dropdown
       {...props}
+      ref={dropdownRef}
       PaperProps={{ className: paperClassName }}
       label={(taskList && taskList.title) || 'Loading...'}
       open={!!anchorEl}

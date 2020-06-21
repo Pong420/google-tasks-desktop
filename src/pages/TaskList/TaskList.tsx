@@ -5,6 +5,7 @@ import { TaskListHeader } from './TaskListHeader';
 import { TodoTaskList } from './TodoTaskList';
 import { NewTask } from './NewTask';
 import { CompletedTaskList } from './CompletedTaskList';
+import { TodoTaskDetailsProvider } from './Task/TodoTaskDetails';
 import { getAllTasklist, getAllTasks } from '../../service';
 import {
   useTaskListActions,
@@ -42,13 +43,15 @@ export function TaskList() {
   return (
     <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>
       <TaskListHeader onConfirm={taskListActions.newTaskList} />
-      <div className="task-list-content">
-        <NewTask />
-        <div className="scroll-content">
-          <TodoTaskList taskListId={taskListId} />
+      <TodoTaskDetailsProvider>
+        <div className="task-list-content">
+          <NewTask />
+          <div className="scroll-content">
+            <TodoTaskList taskListId={taskListId} />
+          </div>
+          <CompletedTaskList key={taskListId} />
         </div>
-        <CompletedTaskList key={taskListId} />
-      </div>
+      </TodoTaskDetailsProvider>
     </div>
   );
 }

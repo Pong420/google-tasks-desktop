@@ -1,4 +1,10 @@
-import React, { KeyboardEvent, useState } from 'react';
+import React, {
+  KeyboardEvent,
+  useState,
+  createContext,
+  ReactNode,
+  useEffect
+} from 'react';
 import { useSelector } from 'react-redux';
 import {
   DeleteIcon,
@@ -16,10 +22,13 @@ import { todoTaskSelector, useTaskActions } from '../../../../store';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 
-interface Props extends FullScreenDialogProps, Pick<Schema$Task, 'uuid'> {
+interface Props extends Pick<Schema$Task, 'uuid'> {
   taskListDropdownOpened?: boolean;
-  onDelete: () => void;
   openDateTimeDialog: () => void;
+}
+
+interface Context {
+  openTodoTaskDetails: (props: Props) => void;
 }
 
 const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
@@ -28,6 +37,34 @@ const preventStartNewLine = (evt: KeyboardEvent<HTMLDivElement>) =>
 const dropdownButtonProps = {
   fullWidth: true
 };
+
+export const TodoTaskDetailsContext = createContext({} as Context);
+
+export function TodoTaskDetailsProvider({ children }: { children: ReactNode }) {
+  const [props, setProps] = useState<Props & Partial<FullScreenDialogProps>>();
+  const [isOpen, open, close] = useBoolean();
+
+  useEffect(() => {
+    props && open();
+  }, [props, open]);
+
+  return (
+    <TodoTaskDetailsContext.Provider value={{ openTodoTaskDetails: setProps }}>
+      {children}
+      {props && (
+        <TodoTaskDetails
+          {...props}
+          open={isOpen}
+          onClose={close}
+          onExited={(...args) => {
+            props.onExited && props.onExited(...args);
+            setProps(undefined);
+          }}
+        />
+      )}
+    </TodoTaskDetailsContext.Provider>
+  );
+}
 
 export const EditTaskButton = ({ onClick }: { onClick(): void }) => {
   return (
@@ -44,14 +81,13 @@ export function TodoTaskDetails({
   uuid,
   open,
   onClose,
-  onDelete,
   openDateTimeDialog,
   taskListDropdownOpened,
   ...props
-}: Props) {
+}: Props & FullScreenDialogProps) {
   const [shouldBeDeleted, deleteOnExited] = useBoolean();
   const [moveTo, setMoveTo] = useState<Schema$TaskList>();
-  const { updateTask, moveToAnotherList } = useTaskActions();
+  const { updateTask, deleteTask, moveToAnotherList } = useTaskActions();
   const { title, notes, due } = useSelector(todoTaskSelector(uuid)) || {};
 
   return (
@@ -69,7 +105,7 @@ export function TodoTaskDetails({
       }
       onExited={() => {
         if (shouldBeDeleted) {
-          onDelete();
+          deleteTask({ uuid });
         } else {
           moveTo && moveToAnotherList({ tasklistId: moveTo.id, uuid });
         }

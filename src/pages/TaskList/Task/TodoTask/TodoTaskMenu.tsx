@@ -7,7 +7,7 @@ interface Props extends Omit<MenuProps, 'ref'> {
   uuid: string;
   onDelete?: () => void;
   openDateTimeDialog?: () => void;
-  openTaskListDropdown?: () => void;
+  moveToAnotherList?: () => void;
 }
 
 const classes: MenuProps['classes'] = { paper: 'todo-task-menu-paper' };
@@ -17,7 +17,7 @@ export const TodoTaskMenu = ({
   onClose,
   onDelete,
   openDateTimeDialog,
-  openTaskListDropdown,
+  moveToAnotherList,
   ...props
 }: Props) => {
   const MenuItem = useMuiMenuItem({ onClose });
@@ -33,7 +33,7 @@ export const TodoTaskMenu = ({
       <MenuItem text="Add a subtask" disabled />
       {/* TODO:  should not show on first task */}
       <MenuItem text="Indent" disabled />
-      <MenuItem text="Move to another list" onClick={openTaskListDropdown} />
+      <MenuItem text="Move to another list" onClick={moveToAnotherList} />
     </Menu>
   );
 };

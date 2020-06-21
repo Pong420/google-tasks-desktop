@@ -2,13 +2,14 @@ import React, {
   useRef,
   useMemo,
   useEffect,
+  useContext,
   MouseEvent,
   KeyboardEvent
 } from 'react';
 import { useSelector } from 'react-redux';
 import { Task, TaskProps } from '../Task';
 import { TodoTaskMenu } from './TodoTaskMenu';
-import { TodoTaskDetails, EditTaskButton } from '../TodoTaskDetails';
+import { TodoTaskDetailsContext, EditTaskButton } from '../TodoTaskDetails';
 import { DateTimeDialog } from '../DateTimeDialog';
 import {
   focusedSelector,
@@ -165,12 +166,15 @@ export const TodoTask = React.memo(
 
     const { anchorPosition, setAnchorPosition, onClose } = useMuiMenu();
 
-    const [detailViewOpened, openDetailsView, closeDetailsView] = useBoolean();
     const [
       dialogOpened,
       openDateTimeDialog,
       closeDateTimeDialog
     ] = useBoolean();
+
+    const { openTodoTaskDetails } = useContext(TodoTaskDetailsContext);
+    const openTodoTaskDetailsCallback = () =>
+      openTodoTaskDetails({ openDateTimeDialog, uuid });
 
     useEffect(() => {
       const el = ref.current;
@@ -183,7 +187,7 @@ export const TodoTask = React.memo(
       }
     }, [focused]);
 
-    useMouseTrap(focused ? 'shift+enter' : '', openDetailsView);
+    useMouseTrap(focused ? 'shift+enter' : '', openTodoTaskDetailsCallback);
     useMouseTrap(
       focused ? 'option+up' : '',
       sortByDate ? moveUpByDate : moveTaskUp
@@ -211,8 +215,11 @@ export const TodoTask = React.memo(
           className={['todo-task', focused ? 'focused' : '', className]
             .join(' ')
             .trim()}
-          endAdornment={<EditTaskButton onClick={openDetailsView} />}
+          endAdornment={
+            <EditTaskButton onClick={openTodoTaskDetailsCallback} />
+          }
         />
+
         <TodoTaskMenu
           uuid={uuid}
           keepMounted={false}
@@ -222,15 +229,15 @@ export const TodoTask = React.memo(
           onClose={onClose}
           onDelete={onDelete}
           openDateTimeDialog={openDateTimeDialog}
+          moveToAnotherList={() =>
+            openTodoTaskDetails({
+              taskListDropdownOpened: true,
+              openDateTimeDialog,
+              uuid
+            })
+          }
         />
-        <TodoTaskDetails
-          uuid={uuid}
-          keepMounted={false}
-          open={detailViewOpened}
-          onClose={closeDetailsView}
-          onDelete={onDelete}
-          openDateTimeDialog={openDateTimeDialog}
-        />
+
         <DateTimeDialog
           date={due ? new Date(due) : undefined}
           open={dialogOpened}
