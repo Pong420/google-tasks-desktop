@@ -79,3 +79,4 @@ yarn package-all
 - Add time / repeat is not supported as API limitation
 - Tasks sorting type (My order / Date) is not synced to the official platform (Web/App)
 - The position of the task which marks as complete to incomplete may be different after refresh
+
