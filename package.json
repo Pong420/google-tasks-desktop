@@ -163,7 +163,7 @@
     "customize-cra": "^0.9.1",
     "googleapis": "^47.0.0",
     "history": "^4.10.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mousetrap": "^1.6.5",
     "nprogress": "^0.2.0",
     "react": "^16.13.0",
