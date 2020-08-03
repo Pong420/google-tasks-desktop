@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRxInput, useRxAsync } from 'use-rx-hooks';
 import { Button } from '@material-ui/core';
 import { Input } from '../../components/Mui/Input';
@@ -7,8 +7,6 @@ import { generateAuthUrl, getToken } from '../../service';
 import { ReactComponent as LogoSvg } from '../../assets/logo.svg';
 import { useAuthActions } from '../../store';
 
-const installed = window.oAuth2Storage.get();
-
 export function Auth() {
   const [value, inputProps] = useRxInput();
   const { authenticated } = useAuthActions();
@@ -16,6 +14,7 @@ export function Auth() {
     defer: true,
     onSuccess: authenticated
   });
+  const [installed, setInstanned] = useState(window.oAuth2Storage.get());
 
   return (
     <div className="auth">
@@ -35,15 +34,23 @@ export function Auth() {
               fullWidth
             />
             <div>
-              <Button disabled={loading} onClick={generateAuthUrl}>
-                Get Code
-              </Button>
+              <div>
+                <Button disabled={loading} onClick={generateAuthUrl}>
+                  Get Code
+                </Button>
+                <Button
+                  disabled={loading}
+                  className="auth-confirm-button"
+                  onClick={() => run(value)}
+                >
+                  Confirm
+                </Button>
+              </div>
               <Button
-                disabled={loading}
-                className="auth-confirm-button"
-                onClick={() => run(value)}
+                className="auth-go-back"
+                onClick={() => setInstanned(undefined)}
               >
-                Confirm
+                Go Back
               </Button>
             </div>
           </form>

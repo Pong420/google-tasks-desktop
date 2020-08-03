@@ -24,6 +24,10 @@
     color: var(--accent-color);
   }
 
+  .auth-go-back {
+    color: #999;
+  }
+
   form {
     @include dimen(100%);
     .mui-input-base {
