@@ -4,7 +4,7 @@ const { override, addWebpackResolve } = require('customize-cra');
 // TODO:
 // @material-ui/core
 
-module.exports = function(config, env) {
+module.exports = function (config, env) {
   return override(
     addWebpackResolve({
       alias: {

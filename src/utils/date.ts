@@ -10,12 +10,12 @@
 
 export const _ = '';
 
-Date.prototype.getDayCn = function() {
+Date.prototype.getDayCn = function () {
   const days_full: DayCn[] = ['日', '一', '二', '三', '四', '五', '六'];
   return days_full[this.getDay()];
 };
 
-Date.prototype.addDays = function(n: number) {
+Date.prototype.addDays = function (n: number) {
   const date = new Date();
   const time = this.getTime();
   const changedDate = new Date(time + n * 24 * 60 * 60 * 1000);
@@ -23,7 +23,7 @@ Date.prototype.addDays = function(n: number) {
   return date;
 };
 
-Date.prototype.addMonths = function(n: number) {
+Date.prototype.addMonths = function (n: number) {
   const month = this.getMonth();
   const lastYear = month === 0 && n < 0;
   const nextYear = month === 11 && n > 0;
@@ -37,7 +37,7 @@ Date.prototype.addMonths = function(n: number) {
 };
 
 // Provide month names
-Date.prototype.getMonthName = function() {
+Date.prototype.getMonthName = function () {
   const month_names: MonthFullName[] = [
     'January',
     'February',
@@ -56,7 +56,7 @@ Date.prototype.getMonthName = function() {
 };
 
 // Provide month abbreviation
-Date.prototype.getMonthAbbr = function() {
+Date.prototype.getMonthAbbr = function () {
   const month_abbrs: MonthAbbr[] = [
     'Jan',
     'Feb',
@@ -75,7 +75,7 @@ Date.prototype.getMonthAbbr = function() {
 };
 
 // Provide full day of week name
-Date.prototype.getDayFull = function() {
+Date.prototype.getDayFull = function () {
   const days_full: DayFullName[] = [
     'Sunday',
     'Monday',
@@ -89,7 +89,7 @@ Date.prototype.getDayFull = function() {
 };
 
 // Provide full day of week name
-Date.prototype.getDayAbbr = function() {
+Date.prototype.getDayAbbr = function () {
   const days_abbr: DayAbbr[] = [
     'Sun',
     'Mon',
@@ -103,13 +103,13 @@ Date.prototype.getDayAbbr = function() {
 };
 
 // Provide the day of year 1-365
-Date.prototype.getDayOfYear = function() {
+Date.prototype.getDayOfYear = function () {
   const onejan = new Date(this.getFullYear(), 0, 1);
   return Math.ceil((Number(this) - Number(onejan)) / 86400000);
 };
 
 // Provide the day suffix (st,nd,rd,th)
-Date.prototype.getDaySuffix = function() {
+Date.prototype.getDaySuffix = function () {
   const d = this.getDate();
   const sfx: DaySuffix[] = ['th', 'st', 'nd', 'rd'];
   const val = d % 100;
@@ -117,7 +117,7 @@ Date.prototype.getDaySuffix = function() {
 };
 
 // Provide Week of Year
-Date.prototype.getWeekOfYear = function() {
+Date.prototype.getWeekOfYear = function () {
   const onejan = new Date(this.getFullYear(), 0, 1);
   return Math.ceil(
     ((Number(this) - Number(onejan)) / 86400000 + onejan.getDay() + 1) / 7
@@ -125,7 +125,7 @@ Date.prototype.getWeekOfYear = function() {
 };
 
 // Provide if it is a leap year or not
-Date.prototype.isLeapYear = function() {
+Date.prototype.isLeapYear = function () {
   const yr = String(this.getFullYear());
   if (parseInt(yr, 10) % 4 === 0) {
     if (parseInt(yr, 10) % 100 === 0) {
@@ -148,7 +148,7 @@ Date.prototype.isLeapYear = function() {
 };
 
 // Provide Number of Days in a given month
-Date.prototype.getMonthDayCount = function() {
+Date.prototype.getMonthDayCount = function () {
   const month_day_counts = [
     31,
     this.isLeapYear() ? 29 : 28,
@@ -166,7 +166,7 @@ Date.prototype.getMonthDayCount = function() {
   return month_day_counts[this.getMonth()];
 };
 
-Date.prototype.compare = function(dateObj: Date) {
+Date.prototype.compare = function (dateObj: Date) {
   const date = dateObj.getDate();
   const month = dateObj.getMonth();
   const year = dateObj.getFullYear();
@@ -187,15 +187,15 @@ Date.prototype.compare = function(dateObj: Date) {
   };
 };
 
-Date.prototype.dayDiff = function(d: Date = new Date()) {
+Date.prototype.dayDiff = function (d: Date = new Date()) {
   return Math.floor((d.getTime() - this.getTime()) / 1000 / 60 / 60 / 24);
 };
 
-Date.prototype.isToday = function() {
+Date.prototype.isToday = function () {
   return this.dayDiff(new Date()) === 0;
 };
 
-Date.prototype.toISODateString = function() {
+Date.prototype.toISODateString = function () {
   const str = this.toISOString();
   return (
     str.substring(0, str.indexOf('T')) +
@@ -204,7 +204,7 @@ Date.prototype.toISODateString = function() {
 };
 
 // format provided date into this.format format
-Date.prototype.format = function(dateFormat_: string) {
+Date.prototype.format = function (dateFormat_: string) {
   // break apart format string into array of characters
   const dateFormat = dateFormat_.split('');
   const date = this.getDate();

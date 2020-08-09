@@ -31,10 +31,7 @@ export const Task = React.forwardRef<HTMLDivElement, TaskProps>(
     return (
       <div
         data-uuid={uuid}
-        className={['task', className]
-          .filter(Boolean)
-          .join(' ')
-          .trim()}
+        className={['task', className].filter(Boolean).join(' ').trim()}
         ref={ref}
       >
         <ToggleCompleted isEmpty={!!isEmpty} uuid={uuid} />

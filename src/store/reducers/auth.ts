@@ -8,7 +8,7 @@ const initialState: State = {
   loggedIn: !!window.tokenStorage.get()
 };
 
-export default function(state = initialState, action: AuthActions): State {
+export default function (state = initialState, action: AuthActions): State {
   switch (action.type) {
     case 'AUTHENTICATED':
       return {
