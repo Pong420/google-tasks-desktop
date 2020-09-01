@@ -15,10 +15,13 @@
 
 #### Step to enable Google Tasks API.
 
-1. Setup your [OAuth consent screen](https://console.developers.google.com/apis/credentials/consent) in Google API Console
+1. Follow the instruction in https://support.google.com/cloud/answer/6158849 to setup your `OAuth consent screen` and `Credentials` ( In step 6, you should select `Desktop app` as the application type )
 
-2. In Google API Console [Credentials](https://console.developers.google.com/apis/credentials) section.
-   Create credentials => OAuth client ID => Other => Create. After, you should get a json file like this.
+2. After the OAuth client created, you could download the `oAuth.json` by clicking this button
+
+<img src="./screenshot/guide-1.png" />
+
+And the `oAuth.json` looks like this
 
 ```json
 {
@@ -34,11 +37,11 @@
 }
 ```
 
-3. Start and drag this file into the application.
+3. Start and drag the `oAuth.json` into the application.
 
-4. Click on `Get Code` button then you will require authentication. Just ignore the `This app isn't verified` warning and continue because you are the app owner.
+4. Click on the `Get Code` button and will require authentication. Just ignore the `This app isn't verified` warning and continue because you are the app owner.
 
-5. Paste the code into the input filed and click confirm. Done!
+5. Paste the code into the input filed and click the `Confirm` button.
 
 ### Development
 
