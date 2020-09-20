@@ -8,7 +8,7 @@ import { PATHS } from './constants';
 
 const App = () => (
   <>
-    <AppRegion />
+    {window.platform === 'win32' ? null : <AppRegion />}
     <>
       <Switch>
         <Route path={PATHS.AUTH} component={Auth} />

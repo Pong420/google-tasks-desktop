@@ -7,5 +7,5 @@
     "incremental": true
   },
   "exclude": ["../node_modules"],
-  "include": ["./**/*", "../common.d.ts"]
+  "include": ["./*.ts", "./preload/*.ts", "../common.d.ts"]
 }

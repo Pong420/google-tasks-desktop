@@ -23,7 +23,7 @@
 .task-list-content {
   @include sq-dimen(100%);
   @include flex($flex-direction: column);
-  max-height: calc(100vh - #{$header-height});
+  max-height: calc(100vh - var(--header-height));
   overflow: hidden;
   z-index: 1;
 

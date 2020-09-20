@@ -16,10 +16,9 @@ $completed-task-list-header-height: 54px;
   @include absolute(null, 0, 0);
   @include animate(transform);
   @include flex($flex-direction: column);
-  @include dimen(100%);
-
+  @include dimen(100%, 100vh);
   background-color: var(--main-color);
-  max-height: calc(100vh - #{$header-height});
+  max-height: calc(100vh - var(--header-height));
   padding-bottom: 2px;
   transform: translateY(calc(100% - #{$completed-task-list-header-height}));
   z-index: 10;

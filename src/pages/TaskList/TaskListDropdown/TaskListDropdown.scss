@@ -34,7 +34,7 @@ $item-height: 40px;
   .scroll-content {
     max-height: $item-height * 5;
     min-width: 180px;
-    overflow: scroll;
+    overflow: auto;
   }
 
   .mui-menu-item {

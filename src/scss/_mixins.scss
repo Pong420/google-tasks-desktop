@@ -8,3 +8,18 @@
 @import './mixins/size';
 @import './mixins/textHighlight';
 @import './mixins/textOverflow';
+
+@mixin scrollbar {
+  ::-webkit-scrollbar {
+    width: 0.8rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    background-color: rgba(128, 128, 128, 0.4);
+    border: 2px solid transparent;
+    border-radius: 0.8rem;
+    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.05),
+      inset 1px 1px 0 rgba(0, 0, 0, 0.05);
+  }
+}

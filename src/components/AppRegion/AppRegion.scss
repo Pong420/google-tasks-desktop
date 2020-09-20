@@ -1,6 +1,6 @@
 .app-region {
   @include absolute(0, null, 0);
-  @include dimen(100%, $header-height);
+  @include dimen(100%, var(--header-height));
 
   > div {
     @include sq-dimen(100%);

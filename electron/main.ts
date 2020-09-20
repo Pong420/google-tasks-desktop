@@ -1,6 +1,11 @@
 import path from 'path';
 import url from 'url';
-import { app, BrowserWindow, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  BrowserWindowConstructorOptions
+} from 'electron';
 import { MenuBuilder } from './menu';
 
 let mainWindow: BrowserWindow | null = null;
@@ -18,16 +23,27 @@ async function createWindow() {
     await installExtension(REDUX_DEVTOOLS);
   }
 
-  mainWindow = new BrowserWindow({
-    frame: false,
+  const options: BrowserWindowConstructorOptions = {
     height: 500,
     width: 300,
     show: false,
-    titleBarStyle: 'hiddenInset',
     webPreferences: {
       preload: path.join(__dirname, './preload/index.js')
     }
-  });
+  };
+
+  if (process.platform === 'win32') {
+    mainWindow = new BrowserWindow({
+      ...options
+    });
+    mainWindow.setMenuBarVisibility(false);
+  } else {
+    mainWindow = new BrowserWindow({
+      ...options,
+      frame: false,
+      titleBarStyle: 'hiddenInset'
+    });
+  }
 
   const startUrl =
     process.env.ELECTRON_START_URL ||

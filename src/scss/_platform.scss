@@ -1,0 +1,7 @@
+:root {
+  --header-height: 70px;
+}
+
+[data-platform^='win32'] {
+  --header-height: 55px;
+}
