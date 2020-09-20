@@ -18,3 +18,5 @@ export interface SyncPreferences {
   reconnection: boolean;
   inactiveHours: number;
 }
+
+export type TitleBar = 'native' | 'simple';

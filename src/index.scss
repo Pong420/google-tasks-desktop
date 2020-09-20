@@ -11,8 +11,11 @@ body,
 }
 
 html {
-  @include scrollbar;
   background-color: var(--main-color);
+
+  &:not([data-platform^='darwin']) {
+    @include scrollbar;
+  }
 }
 
 body {

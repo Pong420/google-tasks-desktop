@@ -1,4 +1,4 @@
-import { Epic } from 'redux-observable';
+import { Epic, ofType } from 'redux-observable';
 import { defer, empty, fromEvent, merge, timer, of, concat } from 'rxjs';
 import { switchMap, map, takeUntil, filter, delay } from 'rxjs/operators';
 import {
@@ -10,11 +10,12 @@ import { TaskActions, TaskActionTypes, syncTasks } from '../actions/task';
 import { RootState } from '../reducers';
 import { getAllTasklist, getAllTasks } from '../../service';
 import { currentTaskListsSelector } from '../selectors';
+import { PreferencesActionTypes, PreferenceActions } from '../actions';
 
-type Actions = TaskListActions | TaskActions;
-type SyncEpic = Epic<Actions, Actions, RootState>;
+type Actions = TaskListActions | TaskActions | PreferenceActions;
+type PreferencesEpic = Epic<Actions, Actions, RootState>;
 
-export const syncDataEpic: SyncEpic = (action$, state$) => {
+export const syncDataEpic: PreferencesEpic = (action$, state$) => {
   const userActions$ = action$.pipe(
     filter(
       ({ type }) =>
@@ -52,6 +53,16 @@ export const syncDataEpic: SyncEpic = (action$, state$) => {
             )
           ).pipe(takeUntil(userActions$))
         : empty();
+    })
+  );
+};
+
+export const savePreferencesEpic: PreferencesEpic = (action$, state$) => {
+  return action$.pipe(
+    ofType(...Object.values(PreferencesActionTypes)),
+    switchMap(() => {
+      window.preferencesStorage.save(state$.value.preferences);
+      return empty();
     })
   );
 };

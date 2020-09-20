@@ -32,17 +32,17 @@ async function createWindow() {
     }
   };
 
-  if (process.platform === 'win32') {
-    mainWindow = new BrowserWindow({
-      ...options
-    });
-    mainWindow.setMenuBarVisibility(false);
-  } else {
+  if (process.platform === 'darwin') {
     mainWindow = new BrowserWindow({
       ...options,
       frame: false,
       titleBarStyle: 'hiddenInset'
     });
+  } else {
+    mainWindow = new BrowserWindow({
+      ...options
+    });
+    mainWindow.setMenuBarVisibility(false);
   }
 
   const startUrl =

@@ -2,8 +2,11 @@
   &.mui-menu-paper {
     border-radius: 8px;
     background-color: var(--paper-background-color);
-    box-shadow: 0 8px 10px 1px var(--shadow-color),
-      0 3px 14px 2px var(--shadow-color), 0 5px 5px -3px var(--shadow-color);
+    // prettier-ignore
+    box-shadow: 
+      0 0 0 1px  var(--shadow-color),
+      0 2px 4px var(--shadow-color), 
+      0 8px 24px var(--shadow-color);
     color: var(--text-color);
   }
 

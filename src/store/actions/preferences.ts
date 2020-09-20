@@ -1,8 +1,9 @@
 import { UnionCRUDActions } from '@pong420/redux-crud';
 import { useActions } from '../../hooks/useActions';
-import { SyncPreferences } from '../../typings';
+import { SyncPreferences, TitleBar } from '../../typings';
 
 export enum PreferencesActionTypes {
+  UPDATE_TITLE_BAR = 'UPDATE_TITLE_BAR',
   UPDATE_SYNC_PREFERENCES = 'UPDATE_SYNC_PREFERENCES'
 }
 
@@ -11,7 +12,19 @@ export interface UpdateSyncPreferences {
   payload: Partial<SyncPreferences>;
 }
 
-export type PreferencesActions = UpdateSyncPreferences;
+export interface UpdateTitleBar {
+  type: PreferencesActionTypes.UPDATE_TITLE_BAR;
+  payload: TitleBar;
+}
+
+export type PreferencesActions = UpdateSyncPreferences | UpdateTitleBar;
+
+function updateTitleBar(payload: TitleBar): UpdateTitleBar {
+  return {
+    type: PreferencesActionTypes.UPDATE_TITLE_BAR,
+    payload
+  };
+}
 
 function toggleSync(enabled: boolean): UpdateSyncPreferences {
   return {
@@ -41,6 +54,7 @@ function toggleSyncOnReconnection(enabled: boolean): UpdateSyncPreferences {
 }
 
 export const preferenceActions = {
+  updateTitleBar,
   toggleSync,
   setInactiveHour,
   toggleSyncOnReconnection

@@ -2,15 +2,14 @@ import {
   PreferencesActions,
   PreferencesActionTypes
 } from '../actions/preferences';
-import { SyncPreferences } from '../../typings';
+import { SyncPreferences, TitleBar } from '../../typings';
 
 interface State {
   sync: SyncPreferences;
+  titleBar: TitleBar;
 }
 
-const initialState: State = {
-  sync: window.preferencesStorage.get()
-};
+const initialState: State = window.preferencesStorage.get();
 
 export function preferencesReducer(
   state = initialState,
@@ -18,16 +17,18 @@ export function preferencesReducer(
 ): State {
   switch (action.type) {
     case PreferencesActionTypes.UPDATE_SYNC_PREFERENCES:
-      const sync = {
-        ...state.sync,
-        ...action.payload
-      };
-
-      window.preferencesStorage.save(sync);
-
       return {
         ...state,
-        sync
+        sync: {
+          ...state.sync,
+          ...action.payload
+        }
+      };
+
+    case PreferencesActionTypes.UPDATE_TITLE_BAR:
+      return {
+        ...state,
+        titleBar: action.payload
       };
 
     default:

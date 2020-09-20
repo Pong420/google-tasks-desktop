@@ -4,7 +4,7 @@ import {
   FullScreenDialog,
   FullScreenDialogProps
 } from '../Mui/Dialog/FullScreenDialog';
-import { Input } from '../Mui/Input';
+import { Input, Dropdown, MenuItem, useMuiMenu } from '../Mui';
 import { Switch } from '../Switch';
 import { RootState, usePreferenceActions } from '../../store';
 
@@ -32,9 +32,13 @@ export function Preferences(props: FullScreenDialogProps) {
   const {
     setInactiveHour,
     toggleSync,
-    toggleSyncOnReconnection
+    toggleSyncOnReconnection,
+    updateTitleBar
   } = usePreferenceActions();
-  const { sync } = useSelector((state: RootState) => state.preferences);
+  const { sync, titleBar } = useSelector(
+    (state: RootState) => state.preferences
+  );
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   return (
     <FullScreenDialog {...props} className="preferences">
@@ -64,6 +68,32 @@ export function Preferences(props: FullScreenDialogProps) {
                 onClick={() => window.__setAccentColor(color)}
               />
             ))}
+          </div>
+        </FullScreenDialog.Row>
+
+        <FullScreenDialog.Row>
+          <div className="preferences-label">Title Bar</div>
+          <div className="preferences-title-bar-selector">
+            <Dropdown
+              open={!!anchorEl}
+              anchorEl={anchorEl}
+              onClick={setAnchorEl}
+              onClose={onClose}
+              label={titleBar.replace(/^./, match => match.toUpperCase())}
+            >
+              <MenuItem
+                text="Native"
+                selected={titleBar === 'native'}
+                onClick={() => updateTitleBar('native')}
+                onClose={onClose}
+              />
+              <MenuItem
+                text="Simple"
+                selected={titleBar === 'simple'}
+                onClick={() => updateTitleBar('simple')}
+                onClose={onClose}
+              />
+            </Dropdown>
           </div>
         </FullScreenDialog.Row>
       </FullScreenDialog.Section>

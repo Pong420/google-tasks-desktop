@@ -58,8 +58,25 @@ window.tokenStorage = FileStorage(TOKEN_PATH);
 
 window.taskListSortByDateStorage = FileStorage(TASKLIST_SORT_BY_DATE_PATH, []);
 
-window.preferencesStorage = FileStorage(PREFERENCES_PATH, {
-  enabled: true,
-  reconnection: true,
-  inactiveHours: 12
-});
+const defaultPrefrences = {
+  titleBar: 'native',
+  sync: {
+    enabled: true,
+    reconnection: true,
+    inactiveHours: 12
+  }
+};
+
+window.preferencesStorage = FileStorage(PREFERENCES_PATH, defaultPrefrences);
+
+// fix for version >= v3.0.2
+let preferences = window.preferencesStorage.get();
+if (!('titleBar' in preferences)) {
+  window.preferencesStorage.save({
+    ...defaultPrefrences,
+    sync: {
+      ...defaultPrefrences.sync,
+      ...preferences
+    }
+  });
+}
