@@ -9,6 +9,26 @@ import {
   MenuItemConstructorOptions
 } from 'electron';
 
+const help = {
+  label: 'Help',
+  submenu: [
+    {
+      label: 'Github',
+      click() {
+        shell.openExternal('https://github.com/Pong420/google-tasks-desktop');
+      }
+    },
+    {
+      label: 'Search Issues',
+      click() {
+        shell.openExternal(
+          'https://github.com/Pong420/google-tasks-desktop/issues'
+        );
+      }
+    }
+  ]
+};
+
 export class MenuBuilder {
   mainWindow: BrowserWindow;
 
@@ -112,37 +132,7 @@ export class MenuBuilder {
         { label: 'Bring All to Front', selector: 'arrangeInFront:' }
       ]
     };
-    const subMenuHelp = {
-      label: 'Help',
-      submenu: [
-        {
-          label: 'Learn More',
-          click() {
-            shell.openExternal('http://electron.atom.io');
-          }
-        },
-        {
-          label: 'Documentation',
-          click() {
-            shell.openExternal(
-              'https://github.com/atom/electron/tree/master/docs#readme'
-            );
-          }
-        },
-        {
-          label: 'Community Discussions',
-          click() {
-            shell.openExternal('https://discuss.atom.io/c/electron');
-          }
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/atom/electron/issues');
-          }
-        }
-      ]
-    };
+    const subMenuHelp = help;
     const subMenuView = {
       label: 'View',
       submenu: [
@@ -184,76 +174,31 @@ export class MenuBuilder {
       },
       {
         label: '&View',
-        submenu:
-          process.env.NODE_ENV === 'development'
-            ? [
-                {
-                  label: '&Reload',
-                  accelerator: 'Ctrl+R',
-                  click: () => {
-                    this.mainWindow.webContents.reload();
-                  }
-                },
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () => {
-                    this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
-                    );
-                  }
-                },
-                {
-                  label: 'Toggle &Developer Tools',
-                  accelerator: 'Alt+Ctrl+I',
-                  click: () => {
-                    this.mainWindow.webContents.toggleDevTools();
-                  }
-                }
-              ]
-            : [
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () => {
-                    this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
-                    );
-                  }
-                }
-              ]
-      },
-      {
-        label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
-            click() {
-              shell.openExternal('http://electron.atom.io');
+            label: '&Reload',
+            accelerator: 'Ctrl+R',
+            click: () => {
+              this.mainWindow.webContents.reload();
             }
           },
           {
-            label: 'Documentation',
-            click() {
-              shell.openExternal(
-                'https://github.com/atom/electron/tree/master/docs#readme'
-              );
+            label: 'Toggle &Full Screen',
+            accelerator: 'F11',
+            click: () => {
+              this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
             }
           },
           {
-            label: 'Community Discussions',
-            click() {
-              shell.openExternal('https://discuss.atom.io/c/electron');
-            }
-          },
-          {
-            label: 'Search Issues',
-            click() {
-              shell.openExternal('https://github.com/atom/electron/issues');
+            label: 'Toggle &Developer Tools',
+            accelerator: 'Alt+Ctrl+I',
+            click: () => {
+              this.mainWindow.webContents.toggleDevTools();
             }
           }
         ]
-      }
+      },
+      help
     ];
 
     return templateDefault;
