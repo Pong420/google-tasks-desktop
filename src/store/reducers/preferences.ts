@@ -2,11 +2,11 @@ import {
   PreferencesActions,
   PreferencesActionTypes
 } from '../actions/preferences';
-import { SyncPreferences, TitleBar } from '../../typings';
+import { SyncPreferences } from '../../typings';
 
 interface State {
   sync: SyncPreferences;
-  titleBar: TitleBar;
+  titleBar: TITLE_BAR;
 }
 
 const initialState: State = window.preferencesStorage.get();

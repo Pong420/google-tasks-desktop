@@ -1,5 +1,6 @@
 type THEME = 'light' | 'dark';
 type ACCENT_COLOR = 'red' | 'blue' | 'amber' | 'green' | 'purple' | 'grey';
+type TITLE_BAR = 'native' | 'simple';
 
 interface Schema$Storage<T> {
   get(): T;
@@ -20,6 +21,7 @@ interface OAuthKeys {
 declare interface Window {
   __setTheme(theme?: THEME): void;
   __setAccentColor(color?: ACCENT_COLOR): void;
+  __setTitleBar(titleBar?: TITLE_BAR, shouldRelaunch?: boolean): void;
   platform: NodeJS.Platform;
   openExternal: Electron.Shell['openExternal'];
   getCurrentWindow(): Electron.BrowserWindow;

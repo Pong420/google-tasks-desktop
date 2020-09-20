@@ -7,10 +7,13 @@ import {
   BrowserWindowConstructorOptions
 } from 'electron';
 import { MenuBuilder } from './menu';
+import { initStorage } from './storage';
 
 let mainWindow: BrowserWindow | null = null;
 
 const isDevelopment = process.env.NODE_ENV === 'development';
+
+const { preferencesStorage } = initStorage(app);
 
 async function createWindow() {
   if (isDevelopment) {
@@ -32,11 +35,13 @@ async function createWindow() {
     }
   };
 
-  if (process.platform === 'darwin') {
+  const titleBar: TITLE_BAR = preferencesStorage.get().titleBar;
+
+  if (titleBar === 'simple' || process.platform === 'darwin') {
     mainWindow = new BrowserWindow({
       ...options,
       frame: false,
-      titleBarStyle: 'hiddenInset'
+      titleBarStyle: titleBar === 'simple' ? 'hidden' : 'hiddenInset'
     });
   } else {
     mainWindow = new BrowserWindow({

@@ -61,10 +61,12 @@ export const savePreferencesEpic: PreferencesEpic = (action$, state$) => {
   return action$.pipe(
     ofType(...Object.values(PreferencesActionTypes)),
     switchMap(() => {
-      window.preferencesStorage.save(state$.value.preferences);
+      const { preferences } = state$.value;
+      window.preferencesStorage.save(preferences);
+      window.__setTitleBar(preferences.titleBar, true);
       return empty();
     })
   );
 };
 
-export default [syncDataEpic];
+export default [syncDataEpic, savePreferencesEpic];
