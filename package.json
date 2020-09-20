@@ -82,7 +82,17 @@
         "rpm",
         "snap"
       ],
-      "icon": "public/icon"
+      "icon": "public/icon",
+      "desktop": {
+        "Type": "Application",
+        "Encoding": "UTF-8",
+        "Name": "Google Tasks",
+        "Comment": "Unofficial google tasks desktop application",
+        "Exec": "application",
+        "Icon": "public/icon/icon.png",
+        "Terminal": "false",
+        "StartupWMClass": "google-tasks-desktop"
+      }
     },
     "snap": {
       "grade": "stable"
