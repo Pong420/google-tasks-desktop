@@ -1,22 +1,28 @@
 import React from 'react';
 import { Route, Switch, Redirect, generatePath } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { AppRegion } from './components/AppRegion';
 import { PrivateRoute } from './components/PrivateRoute';
 import { Auth } from './pages/Auth';
 import { TaskList } from './pages/TaskList';
 import { PATHS } from './constants';
+import { titleBarSelector } from './store';
 
-const App = () => (
-  <>
-    {window.platform === 'win32' ? null : <AppRegion />}
+const App = () => {
+  const titleBar = useSelector(titleBarSelector);
+
+  return (
     <>
-      <Switch>
-        <Route path={PATHS.AUTH} component={Auth} />
-        <PrivateRoute path={PATHS.TASKLIST} component={TaskList} />
-        <Redirect to={generatePath(PATHS.TASKLIST, {})} />
-      </Switch>
+      {titleBar === 'native' ? null : <AppRegion />}
+      <>
+        <Switch>
+          <Route path={PATHS.AUTH} component={Auth} />
+          <PrivateRoute path={PATHS.TASKLIST} component={TaskList} />
+          <Redirect to={generatePath(PATHS.TASKLIST, {})} />
+        </Switch>
+      </>
     </>
-  </>
-);
+  );
+};
 
 export default App;

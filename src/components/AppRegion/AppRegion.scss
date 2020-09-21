@@ -2,18 +2,13 @@
   @include absolute(0, null, 0);
   @include dimen(100%, var(--header-height));
 
-  > div {
+  .simple-title-bar {
     @include sq-dimen(100%);
-    align-items: flex-start !important;
-
-    > div:nth-child(1) {
+    @include app-region-drag;
+    padding: 10px 0px 0px 10px;
+    button {
+      @include app-region-no-drag;
       z-index: $app-region-z-index;
-    }
-
-    [data-platform='darwin'] & {
-      > div {
-        visibility: hidden;
-      }
     }
   }
 }
@@ -22,5 +17,6 @@ body {
   > [role='dialog'],
   > [role='presentation'] {
     @include app-region-no-drag;
+    z-index: $app-region-z-index !important;
   }
 }

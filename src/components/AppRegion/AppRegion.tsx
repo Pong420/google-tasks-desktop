@@ -1,45 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { TitleBar as MacOSTitleBar } from 'react-desktop/macOs';
+import React from 'react';
+import { IconButton } from '../Mui';
+import Close from '@material-ui/icons/Close';
 
-const {
-  isMaximized,
-  minimize,
-  maximize,
-  unmaximize,
-  close
-} = window.getCurrentWindow();
-
-function toggleMaximize() {
-  isMaximized() ? unmaximize() : maximize();
-}
+const { close } = window.getCurrentWindow();
 
 export function AppRegion() {
-  const [isFullscreen, setIsFullscreen] = useState(isMaximized());
-
-  useEffect(() => {
-    function onResize() {
-      setIsFullscreen(isMaximized());
-    }
-
-    onResize();
-
-    window.addEventListener('resize', onResize);
-
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
   return (
     <div className="app-region">
-      <MacOSTitleBar
-        title=" "
-        inset
-        controls
-        transparent
-        isFullscreen={isFullscreen}
-        onCloseClick={() => close()}
-        onMinimizeClick={() => minimize()}
-        onResizeClick={() => toggleMaximize()}
-      />
+      <div className="simple-title-bar">
+        {/* should not pass `close` function directly into `onClick` props */}
+        <IconButton icon={Close} onClick={() => close()} />
+      </div>
     </div>
   );
 }

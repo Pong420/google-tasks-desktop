@@ -28,9 +28,7 @@ window.__setTitleBar = (newTitleBar?: TITLE_BAR, shouldRelaunch?: boolean) => {
       titleBar
     });
 
-    // console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-
-    if (shouldRelaunch && process.env.NODE_ENV !== 'development') {
+    if (shouldRelaunch) {
       relaunch();
     }
   }

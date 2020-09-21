@@ -28,6 +28,44 @@ const normalizeNumber = (value: string) => {
     : num;
 };
 
+function TitleBarRow({
+  titleBar,
+  onChange
+}: {
+  titleBar: TITLE_BAR;
+  onChange: (titleBar: TITLE_BAR) => void;
+}) {
+  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
+
+  return (
+    <FullScreenDialog.Row>
+      <div className="preferences-label">Title Bar</div>
+      <div className="preferences-title-bar-selector">
+        <Dropdown
+          open={!!anchorEl}
+          anchorEl={anchorEl}
+          onClick={setAnchorEl}
+          onClose={onClose}
+          label={titleBar.replace(/^./, match => match.toUpperCase())}
+        >
+          <MenuItem
+            text="Native"
+            selected={titleBar === 'native'}
+            onClick={() => onChange('native')}
+            onClose={onClose}
+          />
+          <MenuItem
+            text="Simple"
+            selected={titleBar === 'simple'}
+            onClick={() => onChange('simple')}
+            onClose={onClose}
+          />
+        </Dropdown>
+      </div>
+    </FullScreenDialog.Row>
+  );
+}
+
 export function Preferences(props: FullScreenDialogProps) {
   const {
     setInactiveHour,
@@ -38,7 +76,6 @@ export function Preferences(props: FullScreenDialogProps) {
   const { sync, titleBar } = useSelector(
     (state: RootState) => state.preferences
   );
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
   return (
     <FullScreenDialog {...props} className="preferences">
@@ -71,31 +108,9 @@ export function Preferences(props: FullScreenDialogProps) {
           </div>
         </FullScreenDialog.Row>
 
-        <FullScreenDialog.Row>
-          <div className="preferences-label">Title Bar</div>
-          <div className="preferences-title-bar-selector">
-            <Dropdown
-              open={!!anchorEl}
-              anchorEl={anchorEl}
-              onClick={setAnchorEl}
-              onClose={onClose}
-              label={titleBar.replace(/^./, match => match.toUpperCase())}
-            >
-              <MenuItem
-                text="Native"
-                selected={titleBar === 'native'}
-                onClick={() => updateTitleBar('native')}
-                onClose={onClose}
-              />
-              <MenuItem
-                text="Simple"
-                selected={titleBar === 'simple'}
-                onClick={() => updateTitleBar('simple')}
-                onClose={onClose}
-              />
-            </Dropdown>
-          </div>
-        </FullScreenDialog.Row>
+        {window.platform === 'darwin' ? null : (
+          <TitleBarRow titleBar={titleBar} onChange={updateTitleBar} />
+        )}
       </FullScreenDialog.Section>
 
       <FullScreenDialog.Section>

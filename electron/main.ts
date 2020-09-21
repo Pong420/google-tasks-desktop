@@ -2,8 +2,8 @@ import path from 'path';
 import url from 'url';
 import {
   app,
-  BrowserWindow,
   shell,
+  BrowserWindow,
   BrowserWindowConstructorOptions
 } from 'electron';
 import { MenuBuilder } from './menu';

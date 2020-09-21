@@ -3,7 +3,7 @@ import { FullScreenDialog, FullScreenDialogProps } from '../Mui/Dialog';
 import shortcuts from './shortcuts.json';
 
 function normalizeKeyName(str: string) {
-  switch (process.platform) {
+  switch (window.platform) {
     case 'darwin':
       return str.replace('Alt', '⌥');
 

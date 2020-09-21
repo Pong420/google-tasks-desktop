@@ -9,7 +9,10 @@ interface State {
   titleBar: TITLE_BAR;
 }
 
-const initialState: State = window.preferencesStorage.get();
+const initialState: State = {
+  ...window.preferencesStorage.get(),
+  ...(window.platform === 'darwin' ? { titleBar: 'native' } : {})
+};
 
 export function preferencesReducer(
   state = initialState,

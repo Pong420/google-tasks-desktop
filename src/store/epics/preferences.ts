@@ -59,11 +59,16 @@ export const syncDataEpic: PreferencesEpic = (action$, state$) => {
 
 export const savePreferencesEpic: PreferencesEpic = (action$, state$) => {
   return action$.pipe(
-    ofType(...Object.values(PreferencesActionTypes)),
-    switchMap(() => {
+    ofType<Actions, PreferenceActions>(
+      ...Object.values(PreferencesActionTypes)
+    ),
+    switchMap(action => {
       const { preferences } = state$.value;
       window.preferencesStorage.save(preferences);
-      window.__setTitleBar(preferences.titleBar, true);
+
+      if (action.type === PreferencesActionTypes.UPDATE_TITLE_BAR) {
+        window.__setTitleBar(preferences.titleBar, true);
+      }
       return empty();
     })
   );

@@ -2,6 +2,6 @@
   --header-height: 70px;
 }
 
-[data-platform^='win32'] {
+[data-platform^='win32'][data-title-bar^='native'] {
   --header-height: 55px;
 }
