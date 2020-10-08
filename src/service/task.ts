@@ -1,6 +1,7 @@
-import { defer } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, defer, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { google, tasks_v1 } from 'googleapis';
+import { PagePayload } from '@pong420/redux-crud';
 import { oAuth2Client } from './auth';
 import { Schema$Task } from '../typings';
 import { UUID } from '../utils/uuid';
@@ -12,20 +13,41 @@ const { tasks } = google.tasks({
 
 export const taskUUID = new UUID();
 
+export type Param$GetTasks = tasks_v1.Params$Resource$Tasks$List;
+
 // TODO: https://developers.google.com/tasks/performance#partial
-export function getAllTasks(params: tasks_v1.Params$Resource$Tasks$List) {
+export function getAllTasks(
+  params: tasks_v1.Params$Resource$Tasks$List,
+  prevTasks: Schema$Task[] = []
+): Observable<PagePayload<Schema$Task>> {
+  const max = Number(params.maxResults || 100);
+  const maxResults = String(Math.min(max, 100));
+
   return defer(() =>
-    tasks.list({ showCompleted: true, showHidden: true, ...params })
+    tasks.list({
+      ...params,
+      showCompleted: true,
+      showHidden: true,
+      maxResults
+    })
   ).pipe(
-    map(res => {
-      const data = (res.data.items || []) as Schema$Task[];
-      return {
-        data: data
+    mergeMap(response => {
+      const { nextPageToken, items = [] } = response.data;
+      const data = prevTasks.concat(
+        items
           .sort((a, b) => Number(a.position) - Number(b.position))
-          .map<Schema$Task>(d => ({ ...d, uuid: taskUUID.next() })),
+          .map<Schema$Task>(d => ({ ...d, uuid: taskUUID.next() }))
+      );
+
+      if (nextPageToken && data.length < max) {
+        return getAllTasks({ ...params, pageToken: nextPageToken }, data);
+      }
+
+      return of({
+        data,
         pageNo: 1,
         total: data.length
-      };
+      });
     })
   );
 }

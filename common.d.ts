@@ -18,6 +18,18 @@ interface OAuthKeys {
   };
 }
 
+interface SyncConfig {
+  enabled: boolean;
+  reconnection: boolean;
+  inactiveHours: number;
+}
+
+interface Schema$Preferences {
+  sync: SyncConfig;
+  titleBar: TITLE_BAR;
+  maxTasks: number;
+}
+
 declare interface Window {
   __setTheme(theme?: THEME): void;
   __setAccentColor(color?: ACCENT_COLOR): void;

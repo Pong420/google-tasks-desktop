@@ -3,6 +3,7 @@ import {
   createCRUDActions,
   PagePayload
 } from '@pong420/redux-crud';
+import { tasks_v1 } from 'googleapis';
 import { useActions } from '../../hooks/useActions';
 import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
@@ -30,6 +31,7 @@ const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
 
 export const TaskActionTypes = {
   ...actionTypes,
+  GET: 'GET_TASKS' as const,
   CREATE: 'CREATE_TASK' as const,
   CREATE_SUCCESS: 'CREATE_TASK_SUCCESS' as const,
   DELETE: 'DELETE_TASK' as const,
@@ -42,6 +44,13 @@ export const TaskActionTypes = {
   SYNC: 'SYNC_TASKS' as const,
   MOVE_TO_ANOTHER_LIST: 'MOVE_TO_ANOTHER_LIST' as const
 };
+
+export function getTasks(payload: tasks_v1.Params$Resource$Tasks$List) {
+  return {
+    type: TaskActionTypes.GET,
+    payload
+  };
+}
 
 export function createTask(payload: Payload$CreateTask = {}) {
   return {
@@ -121,6 +130,7 @@ export function moveToAnotherList(payload: Payload$MoveToAnotherList) {
 
 export const taskActions = {
   ...actions,
+  getTasks,
   createTask,
   deleteTask,
   setFocus,

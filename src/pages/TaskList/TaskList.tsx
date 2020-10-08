@@ -8,7 +8,7 @@ import { CompletedTaskList } from './CompletedTaskList';
 import { TodoTaskDetailsProvider } from './Task/TodoTaskDetails';
 import { DateTimeDialogProvider } from './Task/DateTimeDialog';
 import { TodoTaskMenuProvider } from './Task/TodoTask/TodoTaskMenu';
-import { getAllTasklist, getAllTasks } from '../../service';
+import { getAllTasklist } from '../../service';
 import {
   useTaskListActions,
   useTaskActions,
@@ -29,18 +29,12 @@ export function TaskList() {
     onSuccess: taskListActions.paginateTaskList
   });
 
-  const { run } = useRxAsync(getAllTasks, {
-    defer: true,
-    onStart: taskListActions.disableTaskList,
-    onSuccess: taskActions.paginateTask
-  });
-
   useEffect(() => {
     NProgress.start();
     if (taskListId) {
-      run({ tasklist: taskListId });
+      taskActions.getTasks({ tasklist: taskListId });
     }
-  }, [run, taskListId]);
+  }, [taskActions, taskListId]);
 
   return (
     <div className={[`task-list`, disabled ? 'disabled' : ''].join(' ').trim()}>

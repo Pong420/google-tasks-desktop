@@ -23,7 +23,7 @@ $defaultWidth: 47.5px;
 
   .switch-icon {
     @include animate(transform);
-    @include absolute(-0.5px);
+    @include absolute(-0.4px);
     @include dimen(50%, 100%);
     padding: round(percentage(2.5 / strip-unit($defaultWidth)));
     transform: translateX(0);

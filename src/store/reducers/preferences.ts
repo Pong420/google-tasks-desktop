@@ -2,12 +2,8 @@ import {
   PreferencesActions,
   PreferencesActionTypes
 } from '../actions/preferences';
-import { SyncPreferences } from '../../typings';
 
-interface State {
-  sync: SyncPreferences;
-  titleBar: TITLE_BAR;
-}
+interface State extends Schema$Preferences {}
 
 const initialState: State = {
   ...window.preferencesStorage.get(),

@@ -51,8 +51,9 @@ export function initStorage(app: App) {
     []
   );
 
-  const defaultPrefrences = {
+  const defaultPrefrences: Schema$Preferences = {
     titleBar: 'native',
+    maxTasks: 100,
     sync: {
       enabled: true,
       reconnection: true,
@@ -60,22 +61,33 @@ export function initStorage(app: App) {
     }
   };
 
-  const preferencesStorage = FileStorage<any>(
+  const preferencesStorage = FileStorage<Schema$Preferences>(
     PREFERENCES_PATH,
     defaultPrefrences
   );
 
-  // fix for version >= v3.0.2
+  // for version <= v3.0.2
   let preferences = preferencesStorage.get();
-  if (!('titleBar' in preferences)) {
-    preferencesStorage.save({
+  if (
+    !('titleBar' in preferences) &&
+    'enabled' in preferences &&
+    'reconnection' in preferences &&
+    'inactiveHours' in preferences
+  ) {
+    preferences = {
       ...defaultPrefrences,
       sync: {
         ...defaultPrefrences.sync,
-        ...preferences
+        ...(preferences as SyncConfig)
       }
-    });
+    };
   }
+
+  if (typeof preferences.maxTasks !== 'number') {
+    preferences.maxTasks = defaultPrefrences.maxTasks;
+  }
+
+  preferencesStorage.save(preferences);
 
   return {
     STORAGE_DIRECTORY,

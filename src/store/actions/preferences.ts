@@ -1,6 +1,5 @@
 import { UnionCRUDActions } from '@pong420/redux-crud';
 import { useActions } from '../../hooks/useActions';
-import { SyncPreferences } from '../../typings';
 
 export enum PreferencesActionTypes {
   UPDATE_TITLE_BAR = 'UPDATE_TITLE_BAR',
@@ -9,7 +8,7 @@ export enum PreferencesActionTypes {
 
 export interface UpdateSyncPreferences {
   type: PreferencesActionTypes.UPDATE_SYNC_PREFERENCES;
-  payload: Partial<SyncPreferences>;
+  payload: Partial<SyncConfig>;
 }
 
 export interface UpdateTitleBar {

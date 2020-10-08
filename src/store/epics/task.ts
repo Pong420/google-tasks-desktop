@@ -1,4 +1,5 @@
 import { ofType, Epic, ActionsObservable } from 'redux-observable';
+import { RouterAction } from 'connected-react-router';
 import { Observable, empty, defer, of, forkJoin, from, concat } from 'rxjs';
 import {
   switchMap,
@@ -20,15 +21,16 @@ import {
   createTaskSuccess,
   updateTaskSuccess,
   moveTaskSuccess,
-  deleteAllCompletedTasksSuccess
+  deleteAllCompletedTasksSuccess,
+  taskActions
 } from '../actions/task';
 import { RootState } from '../reducers';
 import { taskSelector, currentTaskListsSelector } from '../selectors';
-import { tasksAPI } from '../../service';
+import { tasksAPI, getAllTasks } from '../../service';
 import { ExtractAction, Schema$Task } from '../../typings';
-import NProgress from '../../utils/nprogress';
+import { NProgress } from '../../utils/nprogress';
 
-type Actions = TaskActions;
+type Actions = TaskActions | RouterAction;
 type TaskEpic = Epic<Actions, Actions, RootState>;
 
 const waitForTaskCreated$ = (
@@ -60,6 +62,18 @@ const nprogressEpic: TaskEpic = action$ =>
     switchMap(() => {
       NProgress.done();
       return empty();
+    })
+  );
+
+const getTasksEpic: TaskEpic = (action$, state$) =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'GET_TASKS'>>('GET_TASKS'),
+    switchMap(action => {
+      const max = state$.value.preferences.maxTasks;
+      return getAllTasks({
+        ...action.payload,
+        maxResults: String(max)
+      }).pipe(map(taskActions.paginateTask));
     })
   );
 
@@ -301,6 +315,7 @@ const moveToAnotherListEpic: TaskEpic = (action$, state$) =>
 
 export default [
   nprogressEpic,
+  getTasksEpic,
   createTaskEpic,
   updateTaskEpic,
   deleteTaskEpic,
