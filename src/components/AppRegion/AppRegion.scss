@@ -11,6 +11,11 @@
       z-index: $app-region-z-index;
     }
   }
+
+  .app-region-drag {
+    @include app-region-drag;
+    @include sq-dimen(100%);
+  }
 }
 
 body {
