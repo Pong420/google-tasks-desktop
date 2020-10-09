@@ -3,6 +3,7 @@ import url from 'url';
 import {
   app,
   shell,
+  systemPreferences,
   BrowserWindow,
   BrowserWindowConstructorOptions
 } from 'electron';
@@ -13,7 +14,7 @@ let mainWindow: BrowserWindow | null = null;
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const { preferencesStorage } = initStorage(app);
+const { preferencesStorage } = initStorage(app, systemPreferences);
 
 async function createWindow() {
   if (isDevelopment) {

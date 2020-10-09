@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { App } from 'electron';
+import { App, SystemPreferences } from 'electron';
 
 function FileStorage<T extends {}>(path: string): Schema$Storage<T | undefined>;
 function FileStorage<T extends {}>(path: string, defaultValue: T): Schema$Storage<T> // prettier-ignore
@@ -21,7 +21,7 @@ function FileStorage<T extends {}>(path: string, defaultValue?: T): Schema$Stora
   };
 }
 
-export function initStorage(app: App) {
+export function initStorage(app: App, systemPreferences: SystemPreferences) {
   const STORAGE_DIRECTORY = path.join(
     app.getPath('userData'),
     'google-tasks-desktop'
@@ -52,8 +52,10 @@ export function initStorage(app: App) {
   );
 
   const defaultPrefrences: Schema$Preferences = {
-    titleBar: 'native',
+    accentColor: 'blue',
     maxTasks: 100,
+    theme: systemPreferences.isDarkMode() ? 'dark' : 'light',
+    titleBar: 'native',
     sync: {
       enabled: true,
       reconnection: true,
@@ -68,26 +70,16 @@ export function initStorage(app: App) {
 
   // for version <= v3.0.2
   let preferences = preferencesStorage.get();
-  if (
-    !('titleBar' in preferences) &&
-    'enabled' in preferences &&
-    'reconnection' in preferences &&
-    'inactiveHours' in preferences
-  ) {
-    preferences = {
-      ...defaultPrefrences,
-      sync: {
-        ...defaultPrefrences.sync,
-        ...(preferences as SyncConfig)
-      }
-    };
-  }
-
-  if (typeof preferences.maxTasks !== 'number') {
-    preferences.maxTasks = defaultPrefrences.maxTasks;
-  }
-
-  preferencesStorage.save(preferences);
+  preferencesStorage.save(
+    Object.entries(defaultPrefrences).reduce((results, [key, value]) => {
+      const currentValue: unknown =
+        preferences[key as keyof typeof preferences];
+      return {
+        ...results,
+        [key]: typeof currentValue === 'undefined' ? value : currentValue
+      };
+    }, {} as Schema$Preferences)
+  );
 
   return {
     STORAGE_DIRECTORY,

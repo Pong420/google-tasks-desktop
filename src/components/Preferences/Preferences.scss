@@ -127,16 +127,30 @@
     }
   }
 
-  .preferences-hours {
-    font-weight: 500;
+  .preferences-hours,
+  .preferences-max-tasks-selector {
     .mui-input-base {
       @include padding-y(0);
+      @include padding-x(10px);
       margin-right: 5px;
       max-width: 4em;
       min-height: 30px;
+
       input {
-        text-align: center;
+        text-align: right;
       }
+    }
+  }
+
+  .preferences-max-tasks-selector {
+    .mui-input-base {
+      max-width: 6em;
+    }
+  }
+
+  .preferences-hours {
+    .mui-input-base {
+      max-width: 4em;
     }
   }
 }

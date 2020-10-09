@@ -24,11 +24,13 @@ interface SyncConfig {
   inactiveHours: number;
 }
 
-interface Schema$Preferences {
-  sync: SyncConfig;
-  titleBar: TITLE_BAR;
+type Schema$Preferences = {
+  accentColor: ACCENT_COLOR;
   maxTasks: number;
-}
+  sync: SyncConfig;
+  theme: THEME;
+  titleBar: TITLE_BAR;
+};
 
 declare interface Window {
   __setTheme(theme?: THEME): void;
@@ -39,7 +41,7 @@ declare interface Window {
   getCurrentWindow(): Electron.BrowserWindow;
   oAuth2Storage: Schema$Storage<OAuthKeys | undefined>;
   tokenStorage: Schema$Storage<any>;
-  preferencesStorage: Schema$Storage<any>;
+  preferencesStorage: Schema$Storage<Schema$Preferences>;
   taskListSortByDateStorage: Schema$Storage<string[]>;
   logout: () => void;
   TOKEN_PATH: string;

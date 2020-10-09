@@ -10,7 +10,7 @@ import { TaskActions, TaskActionTypes, syncTasks } from '../actions/task';
 import { RootState } from '../reducers';
 import { getAllTasklist, getAllTasks } from '../../service';
 import { currentTaskListsSelector } from '../selectors';
-import { PreferencesActionTypes, PreferenceActions } from '../actions';
+import { PreferenceActions } from '../actions';
 
 type Actions = TaskListActions | TaskActions | PreferenceActions;
 type PreferencesEpic = Epic<Actions, Actions, RootState>;
@@ -27,7 +27,7 @@ export const syncDataEpic: PreferencesEpic = (action$, state$) => {
     switchMap(() => {
       const { inactiveHours } = state$.value.preferences.sync;
       const ms = inactiveHours * 60 * 60 * 1000;
-      return ms < 60 * 1000 ? empty() : timer(ms);
+      return timer(Math.max(ms, 60 * 1000));
     })
   );
 
@@ -59,16 +59,9 @@ export const syncDataEpic: PreferencesEpic = (action$, state$) => {
 
 export const savePreferencesEpic: PreferencesEpic = (action$, state$) => {
   return action$.pipe(
-    ofType<Actions, PreferenceActions>(
-      ...Object.values(PreferencesActionTypes)
-    ),
-    switchMap(action => {
-      const { preferences } = state$.value;
-      window.preferencesStorage.save(preferences);
-
-      if (action.type === PreferencesActionTypes.UPDATE_TITLE_BAR) {
-        window.__setTitleBar(preferences.titleBar, true);
-      }
+    ofType<Actions, PreferenceActions>('UPDATE_PREFERENCES'),
+    switchMap(() => {
+      window.preferencesStorage.save(state$.value.preferences);
       return empty();
     })
   );

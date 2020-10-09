@@ -1,35 +1,27 @@
 import { remote } from 'electron';
 
-export const setTheme = (window.__setTheme = (newTheme?: THEME) => {
-  let theme = newTheme || localStorage.USER_THEME || localStorage.OS_THEME;
-
-  if (theme !== 'dark' && theme !== 'light') {
-    theme = 'light';
-  }
+export const setTheme = (newTheme?: THEME) => {
+  const preferences = window.preferencesStorage.get();
+  let theme = newTheme || preferences.theme;
 
   document.documentElement.setAttribute('data-theme', theme);
 
   if (newTheme) {
-    localStorage.USER_THEME = theme;
+    window.preferencesStorage.save({
+      ...preferences,
+      theme
+    });
   }
-});
+};
+
+window.__setTheme = setTheme;
 
 export function handleOSTheme() {
   if (process.platform === 'darwin') {
     const { systemPreferences } = remote;
-
-    const setOSTheme = () => {
-      localStorage.OS_THEME = systemPreferences.isDarkMode() ? 'dark' : 'light';
-    };
-
     systemPreferences.subscribeNotification(
       'AppleInterfaceThemeChangedNotification',
-      () => {
-        setOSTheme();
-        setTheme();
-      }
+      () => setTheme()
     );
-
-    setOSTheme();
   }
 }

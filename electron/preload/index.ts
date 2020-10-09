@@ -8,22 +8,29 @@ function relaunch() {
   remote.app.exit(0);
 }
 
-window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
-  const color = newColor || localStorage.ACCENT_COLOR || 'blue';
+const storage = initStorage(remote.app, remote.systemPreferences);
+const { preferencesStorage } = storage;
 
-  document.documentElement.setAttribute('data-accent-color', color);
+window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
+  const preferences = preferencesStorage.get();
+  const accentColor = newColor || preferences.accentColor;
+
+  document.documentElement.setAttribute('data-accent-color', accentColor);
 
   if (newColor) {
-    localStorage.ACCENT_COLOR = color;
+    preferencesStorage.save({
+      ...preferences,
+      accentColor
+    });
   }
 };
 
 window.__setTitleBar = (newTitleBar?: TITLE_BAR, shouldRelaunch?: boolean) => {
-  const preferences = window.preferencesStorage.get();
+  const preferences = preferencesStorage.get();
   const titleBar = newTitleBar || preferences.titleBar;
   document.documentElement.setAttribute('data-title-bar', titleBar);
   if (titleBar) {
-    window.preferencesStorage.save({
+    preferencesStorage.save({
       ...preferences,
       titleBar
     });
@@ -33,8 +40,6 @@ window.__setTitleBar = (newTitleBar?: TITLE_BAR, shouldRelaunch?: boolean) => {
     }
   }
 };
-
-const storage = initStorage(remote.app);
 
 Object.assign(window, storage);
 

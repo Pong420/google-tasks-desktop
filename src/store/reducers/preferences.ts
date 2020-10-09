@@ -1,7 +1,4 @@
-import {
-  PreferencesActions,
-  PreferencesActionTypes
-} from '../actions/preferences';
+import { PreferenceActions } from '../actions/preferences';
 
 interface State extends Schema$Preferences {}
 
@@ -12,22 +9,17 @@ const initialState: State = {
 
 export function preferencesReducer(
   state = initialState,
-  action: PreferencesActions
+  action: PreferenceActions
 ): State {
   switch (action.type) {
-    case PreferencesActionTypes.UPDATE_SYNC_PREFERENCES:
+    case 'UPDATE_PREFERENCES':
       return {
         ...state,
+        ...action.payload,
         sync: {
           ...state.sync,
-          ...action.payload
+          ...action.payload.sync
         }
-      };
-
-    case PreferencesActionTypes.UPDATE_TITLE_BAR:
-      return {
-        ...state,
-        titleBar: action.payload
       };
 
     default:
