@@ -11,7 +11,7 @@ function relaunch() {
 const storage = initStorage(remote.app, remote.systemPreferences);
 const { preferencesStorage } = storage;
 
-window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
+window.__setAccentColor = (newColor?: AccentColor) => {
   const preferences = preferencesStorage.get();
   const accentColor = newColor || preferences.accentColor;
 
@@ -25,7 +25,7 @@ window.__setAccentColor = (newColor?: ACCENT_COLOR) => {
   }
 };
 
-window.__setTitleBar = (newTitleBar?: TITLE_BAR, shouldRelaunch?: boolean) => {
+window.__setTitleBar = (newTitleBar?: TitleBar, shouldRelaunch?: boolean) => {
   const preferences = preferencesStorage.get();
   const titleBar = newTitleBar || preferences.titleBar;
   document.documentElement.setAttribute('data-title-bar', titleBar);

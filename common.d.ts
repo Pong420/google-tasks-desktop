@@ -1,6 +1,6 @@
-type THEME = 'light' | 'dark';
-type ACCENT_COLOR = 'red' | 'blue' | 'amber' | 'green' | 'purple' | 'grey';
-type TITLE_BAR = 'native' | 'simple';
+type Theme = 'light' | 'dark';
+type AccentColor = 'red' | 'blue' | 'amber' | 'green' | 'purple' | 'grey';
+type TitleBar = 'native' | 'simple';
 
 interface Schema$Storage<T> {
   get(): T;
@@ -25,17 +25,17 @@ interface SyncConfig {
 }
 
 type Schema$Preferences = {
-  accentColor: ACCENT_COLOR;
+  accentColor: AccentColor;
   maxTasks: number;
   sync: SyncConfig;
-  theme: THEME;
-  titleBar: TITLE_BAR;
+  theme: Theme;
+  titleBar: TitleBar;
 };
 
 declare interface Window {
-  __setTheme(theme?: THEME): void;
-  __setAccentColor(color?: ACCENT_COLOR): void;
-  __setTitleBar(titleBar?: TITLE_BAR, shouldRelaunch?: boolean): void;
+  __setTheme(theme?: Theme): void;
+  __setAccentColor(color?: AccentColor): void;
+  __setTitleBar(titleBar?: TitleBar, shouldRelaunch?: boolean): void;
   platform: NodeJS.Platform;
   openExternal: Electron.Shell['openExternal'];
   getCurrentWindow(): Electron.BrowserWindow;

@@ -36,7 +36,7 @@ async function createWindow() {
     }
   };
 
-  const titleBar: TITLE_BAR = preferencesStorage.get().titleBar;
+  const titleBar: TitleBar = preferencesStorage.get().titleBar;
 
   if (titleBar === 'simple' || process.platform === 'darwin') {
     mainWindow = new BrowserWindow({

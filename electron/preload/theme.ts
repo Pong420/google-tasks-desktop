@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 
-export const setTheme = (newTheme?: THEME) => {
+export const setTheme = (newTheme?: Theme) => {
   const preferences = window.preferencesStorage.get();
   let theme = newTheme || preferences.theme;
 

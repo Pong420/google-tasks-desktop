@@ -9,7 +9,7 @@ import { Switch } from '../Switch';
 import { preferencesSelector, usePreferenceActions } from '../../store';
 import { createForm, validators } from '../../utils/form';
 
-const accentColors: ACCENT_COLOR[] = [
+const accentColors: AccentColor[] = [
   'blue',
   'purple',
   'red',
@@ -35,8 +35,8 @@ function TitleBarRow({
   titleBar,
   onChange
 }: {
-  titleBar: TITLE_BAR;
-  onChange: (titleBar: TITLE_BAR) => void;
+  titleBar: TitleBar;
+  onChange: (titleBar: TitleBar) => void;
 }) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
 
