@@ -72,7 +72,7 @@ export interface FormItemLabelProps extends HTMLDivProps {
 interface BasicFormItemProps<S extends {} = Store>
   extends OmititedRcFieldProps {
   name?: NamePath<S>;
-  children?: ReactElement | ((value: S) => ReactElement);
+  children?: ReactElement | ((value: S, fields: FieldData<S>) => ReactElement);
   validators?:
     | Array<Validator | null>
     | ((value: S) => Array<Validator | null>);
@@ -94,7 +94,7 @@ type FormItemPropsDeps<S extends {} = Store> =
     }
   | {
       deps: Deps<S>;
-      children: (value: S) => ReactElement;
+      children: (value: S, fields: FieldData<S>) => ReactElement;
     };
 
 export type FormItemProps<S extends {} = Store> = BasicFormItemProps<S> &
@@ -201,14 +201,15 @@ export function createForm<S extends {} = Store, V = S>({
       },
       (
         control: Control<unknown>,
-        { touched, validating, errors }: FieldData<S>,
+        fields: FieldData<S>,
         form: FormInstance<S>
       ) => {
         const { getFieldsValue } = form;
+        const { touched, validating, errors } = fields;
 
         const childNode =
           typeof children === 'function'
-            ? children(getFieldsValue(deps))
+            ? children(getFieldsValue(deps), fields)
             : name
             ? React.cloneElement(children as React.ReactElement, {
                 ...control

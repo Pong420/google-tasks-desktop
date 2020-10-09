@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Tooltip } from '@material-ui/core';
-import { Input, FullScreenDialog, FullScreenDialogProps } from '../Mui';
+import {
+  Input,
+  ErrorTooltip,
+  FullScreenDialog,
+  FullScreenDialogProps
+} from '../Mui';
 import { Switch } from '../Switch';
 import { Appearance } from './Appearance';
 import { AccentColor } from './AccentColor';
@@ -28,6 +32,20 @@ export function Preferences(props: FullScreenDialogProps) {
   const { updatePreferences } = usePreferenceActions();
   const { titleBar } = preferences;
   const [form] = useForm();
+  const [errors, setErrors] = useState<string[]>([]);
+  const validate = useCallback(() => {
+    return form.validateFields().catch(() => {
+      setErrors(
+        form
+          .getFieldsError(['maxTasks', ['sync', 'inactiveHours']])
+          .map(payload => payload.errors[0])
+      );
+    });
+  }, [form]);
+
+  useEffect(() => {
+    validate();
+  }, [validate]);
 
   return (
     <FullScreenDialog {...props} className="preferences">
@@ -36,7 +54,9 @@ export function Preferences(props: FullScreenDialogProps) {
       <Form
         form={form}
         initialValues={preferences}
-        onValuesChange={updatePreferences}
+        onValuesChange={changes =>
+          validate().then(() => updatePreferences(changes))
+        }
       >
         <FullScreenDialog.Section>
           <FullScreenDialog.Title children="General" />
@@ -47,19 +67,28 @@ export function Preferences(props: FullScreenDialogProps) {
           <FullScreenDialog.Row>
             <div className="preferences-label">Maximum Tasks</div>
             <div className="preferences-max-tasks-selector">
-              <FormItem
-                name="maxTasks"
-                normalize={normalizeNumber}
-                validators={[
-                  validators.required('Cannot be empty'),
-                  validators.number,
-                  validators.integer('Plase input integer only'),
-                  validators.min(0, 'Cannot less then 1')
-                ]}
-                noStyle
+              <ErrorTooltip
+                enterDelay={0}
+                placement="top"
+                title={errors[0] || ''}
+                open={!!errors[0]}
               >
-                <Input className="filled" />
-              </FormItem>
+                <span>
+                  <FormItem
+                    name="maxTasks"
+                    normalize={normalizeNumber}
+                    validators={[
+                      validators.required('Cannot be empty'),
+                      validators.number,
+                      validators.integer('Plase input integer only'),
+                      validators.min(0, 'Cannot less then 1')
+                    ]}
+                    noStyle
+                  >
+                    <Input className="filled" />
+                  </FormItem>
+                </span>
+              </ErrorTooltip>
             </div>
           </FullScreenDialog.Row>
 
@@ -109,23 +138,28 @@ export function Preferences(props: FullScreenDialogProps) {
                         Sync after inactive
                       </div>
                       <div className="preferences-hours">
-                        <FormItem
-                          name={['sync', 'inactiveHours']}
-                          normalize={normalizeNumber}
-                          validators={[
-                            validators.required('Cannot be empty'),
-                            validators.number,
-                            validators.integer('Plase input integer only'),
-                            validators.min(1, 'Cannot less then 1')
-                          ]}
-                          noStyle
+                        <ErrorTooltip
+                          enterDelay={0}
+                          placement="top"
+                          title={errors[1] || ''}
+                          open={!!errors[1]}
                         >
-                          <Tooltip title="Cannot be empty">
-                            <div>
+                          <span>
+                            <FormItem
+                              name={['sync', 'inactiveHours']}
+                              normalize={normalizeNumber}
+                              validators={[
+                                validators.required('Cannot be empty'),
+                                validators.number,
+                                validators.integer('Plase input integer only'),
+                                validators.min(1, 'Cannot less then 1')
+                              ]}
+                              noStyle
+                            >
                               <Input className="filled" />
-                            </div>
-                          </Tooltip>
-                        </FormItem>
+                            </FormItem>
+                          </span>
+                        </ErrorTooltip>
                         Hours
                       </div>
                     </FullScreenDialog.Row>

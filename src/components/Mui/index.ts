@@ -5,3 +5,4 @@ export * from './EditIcon';
 export * from './IconButton';
 export * from './Input';
 export * from './Menu';
+export * from './Tooltip';

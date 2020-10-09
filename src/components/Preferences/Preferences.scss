@@ -8,9 +8,14 @@
   }
 
   .preferences-label {
+    @include flex(center);
     @include typeface('Nunito Sans', 600);
     flex: 0 0 auto;
     padding-right: 10px;
+
+    svg {
+      margin-left: 3px;
+    }
   }
 
   .preferences-theme-selector {
@@ -137,7 +142,7 @@
       min-height: 30px;
 
       input {
-        text-align: right;
+        text-align: center;
       }
     }
   }
