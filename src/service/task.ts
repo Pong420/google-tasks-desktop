@@ -13,9 +13,18 @@ const { tasks } = google.tasks({
 
 export const taskUUID = new UUID();
 
-export type Param$GetTasks = tasks_v1.Params$Resource$Tasks$List;
+// https://developers.google.com/tasks/performance#partial
+const fields: Record<keyof Omit<Schema$Task, 'uuid'>, unknown> = {
+  completed: '',
+  hidden: '',
+  id: '',
+  notes: '',
+  position: '',
+  status: '',
+  title: '',
+  due: ''
+};
 
-// TODO: https://developers.google.com/tasks/performance#partial
 export function getAllTasks(
   params: tasks_v1.Params$Resource$Tasks$List,
   prevTasks: Schema$Task[] = []
@@ -28,7 +37,8 @@ export function getAllTasks(
       ...params,
       showCompleted: true,
       showHidden: true,
-      maxResults
+      maxResults,
+      fields: `nextPageToken,items(${Object.keys(fields).join(',')})`
     })
   ).pipe(
     mergeMap(response => {

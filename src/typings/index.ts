@@ -1,7 +1,23 @@
 import { tasks_v1 } from 'googleapis';
 
-export interface Schema$Task extends tasks_v1.Schema$Task {
+export interface Schema$Task {
   uuid: string;
+
+  completed?: string | null;
+
+  hidden?: boolean | null;
+
+  id?: string | null;
+
+  notes?: string | null;
+
+  position?: string | null;
+
+  status?: string | null;
+
+  title?: string | null;
+
+  due?: string | null;
 }
 
 export interface Schema$TaskList extends tasks_v1.Schema$TaskList {
