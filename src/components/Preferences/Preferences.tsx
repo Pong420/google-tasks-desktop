@@ -1,22 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  FullScreenDialog,
-  FullScreenDialogProps
-} from '../Mui/Dialog/FullScreenDialog';
-import { Input, Dropdown, MenuItem, useMuiMenu } from '../Mui';
+import { Tooltip } from '@material-ui/core';
+import { Input, FullScreenDialog, FullScreenDialogProps } from '../Mui';
 import { Switch } from '../Switch';
+import { Appearance } from './Appearance';
+import { AccentColor } from './AccentColor';
+import { TitleBarRow } from './TitleBarRow';
+import { Storage } from './Storage';
 import { preferencesSelector, usePreferenceActions } from '../../store';
 import { createForm, validators } from '../../utils/form';
-
-const accentColors: AccentColor[] = [
-  'blue',
-  'purple',
-  'red',
-  'amber',
-  'green',
-  'grey'
-];
 
 const { Form, FormItem, useForm } = createForm<Schema$Preferences>();
 
@@ -30,44 +22,6 @@ const normalizeNumber = (value: string) => {
     ? String(value)
     : num;
 };
-
-function TitleBarRow({
-  titleBar,
-  onChange
-}: {
-  titleBar: TitleBar;
-  onChange: (titleBar: TitleBar) => void;
-}) {
-  const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
-
-  return (
-    <FullScreenDialog.Row>
-      <div className="preferences-label">Title Bar</div>
-      <div className="preferences-title-bar-selector">
-        <Dropdown
-          open={!!anchorEl}
-          anchorEl={anchorEl}
-          onClick={setAnchorEl}
-          onClose={onClose}
-          label={titleBar.replace(/^./, match => match.toUpperCase())}
-        >
-          <MenuItem
-            text="Native"
-            selected={titleBar === 'native'}
-            onClick={() => onChange('native')}
-            onClose={onClose}
-          />
-          <MenuItem
-            text="Simple"
-            selected={titleBar === 'simple'}
-            onClick={() => onChange('simple')}
-            onClose={onClose}
-          />
-        </Dropdown>
-      </div>
-    </FullScreenDialog.Row>
-  );
-}
 
 export function Preferences(props: FullScreenDialogProps) {
   const preferences = useSelector(preferencesSelector);
@@ -86,30 +40,9 @@ export function Preferences(props: FullScreenDialogProps) {
       >
         <FullScreenDialog.Section>
           <FullScreenDialog.Title children="General" />
-          <FullScreenDialog.Row>
-            <div className="preferences-label">Appearance</div>
-            <div className="preferences-theme-selector">
-              <div className="preferences-theme light">
-                <div onClick={() => window.__setTheme('light')} />
-              </div>
-              <div className="preferences-theme dark">
-                <div onClick={() => window.__setTheme('dark')} />
-              </div>
-            </div>
-          </FullScreenDialog.Row>
 
-          <FullScreenDialog.Row>
-            <div className="preferences-label">Accent color</div>
-            <div className="preferences-accent-color-selector">
-              {accentColors.map((color, index) => (
-                <div
-                  key={index}
-                  className={color}
-                  onClick={() => window.__setAccentColor(color)}
-                />
-              ))}
-            </div>
-          </FullScreenDialog.Row>
+          <Appearance />
+          <AccentColor />
 
           <FullScreenDialog.Row>
             <div className="preferences-label">Maximum Tasks</div>
@@ -187,7 +120,11 @@ export function Preferences(props: FullScreenDialogProps) {
                           ]}
                           noStyle
                         >
-                          <Input className="filled" />
+                          <Tooltip title="Cannot be empty">
+                            <div>
+                              <Input className="filled" />
+                            </div>
+                          </Tooltip>
                         </FormItem>
                         Hours
                       </div>
@@ -200,17 +137,7 @@ export function Preferences(props: FullScreenDialogProps) {
           </FormItem>
         </FullScreenDialog.Section>
 
-        <FullScreenDialog.Section>
-          <FullScreenDialog.Title children="Storage ( Read-Only )" />
-          <FullScreenDialog.Row>
-            <div className="preferences-label">Path</div>
-            <Input
-              value={window.STORAGE_DIRECTORY}
-              readOnly
-              className="filled"
-            />
-          </FullScreenDialog.Row>
-        </FullScreenDialog.Section>
+        <Storage />
       </Form>
     </FullScreenDialog>
   );
