@@ -85,7 +85,8 @@ export function taskListReducer(
         ...reducer(
           initialState,
           taskListActions.paginateTaskList(action.payload)
-        )
+        ),
+        loading: false
       };
 
     default:
