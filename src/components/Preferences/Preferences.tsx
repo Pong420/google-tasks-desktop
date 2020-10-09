@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Input,
@@ -33,19 +33,6 @@ export function Preferences(props: FullScreenDialogProps) {
   const { titleBar } = preferences;
   const [form] = useForm();
   const [errors, setErrors] = useState<string[]>([]);
-  const validate = useCallback(() => {
-    return form.validateFields().catch(() => {
-      setErrors(
-        form
-          .getFieldsError(['maxTasks', ['sync', 'inactiveHours']])
-          .map(payload => payload.errors[0])
-      );
-    });
-  }, [form]);
-
-  useEffect(() => {
-    validate();
-  }, [validate]);
 
   return (
     <FullScreenDialog {...props} className="preferences">
@@ -55,7 +42,16 @@ export function Preferences(props: FullScreenDialogProps) {
         form={form}
         initialValues={preferences}
         onValuesChange={changes =>
-          validate().then(() => updatePreferences(changes))
+          form
+            .validateFields()
+            .then(() => updatePreferences(changes))
+            .catch(() => {
+              setErrors(
+                form
+                  .getFieldsError(['maxTasks', ['sync', 'inactiveHours']])
+                  .map(payload => payload.errors[0])
+              );
+            })
         }
       >
         <FullScreenDialog.Section>
