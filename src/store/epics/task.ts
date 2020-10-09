@@ -69,11 +69,15 @@ const getTasksEpic: TaskEpic = (action$, state$) =>
   action$.pipe(
     ofType<Actions, ExtractAction<Actions, 'GET_TASKS'>>('GET_TASKS'),
     switchMap(action => {
+      NProgress.start();
       const max = state$.value.preferences.maxTasks;
       return getAllTasks({
         ...action.payload,
         maxResults: String(max)
-      }).pipe(map(taskActions.paginateTask));
+      }).pipe(
+        map(taskActions.paginateTask),
+        tap(() => NProgress.done())
+      );
     })
   );
 

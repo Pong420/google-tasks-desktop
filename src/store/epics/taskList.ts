@@ -5,7 +5,7 @@ import { of, defer, empty, merge } from 'rxjs';
 import { switchMap, mergeMap, map, tap } from 'rxjs/operators';
 import { taskListActions, TaskListActions } from '../actions/taskList';
 import { RootState } from '../reducers';
-import { tasklists, taskListAPI } from '../../service';
+import { tasklists, getAllTasklist, taskListAPI } from '../../service';
 import { PATHS } from '../../constants';
 import { ExtractAction, Schema$TaskList } from '../../typings';
 import { currentTaskListsSelector } from '../selectors';
@@ -15,6 +15,15 @@ type Actions = TaskListActions | RouterAction;
 type TaskEpic = Epic<Actions, Actions, RootState>;
 
 const gotoMasterTasklist = () => of(replace(generatePath(PATHS.TASKLIST, {})));
+
+const getTaskListsEpic: TaskEpic = action$ =>
+  action$.pipe(
+    ofType<Actions, ExtractAction<Actions, 'GET_TASKLISTS'>>('GET_TASKLISTS'),
+    tap(() => NProgress.start()),
+    switchMap(action =>
+      getAllTasklist(action.payload).pipe(map(taskListActions.paginateTaskList))
+    )
+  );
 
 const newTaskListEpic: TaskEpic = action$ =>
   action$.pipe(
@@ -94,6 +103,7 @@ const redirectEpic: TaskEpic = (action$, state$) =>
   );
 
 export default [
+  getTaskListsEpic,
   newTaskListEpic,
   deleteCurrentTaskListEpic,
   updateTaskListEpic,

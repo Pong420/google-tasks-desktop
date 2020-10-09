@@ -8,6 +8,7 @@ import { Schema$TaskList, ExtractAction } from '../../typings';
 import { TaskActions } from '../actions';
 
 type DefaultState = typeof defaultState;
+
 interface State extends DefaultState {
   loading: boolean;
   sortByDate: string[];
@@ -31,8 +32,8 @@ export function taskListReducer(
   action: TaskListActions | ExtractAction<TaskActions, 'PAGINATE_TASK'>
 ): State {
   switch (action.type) {
+    case TaskListActionTypes.GET:
     case TaskListActionTypes.NEW:
-    case TaskListActionTypes.DISABLE:
       return {
         ...state,
         loading: true

@@ -4,6 +4,7 @@ import { taskSelector } from '../selectors';
 import { Schema$Task } from '../../typings';
 
 interface State {
+  loading?: boolean;
   todo: typeof todoState;
   completed: typeof completeState;
   focused: string | null;
@@ -25,6 +26,7 @@ const [completeState, completeReducer] = createCRUDReducer<Schema$Task, 'uuid'>(
 );
 
 const initialState: State = {
+  loading: true,
   todo: todoState,
   completed: completeState,
   focused: null,
@@ -36,6 +38,12 @@ export function taskReducer(
   action: TaskActions
 ): typeof initialState {
   switch (action.type) {
+    case 'GET_TASKS':
+      return {
+        ...state,
+        loading: true
+      };
+
     case 'SYNC_TASKS':
     case 'PAGINATE_TASK':
       return (() => {
@@ -48,6 +56,7 @@ export function taskReducer(
         }
         return {
           ...state,
+          loading: false,
           todo: todoReducer(
             todoState,
             taskActions.paginateTask({
