@@ -7,7 +7,7 @@ import {
   FullScreenDialogProps
 } from '../Mui';
 import { Switch } from '../Switch';
-import { Appearance } from './Appearance';
+import { ThemeSelector } from './ThemeSelector';
 import { AccentColor } from './AccentColor';
 import { TitleBarRow } from './TitleBarRow';
 import { Storage } from './Storage';
@@ -55,10 +55,19 @@ export function Preferences(props: FullScreenDialogProps) {
         }
       >
         <FullScreenDialog.Section>
-          <FullScreenDialog.Title children="General" />
+          <FullScreenDialog.Title children="Appearances" />
 
-          <Appearance />
+          <ThemeSelector />
+
           <AccentColor />
+
+          {window.platform === 'darwin' ? null : (
+            <TitleBarRow titleBar={titleBar} onChange={window.__setTitleBar} />
+          )}
+        </FullScreenDialog.Section>
+
+        <FullScreenDialog.Section>
+          <FullScreenDialog.Title children="Tasks" />
 
           <FullScreenDialog.Row>
             <div className="preferences-label">Maximum Tasks</div>
@@ -87,14 +96,6 @@ export function Preferences(props: FullScreenDialogProps) {
               </ErrorTooltip>
             </div>
           </FullScreenDialog.Row>
-
-          {window.platform === 'darwin' ? null : (
-            <TitleBarRow titleBar={titleBar} onChange={window.__setTitleBar} />
-          )}
-        </FullScreenDialog.Section>
-
-        <FullScreenDialog.Section>
-          <FullScreenDialog.Title children="Synchronization" />
 
           <FullScreenDialog.Row>
             <div className="preferences-label">Enable synchronization</div>

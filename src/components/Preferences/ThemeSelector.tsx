@@ -1,10 +1,10 @@
 import React from 'react';
 import { FullScreenDialog } from '../Mui/Dialog/FullScreenDialog';
 
-export function Appearance() {
+export function ThemeSelector() {
   return (
     <FullScreenDialog.Row>
-      <div className="preferences-label">Appearance</div>
+      <div className="preferences-label">Theme</div>
       <div className="preferences-theme-selector">
         <div className="preferences-theme light">
           <div onClick={() => window.__setTheme('light')} />
