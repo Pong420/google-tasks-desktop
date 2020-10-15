@@ -1,6 +1,6 @@
 {
   "name": "google-tasks-desktop",
-  "version": "3.0.2",
+  "version": "3.1.0-rc.1",
   "scripts": {
     "dev": "nf start",
     "build": "yarn app:build && yarn electron:compile",
@@ -79,7 +79,6 @@
       "target": [
         "AppImage",
         "deb",
-        "rpm",
         "snap"
       ],
       "icon": "public/icon",
@@ -88,7 +87,6 @@
         "Encoding": "UTF-8",
         "Name": "Google Tasks",
         "Comment": "Unofficial google tasks desktop application",
-        "Exec": "application",
         "Icon": "public/icon/icon.png",
         "Terminal": "false",
         "StartupWMClass": "google-tasks-desktop"
