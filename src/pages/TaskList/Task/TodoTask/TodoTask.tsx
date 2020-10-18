@@ -18,7 +18,6 @@ import {
 } from '../../../../store';
 import { useMouseTrap } from '../../../../hooks/useMouseTrap';
 import { Schema$Task } from '../../../../typings';
-import idx from 'idx.macro';
 
 export interface TodoTaskProps extends TaskProps {
   index: number;
@@ -72,12 +71,9 @@ export const TodoTask = React.memo(
         onBlur: () => {
           // reduce unnecessary `FOCUS_TASK` action
           setTimeout(() => {
-            const el = idx(
-              document,
-              d =>
-                d.activeElement.parentElement.parentElement.parentElement
-                  .parentElement
-            );
+            const el =
+              document.activeElement?.parentElement?.parentElement
+                ?.parentElement?.parentElement;
             (!el || !el.classList.contains('task')) && setFocus(null);
           }, 0);
         },
