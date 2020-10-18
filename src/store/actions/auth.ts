@@ -1,5 +1,4 @@
-import { UnionCRUDActions } from '@pong420/redux-crud';
-import { useActions } from '../../hooks/useActions';
+import { useActions, GetCreatorsAction } from '../../hooks/crud-reducer';
 
 export function authenticated() {
   return {
@@ -15,6 +14,6 @@ export function logout() {
 
 const actions = { authenticated, logout };
 
-export type AuthActions = UnionCRUDActions<typeof actions>;
+export type AuthActions = GetCreatorsAction<typeof actions>;
 
 export const useAuthActions = () => useActions({ authenticated, logout });

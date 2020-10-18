@@ -1,10 +1,10 @@
 import { Observable, defer, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { google, tasks_v1 } from 'googleapis';
-import { PagePayload } from '@pong420/redux-crud';
 import { oAuth2Client } from './auth';
 import { Schema$Task } from '../typings';
 import { UUID } from '../utils/uuid';
+import { PaginatePayload } from '../hooks/crud-reducer';
 
 const { tasks } = google.tasks({
   version: 'v1',
@@ -28,7 +28,7 @@ const fields: Record<keyof Omit<Schema$Task, 'uuid'>, unknown> = {
 export function getAllTasks(
   params: tasks_v1.Params$Resource$Tasks$List,
   prevTasks: Schema$Task[] = []
-): Observable<PagePayload<Schema$Task>> {
+): Observable<PaginatePayload<Schema$Task>> {
   const max = Number(params.maxResults || 100);
   const maxResults = String(Math.min(max, 100));
 
@@ -53,11 +53,7 @@ export function getAllTasks(
         return getAllTasks({ ...params, pageToken: nextPageToken }, data);
       }
 
-      return of({
-        data,
-        pageNo: 1,
-        total: data.length
-      });
+      return of(data);
     })
   );
 }

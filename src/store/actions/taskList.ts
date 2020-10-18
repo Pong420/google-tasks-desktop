@@ -1,28 +1,28 @@
-import {
-  UnionCRUDActions,
-  createCRUDActions,
-  PagePayload
-} from '@pong420/redux-crud';
-import { useActions } from '../../hooks/useActions';
-import { Schema$TaskList } from '../../typings';
 import { tasks_v1 } from 'googleapis';
+import {
+  getCRUDActionsCreator,
+  useActions,
+  PaginatePayload,
+  GetCreatorsAction
+} from '../../hooks/crud-reducer';
+import { Schema$TaskList } from '../../typings';
 
-const [actions, actionTypes] = createCRUDActions<Schema$TaskList, 'id'>()({
-  createTaskList: ['CREATE', 'CREATE_TASK_LIST'],
-  deleteTaskList: ['DELETE', 'DELETE_TASK_LIST'],
-  updateTaskList: ['UPDATE', 'UPDATE_TASK_LIST'],
-  paginateTaskList: ['PAGINATE', 'PAGINATE_TASK_LIST']
-});
+const [actions, actionTypes] = getCRUDActionsCreator<Schema$TaskList, 'id'>()({
+  CREATE: 'CREATE_TASK_LIST',
+  DELETE: 'DELETE_TASK_LIST',
+  UPDATE: 'UPDATE_TASK_LIST',
+  PAGINATE: 'PAGINATE_TASK_LIST'
+} as const);
 
 export const TaskListActionTypes = {
   ...actionTypes,
-  GET: 'GET_TASKLISTS' as const,
-  NEW: 'NEW_TASK_LIST' as const,
-  DELETE_CURRENT_TASKLIST: 'DELETE_CURRENT_TASKLIST' as const,
-  SORT_BY: 'SORT_TASKLIST_BY' as const,
-  DISABLE: 'DISABLE_TASKLIST' as const,
-  SYNC: 'SYNC_TASKLIST' as const
-};
+  GET: 'GET_TASKLISTS',
+  NEW: 'NEW_TASK_LIST',
+  DELETE_CURRENT_TASKLIST: 'DELETE_CURRENT_TASKLIST',
+  SORT_BY: 'SORT_TASKLIST_BY',
+  DISABLE: 'DISABLE_TASKLIST',
+  SYNC: 'SYNC_TASKLIST'
+} as const;
 
 export function getTaskLists(
   payload?: tasks_v1.Params$Resource$Tasklists$List
@@ -45,7 +45,7 @@ export function sortTaskListBy(payload: {
   return { type: TaskListActionTypes.SORT_BY, payload };
 }
 
-export function syncTaskList(payload: PagePayload<Schema$TaskList>) {
+export function syncTaskList(payload: PaginatePayload<Schema$TaskList>) {
   return { type: TaskListActionTypes.SYNC, payload };
 }
 
@@ -58,7 +58,7 @@ export const taskListActions = {
 };
 
 export type TaskListActions =
-  | UnionCRUDActions<typeof taskListActions>
+  | GetCreatorsAction<typeof taskListActions>
   | ReturnType<typeof getTaskLists>
   | ReturnType<typeof newTaskList>
   | ReturnType<typeof deleteCurrTaskList>

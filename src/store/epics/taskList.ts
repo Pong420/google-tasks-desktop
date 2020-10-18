@@ -21,7 +21,9 @@ const getTaskListsEpic: TaskEpic = action$ =>
     ofType<Actions, ExtractAction<Actions, 'GET_TASKLISTS'>>('GET_TASKLISTS'),
     tap(() => NProgress.start()),
     switchMap(action =>
-      getAllTasklist(action.payload).pipe(map(taskListActions.paginateTaskList))
+      getAllTasklist(action.payload).pipe(
+        map(payload => taskListActions.paginate(payload))
+      )
     )
   );
 
@@ -36,7 +38,7 @@ const newTaskListEpic: TaskEpic = action$ =>
         map(res => res.data as Schema$TaskList),
         mergeMap(tasklist =>
           of(
-            taskListActions.createTaskList(tasklist),
+            taskListActions.create(tasklist),
             push(
               generatePath(PATHS.TASKLIST, {
                 taskListId: tasklist.id
@@ -58,7 +60,7 @@ const deleteCurrentTaskListEpic: TaskEpic = (action$, state$) =>
         ? defer(() => taskListAPI.delete({ tasklist: current.id })).pipe(
             mergeMap(() =>
               merge(
-                of(taskListActions.deleteTaskList({ id: current.id })),
+                of(taskListActions.delete({ id: current.id })),
                 gotoMasterTasklist()
               )
             )

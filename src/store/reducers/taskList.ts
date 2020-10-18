@@ -1,9 +1,9 @@
-import { createCRUDReducer, removeFromArray } from '@pong420/redux-crud';
 import {
   TaskListActionTypes,
   TaskListActions,
   taskListActions
 } from '../actions/taskList';
+import { createCRUDReducer, removeFromArray } from '../../hooks/crud-reducer';
 import { Schema$TaskList, ExtractAction } from '../../typings';
 import { TaskActions } from '../actions';
 
@@ -14,11 +14,9 @@ interface State extends DefaultState {
   sortByDate: string[];
 }
 
-const [defaultState, reducer] = createCRUDReducer<Schema$TaskList, 'id'>({
-  key: 'id',
+const [defaultState, reducer] = createCRUDReducer<Schema$TaskList, 'id'>('id', {
   prefill: false,
-  actions: TaskListActionTypes,
-  onLocationChanged: null
+  actionTypes: TaskListActionTypes
 });
 
 const initialState: State = {
@@ -32,23 +30,23 @@ export function taskListReducer(
   action: TaskListActions | ExtractAction<TaskActions, 'PAGINATE_TASK'>
 ): State {
   switch (action.type) {
-    case TaskListActionTypes.GET:
-    case TaskListActionTypes.NEW:
+    case 'PAGINATE_TASK':
+      return {
+        ...state,
+        loading: false
+      };
+
+    case 'GET_TASKLISTS':
+    case 'NEW_TASK_LIST':
       return {
         ...state,
         loading: true
       };
 
-    case TaskListActionTypes.CREATE:
+    case 'CREATE_TASK_LIST':
       return {
         ...state,
         ...reducer(state, action),
-        loading: false
-      };
-
-    case 'PAGINATE_TASK':
-      return {
-        ...state,
         loading: false
       };
 
@@ -83,10 +81,7 @@ export function taskListReducer(
     case 'SYNC_TASKLIST':
       return {
         ...state,
-        ...reducer(
-          initialState,
-          taskListActions.paginateTaskList(action.payload)
-        ),
+        ...reducer(initialState, taskListActions.paginate(action.payload)),
         loading: false
       };
 

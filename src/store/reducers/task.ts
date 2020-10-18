@@ -1,34 +1,28 @@
-import { createCRUDReducer } from '@pong420/redux-crud';
 import { TaskActionTypes, TaskActions, taskActions } from '../actions/task';
 import { taskSelector } from '../selectors';
+import {
+  createCRUDReducer,
+  parsePaginatePayload
+} from '../../hooks/crud-reducer';
 import { Schema$Task } from '../../typings';
 
 interface State {
   loading?: boolean;
-  todo: typeof todoState;
-  completed: typeof completeState;
+  todo: typeof taskState;
+  completed: typeof taskState;
   focused: string | null;
   deleted: { [x: string]: Schema$Task };
 }
 
-const [todoState, todoReducer] = createCRUDReducer<Schema$Task, 'uuid'>({
-  key: 'uuid',
+const [taskState, reducer] = createCRUDReducer<Schema$Task, 'uuid'>('uuid', {
   prefill: false,
-  actions: TaskActionTypes
+  actionTypes: TaskActionTypes
 });
-
-const [completeState, completeReducer] = createCRUDReducer<Schema$Task, 'uuid'>(
-  {
-    key: 'uuid',
-    prefill: false,
-    actions: TaskActionTypes
-  }
-);
 
 const initialState: State = {
   loading: true,
-  todo: todoState,
-  completed: completeState,
+  todo: taskState,
+  completed: taskState,
   focused: null,
   deleted: {}
 };
@@ -49,7 +43,8 @@ export function taskReducer(
       return (() => {
         const todo: Schema$Task[] = [];
         const completed: Schema$Task[] = [];
-        for (const task of action.payload.data) {
+        const payload = parsePaginatePayload(action.payload);
+        for (const task of payload.data) {
           task.hidden || task.status === 'completed'
             ? completed.push(task)
             : todo.push(task);
@@ -57,22 +52,8 @@ export function taskReducer(
         return {
           ...state,
           loading: false,
-          todo: todoReducer(
-            todoState,
-            taskActions.paginateTask({
-              data: todo,
-              total: todo.length,
-              pageNo: 1
-            })
-          ),
-          completed: todoReducer(
-            completeState,
-            taskActions.paginateTask({
-              data: completed,
-              total: completed.length,
-              pageNo: 1
-            })
-          )
+          todo: reducer(taskState, taskActions.paginate(todo)),
+          completed: reducer(taskState, taskActions.paginate(completed))
         };
       })();
 
@@ -118,13 +99,12 @@ export function taskReducer(
         const { uuid } = action.payload;
         const isTodoTask = state.todo.ids.includes(uuid);
         const deleteTask = taskActions.deleteTask({ uuid });
-        const updateTask = taskActions.updateTask(action.payload);
-
+        const updateTask = taskActions.update(action.payload);
         if (action.payload.status === 'completed') {
           return {
             ...state,
-            todo: todoReducer(state.todo, deleteTask),
-            completed: completeReducer(
+            todo: reducer(state.todo, deleteTask),
+            completed: reducer(
               state.completed,
               taskActions.createTask(state.todo.byIds[uuid])
             )
@@ -132,19 +112,19 @@ export function taskReducer(
         } else if (action.payload.status === 'needsAction') {
           return {
             ...state,
-            todo: todoReducer(
+            todo: reducer(
               state.todo,
               taskActions.createTask(state.completed.byIds[uuid])
             ),
-            completed: completeReducer(state.completed, deleteTask)
+            completed: reducer(state.completed, deleteTask)
           };
         }
 
         return {
           ...state,
           ...(isTodoTask
-            ? { todo: todoReducer(state.todo, updateTask) }
-            : { completed: completeReducer(state.completed, updateTask) })
+            ? { todo: reducer(state.todo, updateTask) }
+            : { completed: reducer(state.completed, updateTask) })
         };
       })();
 
@@ -153,11 +133,8 @@ export function taskReducer(
         const { uuid, prevTaskIndex } = action.payload;
         const isTodoTask = state.todo.ids.includes(uuid);
         const [newState, task] = isTodoTask
-          ? [todoReducer(state.todo, action), state.todo.byIds[uuid]]
-          : [
-              completeReducer(state.completed, action),
-              state.completed.byIds[uuid]
-            ];
+          ? [reducer(state.todo, action), state.todo.byIds[uuid]]
+          : [reducer(state.completed, action), state.completed.byIds[uuid]];
         const prevTask =
           typeof prevTaskIndex === 'number' && state.todo.ids[prevTaskIndex];
         const [first, second] = state.todo.ids;
@@ -194,10 +171,10 @@ export function taskReducer(
           ...taskSelector(action.payload.uuid)({ task: state })
         };
         const isTodoTask = state.todo.ids.includes(task.uuid);
-        const action_ = taskActions.updateTask(task);
+        const _action = taskActions.update(task);
         const newState = isTodoTask
-          ? { todo: todoReducer(state.todo, action_) }
-          : { completed: completeReducer(state.completed, action_) };
+          ? { todo: reducer(state.todo, _action) }
+          : { completed: reducer(state.completed, _action) };
 
         return {
           ...state,
@@ -232,7 +209,7 @@ export function taskReducer(
             ...state.deleted,
             [uuid]: state.todo.byIds[uuid]!
           },
-          todo: todoReducer(state.todo, taskActions.deleteTask({ uuid }))
+          todo: reducer(state.todo, taskActions.deleteTask({ uuid }))
         };
       })();
 

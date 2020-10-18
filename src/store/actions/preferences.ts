@@ -1,4 +1,4 @@
-import { useActions } from '../../hooks/useActions';
+import { useActions } from '../../hooks/crud-reducer';
 import { DeepPartial } from '../../utils/form';
 
 function updatePreferences(payload: DeepPartial<Schema$Preferences>) {

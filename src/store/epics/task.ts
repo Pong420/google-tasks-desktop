@@ -75,7 +75,7 @@ const getTasksEpic: TaskEpic = (action$, state$) =>
         ...action.payload,
         maxResults: String(max)
       }).pipe(
-        map(taskActions.paginateTask),
+        map(payload => taskActions.paginate(payload)),
         tap(() => NProgress.done())
       );
     })

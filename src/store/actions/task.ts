@@ -1,10 +1,11 @@
-import {
-  UnionCRUDActions,
-  createCRUDActions,
-  PagePayload
-} from '@pong420/redux-crud';
 import { tasks_v1 } from 'googleapis';
-import { useActions } from '../../hooks/useActions';
+import {
+  useActions,
+  getCRUDActionsCreator,
+  GetCreatorsAction,
+  PaginatePayload,
+  UpdatePayload
+} from '../../hooks/crud-reducer';
 import { Schema$Task } from '../../typings';
 import { taskUUID } from '../../service';
 
@@ -24,26 +25,26 @@ export interface Payload$MoveToAnotherList {
   uuid: string;
 }
 
-const [actions, actionTypes] = createCRUDActions<Schema$Task, 'uuid'>()({
-  updateTask: ['UPDATE', 'UPDATE_TASK'],
-  paginateTask: ['PAGINATE', 'PAGINATE_TASK']
-});
+const [actions, actionTypes] = getCRUDActionsCreator<Schema$Task, 'uuid'>()({
+  UPDATE: 'UPDATE_TASK',
+  PAGINATE: 'PAGINATE_TASK'
+} as const);
 
 export const TaskActionTypes = {
   ...actionTypes,
-  GET: 'GET_TASKS' as const,
-  CREATE: 'CREATE_TASK' as const,
-  CREATE_SUCCESS: 'CREATE_TASK_SUCCESS' as const,
-  DELETE: 'DELETE_TASK' as const,
-  FOCUS: 'FOCUS_TASK' as const,
-  UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS' as const,
-  MOVE_TASK: 'MOVE_TASK' as const,
-  MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS' as const,
-  DELETE_ALL_COMPLETED_TASKS: 'DELETE_ALL_COMPLETED_TASKS' as const,
-  DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS' as const,
-  SYNC: 'SYNC_TASKS' as const,
-  MOVE_TO_ANOTHER_LIST: 'MOVE_TO_ANOTHER_LIST' as const
-};
+  GET: 'GET_TASKS',
+  CREATE: 'CREATE_TASK',
+  CREATE_SUCCESS: 'CREATE_TASK_SUCCESS',
+  DELETE: 'DELETE_TASK',
+  FOCUS: 'FOCUS_TASK',
+  UPDATE_SUCCESS: 'UPDATE_TASK_SUCCESS',
+  MOVE_TASK: 'MOVE_TASK',
+  MOVE_TASK_SUCCESS: 'MOVE_TASK_SUCCESS',
+  DELETE_ALL_COMPLETED_TASKS: 'DELETE_ALL_COMPLETED_TASKS',
+  DELETE_ALL_COMPLETED_TASKS_SUCCESS: 'DELETE_ALL_COMPLETED_TASKS_SUCCESS',
+  SYNC: 'SYNC_TASKS',
+  MOVE_TO_ANOTHER_LIST: 'MOVE_TO_ANOTHER_LIST'
+} as const;
 
 export function getTasks(payload: tasks_v1.Params$Resource$Tasks$List) {
   return {
@@ -55,7 +56,6 @@ export function getTasks(payload: tasks_v1.Params$Resource$Tasks$List) {
 export function createTask(payload: Payload$CreateTask = {}) {
   return {
     type: TaskActionTypes.CREATE,
-    sub: 'CREATE' as const,
     payload: {
       uuid: taskUUID.next(),
       ...payload
@@ -66,7 +66,6 @@ export function createTask(payload: Payload$CreateTask = {}) {
 export function deleteTask(payload: { uuid: string; prevTaskIndex?: number }) {
   return {
     type: TaskActionTypes.DELETE,
-    sub: 'DELETE' as const,
     payload
   };
 }
@@ -80,18 +79,16 @@ export function setFocus(payload?: string | number | null) {
 
 export function createTaskSuccess(payload: Schema$Task) {
   return {
-    ...actions.updateTask(payload),
-    payload,
-    type: TaskActionTypes.CREATE_SUCCESS
+    // ...actions.update(payload),
+    type: TaskActionTypes.CREATE_SUCCESS,
+    payload
   };
 }
 
-export function updateTaskSuccess(
-  ...args: Parameters<typeof actions['updateTask']>
-) {
+export function updateTaskSuccess(payload: UpdatePayload<Schema$Task, 'uuid'>) {
   return {
-    ...actions.updateTask(...args),
-    type: TaskActionTypes.UPDATE_SUCCESS
+    type: TaskActionTypes.UPDATE_SUCCESS,
+    payload
   };
 }
 
@@ -120,7 +117,7 @@ export function deleteAllCompletedTasksSuccess() {
   };
 }
 
-export function syncTasks(payload: PagePayload<Schema$Task>) {
+export function syncTasks(payload: PaginatePayload<Schema$Task>) {
   return { type: TaskActionTypes.SYNC, payload };
 }
 
@@ -141,7 +138,7 @@ export const taskActions = {
 };
 
 export type TaskActions =
-  | UnionCRUDActions<typeof taskActions>
+  | GetCreatorsAction<typeof taskActions>
   | ReturnType<typeof createTaskSuccess>
   | ReturnType<typeof updateTaskSuccess>
   | ReturnType<typeof moveTaskSuccess>
