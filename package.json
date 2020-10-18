@@ -161,7 +161,6 @@
   "dependencies": {
     "@material-ui/core": "^4.9.5",
     "@material-ui/icons": "^4.9.1",
-    "@pong420/redux-crud": "^1.4.3",
     "connected-react-router": "^6.7.0",
     "customize-cra": "^0.9.1",
     "googleapis": "^47.0.0",
