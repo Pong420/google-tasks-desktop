@@ -44,7 +44,7 @@ export const TodoTask = React.memo(
     const {
       createTask,
       deleteTask,
-      updateTask,
+      update: updateTask,
       moveTask,
       setFocus
     } = useTaskActions();

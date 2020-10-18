@@ -23,7 +23,7 @@ const MarkInCompleteButton = React.memo(() => (
 ));
 
 export function ToggleCompleted({ uuid, isEmpty }: Props) {
-  const { updateTask, deleteTask } = useTaskActions();
+  const { update: updateTask, deleteTask } = useTaskActions();
   const { status, hidden } = useSelector(taskSelector(uuid)) || {};
   const isCompleted = hidden || status === 'completed';
 

@@ -92,7 +92,11 @@ export function TodoTaskDetails({
 }: Props & FullScreenDialogProps) {
   const [shouldBeDeleted, deleteOnExited] = useBoolean();
   const [moveTo, setMoveTo] = useState<Schema$TaskList>();
-  const { updateTask, deleteTask, moveToAnotherList } = useTaskActions();
+  const {
+    update: updateTask,
+    deleteTask,
+    moveToAnotherList
+  } = useTaskActions();
   const { title, notes, due } = useSelector(todoTaskSelector(uuid)) || {};
 
   return (

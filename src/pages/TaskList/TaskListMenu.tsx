@@ -128,7 +128,7 @@ export function TaskListMenu({ onClose, ...props }: Props) {
         onClose={closeRenameTaskDialog}
         onConfirm={title =>
           currentTaskListId &&
-          taskListActions.updateTaskList({ id: currentTaskListId, title })
+          taskListActions.update({ id: currentTaskListId, title })
         }
       />
       <ConfirmDialog
