@@ -18,10 +18,9 @@ export function CompletedTaskList() {
   return (
     <div className="completed-tasks-list">
       <div
-        className="completed-tasks-list-inner"
-        style={{
-          transform: expanded ? 'translateY(0)' : undefined
-        }}
+        className={`completed-tasks-list-inner ${
+          expanded ? 'expanded' : ''
+        }`.trim()}
       >
         <div className="completed-tasks-list-header" onClick={toggle}>
           Completed ({tasks.length})

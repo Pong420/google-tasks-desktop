@@ -22,6 +22,17 @@ $completed-task-list-header-height: 54px;
   padding-bottom: 2px;
   transform: translateY(calc(100% - #{$completed-task-list-header-height}));
   z-index: 10;
+
+  .completed-tasks-list-content {
+    visibility: hidden;
+  }
+
+  &.expanded {
+    transform: translateY(0);
+    .completed-tasks-list-content {
+      visibility: visible;
+    }
+  }
 }
 
 .completed-tasks-list-header {
