@@ -60,8 +60,21 @@ export const syncDataEpic: PreferencesEpic = (action$, state$) => {
 export const savePreferencesEpic: PreferencesEpic = (action$, state$) => {
   return action$.pipe(
     ofType<Actions, PreferenceActions>('UPDATE_PREFERENCES'),
-    switchMap(() => {
+    switchMap(({ payload: changes }) => {
       window.preferencesStorage.save(state$.value.preferences);
+
+      if (changes.theme) {
+        window.__setTheme(changes.theme);
+      }
+
+      if (changes.accentColor) {
+        window.__setAccentColor(changes.accentColor);
+      }
+
+      if (changes.titleBar) {
+        window.__setTitleBar(changes.titleBar);
+      }
+
       return empty();
     })
   );

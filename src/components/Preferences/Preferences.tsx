@@ -29,10 +29,9 @@ const normalizeNumber = (value: string) => {
 
 export function Preferences(props: FullScreenDialogProps) {
   const preferences = useSelector(preferencesSelector);
-  const { updatePreferences } = usePreferenceActions();
-  const { titleBar } = preferences;
   const [form] = useForm();
   const [errors, setErrors] = useState<string[]>([]);
+  const { updatePreferences } = usePreferenceActions();
 
   return (
     <FullScreenDialog {...props} className="preferences">
@@ -41,28 +40,36 @@ export function Preferences(props: FullScreenDialogProps) {
       <Form
         form={form}
         initialValues={preferences}
-        onValuesChange={changes =>
-          form
-            .validateFields()
-            .then(() => updatePreferences(changes))
-            .catch(() => {
-              setErrors(
-                form
-                  .getFieldsError(['maxTasks', ['sync', 'inactiveHours']])
-                  .map(payload => payload.errors[0])
-              );
-            })
-        }
+        onValuesChange={changes => {
+          setTimeout(() => {
+            form
+              .validateFields()
+              .then(() => updatePreferences(changes))
+              .catch(() => {
+                setErrors(
+                  form
+                    .getFieldsError(['maxTasks', ['sync', 'inactiveHours']])
+                    .map(payload => payload.errors[0])
+                );
+              });
+          }, 0);
+        }}
       >
         <FullScreenDialog.Section>
           <FullScreenDialog.Title children="Appearances" />
 
-          <ThemeSelector />
+          <FormItem name="theme" noStyle>
+            <ThemeSelector />
+          </FormItem>
 
-          <AccentColor />
+          <FormItem name="accentColor" noStyle>
+            <AccentColor />
+          </FormItem>
 
           {window.platform === 'darwin' ? null : (
-            <TitleBarRow titleBar={titleBar} onChange={window.__setTitleBar} />
+            <FormItem name="titleBar" noStyle>
+              <TitleBarRow />
+            </FormItem>
           )}
         </FullScreenDialog.Section>
 

@@ -1,14 +1,11 @@
 import React from 'react';
 import { FullScreenDialog } from '../Mui/Dialog/FullScreenDialog';
 import { Dropdown, MenuItem, useMuiMenu } from '../Mui';
+import { Control } from '../../utils/form';
 
-interface Props {
-  titleBar: TitleBar;
-  onChange: (titleBar: TitleBar) => void;
-}
-
-export function TitleBarRow({ titleBar, onChange }: Props) {
+export function TitleBarRow({ value, onChange }: Control<TitleBar>) {
   const { anchorEl, setAnchorEl, onClose } = useMuiMenu();
+  const handleChange = onChange || (() => {});
 
   return (
     <FullScreenDialog.Row>
@@ -19,18 +16,18 @@ export function TitleBarRow({ titleBar, onChange }: Props) {
           anchorEl={anchorEl}
           onClick={setAnchorEl}
           onClose={onClose}
-          label={titleBar.replace(/^./, match => match.toUpperCase())}
+          label={value?.replace(/^./, match => match.toUpperCase())}
         >
           <MenuItem
             text="Native"
-            selected={titleBar === 'native'}
-            onClick={() => onChange('native')}
+            selected={value === 'native'}
+            onClick={() => handleChange('native')}
             onClose={onClose}
           />
           <MenuItem
             text="Simple"
-            selected={titleBar === 'simple'}
-            onClick={() => onChange('simple')}
+            selected={value === 'simple'}
+            onClick={() => handleChange('simple')}
             onClose={onClose}
           />
         </Dropdown>
