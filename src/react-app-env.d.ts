@@ -1,6 +1,7 @@
 /// <reference types="pong-react-scripts" />
 
 declare module '*.scss';
+declare module 'react-desktop/windows';
 
 declare interface Window {
   __REDUX_DEVTOOLS_EXTENSION__: any;

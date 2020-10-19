@@ -5,7 +5,7 @@ import { initStorage } from '../storage';
 
 function relaunch() {
   remote.app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });
-  remote.app.exit(0);
+  remote.app.quit();
 }
 
 const storage = initStorage(remote.app, remote.systemPreferences);

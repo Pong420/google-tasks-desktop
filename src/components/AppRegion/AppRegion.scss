@@ -12,9 +12,28 @@
     }
   }
 
+  // drawin
   .app-region-drag {
     @include app-region-drag;
     @include sq-dimen(100%);
+  }
+}
+
+[data-platform^='win32'][data-title-bar^='native'] {
+  .app-region {
+    > div {
+      @include relative();
+      z-index: $app-region-z-index;
+    }
+  }
+
+  .windows-title {
+    @include flex(center);
+    svg {
+      @include sq-dimen(14px);
+      margin-top: 1px;
+      margin-right: 5px;
+    }
   }
 }
 
