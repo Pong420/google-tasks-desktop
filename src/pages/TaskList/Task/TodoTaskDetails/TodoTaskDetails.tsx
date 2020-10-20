@@ -19,7 +19,11 @@ import { TaskListDropdown } from '../../TaskListDropdown';
 import { DateTimeButton } from './DateTimeButton';
 import { Schema$Task, Schema$TaskList } from '../../../../typings';
 import { useBoolean } from '../../../../hooks/useBoolean';
-import { todoTaskSelector, useTaskActions } from '../../../../store';
+import {
+  todoTaskSelector,
+  useTaskActions,
+  currentTaskListsSelector
+} from '../../../../store';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 
@@ -98,6 +102,7 @@ export function TodoTaskDetails({
     moveToAnotherList
   } = useTaskActions();
   const { title, notes, due } = useSelector(todoTaskSelector(uuid)) || {};
+  const currentTaskList = useSelector(currentTaskListsSelector);
 
   return (
     <FullScreenDialog
@@ -115,8 +120,8 @@ export function TodoTaskDetails({
       onExited={() => {
         if (shouldBeDeleted) {
           deleteTask({ uuid });
-        } else {
-          moveTo && moveToAnotherList({ tasklistId: moveTo.id, uuid });
+        } else if (moveTo && moveTo.id !== currentTaskList.id) {
+          moveToAnotherList({ tasklistId: moveTo.id, uuid });
         }
       }}
     >
