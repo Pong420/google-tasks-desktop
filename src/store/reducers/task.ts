@@ -101,20 +101,30 @@ export function taskReducer(
         const deleteTask = taskActions.deleteTask({ uuid });
         const updateTask = taskActions.update(action.payload);
         if (action.payload.status === 'completed') {
+          const { id, hidden, ...task } = state.todo.byIds[uuid];
           return {
             ...state,
             todo: reducer(state.todo, deleteTask),
             completed: reducer(
               state.completed,
-              taskActions.createTask(state.todo.byIds[uuid])
+              taskActions.createTask({
+                ...task,
+                ...state.todo.byIds[uuid],
+                hidden: true
+              })
             )
           };
         } else if (action.payload.status === 'needsAction') {
+          const { id, hidden, ...task } = state.completed.byIds[uuid];
           return {
             ...state,
             todo: reducer(
               state.todo,
-              taskActions.createTask(state.completed.byIds[uuid])
+              taskActions.createTask({
+                ...task,
+                ...action.payload,
+                hidden: false
+              })
             ),
             completed: reducer(state.completed, deleteTask)
           };
