@@ -31,9 +31,9 @@ export function TitleBarSelector({ value, onChange }: Control<TitleBar>) {
             onClose={onClose}
           />
           <MenuItem
-            text="Simple"
-            selected={value === 'simple'}
-            onClick={() => hadnleSelect('simple')}
+            text="Frameless"
+            selected={value === 'frameless'}
+            onClick={() => hadnleSelect('frameless')}
             onClose={onClose}
           />
         </Dropdown>

@@ -27,7 +27,7 @@ async function createWindow() {
     await installExtension(REDUX_DEVTOOLS);
   }
 
-  const options: BrowserWindowConstructorOptions = {
+  let options: BrowserWindowConstructorOptions = {
     height: 500,
     width: 300,
     show: false,
@@ -38,18 +38,20 @@ async function createWindow() {
 
   const titleBar: TitleBar = preferencesStorage.get().titleBar;
 
-  if (titleBar === 'simple' || process.platform === 'darwin') {
-    mainWindow = new BrowserWindow({
+  if (
+    titleBar === 'frameless' ||
+    process.platform === 'win32' ||
+    process.platform === 'darwin'
+  ) {
+    options = {
       ...options,
       frame: false,
-      titleBarStyle: titleBar === 'simple' ? 'hidden' : 'hiddenInset'
-    });
-  } else {
-    mainWindow = new BrowserWindow({
-      ...options
-    });
-    mainWindow.setMenuBarVisibility(false);
+      titleBarStyle: titleBar === 'frameless' ? 'hidden' : 'hiddenInset'
+    };
   }
+
+  mainWindow = new BrowserWindow(options);
+  mainWindow.setMenuBarVisibility(false);
 
   const startUrl =
     process.env.ELECTRON_START_URL ||

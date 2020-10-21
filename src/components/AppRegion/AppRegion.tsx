@@ -13,7 +13,7 @@ export function AppRegion() {
 
   if (window.platform === 'darwin') {
     content = <div className="app-region-drag" />;
-  } else if (titleBar === 'simple') {
+  } else if (titleBar === 'frameless') {
     content = (
       <div className="simple-title-bar">
         {/* should not pass `close` function directly into `onClick` props */}

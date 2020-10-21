@@ -1,6 +1,6 @@
 type Theme = 'light' | 'dark';
 type AccentColor = 'red' | 'blue' | 'amber' | 'green' | 'purple' | 'grey';
-type TitleBar = 'native' | 'simple';
+type TitleBar = 'native' | 'frameless';
 
 interface Schema$Storage<T> {
   get(): T;
