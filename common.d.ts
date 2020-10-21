@@ -49,4 +49,5 @@ declare interface Window {
   PREFERENCES_PATH: string;
   TASKLIST_SORT_BY_DATE_PATH: string;
   STORAGE_DIRECTORY: string;
+  relaunch: () => void;
 }

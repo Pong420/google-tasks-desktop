@@ -10,7 +10,7 @@
     "app:dev": "cross-env BROWSER=false react-app-rewired start --scripts-version pong-react-scripts",
     "app:build": "cross-env react-app-rewired build --scripts-version pong-react-scripts",
     "electron:compile": "tsc --project electron/tsconfig.json",
-    "electron:dev": "cross-env NODE_ENV=development electron electron/main.js",
+    "electron:dev": "cross-env NODE_ENV=development & electron electron/main.js",
     "component": "node scripts/component.js",
     "get": "node scripts/type.js",
     "redux": "node scripts/redux.js",

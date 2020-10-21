@@ -38,18 +38,18 @@ async function createWindow() {
 
   const titleBar: TitleBar = preferencesStorage.get().titleBar;
 
-  // if (titleBar === 'simple' || process.platform === 'darwin') {
-  mainWindow = new BrowserWindow({
-    ...options,
-    frame: false,
-    titleBarStyle: titleBar === 'simple' ? 'hidden' : 'hiddenInset'
-  });
-  // } else {
-  //   mainWindow = new BrowserWindow({
-  //     ...options
-  //   });
-  //   mainWindow.setMenuBarVisibility(false);
-  // }
+  if (titleBar === 'simple' || process.platform === 'darwin') {
+    mainWindow = new BrowserWindow({
+      ...options,
+      frame: false,
+      titleBarStyle: titleBar === 'simple' ? 'hidden' : 'hiddenInset'
+    });
+  } else {
+    mainWindow = new BrowserWindow({
+      ...options
+    });
+    mainWindow.setMenuBarVisibility(false);
+  }
 
   const startUrl =
     process.env.ELECTRON_START_URL ||

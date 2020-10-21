@@ -9,7 +9,7 @@ import {
 import { Switch } from '../Switch';
 import { ThemeSelector } from './ThemeSelector';
 import { AccentColor } from './AccentColor';
-import { TitleBarRow } from './TitleBarRow';
+import { TitleBarSelector } from './TitleBarSelector';
 import { Storage } from './Storage';
 import { preferencesSelector, usePreferenceActions } from '../../store';
 import { createForm, validators } from '../../utils/form';
@@ -68,7 +68,7 @@ export function Preferences(props: FullScreenDialogProps) {
 
           {window.platform === 'darwin' ? null : (
             <FormItem name="titleBar" noStyle>
-              <TitleBarRow />
+              <TitleBarSelector />
             </FormItem>
           )}
         </FullScreenDialog.Section>

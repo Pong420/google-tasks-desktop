@@ -4,8 +4,8 @@ import { handleOSTheme } from './theme';
 import { initStorage } from '../storage';
 
 function relaunch() {
-  remote.app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });
-  remote.app.quit();
+  remote.app.relaunch();
+  remote.app.exit();
 }
 
 const storage = initStorage(remote.app, remote.systemPreferences);
@@ -47,6 +47,7 @@ window.platform = process.platform;
 window.getCurrentWindow = remote.getCurrentWindow;
 window.openExternal = remote.shell.openExternal;
 window.logout = () => fs.unlinkSync(storage.TOKEN_PATH);
+window.relaunch = relaunch;
 
 process.once('loaded', () => {
   handleOSTheme();

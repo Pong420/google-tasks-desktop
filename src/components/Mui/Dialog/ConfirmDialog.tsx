@@ -5,11 +5,11 @@ import mergeWith from 'lodash/mergeWith';
 
 export interface ConfirmDialogProps extends DialogProps {
   title?: string;
-  confirmLabel: string;
+  confirmLabel?: string;
   open: boolean;
   children?: ReactNode;
   onClose(): void;
-  onConfirm(): any;
+  onConfirm: () => unknown;
   autoFocusConfirmButon?: boolean;
 }
 
@@ -17,7 +17,7 @@ const backdropProps = { classes: { root: 'mui-menu-backdrop' } };
 
 export function ConfirmDialog({
   title,
-  confirmLabel,
+  confirmLabel = 'Confirm',
   children,
   onClose,
   onConfirm,
