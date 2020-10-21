@@ -8,7 +8,7 @@ function relaunch() {
   remote.app.exit();
 }
 
-const storage = initStorage(remote.app, remote.systemPreferences);
+const storage = initStorage(remote.app, remote.nativeTheme);
 const { preferencesStorage } = storage;
 
 window.__setAccentColor = (newColor?: AccentColor) => {

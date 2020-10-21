@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { App, SystemPreferences } from 'electron';
+import { App, NativeTheme } from 'electron';
 
 function FileStorage<T extends {}>(path: string): Schema$Storage<T | undefined>;
 function FileStorage<T extends {}>(path: string, defaultValue: T): Schema$Storage<T> // prettier-ignore
@@ -21,7 +21,7 @@ function FileStorage<T extends {}>(path: string, defaultValue?: T): Schema$Stora
   };
 }
 
-export function initStorage(app: App, systemPreferences: SystemPreferences) {
+export function initStorage(app: App, nativeTheme: NativeTheme) {
   const STORAGE_DIRECTORY = path.join(
     app.getPath('userData'),
     'google-tasks-desktop'
@@ -54,7 +54,7 @@ export function initStorage(app: App, systemPreferences: SystemPreferences) {
   const defaultPrefrences: Schema$Preferences = {
     accentColor: 'blue',
     maxTasks: 100,
-    theme: systemPreferences.isDarkMode() ? 'dark' : 'light',
+    theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
     titleBar: 'native',
     sync: {
       enabled: true,
