@@ -14,8 +14,11 @@ function normalizeKeyName(str: string) {
 
 export function KeyboardShortcuts(props: FullScreenDialogProps) {
   return (
-    <FullScreenDialog {...props} className="keyboard-shortcuts">
-      <h4>Keyboard shortcuts</h4>
+    <FullScreenDialog
+      {...props}
+      className="keyboard-shortcuts"
+      title="Keyboard shortcuts"
+    >
       <div className="keyboard-shortcuts-content">
         {Object.entries(shortcuts).map(([type, rows]) => (
           <FullScreenDialog.Section key={type}>

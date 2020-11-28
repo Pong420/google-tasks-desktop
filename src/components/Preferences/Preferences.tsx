@@ -34,9 +34,7 @@ export function Preferences(props: FullScreenDialogProps) {
   const { updatePreferences } = usePreferenceActions();
 
   return (
-    <FullScreenDialog {...props} className="preferences">
-      <h4>Preferences</h4>
-
+    <FullScreenDialog {...props} className="preferences" title="Preferences">
       <Form
         form={form}
         initialValues={preferences}

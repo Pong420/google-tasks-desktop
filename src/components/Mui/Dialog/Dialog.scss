@@ -61,12 +61,20 @@
 .fullscreen-diaglog-header {
   @include app-region-drag;
   @include dimen(100%, 70px);
-  @include flex(center, flex-end);
+  @include flex(center, space-between);
   @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
-  @include padding-x(10px);
+  @include padding-x(15px 10px);
 
   .mui-icon-button {
     @include app-region-no-drag;
+  }
+
+  h4 {
+    @include margin-y(0 15px);
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 0;
   }
 }
 
@@ -78,14 +86,7 @@
 
   .fullscreen-dialog-inner-content {
     @include dimen(100%);
-    padding: $padding-x;
-  }
-
-  h4 {
-    @include margin-y(0 15px);
-    color: var(--text-color);
-    font-size: 18px;
-    font-weight: 500;
+    @include padding-x($padding-x);
   }
 
   .fullscreen-dialog-section {

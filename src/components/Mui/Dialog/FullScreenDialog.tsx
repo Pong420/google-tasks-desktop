@@ -5,7 +5,8 @@ import { IconButton } from '../IconButton';
 import Slide from '@material-ui/core/Slide';
 import CloseIcon from '@material-ui/icons/Close';
 
-export interface FullScreenDialogProps extends DialogProps {
+export interface FullScreenDialogProps extends Omit<DialogProps, 'title'> {
+  title?: string;
   headerComponents?: ReactNode;
   onClose(): void;
 }
@@ -28,6 +29,7 @@ const paperClasses = { paper: 'fullscreen-dialog-paper' };
 
 export function FullScreenDialog({
   children,
+  title,
   onClose,
   headerComponents,
   ...props
@@ -43,6 +45,7 @@ export function FullScreenDialog({
       TransitionComponent={Transition}
     >
       <div className="fullscreen-diaglog-header">
+        <h4>{title}</h4>
         {headerComponents}
         <IconButton tooltip="Close task" icon={CloseIcon} onClick={onClose} />
       </div>
