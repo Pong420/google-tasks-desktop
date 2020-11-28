@@ -81,13 +81,13 @@
         "deb",
         "snap"
       ],
-      "icon": "public/icon",
+      "icon": "./public/icon",
       "desktop": {
         "Type": "Application",
         "Encoding": "UTF-8",
         "Name": "Google Tasks",
         "Comment": "Unofficial google tasks desktop application",
-        "Icon": "public/icon/icon.png",
+        "Icon": "./public/icon/icon.png",
         "Terminal": "false",
         "StartupWMClass": "google-tasks-desktop"
       }
