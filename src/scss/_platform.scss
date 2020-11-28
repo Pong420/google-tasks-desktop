@@ -2,10 +2,6 @@
   --header-height: 70px;
 }
 
-[data-title-bar^='native'] {
-  --header-height: 60px;
-}
-
 [data-platform^='win32'][data-title-bar^='native'] {
   --header-height: 90px;
 }

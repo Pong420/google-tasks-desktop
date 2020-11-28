@@ -64,6 +64,7 @@
   @include flex(center, space-between);
   @include fake-border($borderWidth: 1px, $color: var(--main-color-diff));
   @include padding-x(15px 10px);
+  flex: 0 0 auto;
 
   .mui-icon-button {
     @include app-region-no-drag;
@@ -75,6 +76,16 @@
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 0;
+  }
+
+  [data-platform^='darwin'] & {
+    height: 70px;
+    padding-bottom: 5px;
+
+    h4 {
+      margin-bottom: 7.5px;
+      align-self: flex-end;
+    }
   }
 }
 

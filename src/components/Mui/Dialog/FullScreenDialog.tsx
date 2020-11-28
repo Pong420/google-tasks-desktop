@@ -46,8 +46,10 @@ export function FullScreenDialog({
     >
       <div className="fullscreen-diaglog-header">
         <h4>{title}</h4>
-        {headerComponents}
-        <IconButton tooltip="Close task" icon={CloseIcon} onClick={onClose} />
+        <div>
+          {headerComponents}
+          <IconButton tooltip="Close task" icon={CloseIcon} onClick={onClose} />
+        </div>
       </div>
       <div className="fullscreen-dialog-content">
         <div className="fullscreen-dialog-inner-content">{children}</div>
