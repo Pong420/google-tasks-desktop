@@ -39,9 +39,11 @@ And the `oAuth.json` looks like this
 
 3. Start and drag the `oAuth.json` into the application.
 
-4. Click on the `Get Code` button and will require authentication. Just ignore the `This app isn't verified` warning and continue because you are the app owner.
+4. Enable [Google Tasks API](https://console.developers.google.com/apis/library/tasks.googleapis.com)
 
-5. Paste the code into the input filed and click the `Confirm` button.
+5. Click on the `Get Code` button and will require authentication. Just ignore the `This app isn't verified` warning and continue because you are the app owner.
+
+6. Paste the code into the input filed and click the `Confirm` button.
 
 ### Development
 
