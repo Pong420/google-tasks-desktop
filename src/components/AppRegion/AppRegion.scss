@@ -1,6 +1,6 @@
 .app-region {
   @include absolute(0, null, 0);
-  @include dimen(100%, var(--header-height));
+  width: 100%;
 
   .simple-title-bar {
     @include sq-dimen(100%);
