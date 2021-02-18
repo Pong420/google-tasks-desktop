@@ -38,25 +38,23 @@ export function WindowsTitleBar() {
   }, []);
 
   return (
-    <div className="app-region">
-      <Suspense fallback={null}>
-        <WindowsTitleBarComp
-          title={
-            <div className="windows-title">
-              <Logo />
-              Google Tasks
-            </div>
-          }
-          controls
-          theme={theme}
-          background="var(--main-color)"
-          isMaximized={isFullscreen}
-          onCloseClick={() => close()}
-          onMinimizeClick={() => minimize()}
-          onMaximizeClick={() => toggleMaximize()}
-          onRestoreDownClick={() => toggleMaximize()}
-        />
-      </Suspense>
-    </div>
+    <Suspense fallback={null}>
+      <WindowsTitleBarComp
+        title={
+          <div className="windows-title">
+            <Logo />
+            Google Tasks
+          </div>
+        }
+        controls
+        theme={theme}
+        background="var(--main-color)"
+        isMaximized={isFullscreen}
+        onCloseClick={() => close()}
+        onMinimizeClick={() => minimize()}
+        onMaximizeClick={() => toggleMaximize()}
+        onRestoreDownClick={() => toggleMaximize()}
+      />
+    </Suspense>
   );
 }
