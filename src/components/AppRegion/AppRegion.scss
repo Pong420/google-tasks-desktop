@@ -21,6 +21,7 @@
 
 [data-platform^='win32'][data-title-bar^='native'] {
   .app-region {
+    height: auto;
     > div {
       @include relative();
       z-index: $app-region-z-index;
