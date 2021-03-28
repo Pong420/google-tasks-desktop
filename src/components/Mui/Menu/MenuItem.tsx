@@ -42,6 +42,7 @@ export const MenuItem = forwardRef<HTMLLIElement, Props & MenuItemProps>(
 );
 
 export function useMuiMenuItem({ onClose }: Props) {
+  // eslint-disable-next-line
   return useCallback(
     forwardRef<HTMLLIElement, MenuItemProps>((props, ref) => (
       <MenuItem onClose={onClose} {...props} ref={ref} />

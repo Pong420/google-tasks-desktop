@@ -32,7 +32,7 @@ interface Props extends Pick<Schema$Task, 'uuid'> {
   openDateTimeDialog: () => void;
 }
 
-interface Context {
+interface TodoTaskDetailsContext {
   openTodoTaskDetails: (props: Props) => void;
 }
 
@@ -43,7 +43,7 @@ const dropdownButtonProps = {
   fullWidth: true
 };
 
-export const Context = createContext({} as Context);
+export const Context = createContext({} as TodoTaskDetailsContext);
 
 export function useTodoTaskDetails() {
   return useContext(Context);

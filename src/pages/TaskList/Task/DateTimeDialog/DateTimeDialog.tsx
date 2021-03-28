@@ -22,7 +22,7 @@ type Control = Omit<
   'onChange' | 'onConfirm' | 'confirmLabel'
 >;
 
-interface Context {
+interface DateTimeDialogContext {
   openDateTimeDialog: (props: Props) => void;
 }
 
@@ -30,7 +30,7 @@ const dialogClasses: ConfirmDialogProps['classes'] = {
   paper: 'date-time-dialog-paper'
 };
 
-const Context = createContext({} as Context);
+const Context = createContext({} as DateTimeDialogContext);
 
 export function useDateTimeDialog() {
   return useContext(Context);

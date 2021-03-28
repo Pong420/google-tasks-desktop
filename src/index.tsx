@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+import { ConnectedRouter } from 'connected-react-router/immutable'; // https://github.com/supasate/connected-react-router/issues/312
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { theme } from './theme';
 import configureStore, { history } from './store';

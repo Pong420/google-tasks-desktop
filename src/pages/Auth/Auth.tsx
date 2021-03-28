@@ -10,7 +10,7 @@ import { useAuthActions } from '../../store';
 export function Auth() {
   const [value, inputProps] = useRxInput();
   const { authenticated } = useAuthActions();
-  const { run, loading } = useRxAsync(getToken, {
+  const [{ loading }, { fetch }] = useRxAsync(getToken, {
     defer: true,
     onSuccess: authenticated
   });
@@ -41,7 +41,7 @@ export function Auth() {
                 <Button
                   disabled={loading}
                   className="auth-confirm-button"
-                  onClick={() => run(value)}
+                  onClick={() => fetch(value)}
                 >
                   Confirm
                 </Button>

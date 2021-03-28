@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import mousetrap from 'mousetrap';
+import mousetrap, { MousetrapStatic } from 'mousetrap';
 
 type Params = Parameters<MousetrapStatic['bind']>;
 

@@ -22,7 +22,7 @@ interface Props {
   firstTask?: boolean;
 }
 
-interface Context {
+interface TodoTaskMenuContext {
   openTodoTaskMenu: (props: Props & { event: MouseEvent<HTMLElement> }) => void;
 }
 
@@ -30,7 +30,7 @@ type Control = Omit<MenuProps, 'ref'>;
 
 const classes: MenuProps['classes'] = { paper: 'todo-task-menu-paper' };
 
-const Context = createContext({} as Context);
+const Context = createContext({} as TodoTaskMenuContext);
 
 export function useTodoTaskMenu() {
   return useContext(Context);

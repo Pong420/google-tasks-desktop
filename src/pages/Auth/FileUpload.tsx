@@ -27,7 +27,7 @@ function onSuccess(payload: OAuthKeys) {
 export function FileUpload() {
   const [isDragover, dragover, dragleave] = useBoolean();
   const [errorMsg, setErrorMsg] = useState('');
-  const { run } = useRxAsync(readFile, {
+  const [, { fetch }] = useRxAsync(readFile, {
     defer: true,
     onSuccess,
     onFailure: setErrorMsg
@@ -64,7 +64,7 @@ export function FileUpload() {
           onChange={evt => {
             const { files } = evt.currentTarget;
             if (files && files.length && files[0].type === 'application/json') {
-              run(files[0]);
+              fetch(files[0]);
             } else {
               setErrorMsg('Invalid file or format');
             }
