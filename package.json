@@ -90,7 +90,7 @@
         "Encoding": "UTF-8",
         "Name": "Google Tasks",
         "Comment": "Unofficial google tasks desktop application",
-        "Icon": "./public/icon/icon.png",
+        "Icon": "google-tasks-desktop",
         "Terminal": "false",
         "StartupWMClass": "google-tasks-desktop"
       }
