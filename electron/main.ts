@@ -34,6 +34,7 @@ async function createWindow() {
     width: 300,
     show: false,
     webPreferences: {
+      enableRemoteModule: true,
       preload: path.join(__dirname, './preload/index.js')
     }
   };
